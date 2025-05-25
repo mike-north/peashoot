@@ -5,13 +5,34 @@
   import { onDestroy } from "svelte";
   import type { Garden } from "../../lib/garden";
   import GardenBedView from "./GardenBedView.svelte";
+  import { GardenBedLayoutCalculator } from "../../lib/garden-bed-layout-calculator";
 
   interface GardenProps {
     garden: Garden;
+    onMovePlantInBed: (
+      bedId: string,
+      plantId: string,
+      newX: number,
+      newY: number
+    ) => void;
+    onMovePlantToDifferentBed: (
+      sourceBedId: string,
+      targetBedId: string,
+      plant: PlantPlacement,
+      newX: number,
+      newY: number
+    ) => void;
+    edgeIndicators?: { id: string; plantAId: string; plantBId: string; color: string }[];
   }
 
-  let { garden }: GardenProps = $props();
-  let { beds, edgeIndicators } = $derived(garden);
+  let {
+    garden,
+    onMovePlantInBed,
+    onMovePlantToDifferentBed,
+    edgeIndicators
+  }: GardenProps = $props();
+
+  let { beds } = $derived(garden);
   let gardenRef: HTMLDivElement | null = null;
 
   function handleTileMouseDown(
@@ -36,9 +57,10 @@
   function onGardenMouseMove(event: MouseEvent) {
     // For each bed, check if mouse is over its SVG
     for (const bed of beds) {
-      const svg = document.querySelector(`[data-bed-id='${bed.id}'] svg`);
-      if (!svg) continue;
-      const rect = svg.getBoundingClientRect();
+      const svgElement = document.querySelector(`[data-bed-id='${bed.id}'] svg`);
+      if (!svgElement) continue;
+      const rect = svgElement.getBoundingClientRect();
+
       if (
         event.clientX >= rect.left &&
         event.clientX <= rect.right &&
@@ -46,25 +68,47 @@
         event.clientY <= rect.bottom
       ) {
         // Mouse is over this bed
-        // Calculate cell coordinates
-        // We'll need to get layout info from the bed (assume cell size 40 for now)
-        const cellSize = 40; // TODO: get from bed or layout
-        const x = Math.floor((event.clientX - rect.left) / cellSize);
-        const y = Math.floor((rect.bottom - event.clientY) / cellSize);
+        // Create a layout calculator for this specific bed to get accurate metrics
+        const layout = new GardenBedLayoutCalculator({
+          width: bed.width,
+          height: bed.height,
+          cellSize: 40, // Assuming these are global constants for now
+          paddingTop: 2,
+          paddingLeft: 20,
+          paddingBottom: 20,
+          paddingRight: 20,
+          frameThickness: 4,
+        });
+
+        // Convert screen coordinates to SVG coordinates for this bed
+        const pt = (svgElement as any).createSVGPoint();
+        pt.x = event.clientX;
+        pt.y = event.clientY;
+        const cursorpt = pt.matrixTransform((svgElement as any).getScreenCTM().inverse());
+
+        // Calculate cell coordinates using the layout
+        const x = Math.max(0, Math.min(bed.width - 1,
+          Math.round((cursorpt.x - layout.interiorX) / layout.cellWidth)
+        ));
+        const y = Math.max(0, Math.min(bed.height - 1,
+          bed.height - 1 - Math.round((cursorpt.y - layout.interiorY) / layout.cellHeight)
+        ));
+
         dragState.update((s) => ({
           ...s,
           targetBedId: bed.id,
-          dragPosition: { x: event.clientX, y: event.clientY },
-          highlightedCell: { x, y },
+          dragPosition: { x: event.clientX, y: event.clientY }, // Screen coordinates for dragged element style
+          highlightedCell: { x, y }, // Grid coordinates for logic
         }));
         return;
       }
     }
-    // If not over any bed, clear highlight
+    // If not over any bed, clear targetBedId and highlightedCell
     dragState.update((s) => ({
       ...s,
       targetBedId: null,
       highlightedCell: null,
+      dragPosition: { x: event.clientX, y: event.clientY },
     }));
   }
 
@@ -107,65 +151,65 @@
 
   function onGardenMouseUp(event: MouseEvent) {
     const state = $dragState;
-    if (state.draggedPlant && state.targetBedId && state.highlightedCell) {
+    console.log('[GardenView] onGardenMouseUp: state', JSON.parse(JSON.stringify(state)));
+
+    // Ensure all required state properties for a valid drop are non-null
+    if (state.draggedPlant && state.sourceBedId && state.targetBedId && state.highlightedCell) {
       const draggedPlant = state.draggedPlant;
       const highlightedCell = state.highlightedCell;
-      const targetBed = garden.beds.find((b) => b.id === state.targetBedId);
-      if (!targetBed) return cleanupDrag();
-      // Check bounds and overlap
-      if (
-        !isValidDrop(
-          targetBed,
-          draggedPlant,
-          highlightedCell.x,
-          highlightedCell.y
-        )
-      ) {
+      // After this check, sourceBedId, targetBedId are confirmed strings
+      // and highlightedCell is a confirmed object.
+      const currentSourceBedId = state.sourceBedId as string;
+      const currentTargetBedId = state.targetBedId as string;
+
+      const targetBed = beds.find((b: GardenBed) => b.id === currentTargetBedId);
+
+      console.log('[GardenView] onGardenMouseUp: Details - ',
+        'Dragged Plant ID:', draggedPlant.id, 'Original Coords:', {x: draggedPlant.x, y: draggedPlant.y}, 'Size:', state.draggedTileSize,
+        'Target Bed ID:', targetBed ? targetBed.id : 'null',
+        'Source Bed ID:', currentSourceBedId,
+        'Highlighted Cell:', highlightedCell);
+
+      if (!targetBed) {
+        console.log('[GardenView] onGardenMouseUp: No target bed found. Cleaning up.');
+        return cleanupDrag();
+      }
+
+      const isValid = isValidDrop(
+        targetBed,
+        draggedPlant,
+        highlightedCell.x,
+        highlightedCell.y
+      );
+      console.log('[GardenView] onGardenMouseUp: isValidDrop returned:', isValid, 
+        'for cell:', highlightedCell, 'in bed:', currentTargetBedId);
+
+      if (!isValid) {
+        console.log('[GardenView] onGardenMouseUp: Drop is not valid. Cleaning up.');
         cleanupDrag();
         return;
       }
-      if (state.sourceBedId === state.targetBedId) {
+
+      if (currentSourceBedId === currentTargetBedId) {
         // Move within the same bed
-        beds = beds.map((b) => {
-          if (b.id !== state.sourceBedId) return b;
-          return {
-            ...b,
-            plantPlacements: b.plantPlacements.map((p) =>
-              p.id === draggedPlant.id
-                ? { ...p, x: highlightedCell.x, y: highlightedCell.y }
-                : p
-            ),
-          };
-        });
+        onMovePlantInBed(
+          currentSourceBedId,
+          draggedPlant.id,
+          highlightedCell.x,
+          highlightedCell.y
+        );
       } else {
         // Move to a different bed
-        beds = beds.map((b) => {
-          if (b.id === state.sourceBedId) {
-            return {
-              ...b,
-              plantPlacements: b.plantPlacements.filter(
-                (p) => p.id !== draggedPlant.id
-              ),
-            };
-          }
-          if (b.id === state.targetBedId) {
-            return {
-              ...b,
-              plantPlacements: [
-                ...b.plantPlacements,
-                {
-                  ...draggedPlant,
-                  x: highlightedCell.x,
-                  y: highlightedCell.y,
-                  plantTile: draggedPlant.plantTile,
-                  id: draggedPlant.id,
-                },
-              ],
-            };
-          }
-          return b;
-        });
+        onMovePlantToDifferentBed(
+          currentSourceBedId,
+          currentTargetBedId,
+          draggedPlant,
+          highlightedCell.x,
+          highlightedCell.y
+        );
       }
+    } else {
+      console.log('[GardenView] onGardenMouseUp: Aborted due to null state properties (draggedPlant, sourceBedId, targetBedId, or highlightedCell).');
     }
     cleanupDrag();
   }
@@ -188,30 +232,12 @@
     window.removeEventListener("mousemove", onGardenMouseMove);
     window.removeEventListener("mouseup", onGardenMouseUp);
   });
-
-  function generateSetPlantPlacementsForBed(bed: GardenBed) {
-    return (plants: PlantPlacement[]) => {
-      // For each plant in the new array, update or add it
-      const updatedPlacements = [
-        ...plants.map((updated) => {
-          const existing = bed.plantPlacements.find((p) => p.id === updated.id);
-          return existing
-            ? { ...existing, x: updated.x, y: updated.y }
-            : updated;
-        }),
-      ];
-      beds = beds.map((b) =>
-        b.id === bed.id ? { ...b, plantPlacements: updatedPlacements } : b
-      );
-    };
-  }
 </script>
 
 <div class="garden" bind:this={gardenRef}>
-  {#each beds as bed}
+  {#each beds as bed (bed.id)}
     <GardenBedView
       {bed}
-      setPlantPlacements={generateSetPlantPlacementsForBed(bed)}
       onTileMouseDownFromParent={handleTileMouseDown}
       {edgeIndicators}
     />

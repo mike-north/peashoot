@@ -1,7 +1,8 @@
 {
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true
   },
   "include": [
     "packages/**/*.ts",
@@ -9,7 +10,9 @@
     "packages/**/*.tsx",
     "eslint.config.mjs",
     "global.d.ts",
-    "packages/server/src/csp-solver._ts"
+    "packages/server/src/csp-solver._ts",
+    "packages/client/postcss.config.cjs",
+    "packages/client/tailwind.config.cjs"
   ],
   "exclude": ["./node_modules/*", "./public/*", "coverage/**/*"]
 }

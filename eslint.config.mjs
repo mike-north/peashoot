@@ -39,15 +39,22 @@ export default tseslint.config(
         "error",
         { argsIgnorePattern: "^_" },
       ],
-      "@typescript-eslint/restrict-template-expressions": ["error", {
-        "allowNumber": true,
-        "allowBoolean": true
-      }],
+      "@typescript-eslint/restrict-template-expressions": [
+        "error",
+        {
+          allowNumber: true,
+          allowBoolean: true,
+        },
+      ],
     },
   },
   // Svelte linting for client/src only
   {
-    files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
+    files: [
+      "**/*.svelte",
+      "**/*.svelte.ts",
+      "**/*.svelte.js"
+    ],
     // See more details at: https://typescript-eslint.io/packages/parser/
     languageOptions: {
       parserOptions: {
@@ -77,5 +84,12 @@ export default tseslint.config(
   {
     files: ["packages/server/**/*.ts"],
     plugins: { n },
+  },
+  {
+    files: ["**/*.cjs"],
+    globals: {
+      module: "readonly",
+      require: "readonly",
+    },
   }
 );

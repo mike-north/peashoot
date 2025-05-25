@@ -1,6 +1,5 @@
 import { mount } from "svelte";
 import "./app.scss";
-import "./colors.scss";
 import App from "./App.svelte";
 
 const rootElement = document.getElementById("app");

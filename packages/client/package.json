@@ -26,6 +26,8 @@
     "eslint": "^9.27.0",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.3",
+    "stylelint": "^16.19.1",
+    "stylelint-config-tailwindcss": "^1.0.0",
     "svelte": "^5.28.1",
     "svelte-check": "^4.2.1",
     "tailwindcss": "^4.1.7",
@@ -35,6 +37,8 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@dvcol/svelte-simple-router": "^2.7.2",
+    "@tailwindcss/postcss": "^4.1.7",
     "sass": "^1.89.0",
     "svelte-dnd-action": "^0.9.61"
   }

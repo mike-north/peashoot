@@ -1,3 +1,4 @@
+/* eslint-disable */
 // planting-csp-scaffold.ts
 
 import { CSP, min_conflicts } from "csps";

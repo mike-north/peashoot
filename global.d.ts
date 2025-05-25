@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// packages/client/src/svelte.d.ts
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Component } from "svelte";
 declare module "*.svelte" {
-  export default class SvelteComponentTyped<
-    Props = Record<string, any>,
-    Events = Record<string, any>,
-    Slots = Record<string, any>,
-  > extends Component<Props, Events, Slots> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export default interface SvelteComponentTyped<
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    Props extends Record<string, any> = Record<string, any>,
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    Events extends Record<string, any> = Record<string, any>,
+    Bindings extends keyof Props | "" = string,
+  > extends Component<Props, Events, Bindings> {}
 }

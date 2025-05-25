@@ -50,11 +50,7 @@ export default tseslint.config(
   },
   // Svelte linting for client/src only
   {
-    files: [
-      "**/*.svelte",
-      "**/*.svelte.ts",
-      "**/*.svelte.js"
-    ],
+    files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
     // See more details at: https://typescript-eslint.io/packages/parser/
     languageOptions: {
       parserOptions: {
@@ -87,9 +83,14 @@ export default tseslint.config(
   },
   {
     files: ["**/*.cjs"],
-    globals: {
-      module: "readonly",
-      require: "readonly",
+    languageOptions: {
+      globals: {
+        module: "readonly",
+        require: "readonly",
+      },
     },
-  }
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 );

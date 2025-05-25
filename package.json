@@ -31,5 +31,8 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript-eslint": "^8.32.1"
+  },
+  "dependencies": {
+    "@mateothegreat/svelte5-router": "^2.15.1"
   }
 }

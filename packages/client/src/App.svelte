@@ -1,32 +1,20 @@
 <script lang="ts">
-  import {
-  RouterView,
-    type Route,
-    type RouterOptions,
-  } from "@dvcol/svelte-simple-router";
+  import { Router, type RouteConfig } from "@mateothegreat/svelte5-router";
 
   import HomeComponent from "./ui/pages/Home.svelte";
+  import About from "./ui/components/About.svelte";
 
-  const RouteName = {
-    Hello: "hello",
-    Goodbye: "goodbye",
-    Home: "home",
-    Any: "any",
-  } as const;
-
-  type RouteNames = (typeof RouteName)[keyof typeof RouteName];
-
-  const routes: Readonly<readonly Route<RouteNames>[]> = [
+  const routes: RouteConfig[] = [
     {
-      name: RouteName.Home,
-      path: "/",
-      component: HomeComponent,
+      component: HomeComponent
     },
-  ] as const;
+    {
+      path: "about",
+      component: About
+    }
 
-  const options: RouterOptions<RouteNames> = {
-    routes,
-  } as const;
+  ];
 </script>
 
-<RouterView {options} />
+
+<Router {routes} />

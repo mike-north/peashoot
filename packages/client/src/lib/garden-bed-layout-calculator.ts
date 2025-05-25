@@ -1,5 +1,8 @@
 // Layout calculator for garden bed and tiles
 
+import { makePoint, type Line } from "./types/geometry";
+import type { Keyed } from "./types/ui";
+
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
  */
@@ -33,6 +36,8 @@ export interface LayoutParams {
   paddingRight: number;
   frameThickness: number;
 }
+
+export type GridLine = Line & Keyed;
 
 /**
  * Handles all layout calculations for a square foot garden bed and its plant tiles.
@@ -68,7 +73,10 @@ export class GardenBedLayoutCalculator {
    */
   get svgWidth(): number {
     return (
-      this.paddingLeft + this.paddingRight + this.frameThickness + this.width * this.cellSize
+      this.paddingLeft +
+      this.paddingRight +
+      this.frameThickness +
+      this.width * this.cellSize
     );
   }
   /**
@@ -76,7 +84,10 @@ export class GardenBedLayoutCalculator {
    */
   get svgHeight(): number {
     return (
-      this.paddingTop + this.paddingBottom + this.frameThickness + this.height * this.cellSize
+      this.paddingTop +
+      this.paddingBottom +
+      this.frameThickness +
+      this.height * this.cellSize
     );
   }
   /**
@@ -160,22 +171,32 @@ export class GardenBedLayoutCalculator {
   /**
    * Returns the positions of all vertical grid lines.
    */
-  getVerticalLines(): { x: number; y1: number; y2: number }[] {
-    return Array.from({ length: this.width - 1 }, (_, i) => ({
-      x: this.interiorX + (i + 1) * this.cellWidth,
-      y1: this.interiorY,
-      y2: this.interiorY + this.interiorHeight,
-    }));
+  getVerticalLines(): GridLine[] {
+    return Array.from({ length: this.width - 1 }, (_, i) => {
+      const x = this.interiorX + (i + 1) * this.cellWidth;
+      const y1 = this.interiorY;
+      const y2 = this.interiorY + this.interiorHeight;
+      const key = `vertical-${i}`;
+      return {
+        points: [makePoint({ x: x, y: y1 }), makePoint({ x: x, y: y2 })],
+        key,
+      } satisfies GridLine;
+    });
   }
   /**
    * Returns the positions of all horizontal grid lines.
    */
-  getHorizontalLines(): { y: number; x1: number; x2: number }[] {
-    return Array.from({ length: this.height - 1 }, (_, i) => ({
-      y: this.interiorY + (i + 1) * this.cellHeight,
-      x1: this.interiorX,
-      x2: this.interiorX + this.interiorWidth,
-    }));
+  getHorizontalLines(): GridLine[] {
+    return Array.from({ length: this.height - 1 }, (_, i) => {
+      const y = this.interiorY + (i + 1) * this.cellHeight;
+      const x1 = this.interiorX;
+      const x2 = this.interiorX + this.interiorWidth;
+      const key = `horizontal-${i}`;
+      return {
+        points: [makePoint({ x: x1, y: y }), makePoint({ x: x2, y: y })],
+        key,
+      } satisfies GridLine;
+    });
   }
 
   /**
@@ -249,7 +270,7 @@ export class GardenBedLayoutCalculator {
     y,
     size = 1,
     bedWidth,
-    bedHeight
+    bedHeight,
   }: {
     x: number;
     y: number;
@@ -262,10 +283,10 @@ export class GardenBedLayoutCalculator {
     const isBottom = y === 0;
     const isLeft = x === 0;
     const isRight = x + size === bedWidth;
-    if (isTop && isLeft) corners.push('top-left');
-    if (isTop && isRight) corners.push('top-right');
-    if (isBottom && isLeft) corners.push('bottom-left');
-    if (isBottom && isRight) corners.push('bottom-right');
+    if (isTop && isLeft) corners.push("top-left");
+    if (isTop && isRight) corners.push("top-right");
+    if (isBottom && isLeft) corners.push("bottom-left");
+    if (isBottom && isRight) corners.push("bottom-right");
     return corners;
   }
-} 
+}

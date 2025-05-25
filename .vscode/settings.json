@@ -1,4 +1,6 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "nxConsole.generateAiAgentRules": true
+    "nxConsole.generateAiAgentRules": true,
+    "eslint.validate": ["javascript", "javascriptreact", "svelte"]
+
 }

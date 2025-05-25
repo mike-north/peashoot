@@ -1,16 +1,34 @@
 <script lang="ts">
-  export let value: number = 0;
-  export let max: number = 5;
-  export let filledColor: string = '#3498db';
-  export let emptyColor: string = '#3498db22';
-  export let borderColor: string = '#3498db';
-  export let label: string = '';
-  export let labelColor: string = '#3498db';
+  interface HorizontalBarMeterProps {
+    id: string;
+    value: number;
+    max: number;
+    label: string;
+    filledColor: string;
+    emptyColor: string;
+    borderColor: string;
+    labelColor: string;
+  }
+
+  const {
+    id,
+    value,
+    max,
+    label,
+    filledColor = "#3498db",
+    emptyColor = "#3498db22",
+    borderColor = "#3498db",
+    labelColor = "#3498db",
+  }: HorizontalBarMeterProps = $props();
 </script>
 
 <div class="horizontal-bar-meter">
-  <svg class="horizontal-bar-meter__graph" width={2 + max * 7.2 + 2} height="10">
-    {#each Array.from({ length: max }) as _, i}
+  <svg
+    class="horizontal-bar-meter__graph"
+    width={2 + max * 7.2 + 2}
+    height="10"
+  >
+    {#each Array.from<unknown>({ length: max }) as _, i (`${id}-cell-${i}`)}
       <rect
         x={2 + i * 7.2}
         y={1}
@@ -23,26 +41,29 @@
       />
     {/each}
   </svg>
-  <span class="horizontal-bar-meter__label" style="color: {labelColor};">{label}</span>
-</div> 
-<style lang="scss">
-.horizontal-bar-meter {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0;
-  
-  &__graph {
-    display: block;
-    align-self: center;
-  }
+  <span class="horizontal-bar-meter__label" style="color: {labelColor};"
+    >{label}</span
+  >
+</div>
 
-  &__label {
-    line-height: 1rem;
-    font-size: 0.5rem;
-    font-weight: 600;
-    vertical-align: middle;
-    margin-top: -2px;
+<style lang="scss">
+  .horizontal-bar-meter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+
+    &__graph {
+      display: block;
+      align-self: center;
+    }
+
+    &__label {
+      line-height: 1rem;
+      font-size: 0.5rem;
+      font-weight: 600;
+      vertical-align: middle;
+      margin-top: -2px;
+    }
   }
-}
 </style>

@@ -4,11 +4,7 @@
   export let plantPlacement: PlantPlacement;
   export let x = 0; // SVG x position
   export let y = 0; // SVG y position
-  export let width = 40; // SVG width (cellWidth * size)
-  export let height = 40; // SVG height (cellHeight * size)
-  export let tileX = 0; // grid x position
-  export let tileY = 0; // grid y position
-  export let gridSize = 1;
+  export let sizePx = 40; // SVG width (cellWidth * size)
 
   // Color mapping for different plants
   const getPlantColor = (plantName: string) => {
@@ -27,24 +23,18 @@
 
   const colorClass = getPlantColor(plantPlacement.plantTile.name);
   const size = plantPlacement.plantTile.size || 1;
-  const iconSize = Math.min(width, height) * 0.3;
-  const iconX = x + width / 2;
-  const iconY = y + height / 2;
-  const borderColor = "#222"; // or use #5A3E36 for dark brown
-  const borderWidth = 1;
-
-  // Edge detection
-  const isRightEdge = tileX + size === gridSize;
-  const isBottomEdge = tileY === 0;
+  const iconSize = sizePx * 0.3;
+  const iconX = x + sizePx / 2;
+  const iconY = y + sizePx / 2;
 </script>
 
-<svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}>
+<svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`}>
   <!-- Tile background -->
   <rect
     x={x}
     y={y}
-    width={width}
-    height={height}
+    width={sizePx}
+    height={sizePx}
     class={colorClass + ' plant-placement-tile__background'}
   />
   <!-- Plant icon -->
@@ -58,10 +48,10 @@
   <!-- Plant name text -->
   <text
     x={iconX}
-    y={iconY + height / 4}
+    y={iconY + sizePx / 4}
     text-anchor="middle"
     class="plant-placement-tile__name"
-    font-size={Math.max(8, Math.min(width, height) / 6)}
+    font-size={Math.max(8, sizePx / 6)}
   >
     {plantPlacement.plantTile.name}
   </text>
@@ -69,10 +59,10 @@
   {#if size > 1}
     <text
       x={iconX}
-      y={iconY - height / 4}
+      y={iconY - sizePx / 4}
       text-anchor="middle"
       class="plant-placement-tile__size-indicator"
-      font-size={Math.max(6, Math.min(width, height) / 8)}
+      font-size={Math.max(6, sizePx / 8)}
     >
       {size}×{size}
     </text>

@@ -2,13 +2,21 @@
   import { Tween } from "svelte/motion";
   import { cubicOut } from "svelte/easing";
 
-  let hovered = false;
-  let flipped = false;
+  let hovered = $state(false);
+  let flipped = $state(false);
   const controlY = new Tween(0, { duration: 500, easing: cubicOut });
   const controlYUp = new Tween(0, { duration: 500, easing: cubicOut });
 
-  $: controlY.set(hovered ? 40 : 0);
-  $: controlYUp.set(hovered ? -40 : 0);
+  $effect(() => {
+    controlY.set(hovered ? 40 : 0).catch((err: unknown) => {
+      console.error("Error setting controlY", err);
+    });
+  });
+  $effect(() => {
+    controlYUp.set(hovered ? -40 : 0).catch((err: unknown) => {
+      console.error("Error setting controlYUp", err);
+    });
+  });
 
   function toggleFlip() {
     flipped = !flipped;
@@ -19,11 +27,11 @@
 <div
   class="packet"
   class:flipped
-  on:click={toggleFlip}
+  onclick={toggleFlip}
   role="button"
   tabindex="0"
-  on:mouseenter={() => (hovered = true)}
-  on:mouseleave={() => (hovered = false)}
+  onmouseenter={() => (hovered = true)}
+  onmouseleave={() => (hovered = false)}
 >
   <div class="packet-inner">
     <div class="packet-front">
@@ -123,7 +131,6 @@
           opacity="1"
         />
 
-        <!-- svelte-ignore a11y_interactive_supports_focus -->
         <text
           x="200"
           y="120"
@@ -216,16 +223,24 @@
           <text x="40" y="250" font-size="20" font-weight="bold">Sow:</text>
           <line x1="130" y1="252" x2="360" y2="252" />
 
-          <text x="40" y="290" font-size="20" font-weight="bold">Germination:</text>
+          <text x="40" y="290" font-size="20" font-weight="bold"
+            >Germination:</text
+          >
           <line x1="180" y1="292" x2="360" y2="292" />
 
-          <text x="40" y="330" font-size="20" font-weight="bold">Hardiness:</text>
+          <text x="40" y="330" font-size="20" font-weight="bold"
+            >Hardiness:</text
+          >
           <line x1="150" y1="332" x2="360" y2="332" />
 
-          <text x="40" y="370" font-size="20" font-weight="bold">Transplant (°F):</text>
+          <text x="40" y="370" font-size="20" font-weight="bold"
+            >Transplant (°F):</text
+          >
           <line x1="200" y1="372" x2="360" y2="372" />
 
-          <text x="40" y="410" font-size="20" font-weight="bold">Days to Harvest:</text>
+          <text x="40" y="410" font-size="20" font-weight="bold"
+            >Days to Harvest:</text
+          >
           <line x1="210" y1="412" x2="360" y2="412" />
 
           <text x="40" y="450" font-size="20" font-weight="bold">Yield:</text>

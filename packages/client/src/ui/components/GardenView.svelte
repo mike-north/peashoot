@@ -6,6 +6,7 @@
   import type { Garden } from "../../lib/garden";
   import GardenBedView from "./GardenBedView.svelte";
   import { GardenBedLayoutCalculator } from "../../lib/garden-bed-layout-calculator";
+  import SeedPacket from "./SeedPacket.svelte";
 
   interface GardenProps {
     garden: Garden;
@@ -57,7 +58,7 @@
   function onGardenMouseMove(event: MouseEvent) {
     // For each bed, check if mouse is over its SVG
     for (const bed of beds) {
-      const svgElement = document.querySelector(`[data-bed-id='${bed.id}'] svg`);
+      const svgElement: SVGSVGElement & SVGGraphicsElement | null = document.querySelector(`[data-bed-id='${bed.id}'] svg`);
       if (!svgElement) continue;
       const rect = svgElement.getBoundingClientRect();
 
@@ -81,10 +82,12 @@
         });
 
         // Convert screen coordinates to SVG coordinates for this bed
-        const pt = (svgElement as any).createSVGPoint();
+        const pt = svgElement.createSVGPoint();
         pt.x = event.clientX;
         pt.y = event.clientY;
-        const cursorpt = pt.matrixTransform((svgElement as any).getScreenCTM().inverse());
+        const ctm = svgElement.getScreenCTM();
+        if (!ctm) throw new Error("ctm is null");
+        const cursorpt = pt.matrixTransform(ctm.inverse());
 
         // Calculate cell coordinates using the layout
         const x = Math.max(0, Math.min(bed.width - 1,
@@ -149,7 +152,7 @@
     return true;
   }
 
-  function onGardenMouseUp(event: MouseEvent) {
+  function onGardenMouseUp(_event: MouseEvent) {
     const state = $dragState;
     console.log('[GardenView] onGardenMouseUp: state', JSON.parse(JSON.stringify(state)));
 
@@ -159,8 +162,8 @@
       const highlightedCell = state.highlightedCell;
       // After this check, sourceBedId, targetBedId are confirmed strings
       // and highlightedCell is a confirmed object.
-      const currentSourceBedId = state.sourceBedId as string;
-      const currentTargetBedId = state.targetBedId as string;
+      const currentSourceBedId = state.sourceBedId;
+      const currentTargetBedId = state.targetBedId;
 
       const targetBed = beds.find((b: GardenBed) => b.id === currentTargetBedId);
 
@@ -172,7 +175,8 @@
 
       if (!targetBed) {
         console.log('[GardenView] onGardenMouseUp: No target bed found. Cleaning up.');
-        return cleanupDrag();
+        cleanupDrag();
+        return
       }
 
       const isValid = isValidDrop(
@@ -214,7 +218,7 @@
     cleanupDrag();
   }
 
-  function cleanupDrag() {
+  function cleanupDrag(): void {
     dragState.set({
       draggedPlant: null,
       draggedTileSize: 1,
@@ -243,6 +247,7 @@
     />
   {/each}
 </div>
+<SeedPacket />
 
 <style>
   

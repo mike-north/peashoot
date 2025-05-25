@@ -4,8 +4,9 @@
   import HorizontalBarMeter from "./HorizontalBarMeter.svelte";
   import { GardenBedLayoutCalculator } from "../../lib/garden-bed-layout-calculator";
   import { dragState, isDragStatePopulated } from "../state/dragState";
-  import { get } from "svelte/store";
   import type { GardenBed } from "../../lib/garden-bed";
+  import { makePoint, type Line } from "../../lib/types/geometry";
+  import type { Keyed } from "../../lib/types/ui";
 
   interface GardenBedViewProps {
     bed: GardenBed;
@@ -87,7 +88,7 @@
     }
   }
 
-  let dragOffset: { x: number; y: number } | null = null;
+  let dragOffset = null as { x: number; y: number } | null;
 
   function isValidPlacement(x: number, y: number, size: number): boolean {
     if (x < 0 || y < 0 || x + size > bed.width || y + size > bed.height)
@@ -115,22 +116,25 @@
 
   // --- Edge Indicator Overlay Logic ---
   // For each edgeIndicator, find all shared borders between plantA and plantB in this bed
-  type Cell = { x: number; y: number };
-  type Border = {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
+  interface Cell {
+    x: number;
+    y: number;
+    readonly _CELL: unique symbol;
+  }
+
+  interface Border extends Line, Keyed {
     color: string;
-    id: string;
-  };
+  }
 
   function getPlantCells(placement: PlantPlacement): Cell[] {
     const size = placement.plantTile.size || 1;
     const cells: Cell[] = [];
     for (let dx = 0; dx < size; dx++) {
       for (let dy = 0; dy < size; dy++) {
-        cells.push({ x: placement.x + dx, y: placement.y + dy });
+        cells.push({ x: placement.x + dx, y: placement.y + dy } satisfies Pick<
+          Cell,
+          "x" | "y"
+        > as Cell);
       }
     }
     return cells;
@@ -174,12 +178,12 @@
               const yTop = tile.svgY;
               const yBot = tile.svgY + tile.height;
               borders.push({
-                x1: xEdge,
-                y1: yTop,
-                x2: xEdge,
-                y2: yBot,
+                points: [
+                  makePoint({ x: xEdge, y: yTop }),
+                  makePoint({ x: xEdge, y: yBot }),
+                ],
                 color,
-                id: indicatorId,
+                key: indicatorId,
               });
             }
             // Vertical adjacency
@@ -192,12 +196,12 @@
               const xLeft = tile.svgX;
               const xRight = tile.svgX + tile.width;
               borders.push({
-                x1: xLeft,
-                y1: yEdge,
-                x2: xRight,
-                y2: yEdge,
+                points: [
+                  makePoint({ x: xLeft, y: yEdge }),
+                  makePoint({ x: xRight, y: yEdge }),
+                ],
                 color,
-                id: indicatorId,
+                key: indicatorId,
               });
             }
           }
@@ -210,7 +214,7 @@
   // Make sure calculateEdgeBorders is defined above the effect
   function calculateEdgeBorders(): Border[] {
     let borders: Border[] = [];
-    if (edgeIndicators && edgeIndicators.length > 0) {
+    if (edgeIndicators.length > 0) {
       for (const indicator of edgeIndicators) {
         const plantA = bed.plantPlacements.find(
           (p) => p.id === indicator.plantAId
@@ -251,6 +255,7 @@
 </div>
 <div class="raised-bed__meters-row">
   <HorizontalBarMeter
+    id={`${bed.id}-water`}
     value={bed.waterLevel}
     max={5}
     filledColor="#3498db"
@@ -260,6 +265,7 @@
     labelColor="#3498db"
   />
   <HorizontalBarMeter
+    id={`${bed.id}-sun`}
     value={bed.sunLevel}
     max={5}
     filledColor="#FFD600"
@@ -293,31 +299,31 @@
       opacity="0.2"
     />
     <!-- Grid lines -->
-    {#each verticalLines as line}
+    {#each verticalLines as line (line.key)}
       <line
-        x1={line.x}
-        y1={line.y1}
-        x2={line.x}
-        y2={line.y2}
+        x1={line.points[0].x}
+        y1={line.points[0].y}
+        x2={line.points[1].x}
+        y2={line.points[1].y}
         class="raised-bed__grid-line"
       />
     {/each}
-    {#each horizontalLines as line}
+    {#each horizontalLines as line (line.key)}
       <line
-        x1={line.x1}
-        y1={line.y}
-        x2={line.x2}
-        y2={line.y}
+        x1={line.points[0].x}
+        y1={line.points[0].y}
+        x2={line.points[1].x}
+        y2={line.points[1].y}
         class="raised-bed__grid-line"
       />
     {/each}
     <!-- Edge Indicator Lines -->
-    {#each edgeBorders as border (border.id + "-" + border.x1 + "-" + border.y1 + "-" + border.x2 + "-" + border.y2)}
+    {#each edgeBorders as border (border.key)}
       <line
-        x1={border.x1}
-        y1={border.y1}
-        x2={border.x2}
-        y2={border.y2}
+        x1={border.points[0].x}
+        y1={border.points[0].y}
+        x2={border.points[1].x}
+        y2={border.points[1].y}
         stroke={border.color}
         stroke-width={layout.frameThickness}
         stroke-linecap="round"
@@ -326,7 +332,7 @@
     {/each}
     {#if bed.width <= 8 && bed.height <= 8}
       <g id="raised-bed__coordinate-labels" opacity="0.6">
-        {#each Array.from({ length: bed.width }, (_, i) => i) as x}
+        {#each Array.from({ length: bed.width }, (_, i) => i) as x (`${bed.id}-${x}`)}
           <text
             x={gardenToSvgX(x) + cellWidth / 2}
             y={svgHeight - 5}
@@ -338,7 +344,7 @@
             {x}
           </text>
         {/each}
-        {#each Array.from({ length: bed.height }, (_, i) => i) as y}
+        {#each Array.from({ length: bed.height }, (_, i) => i) as y (`${bed.id}-${y}`)}
           <text
             x="5"
             y={gardenToSvgY(y) + cellHeight / 2 + 3}
@@ -401,10 +407,7 @@
           size,
           strokeWidth: 2,
         })}
-        {@const isTop = placement.y + size === bed.height}
-        {@const isBottom = placement.y === 0}
-        {@const isLeft = placement.x === 0}
-        {@const isRight = placement.x + size === bed.width}
+
         {@const corners = layout.getTileFrameCornerPositions({
           x: placement.x,
           y: placement.y,
@@ -447,17 +450,14 @@
             {borderRadiusStyle}"
           role="button"
           tabindex="0"
-          onmousedown={(e) =>
-            onTileMouseDownFromParent &&
-            onTileMouseDownFromParent(placement, bed.id, e)}
+          onmousedown={(e) => {
+            if (onTileMouseDownFromParent)
+              onTileMouseDownFromParent(placement, bed.id, e);
+          }}
         >
           <PlantPlacementTile
             plantPlacement={placement}
-            width={tileLayout.width}
-            height={tileLayout.height}
-            tileX={placement.x}
-            tileY={placement.y}
-            gridSize={bed.width}
+            sizePx={tileLayout.width}
           />
         </div>
       {/each}

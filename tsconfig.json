@@ -1,0 +1,8 @@
+{
+    "extends": "./tsconfig.build.json",
+    "compilerOptions": {
+       "noEmit": true
+    },
+    "include": ["packages/**/*.ts","packages/**/*.svelte","packages/**/*.tsx", "eslint.config.mjs", "global.d.ts"],
+    "exclude": ["./node_modules/*", "./public/*", "coverage/**/*"]
+}

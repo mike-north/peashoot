@@ -1,8 +1,15 @@
 {
-    "extends": "./tsconfig.build.json",
-    "compilerOptions": {
-       "noEmit": true
-    },
-    "include": ["packages/**/*.ts","packages/**/*.svelte","packages/**/*.tsx", "eslint.config.mjs", "global.d.ts"],
-    "exclude": ["./node_modules/*", "./public/*", "coverage/**/*"]
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.svelte",
+    "packages/**/*.tsx",
+    "eslint.config.mjs",
+    "global.d.ts",
+    "packages/server/src/csp-solver._ts"
+  ],
+  "exclude": ["./node_modules/*", "./public/*", "coverage/**/*"]
 }

@@ -14,7 +14,7 @@
 	<div class="flex h-full">
 		<LayoutSidebar />
 
-		<div class="flex h-full min-w-0 grow flex-col overflow-auto pt-16">
+		<div class="flex h-full min-w-0 grow flex-col overflow-auto">
 			<div id="layout-content" class="grid flex-1 p-6">
 				<Router {routes} />
 			</div>

@@ -11,7 +11,12 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["svelte"]
+    "types": ["svelte"],
+    "paths": {
+      "@mateothegreat/svelte5-router": [
+        "./types/mateothegreat/svelte5-router/index.d.ts"
+      ]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.svelte", "../../global.d.ts", "src/svelte.d.ts"],
   "exclude": ["node_modules/*", "public/*"]

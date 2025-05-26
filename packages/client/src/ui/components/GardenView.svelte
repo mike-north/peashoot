@@ -6,7 +6,6 @@
   import type { Garden } from "../../lib/garden";
   import GardenBedView from "./GardenBedView.svelte";
   import { GardenBedLayoutCalculator } from "../../lib/garden-bed-layout-calculator";
-  import SeedPacket from "./SeedPacket.svelte";
 
   interface GardenProps {
     garden: Garden;
@@ -247,7 +246,6 @@
     />
   {/each}
 </div>
-<SeedPacket />
 
 <style>
   

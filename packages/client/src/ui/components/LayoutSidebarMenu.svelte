@@ -7,6 +7,7 @@
 		.map((r) => ({
 			label: r.label,
 			href: r.path,
+			icon: r.icon,
 		}))
 </script>
 
@@ -14,9 +15,12 @@
 	{#each topItems as item (item.href)}
 		<div class="collapse mb-1">
 			<!-- TODO: Add icon -->
-			<a class="top-level-item grow" href={item.href} use:route={defaultRouteConfig}
-				>{item.label}</a
-			>
+			<a class="top-level-item grow" href={item.href} use:route={defaultRouteConfig}>
+				{#if item.icon}
+					<item.icon class="size-4" />
+				{/if}
+				{item.label}
+			</a>
 		</div>
 	{/each}
 
@@ -50,9 +54,20 @@
 			border-color: var(--color-stone-700);
 			color: var(--color-stone-700);
 			font-weight: bold;
+			&:hover {
+				background-color: var(--color-amber-100) !important;
+				--tw-bg-opacity: 1 !important; /* Ensure full background opacity */
+				color: var(--color-stone-700) !important;
+				--tw-text-opacity: 1 !important; /* Ensure full text opacity */
+				font-weight: bold;
+				border: 1px solid var(--color-stone-700) !important;
+				background-image: none !important; /* Keep this to override DaisyUI default hover image/gradient */
+				/* Ensure border-radius matches default if not already covered by .btn or other styles */
+			}
 		}
 		.top-level-item,
 		.sidebar-menu-item {
+			border: 1px solid transparent;
 			color: var(--color-green-800);
 			min-height: calc(var(--spacing) * 8);
 			align-items: center;

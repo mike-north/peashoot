@@ -2,4 +2,6 @@
 	import Layout from './ui/pages/Layout.svelte'
 </script>
 
-<Layout />
+<div class="h-screen">
+	<Layout />
+</div>

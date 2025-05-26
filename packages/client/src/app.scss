@@ -1,7 +1,15 @@
 @use "tailwindcss";
 @plugin "daisyui";
 
+html,
+body {
+	height: 100%;
+	margin: 0;
+}
+
 @theme {
+  --color-amber-100: #fef3c7; /* Tailwind amber-100 */
+  --color-stone-700: #44403c; /* Tailwind stone-700 */
   --color-tomato-red: rgb(214 40 40);
   --color-red-delicious-apple: rgb(155 27 48);
   --color-carrot-orange: rgb(255 167 38);

@@ -9,4 +9,4 @@ export const AppDataSource = new DataSource({
   entities: [Plant],
   migrations: [],
   subscribers: [],
-}); 
+});

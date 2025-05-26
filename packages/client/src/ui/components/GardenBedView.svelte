@@ -2,11 +2,14 @@
   import type { PlantPlacement } from "../../lib/plant-placement";
   import PlantPlacementTile from "./PlantPlacementTile.svelte";
   import HorizontalBarMeter from "./HorizontalBarMeter.svelte";
-  import { GardenBedLayoutCalculator } from "../../lib/garden-bed-layout-calculator";
+  import {
+    GardenBedLayoutCalculator,
+    calculateEdgeBorders,
+    type Border,
+  } from "../../lib/garden-bed-layout-calculator";
   import { dragState, isDragStatePopulated } from "../state/dragState";
   import type { GardenBed } from "../../lib/garden-bed";
-  import { makePoint, type Line } from "../../lib/types/geometry";
-  import type { Keyed } from "../../lib/types/ui";
+  import { DEFAULT_LAYOUT_PARAMS } from "../../lib/layout-constants";
 
   interface GardenBedViewProps {
     bed: GardenBed;
@@ -32,12 +35,7 @@
   const layout = new GardenBedLayoutCalculator({
     width: bed.width,
     height: bed.height,
-    cellSize: 40,
-    paddingTop: 2,
-    paddingLeft: 20,
-    paddingBottom: 20,
-    paddingRight: 20,
-    frameThickness: 4,
+    ...DEFAULT_LAYOUT_PARAMS, // Use shared constants
   });
 
   // Use layout for all layout-related values
@@ -62,180 +60,21 @@
   const gardenToSvgX = (gardenX: number) => layout.gardenToSvgX(gardenX);
   const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY);
 
-  // Create a map of plant placements for quick lookup
-  const plantMap = new Map<string, PlantPlacement>();
-  const occupiedCells = new Set<string>();
-
-  bed.plantPlacements.forEach((placement) => {
-    const key = `${placement.x},${placement.y}`;
-    plantMap.set(key, placement);
-
-    // Mark all cells occupied by this plant (for multi-cell plants)
-    const size = placement.plantTile.size || 1;
-    for (let dy = 0; dy < size; dy++) {
-      for (let dx = 0; dx < size; dx++) {
-        const cellKey = `${placement.x + dx},${placement.y + dy}`;
-        occupiedCells.add(cellKey);
-      }
-    }
-  });
-
-  // Generate all cell positions
-  const allCells: { x: number; y: number }[] = [];
-  for (let y = 0; y < bed.height; y++) {
-    for (let x = 0; x < bed.width; x++) {
-      allCells.push({ x, y });
-    }
-  }
-
-  let dragOffset = null as { x: number; y: number } | null;
-
+  // Use the factored-out isValidPlacement
   function isValidPlacement(x: number, y: number, size: number): boolean {
-    if (x < 0 || y < 0 || x + size > bed.width || y + size > bed.height)
-      return false;
-    for (const p of bed.plantPlacements) {
-      if ($dragState.draggedPlant && p.id === $dragState.draggedPlant.id)
-        continue;
-      const pSize = p.plantTile.size || 1;
-      for (let dx = 0; dx < size; dx++) {
-        for (let dy = 0; dy < size; dy++) {
-          const cellX = x + dx;
-          const cellY = y + dy;
-          for (let pdx = 0; pdx < pSize; pdx++) {
-            for (let pdy = 0; pdy < pSize; pdy++) {
-              if (cellX === p.x + pdx && cellY === p.y + pdy) {
-                return false;
-              }
-            }
-          }
-        }
-      }
-    }
-    return true;
+    return layout.isValidPlacement(
+      x,
+      y,
+      size,
+      bed.plantPlacements,
+      $dragState.draggedPlant?.id
+    );
   }
 
-  // --- Edge Indicator Overlay Logic ---
-  // For each edgeIndicator, find all shared borders between plantA and plantB in this bed
-  interface Cell {
-    x: number;
-    y: number;
-    readonly _CELL: unique symbol;
-  }
-
-  interface Border extends Line, Keyed {
-    color: string;
-  }
-
-  function getPlantCells(placement: PlantPlacement): Cell[] {
-    const size = placement.plantTile.size || 1;
-    const cells: Cell[] = [];
-    for (let dx = 0; dx < size; dx++) {
-      for (let dy = 0; dy < size; dy++) {
-        cells.push({ x: placement.x + dx, y: placement.y + dy } satisfies Pick<
-          Cell,
-          "x" | "y"
-        > as Cell);
-      }
-    }
-    return cells;
-  }
-
-  function getSharedBorders(
-    plantA: PlantPlacement,
-    plantB: PlantPlacement,
-    color: string,
-    indicatorId: string
-  ): Border[] {
-    const aCells = getPlantCells(plantA);
-    const bCells = getPlantCells(plantB);
-    const bCellSet = new Set(bCells.map((c) => `${c.x},${c.y}`));
-    const borders: Border[] = [];
-    // For each cell in A, check its 4 neighbors; if neighbor is in B, add the shared border
-    for (const cell of aCells) {
-      const neighbors = [
-        { dx: 1, dy: 0, edge: "right" },
-        { dx: -1, dy: 0, edge: "left" },
-        { dx: 0, dy: 1, edge: "top" },
-        { dx: 0, dy: -1, edge: "bottom" },
-      ];
-      for (const { dx, dy } of neighbors) {
-        const nx = cell.x + dx;
-        const ny = cell.y + dy;
-        if (bCellSet.has(`${nx},${ny}`)) {
-          // Only draw the border if (plantA.id, cell.x, cell.y) < (plantB.id, nx, ny) to avoid double-drawing
-          if (
-            plantA.id < plantB.id ||
-            (plantA.id === plantB.id &&
-              (cell.x < nx || (cell.x === nx && cell.y < ny)))
-          ) {
-            // Horizontal adjacency
-            if (Math.abs(cell.x - nx) === 1 && cell.y === ny) {
-              // Always use the leftmost cell for the edge
-              const leftX = Math.min(cell.x, nx);
-              const y = cell.y;
-              const tile = layout.getTileLayoutInfo({ x: leftX, y });
-              const xEdge = tile.svgX + tile.width;
-              const yTop = tile.svgY;
-              const yBot = tile.svgY + tile.height;
-              borders.push({
-                points: [
-                  makePoint({ x: xEdge, y: yTop }),
-                  makePoint({ x: xEdge, y: yBot }),
-                ],
-                color,
-                key: indicatorId,
-              });
-            }
-            // Vertical adjacency
-            if (Math.abs(cell.y - ny) === 1 && cell.x === nx) {
-              // Always use the lower cell for the edge
-              const x = cell.x;
-              const lowY = Math.min(cell.y, ny);
-              const tile = layout.getTileLayoutInfo({ x, y: lowY });
-              const yEdge = tile.svgY;
-              const xLeft = tile.svgX;
-              const xRight = tile.svgX + tile.width;
-              borders.push({
-                points: [
-                  makePoint({ x: xLeft, y: yEdge }),
-                  makePoint({ x: xRight, y: yEdge }),
-                ],
-                color,
-                key: indicatorId,
-              });
-            }
-          }
-        }
-      }
-    }
-    return borders;
-  }
-
-  // Make sure calculateEdgeBorders is defined above the effect
-  function calculateEdgeBorders(): Border[] {
-    let borders: Border[] = [];
-    if (edgeIndicators.length > 0) {
-      for (const indicator of edgeIndicators) {
-        const plantA = bed.plantPlacements.find(
-          (p) => p.id === indicator.plantAId
-        );
-        const plantB = bed.plantPlacements.find(
-          (p) => p.id === indicator.plantBId
-        );
-        if (plantA && plantB) {
-          borders = borders.concat(
-            getSharedBorders(plantA, plantB, indicator.color, indicator.id)
-          );
-        }
-      }
-    }
-    return borders;
-  }
-
+  // Use the factored-out calculateEdgeBorders
   let edgeBorders = $state<Border[]>([]);
   $effect(() => {
-    const newBorders = calculateEdgeBorders();
-    // Only update if different (shallow compare for arrays of objects)
+    const newBorders = calculateEdgeBorders(bed, edgeIndicators, layout);
     if (
       newBorders.length !== edgeBorders.length ||
       newBorders.some(
@@ -247,6 +86,45 @@
   });
   // DEBUG: Log edgeIndicators and plant IDs in this bed
   bed.plantPlacements.forEach((p) => p.id);
+
+  interface TileStyleProps {
+    left: string;
+    top: string;
+    width: string;
+    height: string;
+    zIndex: number;
+    opacity: number;
+    pointerEvents: "none" | "auto";
+  }
+
+  function getTileComputedStyles(
+    placementId: string,
+    currentDragState: typeof $dragState,
+    overlayLayout: ReturnType<typeof layout.getTileOverlayLayoutInfo>
+  ): TileStyleProps {
+    const isBeingDragged =
+      currentDragState.draggedPlant &&
+      currentDragState.draggedPlant.id === placementId;
+
+    // Since dragOffset is not used and tiles don't visually follow mouse,
+    // left/top are always based on overlayLayout.
+    const left = `${overlayLayout.svgX}px`;
+    const top = `${overlayLayout.svgY}px`;
+
+    return {
+      left,
+      top,
+      width: `${overlayLayout.width}px`,
+      height: `${overlayLayout.height}px`,
+      zIndex: isBeingDragged ? 100 : 2,
+      opacity: isBeingDragged ? 0.7 : 1,
+      pointerEvents:
+        currentDragState.draggedPlant &&
+        currentDragState.draggedPlant.id !== placementId
+          ? "none"
+          : "auto",
+    };
+  }
 </script>
 
 <!-- Title and meters OUTSIDE the .raised-bed box -->
@@ -418,36 +296,14 @@
         {@const borderRadiusStyle = corners
           .map((corner) => `border-${corner}-radius: 8px;`)
           .join(" ")}
+        {@const computedStyles = getTileComputedStyles(
+          placement.id,
+          $dragState,
+          overlayLayout
+        )}
         <div
           class="tile-overlay__tile"
-          style="
-          left: {$dragState.draggedPlant &&
-          $dragState.draggedPlant.id === placement.id &&
-          $dragState.dragPosition &&
-          dragOffset
-            ? $dragState.dragPosition.x - dragOffset.x - 1
-            : overlayLayout.svgX}px;
-            top: {$dragState.draggedPlant &&
-          $dragState.draggedPlant.id === placement.id &&
-          $dragState.dragPosition &&
-          dragOffset
-            ? $dragState.dragPosition.y - dragOffset.y - 1
-            : overlayLayout.svgY}px;
-            width: {overlayLayout.width}px;
-            height: {overlayLayout.height}px;
-            z-index: {$dragState.draggedPlant &&
-          $dragState.draggedPlant.id === placement.id
-            ? 100
-            : 2};
-            opacity: {$dragState.draggedPlant &&
-          $dragState.draggedPlant.id === placement.id
-            ? 0.7
-            : 1};
-            pointer-events: {$dragState.draggedPlant &&
-          $dragState.draggedPlant.id !== placement.id
-            ? 'none'
-            : 'auto'};
-            {borderRadiusStyle}"
+          style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
           role="button"
           tabindex="0"
           onmousedown={(e) => {

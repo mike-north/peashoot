@@ -6,4 +6,3 @@ export interface ScalarComparator<T> extends Comparator<T> {
   isLessThan(a: T, b: T): boolean;
   isGreaterThan(a: T, b: T): boolean;
 }
-

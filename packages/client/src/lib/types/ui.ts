@@ -1,3 +1,3 @@
 export interface Keyed {
-    key: string
+  key: string;
 }

@@ -11,6 +11,8 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
     "types": ["svelte"],
     "paths": {
       "@mateothegreat/svelte5-router": [
@@ -18,6 +20,12 @@
       ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.svelte", "../../global.d.ts", "src/svelte.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.svelte",
+    "../../global.d.ts",
+    "src/svelte.d.ts"
+  ],
   "exclude": ["node_modules/*", "public/*"]
 }

@@ -1,7 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-export type PlantId = string & { readonly __brand: unique symbol }; 
-
+export type PlantId = string & { readonly __brand: unique symbol };
 
 @Entity({ name: "plants" })
 export class Plant {

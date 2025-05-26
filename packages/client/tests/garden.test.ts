@@ -1,0 +1,103 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { describe, it, expect, vi } from "vitest";
+import { movePlantBetweenBeds, type Garden } from "../src/lib/garden.js";
+import type { GardenBed } from "../src/lib/garden-bed.js";
+import type { PlantPlacement } from "../src/lib/plant-placement.js";
+import type { Plant } from "../src/lib/plant.js";
+
+const mockPlant: Plant = {
+  id: "plant1",
+  name: "Tomato",
+  icon: "tomato.png",
+  size: 1,
+};
+
+const plantPlacement: PlantPlacement = {
+  plantTile: mockPlant,
+  x: 1,
+  y: 2,
+  id: "placement1",
+};
+
+const sourceBed: GardenBed = {
+  id: "bed1",
+  width: 4,
+  height: 4,
+  waterLevel: 5,
+  sunLevel: 7,
+  plantPlacements: [plantPlacement],
+};
+
+const targetBed: GardenBed = {
+  id: "bed2",
+  width: 4,
+  height: 4,
+  waterLevel: 5,
+  sunLevel: 7,
+  plantPlacements: [],
+};
+
+const garden: Garden = {
+  id: "garden1",
+  beds: [sourceBed, targetBed],
+  edgeIndicators: [],
+};
+
+describe("movePlantBetweenBeds", () => {
+  it("moves a plant from the source bed to the target bed with new coordinates", () => {
+    const updated: Garden = movePlantBetweenBeds(
+      garden,
+      "bed1",
+      "bed2",
+      plantPlacement,
+      3,
+      4,
+    );
+    const { beds } = updated;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const [updatedSource] = beds.filter(
+      (b: GardenBed) => b.id === "bed1",
+    ) satisfies GardenBed[];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const [updatedTarget] = beds.filter(
+      (b: GardenBed) => b.id === "bed2",
+    ) satisfies GardenBed[];
+
+    expect(updatedSource.plantPlacements.length).toBe(0);
+    expect(updatedTarget.plantPlacements.length).toBe(1);
+    expect(updatedTarget.plantPlacements[0].x).toBe(3);
+    expect(updatedTarget.plantPlacements[0].y).toBe(4);
+    expect(updatedTarget.plantPlacements[0].id).toBe("placement1");
+  });
+
+  it("returns the original garden if source or target bed is missing", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {
+      void 0;
+    });
+    const updated: Garden = movePlantBetweenBeds(
+      garden,
+      "missing",
+      "bed2",
+      plantPlacement,
+      3,
+      4,
+    );
+    expect(updated).toBe(garden);
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it("does not mutate the original garden object", () => {
+    const updated: Garden = movePlantBetweenBeds(
+      garden,
+      "bed1",
+      "bed2",
+      plantPlacement,
+      3,
+      4,
+    );
+    expect(updated).not.toBe(garden);
+    expect(garden.beds[0].plantPlacements.length).toBe(1);
+    expect(garden.beds[1].plantPlacements.length).toBe(0);
+  });
+});

@@ -38,7 +38,7 @@
   --color-cornflower-blue: 100, 149, 237;
   --color-poppy-red: 227, 66, 52;
 
-/* 🌱 Neutrals & Backgrounds */
+  /* 🌱 Neutrals & Backgrounds */
   --color-soil-brown: 90, 62, 54;
   --color-mulch-tan: 194, 178, 128;
   --color-dew-gray: 220, 225, 222;
@@ -56,16 +56,16 @@
 */
 
 .soil-brown {
-  fill:  var(--color-soil-brown);
+  fill: var(--color-soil-brown);
 }
 .mulch-tan {
-  fill:  var(--color-mulch-tan);
+  fill: var(--color-mulch-tan);
 }
 .dew-gray {
-  fill:  var(--color-dew-gray);
+  fill: var(--color-dew-gray);
 }
 .slate-label-gray {
-  fill:  var(--color-slate-label-gray);
+  fill: var(--color-slate-label-gray);
 }
 
 /* 50% Alpha Background Classes */

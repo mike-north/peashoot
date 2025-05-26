@@ -19,14 +19,14 @@ export function movePlantBetweenBeds(
   targetBedId: string,
   plant: PlantPlacement,
   newX: number,
-  newY: number
+  newY: number,
 ): Garden {
   const sourceBed = garden.beds.find((b: GardenBed) => b.id === sourceBedId);
   const targetBed = garden.beds.find((b: GardenBed) => b.id === targetBedId);
 
   if (!sourceBed || !targetBed) {
     console.error(
-      "[garden.ts] Source or target bed not found for movePlantToDifferentBed."
+      "[garden.ts] Source or target bed not found for movePlantToDifferentBed.",
     );
     return garden; // Return original garden if beds not found
   }
@@ -34,7 +34,7 @@ export function movePlantBetweenBeds(
   const updatedSourceBed = {
     ...sourceBed,
     plantPlacements: sourceBed.plantPlacements.filter(
-      (p: PlantPlacement) => p.id !== plant.id
+      (p: PlantPlacement) => p.id !== plant.id,
     ),
   };
 

@@ -22,7 +22,9 @@ export const dragState = writable<NullableObject<IDragState>>({
   targetBedId: null,
 });
 
-export function isDragStatePopulated(state: NullableObject<IDragState>): state is IDragState {
+export function isDragStatePopulated(
+  state: NullableObject<IDragState>,
+): state is IDragState {
   return (
     state.draggedPlant !== null &&
     state.draggedTileSize !== null &&

@@ -1,24 +1,29 @@
 import { describe, it, expect } from "vitest";
-import { timeComparator, durationComparator, intervalComparator, Interval } from '../../src/values/time';
-import { Duration } from 'date-fns';
+import {
+  timeComparator,
+  durationComparator,
+  intervalComparator,
+  Interval,
+} from "../../src/values/time";
+import { Duration } from "date-fns";
 
-describe('timeComparator', () => {
-  it('should consider equal times', () => {
-    const a = new Date('2024-01-01T00:00:00.000Z');
-    const b = new Date('2024-01-01T00:00:00.000Z');
+describe("timeComparator", () => {
+  it("should consider equal times", () => {
+    const a = new Date("2024-01-01T00:00:00.000Z");
+    const b = new Date("2024-01-01T00:00:00.000Z");
     expect(timeComparator.isEqual(a, b)).toBe(true);
   });
 
-  it('should compare less than and greater than', () => {
-    const a = new Date('2024-01-01T00:00:00.000Z');
-    const b = new Date('2024-01-01T00:00:01.000Z');
+  it("should compare less than and greater than", () => {
+    const a = new Date("2024-01-01T00:00:00.000Z");
+    const b = new Date("2024-01-01T00:00:01.000Z");
     expect(timeComparator.isLessThan(a, b)).toBe(true);
     expect(timeComparator.isGreaterThan(b, a)).toBe(true);
   });
 });
 
-describe('durationComparator', () => {
-  it('should consider equal durations', () => {
+describe("durationComparator", () => {
+  it("should consider equal durations", () => {
     const d1: Duration = { hours: 1 };
     const d2: Duration = { minutes: 60 };
     const d3: Duration = { days: 2 };
@@ -33,7 +38,7 @@ describe('durationComparator', () => {
     expect(durationComparator.isEqual(d7, d8)).toBe(true);
   });
 
-  it('should compare less than and greater than', () => {
+  it("should compare less than and greater than", () => {
     const d1: Duration = { hours: 1 };
     const d2: Duration = { hours: 2 };
     const d3: Duration = { minutes: 59 };
@@ -49,28 +54,28 @@ describe('durationComparator', () => {
   });
 });
 
-describe('intervalComparator', () => {
-  it('should consider equal intervals', () => {
+describe("intervalComparator", () => {
+  it("should consider equal intervals", () => {
     const a: Interval = {
-      start: new Date('2024-01-01T00:00:00.000Z'),
-      end: new Date('2024-01-02T00:00:00.000Z'),
+      start: new Date("2024-01-01T00:00:00.000Z"),
+      end: new Date("2024-01-02T00:00:00.000Z"),
     };
     const b: Interval = {
-      start: new Date('2024-01-01T00:00:00.000Z'),
-      end: new Date('2024-01-02T00:00:00.000Z'),
+      start: new Date("2024-01-01T00:00:00.000Z"),
+      end: new Date("2024-01-02T00:00:00.000Z"),
     };
     expect(intervalComparator.isEqual(a, b)).toBe(true);
   });
 
-  it('should not consider different intervals as equal', () => {
+  it("should not consider different intervals as equal", () => {
     const a: Interval = {
-      start: new Date('2024-01-01T00:00:00.000Z'),
-      end: new Date('2024-01-02T00:00:00.000Z'),
+      start: new Date("2024-01-01T00:00:00.000Z"),
+      end: new Date("2024-01-02T00:00:00.000Z"),
     };
     const b: Interval = {
-      start: new Date('2024-01-01T01:00:00.000Z'),
-      end: new Date('2024-01-02T00:00:00.000Z'),
+      start: new Date("2024-01-01T01:00:00.000Z"),
+      end: new Date("2024-01-02T00:00:00.000Z"),
     };
     expect(intervalComparator.isEqual(a, b)).toBe(false);
   });
-}); 
+});

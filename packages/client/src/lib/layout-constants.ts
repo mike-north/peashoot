@@ -21,4 +21,4 @@ export const DEFAULT_LAYOUT_PARAMS: BaseLayoutParams = {
   paddingBottom: DEFAULT_PADDING_BOTTOM,
   paddingRight: DEFAULT_PADDING_RIGHT,
   frameThickness: DEFAULT_FRAME_THICKNESS,
-}; 
+};

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { GardenBedLayoutCalculator, getPlantCells, getSharedBorders, calculateEdgeBorders, isValidDrop } from "../src/lib/garden-bed-layout-calculator.js";
+import {
+  GardenBedLayoutCalculator,
+  getPlantCells,
+  getSharedBorders,
+  calculateEdgeBorders,
+  isValidDrop,
+} from "../src/lib/garden-bed-layout-calculator.js";
 import type { GardenBed } from "../src/lib/garden-bed.js";
 
 const layoutParams = { width: 4, height: 4 };
@@ -46,12 +52,24 @@ describe("GardenBedLayoutCalculator", () => {
   });
 
   it("returns correct tile overlay layout info", () => {
-    const info = layout.getTileOverlayLayoutInfo({ x: 1, y: 1, size: 1, strokeWidth: 2 });
-    expect(info.width).toBeGreaterThan(layout.getTileLayoutInfo({ x: 1, y: 1, size: 1 }).width);
+    const info = layout.getTileOverlayLayoutInfo({
+      x: 1,
+      y: 1,
+      size: 1,
+      strokeWidth: 2,
+    });
+    expect(info.width).toBeGreaterThan(
+      layout.getTileLayoutInfo({ x: 1, y: 1, size: 1 }).width,
+    );
   });
 
   it("returns correct frame corner positions", () => {
-    const corners = layout.getTileFrameCornerPositions({ x: 0, y: 0, bedWidth: 4, bedHeight: 4 });
+    const corners = layout.getTileFrameCornerPositions({
+      x: 0,
+      y: 0,
+      bedWidth: 4,
+      bedHeight: 4,
+    });
     expect(Array.isArray(corners)).toBe(true);
   });
 
@@ -69,7 +87,10 @@ describe("getPlantCells", () => {
     expect(cells).toContainEqual({ x: 1, y: 2 });
   });
   it("returns all cells for a 2x2 plant", () => {
-    const cells = getPlantCells({ ...plantPlacement, plantTile: { ...mockPlant, size: 2 } });
+    const cells = getPlantCells({
+      ...plantPlacement,
+      plantTile: { ...mockPlant, size: 2 },
+    });
     expect(cells.length).toBe(4);
   });
 });
@@ -81,7 +102,7 @@ describe("getSharedBorders", () => {
       { ...plantPlacement, x: 2, id: "placement2" },
       "red",
       "indicator1",
-      layout
+      layout,
     );
     expect(Array.isArray(borders)).toBe(true);
   });
@@ -91,7 +112,12 @@ describe("calculateEdgeBorders", () => {
   it("returns borders for edge indicators", () => {
     const bed = { plantPlacements: [plantPlacement, plantPlacement2] };
     const edgeIndicators = [
-      { id: "e1", plantAId: "placement1", plantBId: "placement2", color: "blue" },
+      {
+        id: "e1",
+        plantAId: "placement1",
+        plantBId: "placement2",
+        color: "blue",
+      },
     ];
     const borders = calculateEdgeBorders(bed, edgeIndicators, layout);
     expect(Array.isArray(borders)).toBe(true);
@@ -120,7 +146,12 @@ describe("isValidDrop", () => {
       sunLevel: 7,
       plantPlacements: [plantPlacement],
     };
-    const valid = isValidDrop(bed, { ...plantPlacement, id: "placement2" }, 1, 2);
+    const valid = isValidDrop(
+      bed,
+      { ...plantPlacement, id: "placement2" },
+      1,
+      2,
+    );
     expect(valid).toBe(false);
   });
-}); 
+});

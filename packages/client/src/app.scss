@@ -1,5 +1,7 @@
 @use "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: garden --default;
+}
 
 html,
 body {
@@ -8,6 +10,7 @@ body {
 }
 
 @theme {
+  --color-primary: var(--color-stone-700);
   --color-amber-100: #fef3c7; /* Tailwind amber-100 */
   --color-stone-700: #44403c; /* Tailwind stone-700 */
   --color-tomato-red: rgb(214 40 40);
@@ -55,4 +58,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
 }

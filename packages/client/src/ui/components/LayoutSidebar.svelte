@@ -4,7 +4,10 @@
 	import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
 </script>
 
-<div id="layout-sidebar" class="hidden lg:flex h-100vh flex-col w-64">
+<div
+	id="layout-sidebar"
+	class="hidden lg:flex h-100vh flex-col w-64 border-r border-green-900"
+>
 	<a use:route class="flex min-h-16 items-center justify-center" href="/">
 		<img alt="logo" class="sidebar-logo h-5" src={logo} />
 	</a>

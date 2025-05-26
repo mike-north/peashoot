@@ -36,6 +36,6 @@
     "typescript-eslint": "^8.32.1"
   },
   "dependencies": {
-    "@mateothegreat/svelte5-router": "^2.15.1"
+    "@mateothegreat/svelte5-router": "^2.15.2"
   }
 }

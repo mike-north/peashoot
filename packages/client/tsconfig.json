@@ -15,7 +15,7 @@
 		"exactOptionalPropertyTypes": true,
 		"types": ["svelte"],
 		"paths": {
-			"@mateothegreat/svelte5-router": ["./types/mateothegreat/svelte5-router/index.d.ts"]
+			"@mateothegreat/svelte5-router": ["./types/@mateothegreat/svelte5-router/index.d.ts"]
 		}
 	},
 	"include": [

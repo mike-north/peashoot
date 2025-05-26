@@ -1,25 +1,17 @@
 <script lang="ts">
 	import { Router, type RouteConfig } from '@mateothegreat/svelte5-router'
+	import { defaultRouteConfig, routes as routeData } from '../../routes'
 
-	import Garden from './Garden.svelte'
-	import Home from './Home.svelte'
-	import SeedCatalog from './SeedCatalog.svelte'
 	import LayoutSidebar from '../components/LayoutSidebar.svelte'
 	import LayoutTopbar from '../components/LayoutTopbar.svelte'
 
-	const routes: RouteConfig[] = [
-		{
-			component: Home,
-		},
-		{
-			path: 'garden',
-			component: Garden,
-		},
-		{
-			path: 'seed-catalog',
-			component: SeedCatalog,
-		},
-	]
+	const routes: RouteConfig[] = routeData.map((r) => r.forRouter)
+	const topItems = routeData
+		.filter((r) => !r.hideInSidebar)
+		.map((r) => ({
+			label: r.label,
+			href: r.path,
+		}))
 </script>
 
 <div class="size-full">
@@ -33,26 +25,13 @@
 
 		<LayoutSidebar
 			menu={{
-				topItems: [
-					{
-						label: 'Home',
-						href: '/',
-					},
-					{
-						label: 'Garden',
-						href: '/garden',
-					},
-					{
-						label: 'Seed Catalog',
-						href: '/seed-catalog',
-					},
-				],
+				topItems
 			}}
 		/>
 
 		<div class="flex h-screen min-w-0 grow flex-col overflow-auto">
 			<LayoutTopbar />
-			<div id="layout-content">
+			<div id="layout-content" class="grid p-6">
 				<Router {routes} />
 			</div>
 		</div>

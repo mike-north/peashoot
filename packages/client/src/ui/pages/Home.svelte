@@ -1,19 +1,19 @@
-<script lang="ts"></script>
+<script lang="ts">
+	console.log('Home')
+</script>
 
-<div class="welcome-message">
-	<h1>Welcome</h1>
-	<p>
-		Check out the <a href="/seed-catalog">seed catalog</a> or <a href="/garden">garden</a>
-		to get started.
-	</p>
+<div class="grid h-full place-items-center">
+	<div class="text-center">
+		<span class="text-2xl font-bold">Home</span>
+		<p class="mt-4">
+			Check out the <a href="/seed-catalog" class="link-primary link">seed catalog</a>
+			or
+			<a href="/garden" class="link-primary link">garden</a>
+			to get started.
+		</p>
+	</div>
 </div>
 
 <style lang="scss">
-	.welcome-message {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-	}
+	/* Remove unused styles */
 </style>

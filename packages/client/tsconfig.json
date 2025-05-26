@@ -1,31 +1,30 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "useDefineForClassFields": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true,
-    "strictNullChecks": true,
-    "exactOptionalPropertyTypes": true,
-    "types": ["svelte"],
-    "paths": {
-      "@mateothegreat/svelte5-router": [
-        "./types/mateothegreat/svelte5-router/index.d.ts"
-      ]
-    }
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.svelte",
-    "../../global.d.ts",
-    "src/svelte.d.ts"
-  ],
-  "exclude": ["node_modules/*", "public/*"]
+	"extends": "@tsconfig/svelte/tsconfig.json",
+	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"useDefineForClassFields": true,
+		"verbatimModuleSyntax": true,
+		"isolatedModules": true,
+		"forceConsistentCasingInFileNames": true,
+		"strictNullChecks": true,
+		"exactOptionalPropertyTypes": true,
+		"types": ["svelte"],
+		"paths": {
+			"@mateothegreat/svelte5-router": ["./types/@mateothegreat/svelte5-router/index.d.ts"]
+		}
+	},
+	"include": [
+		"types/**/*.d.ts",
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.svelte",
+		"../../global.d.ts",
+		"src/svelte.d.ts"
+	],
+	"exclude": ["node_modules/*", "public/*"]
 }

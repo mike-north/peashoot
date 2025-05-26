@@ -8,17 +8,7 @@
 
 	// Color mapping for different plants
 	const getPlantColor = (plantName: string) => {
-		const colorMap: Record<string, string> = {
-			lettuce: 'bg-lettuce-green-50a',
-			tomato: 'bg-tomato-red-50a',
-			carrot: 'bg-carrot-orange-50a',
-			spinach: 'bg-spinach-green-50a',
-			cucumber: 'bg-cucumber-green-50a',
-			cherry: 'bg-poppy-red-50a',
-			pepper: 'bg-yellow-pepper-50a',
-			'yellow pepper': 'bg-yellow-pepper-50a',
-		}
-		return colorMap[plantName.toLowerCase()] || 'bg-dew-gray-50a'
+		return `plant-tile ${plantName.toLowerCase()}`
 	}
 
 	const colorClass = getPlantColor(plantPlacement.plantTile.name)
@@ -28,21 +18,15 @@
 	const iconY = y + sizePx / 2
 </script>
 
-<svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`}>
+<svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`} class={colorClass}>
 	<!-- Tile background -->
-	<rect
-		{x}
-		{y}
-		width={sizePx}
-		height={sizePx}
-		class={colorClass + ' plant-placement-tile__background'}
-	/>
+	<rect {x} {y} width={sizePx} height={sizePx} class="plant-placement-tile__background" />
 	<!-- Plant icon -->
 	<circle
 		cx={iconX}
 		cy={iconY}
 		r={iconSize / 2}
-		class={colorClass + ' plant-placement-tile__icon'}
+		class="plant-placement-tile__icon"
 		opacity="0.8"
 	/>
 	<!-- Plant name text -->
@@ -70,17 +54,15 @@
 </svg>
 
 <style lang="scss">
-	.plant-placement-tile {
-		// &__background {
-		//   /* colorClass is dynamic */
-		// }
+	.plant-tile {
 		&__icon {
 			opacity: 0.8;
 		}
 		&__name {
-			font-family: Arial, sans-serif;
-			fill: #4b4e6d;
-			opacity: 0.7;
+			// font-family: Arial, sans-serif;
+			// fill: #4b4e6d;
+			color: white;
+			// opacity: 0.7;
 		}
 		&__size-indicator {
 			font-family: Arial, sans-serif;
@@ -91,6 +73,64 @@
 			stroke: #222;
 			stroke-width: 1;
 			fill: none;
+		}
+		.plant-placement-tile__background {
+			fill-opacity: 0.3;
+		}
+		.plant-placement-tile__size-indicator,
+		.plant-placement-tile__name {
+			fill-opacity: 0.7;
+		}
+		&.tomato {
+			.plant-placement-tile__background {
+				fill: var(--color-tomato-red);
+				fill-opacity: 0.3;
+			}
+		}
+		&.lettuce {
+			.plant-placement-tile__background {
+				fill: var(--color-lettuce-green);
+				fill-opacity: 0.3;
+			}
+		}
+		&.cherry {
+			.plant-placement-tile__background {
+				fill: var(--color-cherry-red);
+				fill-opacity: 0.6;
+			}
+			.plant-placement-tile__name {
+				fill: white;
+			}
+		}
+		&.carrot {
+			.plant-placement-tile__background {
+				fill: var(--color-carrot-orange);
+				fill-opacity: 0.3;
+			}
+		}
+		&.spinach {
+			.plant-placement-tile__background {
+				fill: var(--color-spinach-green);
+				fill-opacity: 0.3;
+			}
+		}
+		&.cucumber {
+			.plant-placement-tile__background {
+				fill: var(--color-cucumber-green);
+				fill-opacity: 0.3;
+			}
+		}
+		&.pepper {
+			.plant-placement-tile__background {
+				fill: var(--color-yellow-pepper);
+				fill-opacity: 0.3;
+			}
+		}
+		&.yellow-pepper {
+			.plant-placement-tile__background {
+				fill: var(--color-yellow-pepper);
+				fill-opacity: 0.3;
+			}
 		}
 	}
 </style>

@@ -13,6 +13,5 @@
 	"useTabs": true,
 	"bracketSpacing": true,
 	"bracketSameLine": false,
-	"jsxBracketSameLine": false,
 	"quoteProps": "as-needed"
 }

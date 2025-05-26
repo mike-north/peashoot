@@ -5,7 +5,10 @@
   import { onDestroy } from "svelte";
   import type { Garden } from "../../lib/garden";
   import GardenBedView from "./GardenBedView.svelte";
-  import { GardenBedLayoutCalculator } from "../../lib/garden-bed-layout-calculator";
+  import {
+    GardenBedLayoutCalculator,
+    screenToGridCoordinates
+  } from "../../lib/garden-bed-layout-calculator";
 
   interface GardenProps {
     garden: Garden;
@@ -80,27 +83,14 @@
           frameThickness: 4,
         });
 
-        // Convert screen coordinates to SVG coordinates for this bed
-        const pt = svgElement.createSVGPoint();
-        pt.x = event.clientX;
-        pt.y = event.clientY;
-        const ctm = svgElement.getScreenCTM();
-        if (!ctm) throw new Error("ctm is null");
-        const cursorpt = pt.matrixTransform(ctm.inverse());
-
-        // Calculate cell coordinates using the layout
-        const x = Math.max(0, Math.min(bed.width - 1,
-          Math.round((cursorpt.x - layout.interiorX) / layout.cellWidth)
-        ));
-        const y = Math.max(0, Math.min(bed.height - 1,
-          bed.height - 1 - Math.round((cursorpt.y - layout.interiorY) / layout.cellHeight)
-        ));
+        // Use the factored-out screenToGridCoordinates
+        const { x, y } = screenToGridCoordinates(svgElement, layout, event.clientX, event.clientY);
 
         dragState.update((s) => ({
           ...s,
           targetBedId: bed.id,
-          dragPosition: { x: event.clientX, y: event.clientY }, // Screen coordinates for dragged element style
-          highlightedCell: { x, y }, // Grid coordinates for logic
+          dragPosition: { x: event.clientX, y: event.clientY },
+          highlightedCell: { x, y },
         }));
         return;
       }
@@ -120,35 +110,18 @@
     x: number,
     y: number
   ): boolean {
+    const layout = new GardenBedLayoutCalculator({
+      width: targetBed.width,
+      height: targetBed.height,
+      cellSize: 40,
+      paddingTop: 2,
+      paddingLeft: 20,
+      paddingBottom: 20,
+      paddingRight: 20,
+      frameThickness: 4,
+    });
     const size = draggedPlant.plantTile.size || 1;
-    // Bounds check
-    if (
-      x < 0 ||
-      y < 0 ||
-      x + size > targetBed.width ||
-      y + size > targetBed.height
-    ) {
-      return false;
-    }
-    // Overlap check
-    for (const p of targetBed.plantPlacements) {
-      if (p.id === draggedPlant.id) continue; // skip self
-      const pSize = p.plantTile.size || 1;
-      for (let dx = 0; dx < size; dx++) {
-        for (let dy = 0; dy < size; dy++) {
-          const cellX = x + dx;
-          const cellY = y + dy;
-          for (let pdx = 0; pdx < pSize; pdx++) {
-            for (let pdy = 0; pdy < pSize; pdy++) {
-              if (cellX === p.x + pdx && cellY === p.y + pdy) {
-                return false;
-              }
-            }
-          }
-        }
-      }
-    }
-    return true;
+    return layout.isValidPlacement(x, y, size, targetBed.plantPlacements, draggedPlant.id);
   }
 
   function onGardenMouseUp(_event: MouseEvent) {

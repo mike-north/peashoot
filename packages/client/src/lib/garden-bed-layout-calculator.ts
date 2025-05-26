@@ -289,4 +289,170 @@ export class GardenBedLayoutCalculator {
     if (isBottom && isRight) corners.push("bottom-right");
     return corners;
   }
+
+  /**
+   * Checks if a placement is valid (no overlap, in bounds) for this bed.
+   * Skips a plant with skipId (for drag/move scenarios).
+   */
+  isValidPlacement(
+    x: number,
+    y: number,
+    size: number,
+    plantPlacements: { x: number; y: number; id: string; plantTile: { size?: number } }[],
+    skipId?: string
+  ): boolean {
+    if (x < 0 || y < 0 || x + size > this.width || y + size > this.height) return false;
+    for (const p of plantPlacements) {
+      if (skipId && p.id === skipId) continue;
+      const pSize = p.plantTile.size || 1;
+      for (let dx = 0; dx < size; dx++) {
+        for (let dy = 0; dy < size; dy++) {
+          const cellX = x + dx;
+          const cellY = y + dy;
+          for (let pdx = 0; pdx < pSize; pdx++) {
+            for (let pdy = 0; pdy < pSize; pdy++) {
+              if (cellX === p.x + pdx && cellY === p.y + pdy) {
+                return false;
+              }
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
+}
+
+// --- Placement and Edge Indicator Types ---
+export interface Cell {
+  x: number;
+  y: number;
+}
+
+export interface Border extends Line, Keyed {
+  color: string;
+}
+
+// --- Placement and Edge Indicator Utilities ---
+
+/**
+ * Returns all grid cells occupied by a plant placement.
+ */
+export function getPlantCells(placement: { x: number; y: number; plantTile: { size?: number } }): Cell[] {
+  const size = placement.plantTile.size || 1;
+  const cells: Cell[] = [];
+  for (let dx = 0; dx < size; dx++) {
+    for (let dy = 0; dy < size; dy++) {
+      cells.push({ x: placement.x + dx, y: placement.y + dy });
+    }
+  }
+  return cells;
+}
+
+/**
+ * Returns all shared borders between two plant placements in a bed, for edge indicators.
+ */
+export function getSharedBorders(
+  plantA: { x: number; y: number; id: string; plantTile: { size?: number } },
+  plantB: { x: number; y: number; id: string; plantTile: { size?: number } },
+  color: string,
+  indicatorId: string,
+  layout: GardenBedLayoutCalculator
+): Border[] {
+  const aCells = getPlantCells(plantA);
+  const bCells = getPlantCells(plantB);
+  const bCellSet = new Set(bCells.map((c) => `${c.x},${c.y}`));
+  const borders: Border[] = [];
+  for (const cell of aCells) {
+    const neighbors = [
+      { dx: 1, dy: 0 },
+      { dx: -1, dy: 0 },
+      { dx: 0, dy: 1 },
+      { dx: 0, dy: -1 },
+    ];
+    for (const { dx, dy } of neighbors) {
+      const nx = cell.x + dx;
+      const ny = cell.y + dy;
+      if (bCellSet.has(`${nx},${ny}`)) {
+        // Only draw the border if (plantA.id, cell.x, cell.y) < (plantB.id, nx, ny) to avoid double-drawing
+        if (
+          plantA.id < plantB.id ||
+          (plantA.id === plantB.id && (cell.x < nx || (cell.x === nx && cell.y < ny)))
+        ) {
+          // Horizontal adjacency
+          if (Math.abs(cell.x - nx) === 1 && cell.y === ny) {
+            const leftX = Math.min(cell.x, nx);
+            const y = cell.y;
+            const tile = layout.getTileLayoutInfo({ x: leftX, y });
+            const xEdge = tile.svgX + tile.width;
+            const yTop = tile.svgY;
+            const yBot = tile.svgY + tile.height;
+            borders.push({
+              points: [makePoint({ x: xEdge, y: yTop }), makePoint({ x: xEdge, y: yBot })],
+              color,
+              key: indicatorId,
+            });
+          }
+          // Vertical adjacency
+          if (Math.abs(cell.y - ny) === 1 && cell.x === nx) {
+            const x = cell.x;
+            const lowY = Math.min(cell.y, ny);
+            const tile = layout.getTileLayoutInfo({ x, y: lowY });
+            const yEdge = tile.svgY;
+            const xLeft = tile.svgX;
+            const xRight = tile.svgX + tile.width;
+            borders.push({
+              points: [makePoint({ x: xLeft, y: yEdge }), makePoint({ x: xRight, y: yEdge })],
+              color,
+              key: indicatorId,
+            });
+          }
+        }
+      }
+    }
+  }
+  return borders;
+}
+
+/**
+ * Calculates all edge indicator borders for a bed.
+ */
+export function calculateEdgeBorders(
+  bed: { plantPlacements: { x: number; y: number; id: string; plantTile: { size?: number } }[] },
+  edgeIndicators: { id: string; plantAId: string; plantBId: string; color: string }[],
+  layout: GardenBedLayoutCalculator
+): Border[] {
+  let borders: Border[] = [];
+  for (const indicator of edgeIndicators) {
+    const plantA = bed.plantPlacements.find((p) => p.id === indicator.plantAId);
+    const plantB = bed.plantPlacements.find((p) => p.id === indicator.plantBId);
+    if (plantA && plantB) {
+      borders = borders.concat(getSharedBorders(plantA, plantB, indicator.color, indicator.id, layout));
+    }
+  }
+  return borders;
+}
+
+/**
+ * Converts screen (client) coordinates to grid coordinates for a given SVG element and layout.
+ */
+export function screenToGridCoordinates(
+  svgElement: SVGSVGElement,
+  layout: GardenBedLayoutCalculator,
+  clientX: number,
+  clientY: number
+): { x: number; y: number } {
+  const pt = svgElement.createSVGPoint();
+  pt.x = clientX;
+  pt.y = clientY;
+  const ctm = svgElement.getScreenCTM();
+  if (!ctm) throw new Error("ctm is null");
+  const cursorpt = pt.matrixTransform(ctm.inverse());
+  const x = Math.max(0, Math.min(layout.width - 1,
+    Math.round((cursorpt.x - layout.interiorX) / layout.cellWidth)
+  ));
+  const y = Math.max(0, Math.min(layout.height - 1,
+    layout.height - 1 - Math.round((cursorpt.y - layout.interiorY) / layout.cellHeight)
+  ));
+  return { x, y };
 }

@@ -7,8 +7,10 @@
   import GardenBedView from "./GardenBedView.svelte";
   import {
     GardenBedLayoutCalculator,
-    screenToGridCoordinates
+    screenToGridCoordinates,
+    isValidDrop,
   } from "../../lib/garden-bed-layout-calculator";
+  import { DEFAULT_LAYOUT_PARAMS } from "../../lib/layout-constants";
 
   interface GardenProps {
     garden: Garden;
@@ -25,14 +27,19 @@
       newX: number,
       newY: number
     ) => void;
-    edgeIndicators?: { id: string; plantAId: string; plantBId: string; color: string }[];
+    edgeIndicators?: {
+      id: string;
+      plantAId: string;
+      plantBId: string;
+      color: string;
+    }[];
   }
 
   let {
     garden,
     onMovePlantInBed,
     onMovePlantToDifferentBed,
-    edgeIndicators
+    edgeIndicators,
   }: GardenProps = $props();
 
   let { beds } = $derived(garden);
@@ -60,7 +67,8 @@
   function onGardenMouseMove(event: MouseEvent) {
     // For each bed, check if mouse is over its SVG
     for (const bed of beds) {
-      const svgElement: SVGSVGElement & SVGGraphicsElement | null = document.querySelector(`[data-bed-id='${bed.id}'] svg`);
+      const svgElement: (SVGSVGElement & SVGGraphicsElement) | null =
+        document.querySelector(`[data-bed-id='${bed.id}'] svg`);
       if (!svgElement) continue;
       const rect = svgElement.getBoundingClientRect();
 
@@ -75,16 +83,17 @@
         const layout = new GardenBedLayoutCalculator({
           width: bed.width,
           height: bed.height,
-          cellSize: 40, // Assuming these are global constants for now
-          paddingTop: 2,
-          paddingLeft: 20,
-          paddingBottom: 20,
-          paddingRight: 20,
-          frameThickness: 4,
+          // Use default layout params from constants
+          ...DEFAULT_LAYOUT_PARAMS,
         });
 
         // Use the factored-out screenToGridCoordinates
-        const { x, y } = screenToGridCoordinates(svgElement, layout, event.clientX, event.clientY);
+        const { x, y } = screenToGridCoordinates(
+          svgElement,
+          layout,
+          event.clientX,
+          event.clientY
+        );
 
         dragState.update((s) => ({
           ...s,
@@ -104,32 +113,20 @@
     }));
   }
 
-  function isValidDrop(
-    targetBed: GardenBed,
-    draggedPlant: PlantPlacement,
-    x: number,
-    y: number
-  ): boolean {
-    const layout = new GardenBedLayoutCalculator({
-      width: targetBed.width,
-      height: targetBed.height,
-      cellSize: 40,
-      paddingTop: 2,
-      paddingLeft: 20,
-      paddingBottom: 20,
-      paddingRight: 20,
-      frameThickness: 4,
-    });
-    const size = draggedPlant.plantTile.size || 1;
-    return layout.isValidPlacement(x, y, size, targetBed.plantPlacements, draggedPlant.id);
-  }
-
   function onGardenMouseUp(_event: MouseEvent) {
     const state = $dragState;
-    console.log('[GardenView] onGardenMouseUp: state', JSON.parse(JSON.stringify(state)));
+    console.log(
+      "[GardenView] onGardenMouseUp: state",
+      JSON.parse(JSON.stringify(state))
+    );
 
     // Ensure all required state properties for a valid drop are non-null
-    if (state.draggedPlant && state.sourceBedId && state.targetBedId && state.highlightedCell) {
+    if (
+      state.draggedPlant &&
+      state.sourceBedId &&
+      state.targetBedId &&
+      state.highlightedCell
+    ) {
       const draggedPlant = state.draggedPlant;
       const highlightedCell = state.highlightedCell;
       // After this check, sourceBedId, targetBedId are confirmed strings
@@ -137,18 +134,32 @@
       const currentSourceBedId = state.sourceBedId;
       const currentTargetBedId = state.targetBedId;
 
-      const targetBed = beds.find((b: GardenBed) => b.id === currentTargetBedId);
+      const targetBed = beds.find(
+        (b: GardenBed) => b.id === currentTargetBedId
+      );
 
-      console.log('[GardenView] onGardenMouseUp: Details - ',
-        'Dragged Plant ID:', draggedPlant.id, 'Original Coords:', {x: draggedPlant.x, y: draggedPlant.y}, 'Size:', state.draggedTileSize,
-        'Target Bed ID:', targetBed ? targetBed.id : 'null',
-        'Source Bed ID:', currentSourceBedId,
-        'Highlighted Cell:', highlightedCell);
+      console.log(
+        "[GardenView] onGardenMouseUp: Details - ",
+        "Dragged Plant ID:",
+        draggedPlant.id,
+        "Original Coords:",
+        { x: draggedPlant.x, y: draggedPlant.y },
+        "Size:",
+        state.draggedTileSize,
+        "Target Bed ID:",
+        targetBed ? targetBed.id : "null",
+        "Source Bed ID:",
+        currentSourceBedId,
+        "Highlighted Cell:",
+        highlightedCell
+      );
 
       if (!targetBed) {
-        console.log('[GardenView] onGardenMouseUp: No target bed found. Cleaning up.');
+        console.log(
+          "[GardenView] onGardenMouseUp: No target bed found. Cleaning up."
+        );
         cleanupDrag();
-        return
+        return;
       }
 
       const isValid = isValidDrop(
@@ -157,11 +168,19 @@
         highlightedCell.x,
         highlightedCell.y
       );
-      console.log('[GardenView] onGardenMouseUp: isValidDrop returned:', isValid, 
-        'for cell:', highlightedCell, 'in bed:', currentTargetBedId);
+      console.log(
+        "[GardenView] onGardenMouseUp: isValidDrop returned:",
+        isValid,
+        "for cell:",
+        highlightedCell,
+        "in bed:",
+        currentTargetBedId
+      );
 
       if (!isValid) {
-        console.log('[GardenView] onGardenMouseUp: Drop is not valid. Cleaning up.');
+        console.log(
+          "[GardenView] onGardenMouseUp: Drop is not valid. Cleaning up."
+        );
         cleanupDrag();
         return;
       }
@@ -185,7 +204,9 @@
         );
       }
     } else {
-      console.log('[GardenView] onGardenMouseUp: Aborted due to null state properties (draggedPlant, sourceBedId, targetBedId, or highlightedCell).');
+      console.log(
+        "[GardenView] onGardenMouseUp: Aborted due to null state properties (draggedPlant, sourceBedId, targetBedId, or highlightedCell)."
+      );
     }
     cleanupDrag();
   }
@@ -221,5 +242,4 @@
 </div>
 
 <style>
-  
 </style>

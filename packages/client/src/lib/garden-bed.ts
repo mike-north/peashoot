@@ -9,3 +9,17 @@ export interface GardenBed {
     sunLevel: number;
     plantPlacements: PlantPlacement[];
 }
+
+export function updatePlantPositionInBed(
+    bed: GardenBed,
+    plantId: string,
+    newX: number,
+    newY: number
+): GardenBed {
+    return {
+        ...bed,
+        plantPlacements: bed.plantPlacements.map((p: PlantPlacement) =>
+            p.id === plantId ? { ...p, x: newX, y: newY } : p
+        ),
+    };
+}

@@ -1,8 +1,10 @@
 <script lang="ts">
   import GardenView from "../components/GardenView.svelte";
   import type { GardenBed } from "../../lib/garden-bed";
+  import { updatePlantPositionInBed } from "../../lib/garden-bed";
   import type { PlantPlacement } from "../../lib/plant-placement";
   import type { Garden } from "../../lib/garden";
+  import { movePlantBetweenBeds } from "../../lib/garden";
 
   let gardenInstance = $state<Garden>({
     id: "garden_0",
@@ -110,8 +112,8 @@
   ) {
     const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId);
     if (bed) {
-      bed.plantPlacements = bed.plantPlacements.map((p: PlantPlacement) =>
-        p.id === plantId ? { ...p, x: newX, y: newY } : p
+      gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
+        b.id === bedId ? updatePlantPositionInBed(b, plantId, newX, newY) : b
       );
     } else {
       console.error("[App.svelte] Bed not found for movePlantInBed:", bedId);
@@ -125,27 +127,14 @@
     newX: number,
     newY: number
   ) {
-    const sourceBed = gardenInstance.beds.find(
-      (b: GardenBed) => b.id === sourceBedId
+    gardenInstance = movePlantBetweenBeds(
+      gardenInstance,
+      sourceBedId,
+      targetBedId,
+      plant,
+      newX,
+      newY
     );
-    const targetBed = gardenInstance.beds.find(
-      (b: GardenBed) => b.id === targetBedId
-    );
-
-    if (sourceBed && targetBed) {
-      sourceBed.plantPlacements = sourceBed.plantPlacements.filter(
-        (p: PlantPlacement) => p.id !== plant.id
-      );
-      targetBed.plantPlacements.push({
-        ...plant,
-        x: newX,
-        y: newY,
-      });
-    } else {
-      console.error(
-        "[App.svelte] Source or target bed not found for movePlantToDifferentBed."
-      );
-    }
   }
 </script>
 

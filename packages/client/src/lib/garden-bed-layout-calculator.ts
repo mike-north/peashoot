@@ -2,6 +2,9 @@
 
 import { makePoint, type Line } from "./types/geometry";
 import type { Keyed } from "./types/ui";
+import { DEFAULT_LAYOUT_PARAMS } from "./layout-constants";
+import type { GardenBed } from "./garden-bed";
+import type { PlantPlacement } from "./plant-placement";
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -29,12 +32,12 @@ export interface PlantTileLayoutInfo {
 export interface LayoutParams {
   width: number;
   height: number;
-  cellSize: number;
-  paddingTop: number;
-  paddingLeft: number;
-  paddingBottom: number;
-  paddingRight: number;
-  frameThickness: number;
+  cellSize?: number;
+  paddingTop?: number;
+  paddingLeft?: number;
+  paddingBottom?: number;
+  paddingRight?: number;
+  frameThickness?: number;
 }
 
 export type GridLine = Line & Keyed;
@@ -60,12 +63,12 @@ export class GardenBedLayoutCalculator {
   constructor(params: LayoutParams) {
     this.width = params.width;
     this.height = params.height;
-    this.cellSize = params.cellSize;
-    this.paddingTop = params.paddingTop;
-    this.paddingLeft = params.paddingLeft;
-    this.paddingBottom = params.paddingBottom;
-    this.paddingRight = params.paddingRight;
-    this.frameThickness = params.frameThickness;
+    this.cellSize = params.cellSize ?? DEFAULT_LAYOUT_PARAMS.cellSize;
+    this.paddingTop = params.paddingTop ?? DEFAULT_LAYOUT_PARAMS.paddingTop;
+    this.paddingLeft = params.paddingLeft ?? DEFAULT_LAYOUT_PARAMS.paddingLeft;
+    this.paddingBottom = params.paddingBottom ?? DEFAULT_LAYOUT_PARAMS.paddingBottom;
+    this.paddingRight = params.paddingRight ?? DEFAULT_LAYOUT_PARAMS.paddingRight;
+    this.frameThickness = params.frameThickness ?? DEFAULT_LAYOUT_PARAMS.frameThickness;
   }
 
   /**
@@ -363,6 +366,8 @@ export function getSharedBorders(
   const bCells = getPlantCells(plantB);
   const bCellSet = new Set(bCells.map((c) => `${c.x},${c.y}`));
   const borders: Border[] = [];
+  let segmentIndex = 0; // Initialize segment index for unique keys
+
   for (const cell of aCells) {
     const neighbors = [
       { dx: 1, dy: 0 },
@@ -390,7 +395,7 @@ export function getSharedBorders(
             borders.push({
               points: [makePoint({ x: xEdge, y: yTop }), makePoint({ x: xEdge, y: yBot })],
               color,
-              key: indicatorId,
+              key: `${indicatorId}_${segmentIndex++}`, // Append segment index for unique key
             });
           }
           // Vertical adjacency
@@ -404,7 +409,7 @@ export function getSharedBorders(
             borders.push({
               points: [makePoint({ x: xLeft, y: yEdge }), makePoint({ x: xRight, y: yEdge })],
               color,
-              key: indicatorId,
+              key: `${indicatorId}_${segmentIndex++}`, // Append segment index for unique key
             });
           }
         }
@@ -455,4 +460,31 @@ export function screenToGridCoordinates(
     layout.height - 1 - Math.round((cursorpt.y - layout.interiorY) / layout.cellHeight)
   ));
   return { x, y };
+}
+
+/**
+ * Checks if a proposed plant placement (drop) is valid within a target bed.
+ * This is a higher-level function often used during drag-and-drop operations.
+ */
+export function isValidDrop(
+  targetBed: GardenBed,
+  draggedPlant: PlantPlacement,
+  x: number, // Target grid x-coordinate
+  y: number, // Target grid y-coordinate
+  layoutParamsOverrides?: Partial<LayoutParams> // Optional overrides for layout calculation
+): boolean {
+  const layout = new GardenBedLayoutCalculator({
+    width: targetBed.width,
+    height: targetBed.height,
+    ...DEFAULT_LAYOUT_PARAMS, // Start with defaults
+    ...(layoutParamsOverrides || {}), // Apply any specific overrides
+  });
+  const size = draggedPlant.plantTile.size || 1;
+  return layout.isValidPlacement(
+    x,
+    y,
+    size,
+    targetBed.plantPlacements,
+    draggedPlant.id
+  );
 }

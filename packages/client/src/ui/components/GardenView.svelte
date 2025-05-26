@@ -27,7 +27,7 @@
       newX: number,
       newY: number
     ) => void;
-    edgeIndicators?: {
+    edgeIndicators: {
       id: string;
       plantAId: string;
       plantBId: string;
@@ -235,8 +235,8 @@
   {#each beds as bed (bed.id)}
     <GardenBedView
       {bed}
+      edgeIndicators={edgeIndicators}
       onTileMouseDownFromParent={handleTileMouseDown}
-      {edgeIndicators}
     />
   {/each}
 </div>

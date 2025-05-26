@@ -9,11 +9,11 @@
 </div>
 
 <style lang="scss">
-	.welcome-message {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-	}
+.welcome-message {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
 </style>

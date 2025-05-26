@@ -3,51 +3,51 @@
   If you update the palette or these variables, ensure the 50% alpha background classes below are also updated to match.
 */
 :root {
-  --color-tomato-red: 214, 40, 40;
-  --color-red-delicious-apple: 155, 27, 48;
-  --color-carrot-orange: 255, 167, 38;
-  --color-pumpkin-orange: 245, 124, 0;
-  --color-berry-red: 229, 57, 53;
+	--color-tomato-red: 214, 40, 40;
+	--color-red-delicious-apple: 155, 27, 48;
+	--color-carrot-orange: 255, 167, 38;
+	--color-pumpkin-orange: 245, 124, 0;
+	--color-berry-red: 229, 57, 53;
 
-  --color-lettuce-green: 123, 182, 97;
-  --color-spinach-green: 56, 142, 60;
-  --color-zucchini-skin: 44, 95, 45;
-  --color-green-apple: 168, 225, 12;
-  --color-cucumber-green: 86, 130, 3;
-  --color-jalapeno-green: 58, 145, 63;
+	--color-lettuce-green: 123, 182, 97;
+	--color-spinach-green: 56, 142, 60;
+	--color-zucchini-skin: 44, 95, 45;
+	--color-green-apple: 168, 225, 12;
+	--color-cucumber-green: 86, 130, 3;
+	--color-jalapeno-green: 58, 145, 63;
 
-  /* 🌶️ Chili & Pepper Colors */
-  --color-hot-chili-red: 193, 18, 31;
-  --color-yellow-pepper: 255, 212, 0;
-  --color-orange-habanero: 247, 92, 3;
-  --color-purple-chili: 128, 0, 128;
+	/* 🌶️ Chili & Pepper Colors */
+	--color-hot-chili-red: 193, 18, 31;
+	--color-yellow-pepper: 255, 212, 0;
+	--color-orange-habanero: 247, 92, 3;
+	--color-purple-chili: 128, 0, 128;
 
-  /* 🍎 Fruit & Berry Colors */
-  --color-kiwi-brown: 109, 76, 65;
-  --color-blueberry-blue: 63, 81, 181;
-  --color-strawberry-red: 229, 57, 53;
-  --color-honeycrisp-apple: 247, 92, 3;
-  --color-fuji-apple: 253, 184, 19;
-  --color-granny-smith-green: 168, 225, 12;
-  --color-watermelon-red: 227, 66, 52;
+	/* 🍎 Fruit & Berry Colors */
+	--color-kiwi-brown: 109, 76, 65;
+	--color-blueberry-blue: 63, 81, 181;
+	--color-strawberry-red: 229, 57, 53;
+	--color-honeycrisp-apple: 247, 92, 3;
+	--color-fuji-apple: 253, 184, 19;
+	--color-granny-smith-green: 168, 225, 12;
+	--color-watermelon-red: 227, 66, 52;
 
-  /* 🌸 Flower-Inspired Complements */
-  --color-marigold-gold: 253, 184, 19;
-  --color-lavender-purple: 180, 151, 189;
-  --color-dahlia-pink: 255, 105, 180;
-  --color-cornflower-blue: 100, 149, 237;
-  --color-poppy-red: 227, 66, 52;
+	/* 🌸 Flower-Inspired Complements */
+	--color-marigold-gold: 253, 184, 19;
+	--color-lavender-purple: 180, 151, 189;
+	--color-dahlia-pink: 255, 105, 180;
+	--color-cornflower-blue: 100, 149, 237;
+	--color-poppy-red: 227, 66, 52;
 
-  /* 🌱 Neutrals & Backgrounds */
-  --color-soil-brown: 90, 62, 54;
-  --color-mulch-tan: 194, 178, 128;
-  --color-dew-gray: 220, 225, 222;
-  --color-slate-label-gray: 75, 78, 109;
+	/* 🌱 Neutrals & Backgrounds */
+	--color-soil-brown: 90, 62, 54;
+	--color-mulch-tan: 194, 178, 128;
+	--color-dew-gray: 220, 225, 222;
+	--color-slate-label-gray: 75, 78, 109;
 }
 
 // SCSS helper to use CSS variable with alpha
 @function css-var-alpha($var, $alpha) {
-  @return rgba(var(--#{$var}), $alpha);
+	@return rgba(var(--#{$var}), $alpha);
 }
 
 /*
@@ -56,100 +56,100 @@
 */
 
 .soil-brown {
-  fill: var(--color-soil-brown);
+	fill: var(--color-soil-brown);
 }
 .mulch-tan {
-  fill: var(--color-mulch-tan);
+	fill: var(--color-mulch-tan);
 }
 .dew-gray {
-  fill: var(--color-dew-gray);
+	fill: var(--color-dew-gray);
 }
 .slate-label-gray {
-  fill: var(--color-slate-label-gray);
+	fill: var(--color-slate-label-gray);
 }
 
 /* 50% Alpha Background Classes */
 .bg-soil-brown-50a {
-  background-color: rgba(var(--color-soil-brown), 0.5);
-  fill: rgba(var(--color-soil-brown), 0.5);
+	background-color: rgba(var(--color-soil-brown), 0.5);
+	fill: rgba(var(--color-soil-brown), 0.5);
 }
 .bg-mulch-tan-50a {
-  background-color: rgba(var(--color-mulch-tan), 0.5);
-  fill: rgba(var(--color-mulch-tan), 0.5);
+	background-color: rgba(var(--color-mulch-tan), 0.5);
+	fill: rgba(var(--color-mulch-tan), 0.5);
 }
 .bg-dew-gray-50a {
-  background-color: rgba(var(--color-dew-gray), 0.5);
-  fill: rgba(var(--color-dew-gray), 0.5);
+	background-color: rgba(var(--color-dew-gray), 0.5);
+	fill: rgba(var(--color-dew-gray), 0.5);
 }
 .bg-slate-label-gray-50a {
-  background-color: rgba(var(--color-slate-label-gray), 0.5);
-  fill: rgba(var(--color-slate-label-gray), 0.5);
+	background-color: rgba(var(--color-slate-label-gray), 0.5);
+	fill: rgba(var(--color-slate-label-gray), 0.5);
 }
 .bg-tomato-red-50a {
-  background-color: rgba(var(--color-tomato-red), 0.5);
-  fill: rgba(var(--color-tomato-red), 0.5);
+	background-color: rgba(var(--color-tomato-red), 0.5);
+	fill: rgba(var(--color-tomato-red), 0.5);
 }
 .bg-red-delicious-apple-50a {
-  background-color: rgba(var(--color-red-delicious-apple), 0.5);
-  fill: rgba(var(--color-red-delicious-apple), 0.5);
+	background-color: rgba(var(--color-red-delicious-apple), 0.5);
+	fill: rgba(var(--color-red-delicious-apple), 0.5);
 }
 .bg-lettuce-green-50a {
-  background-color: rgba(var(--color-lettuce-green), 0.5);
-  fill: rgba(var(--color-lettuce-green), 0.5);
+	background-color: rgba(var(--color-lettuce-green), 0.5);
+	fill: rgba(var(--color-lettuce-green), 0.5);
 }
 .bg-spinach-green-50a {
-  background-color: rgba(var(--color-spinach-green), 0.5);
-  fill: rgba(var(--color-spinach-green), 0.5);
+	background-color: rgba(var(--color-spinach-green), 0.5);
+	fill: rgba(var(--color-spinach-green), 0.5);
 }
 .bg-zucchini-skin-50a {
-  background-color: rgba(var(--color-zucchini-skin), 0.5);
-  fill: rgba(var(--color-zucchini-skin), 0.5);
+	background-color: rgba(var(--color-zucchini-skin), 0.5);
+	fill: rgba(var(--color-zucchini-skin), 0.5);
 }
 .bg-green-apple-50a {
-  background-color: rgba(var(--color-green-apple), 0.5);
-  fill: rgba(var(--color-green-apple), 0.5);
+	background-color: rgba(var(--color-green-apple), 0.5);
+	fill: rgba(var(--color-green-apple), 0.5);
 }
 .bg-cucumber-green-50a {
-  background-color: rgba(var(--color-cucumber-green), 0.5);
-  fill: rgba(var(--color-cucumber-green), 0.5);
+	background-color: rgba(var(--color-cucumber-green), 0.5);
+	fill: rgba(var(--color-cucumber-green), 0.5);
 }
 .bg-hot-chili-red-50a {
-  background-color: rgba(var(--color-hot-chili-red), 0.5);
-  fill: rgba(var(--color-hot-chili-red), 0.5);
+	background-color: rgba(var(--color-hot-chili-red), 0.5);
+	fill: rgba(var(--color-hot-chili-red), 0.5);
 }
 .bg-yellow-pepper-50a {
-  background-color: rgba(var(--color-yellow-pepper), 0.5);
-  fill: rgba(var(--color-yellow-pepper), 0.5);
+	background-color: rgba(var(--color-yellow-pepper), 0.5);
+	fill: rgba(var(--color-yellow-pepper), 0.5);
 }
 .bg-orange-habanero-50a {
-  background-color: rgba(var(--color-orange-habanero), 0.5);
-  fill: rgba(var(--color-orange-habanero), 0.5);
+	background-color: rgba(var(--color-orange-habanero), 0.5);
+	fill: rgba(var(--color-orange-habanero), 0.5);
 }
 .bg-purple-chili-50a {
-  background-color: rgba(var(--color-purple-chili), 0.5);
-  fill: rgba(var(--color-purple-chili), 0.5);
+	background-color: rgba(var(--color-purple-chili), 0.5);
+	fill: rgba(var(--color-purple-chili), 0.5);
 }
 .bg-jalapeno-green-50a {
-  background-color: rgba(var(--color-jalapeno-green), 0.5);
-  fill: rgba(var(--color-jalapeno-green), 0.5);
+	background-color: rgba(var(--color-jalapeno-green), 0.5);
+	fill: rgba(var(--color-jalapeno-green), 0.5);
 }
 .bg-marigold-gold-50a {
-  background-color: rgba(var(--color-marigold-gold), 0.5);
-  fill: rgba(var(--color-marigold-gold), 0.5);
+	background-color: rgba(var(--color-marigold-gold), 0.5);
+	fill: rgba(var(--color-marigold-gold), 0.5);
 }
 .bg-lavender-purple-50a {
-  background-color: rgba(var(--color-lavender-purple), 0.5);
-  fill: rgba(var(--color-lavender-purple), 0.5);
+	background-color: rgba(var(--color-lavender-purple), 0.5);
+	fill: rgba(var(--color-lavender-purple), 0.5);
 }
 .bg-dahlia-pink-50a {
-  background-color: rgba(var(--color-dahlia-pink), 0.5);
-  fill: rgba(var(--color-dahlia-pink), 0.5);
+	background-color: rgba(var(--color-dahlia-pink), 0.5);
+	fill: rgba(var(--color-dahlia-pink), 0.5);
 }
 .bg-cornflower-blue-50a {
-  background-color: rgba(var(--color-cornflower-blue), 0.5);
-  fill: rgba(var(--color-cornflower-blue), 0.5);
+	background-color: rgba(var(--color-cornflower-blue), 0.5);
+	fill: rgba(var(--color-cornflower-blue), 0.5);
 }
 .bg-poppy-red-50a {
-  background-color: rgba(var(--color-poppy-red), 0.5);
-  fill: rgba(var(--color-poppy-red), 0.5);
+	background-color: rgba(var(--color-poppy-red), 0.5);
+	fill: rgba(var(--color-poppy-red), 0.5);
 }

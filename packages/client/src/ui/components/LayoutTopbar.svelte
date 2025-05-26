@@ -5,14 +5,12 @@
 	role="navigation"
 	aria-label="Navbar"
 	class="flex items-center justify-between px-3"
-	id="layout-topbar"
->
+	id="layout-topbar">
 	<div class="inline-flex items-center gap-3">
 		<label
 			class="btn btn-square btn-ghost btn-sm"
 			aria-label="Leftmenu toggle"
-			for="layout-sidebar-toggle-trigger"
-		>
+			for="layout-sidebar-toggle-trigger">
 			<span class="iconify lucide--menu size-5"></span>
 		</label>
 	</div>
@@ -22,8 +20,7 @@
 				tabindex="0"
 				role="button"
 				class="btn btn-sm btn-circle btn-ghost"
-				aria-label="Theme toggle"
-			>
+				aria-label="Theme toggle">
 				<span
 					class="iconify lucide--sun hidden size-4 size-4.5 group-data-[theme=light]/html:inline"
 				></span>
@@ -38,13 +35,11 @@
 				></span>
 			</div>
 			<ul
-				class="dropdown-content menu bg-base-100 rounded-box z-1 mt-2 w-36 space-y-0.5 p-1 shadow-sm"
-			>
+				class="dropdown-content menu bg-base-100 rounded-box z-1 mt-2 w-36 space-y-0.5 p-1 shadow-sm">
 				<li>
 					<div
 						class="group-data-[theme=light]/html:bg-base-200 flex gap-2"
-						data-theme-control="light"
-					>
+						data-theme-control="light">
 						<span class="iconify lucide--sun size-4.5"></span>
 						<span class="font-medium">Light</span>
 					</div>
@@ -52,8 +47,7 @@
 				<li>
 					<div
 						class="group-data-[theme=dark]/html:bg-base-200 flex gap-2"
-						data-theme-control="dark"
-					>
+						data-theme-control="dark">
 						<span class="iconify lucide--moon size-4.5"></span>
 						<span class="font-medium">Dark</span>
 					</div>
@@ -61,8 +55,7 @@
 				<li>
 					<div
 						class="group-[:not([data-theme])]/html:bg-base-200 flex gap-2"
-						data-theme-control="system"
-					>
+						data-theme-control="system">
 						<span class="iconify lucide--monitor size-4.5"></span>
 						<span class="font-medium">System</span>
 					</div>
@@ -71,8 +64,7 @@
 		</div>
 		<label
 			for="layout-rightbar-drawer"
-			class="btn btn-circle btn-ghost btn-sm drawer-button"
-		>
+			class="btn btn-circle btn-ghost btn-sm drawer-button">
 			<span class="iconify lucide--settings-2 size-4.5"></span>
 		</label>
 		<div class="dropdown dropdown-bottom sm:dropdown-end max-sm:dropdown-center">
@@ -80,13 +72,11 @@
 				tabindex="0"
 				role="button"
 				class="btn btn-circle btn-ghost btn-sm"
-				aria-label="Notifications"
-			>
+				aria-label="Notifications">
 				<span class="iconify lucide--bell size-4.5"></span>
 			</div>
 			<div
-				class="dropdown-content bg-base-100 rounded-box card card-compact mt-5 w-60 p-2 shadow sm:w-84"
-			>
+				class="dropdown-content bg-base-100 rounded-box card card-compact mt-5 w-60 p-2 shadow sm:w-84">
 				<div class="flex items-center justify-between px-2">
 					<p class="text-base font-medium">Notification</p>
 					<button tabindex="0" class="btn btn-sm btn-circle btn-ghost" aria-label="Close">
@@ -98,13 +88,11 @@
 				</div>
 				<div class="mt-2">
 					<div
-						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all"
-					>
+						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all">
 						<img
 							class="bg-base-200 mask mask-squircle size-10 p-0.5"
 							alt=""
-							src="./images/avatars/4.png"
-						/>
+							src="./images/avatars/4.png" />
 						<div class="grow">
 							<p class="text-sm leading-tight">
 								Customer has requested a return for item
@@ -115,13 +103,11 @@
 						</div>
 					</div>
 					<div
-						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all"
-					>
+						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all">
 						<img
 							class="bg-base-200 mask mask-squircle size-10 p-0.5"
 							alt=""
-							src="./images/avatars/5.png"
-						/>
+							src="./images/avatars/5.png" />
 						<div class="grow">
 							<p class="text-sm leading-tight">
 								A new review has been submitted for product
@@ -137,13 +123,11 @@
 				</div>
 				<div class="mt-2">
 					<div
-						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all"
-					>
+						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all">
 						<img
 							class="bg-base-200 mask mask-squircle size-10 p-0.5"
 							alt=""
-							src="./images/avatars/1.png"
-						/>
+							src="./images/avatars/1.png" />
 						<div class="grow">
 							<p class="text-sm leading-tight">
 								Prepare for the upcoming weekend promotion
@@ -154,13 +138,11 @@
 						</div>
 					</div>
 					<div
-						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all"
-					>
+						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all">
 						<img
 							class="bg-base-200 mask mask-squircle size-10 p-0.5"
 							alt=""
-							src="./images/avatars/2.png"
-						/>
+							src="./images/avatars/2.png" />
 						<div class="grow">
 							<p class="text-sm leading-tight">
 								Product 'ABC123' is running low in stock.
@@ -171,13 +153,11 @@
 						</div>
 					</div>
 					<div
-						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all"
-					>
+						class="rounded-box hover:bg-base-200 flex cursor-pointer gap-3 px-2 py-1.5 transition-all">
 						<img
 							class="bg-base-200 mask mask-squircle size-10 p-0.5"
 							alt=""
-							src="./images/avatars/3.png"
-						/>
+							src="./images/avatars/3.png" />
 						<div class="grow">
 							<p class="text-sm leading-tight">Payment received for Order ID: #67890</p>
 							<p class="text-base-content/60 text-end text-xs leading-tight">Week ago</p>

@@ -1,9 +1,26 @@
 {
-	"plugins": ["prettier-plugin-svelte"],
-	"overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
-	"svelte-allow-shorthand": false,
-  "svelteIndentScriptAndStyle": true,
-  "svelte-bracket-new-line": true,
+	"plugins": [
+		"prettier-plugin-svelte",
+		"@trivago/prettier-plugin-sort-imports",
+		"prettier-plugin-tailwindcss"
+	],
+	"overrides": [
+		{ "files": "*.svelte", "options": { "parser": "svelte" } },
+		{
+			"files": "*.ts",
+			"options": {
+				"parser": "babel-ts"
+			}
+		},
+		{
+			"files": "*.d.ts",
+			"options": {
+				"parser": "babel-ts"
+			}
+		}
+	],
+	"svelteAllowShorthand": false,
+	"svelteIndentScriptAndStyle": false,
 	"semi": false,
 	"singleQuote": true,
 	"trailingComma": "all",
@@ -12,7 +29,10 @@
 	"tabWidth": 2,
 	"useTabs": true,
 	"bracketSpacing": true,
-	"bracketSameLine": false,
-	"jsxBracketSameLine": false,
-	"quoteProps": "as-needed"
+	"bracketSameLine": true,
+	"quoteProps": "as-needed",
+	"importOrder": ["<THIRD_PARTY_MODULES>", "^[./]"],
+	"importOrderSeparation": true,
+	"importOrderGroupNamespaceSpecifiers": true,
+	"importOrderSortSpecifiers": true
 }

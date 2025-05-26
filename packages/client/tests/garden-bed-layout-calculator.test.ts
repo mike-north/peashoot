@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
+
 import {
 	GardenBedLayoutCalculator,
+	calculateEdgeBorders,
 	getPlantCells,
 	getSharedBorders,
-	calculateEdgeBorders,
 	isValidDrop,
 } from '../src/lib/garden-bed-layout-calculator.js'
 import type { GardenBed } from '../src/lib/garden-bed.js'

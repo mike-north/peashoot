@@ -1,10 +1,9 @@
 // Layout calculator for garden bed and tiles
-
-import { makePoint, type Line } from './types/geometry'
-import type { Keyed } from './types/ui'
-import { DEFAULT_LAYOUT_PARAMS } from './layout-constants'
 import type { GardenBed } from './garden-bed'
+import { DEFAULT_LAYOUT_PARAMS } from './layout-constants'
 import type { PlantPlacement } from './plant-placement'
+import { type Line, makePoint } from './types/geometry'
+import type { Keyed } from './types/ui'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.

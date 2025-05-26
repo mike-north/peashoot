@@ -1,38 +1,37 @@
 <script lang="ts">
-	import { Tween } from 'svelte/motion'
-	import { cubicOut } from 'svelte/easing'
+import { cubicOut } from 'svelte/easing'
+import { Tween } from 'svelte/motion'
 
-	let hovered = $state(false)
-	let flipped = $state(false)
-	const controlY = new Tween(0, { duration: 500, easing: cubicOut })
-	const controlYUp = new Tween(0, { duration: 500, easing: cubicOut })
+let hovered = $state(false)
+let flipped = $state(false)
+const controlY = new Tween(0, { duration: 500, easing: cubicOut })
+const controlYUp = new Tween(0, { duration: 500, easing: cubicOut })
 
-	$effect(() => {
-		controlY.set(hovered ? 40 : 0).catch((err: unknown) => {
-			console.error('Error setting controlY', err)
-		})
+$effect(() => {
+	controlY.set(hovered ? 40 : 0).catch((err: unknown) => {
+		console.error('Error setting controlY', err)
 	})
-	$effect(() => {
-		controlYUp.set(hovered ? -40 : 0).catch((err: unknown) => {
-			console.error('Error setting controlYUp', err)
-		})
+})
+$effect(() => {
+	controlYUp.set(hovered ? -40 : 0).catch((err: unknown) => {
+		console.error('Error setting controlYUp', err)
 	})
+})
 
-	function toggleFlip() {
-		flipped = !flipped
-	}
+function toggleFlip() {
+	flipped = !flipped
+}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="packet"
-	class:flipped
+	class:flipped={flipped}
 	onclick={toggleFlip}
 	role="button"
 	tabindex="0"
 	onmouseenter={() => (hovered = true)}
-	onmouseleave={() => (hovered = false)}
->
+	onmouseleave={() => (hovered = false)}>
 	<div class="packet-inner">
 		<div class="packet-front">
 			<svg
@@ -41,8 +40,7 @@
 				viewBox="0 -40 400 540"
 				xmlns="http://www.w3.org/2000/svg"
 				font-family="sans-serif"
-				font-size="16"
-			>
+				font-size="16">
 				<defs>
 					<linearGradient id="packetFrontGradient" x1="0" y1="0" x2="1" y2="1">
 						<stop offset="0%" stop-color="#fdfbf6" />
@@ -71,8 +69,7 @@
 							cy="100%"
 							r="100%"
 							fx="50%"
-							fy="100%"
-						>
+							fy="100%">
 							<stop offset="0%" stop-color="#b3a98a" stop-opacity="0.4" />
 							<stop offset="70%" stop-color="#b3a98a" stop-opacity="0.18" />
 							<stop offset="100%" stop-color="#b3a98a" stop-opacity="0" />
@@ -88,8 +85,7 @@
 					ry="13"
 					fill="url(#packetFrontGradient)"
 					stroke="none"
-					class="packet-front"
-				/>
+					class="packet-front" />
 				<!-- Draw the left, right, and bottom edges, including top corners, but skip the top edge -->
 				<path
 					d="M12,0
@@ -102,22 +98,19 @@
              A12,12 0 0 0 388,0"
 					fill="none"
 					stroke="#aaa"
-					stroke-width="2"
-				/>
+					stroke-width="2" />
 				<!-- Flap (front, curving out) -->
 				<path
 					d="M8,0 Q200,{controlY.current} 392,0"
 					fill="url(#flapFrontLipGradient)"
-					stroke="#aaa"
-				/>
+					stroke="#aaa" />
 				<!-- Flap (upward arch, bulges up on hover, inside shadow, closely overlapping) -->
 				<path
 					d="M8,0 Q200,{8 + controlYUp.current} 392,0"
 					fill="url(#flapBackLipGradient)"
 					stroke="#aaa"
 					stroke-width="1"
-					opacity="1"
-				/>
+					opacity="1" />
 
 				<text
 					x="200"
@@ -136,18 +129,14 @@
 					height="220"
 					fill="none"
 					stroke="#333"
-					stroke-width="2"
-				/>
+					stroke-width="2" />
 				<text x="200" y="250" font-size="18" text-anchor="middle" fill="#999"
-					>(image)</text
-				>
+					>(image)</text>
 				<text x="200" y="340" font-size="20" text-anchor="middle" fill="#333"
-					>SEED COUNT</text
-				>
+					>SEED COUNT</text>
 				<text x="30" y="470" font-size="16" fill="#444">Net Wt. 1g</text>
 				<text x="370" y="470" font-size="16" text-anchor="end" fill="#444"
-					>Product of Mexico</text
-				>
+					>Product of Mexico</text>
 			</svg>
 		</div>
 		<div class="packet-back">
@@ -157,8 +146,7 @@
 				viewBox="0 -40 400 540"
 				xmlns="http://www.w3.org/2000/svg"
 				font-family="sans-serif"
-				font-size="16"
-			>
+				font-size="16">
 				<!-- Back Panel -->
 				<rect
 					x="0"
@@ -168,22 +156,19 @@
 					rx="13"
 					ry="13"
 					fill="url(#packetBackGradient)"
-					stroke="none"
-				/>
+					stroke="none" />
 				<!-- Flap (front, curving out) -->
 				<path
 					d="M8,0 Q200,{controlY.current} 392,0"
 					fill="url(#flapFrontLipGradient)"
-					stroke="#aaa"
-				/>
+					stroke="#aaa" />
 				<!-- Flap (upward arch, bulges up on hover, inside shadow, closely overlapping) -->
 				<path
 					d="M8,0 Q200,{8 + controlYUp.current} 392,0"
 					fill="url(#flapBackLipGradient)"
 					stroke="#aaa"
 					stroke-width="1"
-					opacity="1"
-				/>
+					opacity="1" />
 				<!-- Border path to match the front -->
 				<path
 					d="M13,0
@@ -196,16 +181,14 @@
              A13,13 0 0 0 387,0"
 					fill="none"
 					stroke="#aaa"
-					stroke-width="2"
-				/>
+					stroke-width="2" />
 				<text
 					x="200"
 					y="200"
 					font-size="32"
 					font-weight="bold"
 					text-anchor="middle"
-					fill="#222">INSTRUCTIONS</text
-				>
+					fill="#222">INSTRUCTIONS</text>
 
 				<g fill="#222" stroke="#333" stroke-width="1">
 					<text x="40" y="250" font-size="20" font-weight="bold">Sow:</text>
@@ -232,45 +215,45 @@
 </div>
 
 <style lang="scss">
-	.packet {
-		cursor: pointer;
-		perspective: 1000px;
-		max-width: 300px;
-		aspect-ratio: 4 / 5;
-		/* Or for responsiveness: max-width: 400px; width: 100%; aspect-ratio: 4 / 5; */
-		.packet-inner {
-			position: relative;
-			width: 100%;
-			height: 100%;
-			transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-			transform-style: preserve-3d;
-		}
-		&.flipped .packet-inner {
-			transform: rotateY(180deg);
-		}
-		.packet-front,
-		.packet-back {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			backface-visibility: hidden;
-			border-radius: 12px;
-		}
-		.packet-back {
-			transform: rotateY(180deg);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.title {
-			pointer-events: none;
-		}
-	}
-	svg {
+.packet {
+	cursor: pointer;
+	perspective: 1000px;
+	max-width: 300px;
+	aspect-ratio: 4 / 5;
+	/* Or for responsiveness: max-width: 400px; width: 100%; aspect-ratio: 4 / 5; */
+	.packet-inner {
+		position: relative;
 		width: 100%;
 		height: 100%;
-		display: block;
+		transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+		transform-style: preserve-3d;
 	}
+	&.flipped .packet-inner {
+		transform: rotateY(180deg);
+	}
+	.packet-front,
+	.packet-back {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		backface-visibility: hidden;
+		border-radius: 12px;
+	}
+	.packet-back {
+		transform: rotateY(180deg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.title {
+		pointer-events: none;
+	}
+}
+svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
 </style>

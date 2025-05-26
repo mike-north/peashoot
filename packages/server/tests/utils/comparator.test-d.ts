@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { expectError, expectType } from 'tsd'
 
-import { expectType, expectError } from 'tsd'
 import { Comparator, ScalarComparator } from '../../src/utils/comparator'
 
 // Dummy types for testing

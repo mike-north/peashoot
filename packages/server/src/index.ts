@@ -1,6 +1,7 @@
-import { Plant } from './entities/plant'
-import { AppDataSource } from './data-source'
 import * as rimraf from 'rimraf'
+
+import { AppDataSource } from './data-source'
+import { Plant } from './entities/plant'
 
 export function helloWorld() {
 	return 'Hello World'

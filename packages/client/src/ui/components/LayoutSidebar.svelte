@@ -1,12 +1,12 @@
 <script lang="ts">
-	import logo from '../../assets/images/peashoot-sidebar-logo.png'
-	import LayoutSidebarMenu, { type SidebarMenuProps } from './LayoutSidebarMenu.svelte'
+import logo from '../../assets/images/peashoot-sidebar-logo.png'
+import LayoutSidebarMenu, { type SidebarMenuProps } from './LayoutSidebarMenu.svelte'
 
-	interface LayoutSidebarProps {
-		menu: SidebarMenuProps
-	}
+interface LayoutSidebarProps {
+	menu: SidebarMenuProps
+}
 
-	const props: LayoutSidebarProps = $props()
+const props: LayoutSidebarProps = $props()
 </script>
 
 <div id="layout-sidebar">
@@ -18,18 +18,18 @@
 			<LayoutSidebarMenu {...props.menu} />
 		</div>
 		<div
-			class="from-base-100/60 pointer-events-none absolute start-0 end-0 bottom-0 h-7 bg-linear-to-t to-transparent"
-		></div>
+			class="from-base-100/60 pointer-events-none absolute start-0 end-0 bottom-0 h-7 bg-linear-to-t to-transparent">
+		</div>
 	</div>
 </div>
 <label for="layout-sidebar-toggle-trigger" id="layout-sidebar-backdrop"></label>
 
 <style lang="scss">
-	.sidebar-logo {
-		height: 40px;
-		object-fit: contain;
-	}
-	#layout-sidebar {
-		background: rgba(var(--color-lettuce-green), 0.2);
-	}
+.sidebar-logo {
+	height: 40px;
+	object-fit: contain;
+}
+#layout-sidebar {
+	background: rgba(var(--color-lettuce-green), 0.2);
+}
 </style>

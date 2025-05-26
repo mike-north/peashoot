@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import { updatePlantPositionInBed, type GardenBed } from '../src/lib/garden-bed.js'
+import { describe, expect, it } from 'vitest'
+
+import { type GardenBed, updatePlantPositionInBed } from '../src/lib/garden-bed.js'
 import type { PlantPlacement } from '../src/lib/plant-placement.js'
 import type { Plant } from '../src/lib/plant.js'
 

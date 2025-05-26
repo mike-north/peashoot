@@ -1,11 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { Duration } from 'date-fns'
+import { describe, expect, it } from 'vitest'
+
 import {
-	timeComparator,
+	Interval,
 	durationComparator,
 	intervalComparator,
-	Interval,
+	timeComparator,
 } from '../../src/values/time'
-import { Duration } from 'date-fns'
 
 describe('timeComparator', () => {
 	it('should consider equal times', () => {

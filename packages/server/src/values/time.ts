@@ -1,12 +1,13 @@
-import { Comparator, ScalarComparator } from '../utils/comparator'
 import {
-	isBefore,
-	isAfter,
-	isEqual,
 	DateArg,
-	Duration,
 	Interval as DateFnsInterval,
+	Duration,
+	isAfter,
+	isBefore,
+	isEqual,
 } from 'date-fns'
+
+import { Comparator, ScalarComparator } from '../utils/comparator'
 
 export type Time = DateArg<Date>
 

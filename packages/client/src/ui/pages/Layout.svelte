@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { Router, type RouteConfig } from '@mateothegreat/svelte5-router'
+import { type RouteConfig, Router } from '@mateothegreat/svelte5-router'
 
-	import Garden from './Garden.svelte'
-	import Home from './Home.svelte'
-	import SeedCatalog from './SeedCatalog.svelte'
-	import LayoutSidebar from '../components/LayoutSidebar.svelte'
-	import LayoutTopbar from '../components/LayoutTopbar.svelte'
+import LayoutSidebar from '../components/LayoutSidebar.svelte'
+import LayoutTopbar from '../components/LayoutTopbar.svelte'
+import Garden from './Garden.svelte'
+import Home from './Home.svelte'
+import SeedCatalog from './SeedCatalog.svelte'
 
-	const routes: RouteConfig[] = [
-		{
-			component: Home,
-		},
-		{
-			path: 'garden',
-			component: Garden,
-		},
-		{
-			path: 'seed-catalog',
-			component: SeedCatalog,
-		},
-	]
+const routes: RouteConfig[] = [
+	{
+		component: Home,
+	},
+	{
+		path: 'garden',
+		component: Garden,
+	},
+	{
+		path: 'seed-catalog',
+		component: SeedCatalog,
+	},
+]
 </script>
 
 <div class="size-full">
@@ -28,8 +28,7 @@
 			type="checkbox"
 			id="layout-sidebar-toggle-trigger"
 			class="hidden"
-			aria-label="Toggle layout sidebar"
-		/>
+			aria-label="Toggle layout sidebar" />
 
 		<LayoutSidebar
 			menu={{
@@ -47,13 +46,12 @@
 						href: '/seed-catalog',
 					},
 				],
-			}}
-		/>
+			}} />
 
 		<div class="flex h-screen min-w-0 grow flex-col overflow-auto">
 			<LayoutTopbar />
 			<div id="layout-content">
-				<Router {routes} />
+				<Router routes={routes} />
 			</div>
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	// About page logic (if any)
+// About page logic (if any)
 </script>
 
 <section>

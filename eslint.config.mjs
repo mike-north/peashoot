@@ -3,6 +3,7 @@ import tseslint from "typescript-eslint";
 import svelte from "eslint-plugin-svelte";
 import n from "eslint-plugin-n";
 import svelteConfig from "./packages/client/svelte.config.js";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default tseslint.config(
   {
@@ -24,6 +25,7 @@ export default tseslint.config(
     ],
   },
   js.configs.recommended,
+  eslintPluginPrettierRecommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylistic,
   ...svelte.configs.recommended,

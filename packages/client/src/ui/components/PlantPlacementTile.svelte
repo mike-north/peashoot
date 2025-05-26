@@ -79,7 +79,7 @@
 		}
 		.plant-placement-tile__size-indicator,
 		.plant-placement-tile__name {
-			fill-opacity: 0.7	;
+			fill-opacity: 0.7;
 		}
 		&.tomato {
 			.plant-placement-tile__background {

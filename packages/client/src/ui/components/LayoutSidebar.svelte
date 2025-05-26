@@ -2,11 +2,6 @@
 	import { route } from '@mateothegreat/svelte5-router'
 	import logo from '../../assets/images/peashoot-sidebar-logo.png'
 	import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
-
-	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-	interface LayoutSidebarProps {}
-
-	const _props: LayoutSidebarProps = $props()
 </script>
 
 <div id="layout-sidebar" class="hidden lg:flex h-100vh flex-col w-64">

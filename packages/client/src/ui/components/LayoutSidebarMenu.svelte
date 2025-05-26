@@ -65,8 +65,7 @@
 				/* Ensure border-radius matches default if not already covered by .btn or other styles */
 			}
 		}
-		.top-level-item,
-		.sidebar-menu-item {
+		.top-level-item {
 			border: 1px solid transparent;
 			color: var(--color-green-800);
 			min-height: calc(var(--spacing) * 8);
@@ -79,10 +78,6 @@
 			line-height: var(--tw-leading, var(--text-sm--line-height));
 			display: flex;
 			// Default text color - you might want to adjust this
-		}
-
-		.collapse-title {
-			font-weight: 900; // Keep this if you want group titles to be bolder by default
 		}
 	}
 </style>

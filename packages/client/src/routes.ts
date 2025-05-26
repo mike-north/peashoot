@@ -9,7 +9,7 @@ import SeedCatalog from './ui/pages/SeedCatalog.svelte'
 export interface PeashootRouteInfo {
 	forRouter: RouteConfig
 	label: string
-	icon?: Component<any>
+	icon?: Component<Record<string, unknown>>
 	path: string
 	hideInSidebar?: boolean
 }

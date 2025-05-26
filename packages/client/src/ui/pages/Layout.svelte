@@ -1,19 +1,13 @@
 <script lang="ts">
 	import { Router, type RouteConfig } from '@mateothegreat/svelte5-router'
-	import { defaultRouteConfig, routes as routeData } from '../../routes'
-	//isSmallScreen store import removed
+	import { routes as routeData } from '../../routes'
 
 	import LayoutSidebar from '../components/LayoutSidebar.svelte'
-	import LayoutTopbar from '../components/LayoutTopbar.svelte'
 
-	const routes: RouteConfig[] = routeData.map((r) => r.forRouter)
-	// topItems is no longer passed to LayoutSidebar, it manages its own menu items
-	// const topItems = routeData
-	// 	.filter((r) => !r.hideInSidebar)
-	// 	.map((r) => ({
-	// 		label: r.label,
-	// 		href: r.path,
-	// 	}))
+	const routes: RouteConfig[] = routeData.map(
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+		(r) => r.forRouter as unknown as RouteConfig,
+	)
 </script>
 
 <div class="size-full">

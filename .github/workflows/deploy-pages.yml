@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ['CI']
     types:
       - completed
     branches:
@@ -12,7 +12,6 @@ permissions:
   pages: write
   id-token: write
 
-  
 jobs:
   deploy:
     if: >
@@ -22,6 +21,12 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Clean workspace (remove old repo directories)
+        run: |
+          rm -rf /home/runner/work/peashoot/peashoot
+      - name: Set safe directory
+        run: |
+          /usr/bin/git config --global --add safe.directory /home/runner/work/mike-north/peashoot
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -46,4 +51,4 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 
+        uses: actions/deploy-pages@v4

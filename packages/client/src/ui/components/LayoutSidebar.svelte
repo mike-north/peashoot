@@ -1,6 +1,10 @@
 <script lang="ts">
-import logo from '../../assets/images/peashoot-sidebar-logo.png'
-import LayoutSidebarMenu, { type SidebarMenuProps } from './LayoutSidebarMenu.svelte'
+import logo from '../../assets/images/peashoot-sidebar-logo.png';
+import LayoutSidebarMenu, { type SidebarMenuProps } from './LayoutSidebarMenu.svelte';
+
+
+
+
 
 interface LayoutSidebarProps {
 	menu: SidebarMenuProps

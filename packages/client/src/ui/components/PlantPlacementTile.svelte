@@ -1,5 +1,9 @@
 <script lang="ts">
-import type { PlantPlacement } from '../../lib/plant-placement'
+import type { PlantPlacement } from '../../lib/plant-placement';
+
+
+
+
 
 export let plantPlacement: PlantPlacement
 export let x = 0 // SVG x position

@@ -1,11 +1,17 @@
 <script lang="ts">
-import { type RouteConfig, Router } from '@mateothegreat/svelte5-router'
+import { type RouteConfig, Router } from '@mateothegreat/svelte5-router';
 
-import LayoutSidebar from '../components/LayoutSidebar.svelte'
-import LayoutTopbar from '../components/LayoutTopbar.svelte'
-import Garden from './Garden.svelte'
-import Home from './Home.svelte'
-import SeedCatalog from './SeedCatalog.svelte'
+
+
+import LayoutSidebar from '../components/LayoutSidebar.svelte';
+import LayoutTopbar from '../components/LayoutTopbar.svelte';
+import Garden from './Garden.svelte';
+import Home from './Home.svelte';
+import SeedCatalog from './SeedCatalog.svelte';
+
+
+
+
 
 const routes: RouteConfig[] = [
 	{

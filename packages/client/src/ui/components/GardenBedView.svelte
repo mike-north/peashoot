@@ -1,15 +1,15 @@
 <script lang="ts">
-import type { GardenBed } from '../../lib/garden-bed'
-import {
-	type Border,
-	GardenBedLayoutCalculator,
-	calculateEdgeBorders,
-} from '../../lib/garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import { dragState, isDragStatePopulated } from '../state/dragState'
-import HorizontalBarMeter from './HorizontalBarMeter.svelte'
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+import type { GardenBed } from '../../lib/garden-bed';
+import { type Border, GardenBedLayoutCalculator, calculateEdgeBorders } from '../../lib/garden-bed-layout-calculator';
+import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants';
+import type { PlantPlacement } from '../../lib/plant-placement';
+import { dragState, isDragStatePopulated } from '../state/dragState';
+import HorizontalBarMeter from './HorizontalBarMeter.svelte';
+import PlantPlacementTile from './PlantPlacementTile.svelte';
+
+
+
+
 
 interface GardenBedViewProps {
 	bed: GardenBed

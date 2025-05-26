@@ -1,10 +1,14 @@
 <script lang="ts">
-import type { Garden } from '../../lib/garden'
-import { movePlantBetweenBeds } from '../../lib/garden'
-import type { GardenBed } from '../../lib/garden-bed'
-import { updatePlantPositionInBed } from '../../lib/garden-bed'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import GardenView from '../components/GardenView.svelte'
+import type { Garden } from '../../lib/garden';
+import { movePlantBetweenBeds } from '../../lib/garden';
+import type { GardenBed } from '../../lib/garden-bed';
+import { updatePlantPositionInBed } from '../../lib/garden-bed';
+import type { PlantPlacement } from '../../lib/plant-placement';
+import GardenView from '../components/GardenView.svelte';
+
+
+
+
 
 let gardenInstance = $state<Garden>({
 	id: 'garden_0',

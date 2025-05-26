@@ -1,4 +1,5 @@
 <script lang="ts">
+
 interface HorizontalBarMeterProps {
 	id: string
 	value: number
@@ -20,6 +21,7 @@ const {
 	borderColor = '#3498db',
 	labelColor = '#3498db',
 }: HorizontalBarMeterProps = $props()
+
 </script>
 
 <div class="horizontal-bar-meter">

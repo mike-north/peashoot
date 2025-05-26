@@ -1,4 +1,5 @@
 <script lang="ts">
+
 export interface SidebarNavGroup {
 	label: string
 	items: SidebarNavItem[]
@@ -15,6 +16,7 @@ export interface SidebarMenuProps {
 }
 
 const { topItems = [], groups = [] }: SidebarMenuProps = $props()
+
 </script>
 
 <div id="sidebar-menu">

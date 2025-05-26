@@ -1,8 +1,12 @@
 <script lang="ts">
-import type { Garden } from '../../lib/garden'
-import type { GardenBed } from '../../lib/garden-bed'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import GardenView from './GardenView.svelte'
+import type { Garden } from '../../lib/garden';
+import type { GardenBed } from '../../lib/garden-bed';
+import type { PlantPlacement } from '../../lib/plant-placement';
+import GardenView from './GardenView.svelte';
+
+
+
+
 
 let gardenInstance = $state<Garden>({
 	id: 'garden_0',

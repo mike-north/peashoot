@@ -1,17 +1,19 @@
 <script lang="ts">
-import { onDestroy } from 'svelte'
+import { onDestroy } from 'svelte';
 
-import type { Garden } from '../../lib/garden'
-import type { GardenBed } from '../../lib/garden-bed'
-import {
-	GardenBedLayoutCalculator,
-	isValidDrop,
-	screenToGridCoordinates,
-} from '../../lib/garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import { dragState } from '../state/dragState'
-import GardenBedView from './GardenBedView.svelte'
+
+
+import type { Garden } from '../../lib/garden';
+import type { GardenBed } from '../../lib/garden-bed';
+import { GardenBedLayoutCalculator, isValidDrop, screenToGridCoordinates } from '../../lib/garden-bed-layout-calculator';
+import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants';
+import type { PlantPlacement } from '../../lib/plant-placement';
+import { dragState } from '../state/dragState';
+import GardenBedView from './GardenBedView.svelte';
+
+
+
+
 
 interface GardenProps {
 	garden: Garden

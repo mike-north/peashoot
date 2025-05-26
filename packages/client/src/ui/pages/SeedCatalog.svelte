@@ -1,5 +1,11 @@
 <script lang="ts">
-import SeedPacket from '../components/SeedPacket.svelte'
+import SeedPacket from '../components/SeedPacket.svelte';
+
+
+
+
+
+
 </script>
 
 <span class="text-2xl font-bold">Seed Catalog</span>

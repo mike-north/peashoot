@@ -1,44 +1,44 @@
 <script lang="ts">
-	import type { Task, TaskList, UrgencyLevel } from '../../lib/types/tasks'
-	import CheckCircle from '~icons/ph/check-circle-duotone'
-	import Circle from '~icons/ph/circle-duotone'
-	import Calendar from '~icons/ph/calendar-duotone'
-	import AlertTriangle from '~icons/ph/warning-duotone'
-	import Fire from '~icons/ph/fire-duotone'
-	import Info from '~icons/ph/info-duotone'
+import type { Task, TaskList, UrgencyLevel } from '../../lib/types/tasks'
+import CheckCircle from '~icons/ph/check-circle-duotone'
+import Circle from '~icons/ph/circle-duotone'
+import Calendar from '~icons/ph/calendar-duotone'
+import AlertTriangle from '~icons/ph/warning-duotone'
+import Fire from '~icons/ph/fire-duotone'
+import Info from '~icons/ph/info-duotone'
 
-	interface Props {
-		taskList: TaskList
+interface Props {
+	taskList: TaskList
+}
+
+let { taskList }: Props = $props()
+
+const urgencyIcons: Record<UrgencyLevel, typeof Info> = {
+	low: Info,
+	medium: Calendar,
+	high: AlertTriangle,
+	critical: Fire,
+}
+
+const urgencyColors: Record<UrgencyLevel, string> = {
+	low: 'text-info',
+	medium: 'text-success',
+	high: 'text-warning',
+	critical: 'text-error',
+}
+
+function toggleTaskCompletion(taskId: string) {
+	const task = taskList.tasks.find((t: Task) => t.id === taskId)
+	if (task) {
+		task.completed = !task.completed
+		// In a real app, you would also persist this change
 	}
-
-	let { taskList }: Props = $props()
-
-	const urgencyIcons: Record<UrgencyLevel, typeof Info> = {
-		low: Info,
-		medium: Calendar,
-		high: AlertTriangle,
-		critical: Fire,
-	}
-
-	const urgencyColors: Record<UrgencyLevel, string> = {
-		low: 'text-info',
-		medium: 'text-success',
-		high: 'text-warning',
-		critical: 'text-error',
-	}
-
-	function toggleTaskCompletion(taskId: string) {
-		const task = taskList.tasks.find((t: Task) => t.id === taskId)
-		if (task) {
-			task.completed = !task.completed
-			// In a real app, you would also persist this change
-		}
-	}
+}
 </script>
 
 <style>
-	/* You can add component-specific styles here if needed, */
-	/* but try to use Tailwind utility classes as much as possible. */
+/* You can add component-specific styles here if needed, */
+/* but try to use Tailwind utility classes as much as possible. */
 </style>
 
 <div class="card bg-base-100 shadow-xl mb-6">

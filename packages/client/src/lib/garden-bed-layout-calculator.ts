@@ -486,14 +486,14 @@ export function screenToGridCoordinates(
 		0,
 		Math.min(
 			layout.width - 1,
-			Math.round((cursorpt.x - layout.interiorX) / layout.cellWidth),
+			Math.floor((cursorpt.x - layout.interiorX) / layout.cellWidth),
 		),
 	)
 	const y = Math.max(
 		0,
 		Math.min(
 			layout.height - 1,
-			layout.height - 1 - Math.round((cursorpt.y - layout.interiorY) / layout.cellHeight),
+			layout.height - 1 - Math.floor((cursorpt.y - layout.interiorY) / layout.cellHeight),
 		),
 	)
 	return { x, y }

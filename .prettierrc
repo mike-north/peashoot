@@ -2,7 +2,7 @@
 	"plugins": ["prettier-plugin-svelte"],
 	"overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
 	"svelteAllowShorthand": false,
-	"svelteIndentScriptAndStyle": true,
+	"svelteIndentScriptAndStyle": false,
 	"svelteSortOrder": "options-scripts-styles-markup",
 	"semi": false,
 	"singleQuote": true,

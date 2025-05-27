@@ -1,11 +1,15 @@
 <script lang="ts">
-	console.log('Home')
+import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
+import PageTitle from '../components/PageTitle.svelte'
+
+const { route }: { route: RouteResult } = $props()
 </script>
 
 <style lang="scss">
-	/* Remove unused styles */
+/* Remove unused styles */
 </style>
 
+<PageTitle route={route} />
 <div class="grid h-full place-items-center">
 	<div class="text-center">
 		<span class="text-2xl font-bold">Home</span>

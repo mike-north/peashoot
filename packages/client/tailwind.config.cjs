@@ -43,5 +43,13 @@ module.exports = {
 	],
 	daisyui: {
 		logs: false,
+		themes: [
+			{
+				light: {
+					...require('daisyui/src/theming/themes')['light'],
+					'primary-focus': 'mediumblue',
+				},
+			},
+		],
 	},
 }

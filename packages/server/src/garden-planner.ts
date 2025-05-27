@@ -4,6 +4,8 @@ import { CSP, min_conflicts } from 'csps'
 
 export type PlantName = string
 
+type Dict<T, K extends string | number | symbol = string> = Partial<Record<K, T>>
+
 export interface Plant {
 	name: PlantName
 	minSpacing: number
@@ -11,7 +13,7 @@ export interface Plant {
 	companions?: PlantName[]
 	antagonists?: PlantName[]
 	// Add other relevant plant properties here
-	[key: string]: any // For additional arbitrary properties
+	// [key: string]: any // For additional arbitrary properties
 }
 
 export interface CellAddress {
@@ -28,7 +30,7 @@ export interface ConstraintContext {
 	plant2: Plant
 	plant2CellId: CellId
 	allNeighbors: Readonly<Record<CellId, CellId[]>>
-	allPlants: Readonly<Record<PlantName, Plant>>
+	allPlants: Readonly<Record<PlantName, Plant | undefined>>
 	gridSize: number // Assuming square grid for simplicity in neighbors
 }
 
@@ -45,11 +47,7 @@ export interface PlantingRule {
 	readonly ruleName: string
 }
 
-export interface SolverSolution {
-	[bedId: string]: {
-		[cellCoordinates: string]: PlantName // "row,col": "plantName"
-	}
-}
+export type SolverSolution = Record<string, Record<CellId, PlantName>>
 
 // ---------------- Main Solver Class ----------------
 
@@ -59,24 +57,22 @@ interface GardenBedConfig {
 }
 
 export class PlantingSolver {
-	private plants: Record<PlantName, Plant>
+	private plants: Dict<Plant>
 	private beds: GardenBedConfig[]
 	private rules: { rule: PlantingRule; weight: number }[] = []
 	private cells: CellId[] = []
-	private cellToBedMap: Map<CellId, string> = new Map()
+	private cellToBedMap: Map<CellId, string>
 	private domains: Record<CellId, PlantName[]>
 	private neighbors: Record<CellId, CellId[]> = {}
 	private cspProblem?: CSP<object>
 
 	constructor(beds: GardenBedConfig[], plants: Plant[]) {
 		this.beds = beds
-		this.plants = plants.reduce(
-			(acc, plant) => {
-				acc[plant.name] = plant
-				return acc
-			},
-			{} as Record<PlantName, Plant>,
-		)
+		this.cellToBedMap = new Map()
+		this.plants = plants.reduce<Dict<Plant>>((acc, plant) => {
+			acc[plant.name] = plant
+			return acc
+		}, {})
 
 		this.initializeCellsAndNeighbors()
 		this.domains = this.initializeDomains()
@@ -134,7 +130,7 @@ export class PlantingSolver {
 		return cellDomains
 	}
 
-	public registerRule(rule: PlantingRule, weight: number = 1.0): void {
+	public registerRule(rule: PlantingRule, weight = 1.0): void {
 		if (weight <= 0) {
 			console.warn(
 				`Rule "${rule.ruleName}" registered with non-positive weight ${weight}. Review if this is intended, as it might lead to unexpected behavior.`,
@@ -152,6 +148,7 @@ export class PlantingSolver {
 		plant2NameObj: object,
 		satisfactionThreshold: number,
 	): boolean => {
+		// TODO: improve type safety
 		const plant1Name = plant1NameObj as unknown as PlantName
 		const plant2Name = plant2NameObj as unknown as PlantName
 
@@ -163,6 +160,10 @@ export class PlantingSolver {
 			return false
 		}
 
+		const bedCandidate = this.beds.find((b) => this.parseCellId(cell1Id).bedId === b.id)
+		if (!bedCandidate) {
+			throw new Error(`Bed not found for cell: ${cell1Id}`)
+		}
 		const context: ConstraintContext = {
 			plant1,
 			plant1CellId: cell1Id,
@@ -170,7 +171,7 @@ export class PlantingSolver {
 			plant2CellId: cell2Id,
 			allNeighbors: this.neighbors,
 			allPlants: this.plants,
-			gridSize: this.beds.find((b) => this.parseCellId(cell1Id).bedId === b.id)!.gridSize,
+			gridSize: bedCandidate.gridSize,
 		}
 
 		let totalWeightedScore = 0
@@ -194,8 +195,8 @@ export class PlantingSolver {
 	}
 
 	public solve(
-		maxIterations: number = 10000,
-		satisfactionThreshold: number = 0.75,
+		maxIterations = 10000,
+		satisfactionThreshold = 0.75,
 	): SolverSolution | null {
 		// CSP library requires the constraint function to have a specific signature.
 		// We adapt our masterConstraint using a closure to include the satisfactionThreshold.
@@ -255,7 +256,7 @@ export class SpacingConstraintRule implements PlantingRule {
 		// This rule only applies if the plants are the same type and are neighbors
 		if (
 			plant1.name === plant2.name &&
-			allNeighbors[plant1CellId]?.includes(plant2CellId)
+			allNeighbors[plant1CellId].includes(plant2CellId)
 		) {
 			if (plant1.minSpacing > 1) {
 				return 0.0 // Violation: same plants too close
@@ -272,7 +273,7 @@ export class AntagonistConstraintRule implements PlantingRule {
 		const { plant1, plant2, plant1CellId, plant2CellId, allNeighbors } = context
 
 		// This rule applies if plants are neighbors
-		if (allNeighbors[plant1CellId]?.includes(plant2CellId)) {
+		if (allNeighbors[plant1CellId].includes(plant2CellId)) {
 			if (
 				plant1.antagonists?.includes(plant2.name) ||
 				plant2.antagonists?.includes(plant1.name)

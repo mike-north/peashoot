@@ -6,7 +6,7 @@ import {
 	UpdateDateColumn,
 	OneToMany,
 } from 'typeorm'
-import { PlantableArea, PlantableAreaId } from './plantable-area'
+import { PlantableArea } from './plantable-area'
 
 export type GardenBedId = string & { readonly __gardenBed: unique symbol }
 

@@ -2298,3 +2298,2650 @@ seed-packets:
       seedCount: 100
       germinationRate: 75
       viabilityYears: 2
+
+  - id: "mary-washington-asparagus"
+    commonName: "Mary Washington Asparagus"
+    latinName: "Asparagus officinalis"
+    plantFamily: "asparagus"
+    description: "Classic heirloom asparagus variety with excellent rust resistance. Produces thick, tender spears for 15-20 years once established."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 50
+          unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "slow"
+      matureSize:
+        height:
+          min:
+            value: 4
+            unit: "feet"
+          max:
+            value: 6
+            unit: "feet"
+        spread:
+          min:
+            value: 2
+            unit: "feet"
+          max:
+            value: 3
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring"]
+        weeksBeforeLastFrost: 2
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["stem"]
+      harvestDuration:
+        value: 730
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "peppers", "parsley", "basil", "marigolds", "nasturtiums", "roses"]
+      badCompanions: ["onions", "garlic", "potatoes", "alliums"]
+      allelopathicEffects:
+        [
+          "releases compounds that may inhibit some plants",
+          "deep roots don't compete with shallow-rooted plants",
+          "ferny foliage provides beneficial insect habitat"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "black-from-tula-tomato"
+    commonName: "Black from Tula Tomato"
+    latinName: "Solanum lycopersicum"
+    plantFamily: "tomatoes"
+    description: "Russian heirloom beefsteak tomato with dark purple-black shoulders and exceptional sweet, complex flavor. Large fruits up to 1 pound."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 24
+        unit: "inches"
+      optimal:
+        value: 36
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+        spread:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 4
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 85
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions:
+        ["basil", "carrots", "onions", "parsley", "marigolds", "nasturtiums", "asparagus", "chives", "oregano"]
+      badCompanions: ["fennel", "corn", "brassicas", "walnut trees", "kohlrabi", "dill"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects when planted with basil",
+          "improved flavor when grown near basil",
+          "releases solanine which can inhibit some plants"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "napa-chardonnay-tomato"
+    commonName: "Napa Chardonnay Tomato"
+    latinName: "Solanum lycopersicum"
+    plantFamily: "tomatoes"
+    description: "Unique white/cream colored tomato with sweet, mild flavor. Indeterminate variety producing 4-6 oz fruits with low acidity."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 24
+        unit: "inches"
+      optimal:
+        value: 36
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+        spread:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 4
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 80
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions:
+        ["basil", "carrots", "onions", "parsley", "marigolds", "nasturtiums", "asparagus", "chives", "oregano"]
+      badCompanions: ["fennel", "corn", "brassicas", "walnut trees", "kohlrabi", "dill"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects when planted with basil",
+          "improved flavor when grown near basil",
+          "releases solanine which can inhibit some plants"
+        ]
+    seedSource: "Specialty Seed Company"
+    seedPacketInfo:
+      seedCount: 20
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "sweet-100-tomato"
+    commonName: "Sweet 100 Cherry Tomato"
+    latinName: "Solanum lycopersicum"
+    plantFamily: "tomatoes"
+    description: "Prolific cherry tomato producing long clusters of sweet, 1-inch red fruits. Indeterminate variety with excellent disease resistance."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 10
+            unit: "feet"
+        spread:
+          min:
+            value: 2
+            unit: "feet"
+          max:
+            value: 3
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "cage"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 65
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 90
+        unit: "days"
+    companions:
+      goodCompanions:
+        ["basil", "carrots", "onions", "parsley", "marigolds", "nasturtiums", "asparagus", "chives", "oregano"]
+      badCompanions: ["fennel", "corn", "brassicas", "walnut trees", "kohlrabi", "dill"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects when planted with basil",
+          "improved flavor when grown near basil",
+          "releases solanine which can inhibit some plants"
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 30
+      germinationRate: 90
+      viabilityYears: 4
+
+  - id: "nadapeno-sweet-pepper"
+    commonName: "NuMex Nadapeño Sweet Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Mild jalapeño-type pepper with no heat. Thick walls, crisp texture, and classic jalapeño flavor without the spice. Perfect for stuffing."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 70
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["benefits from tomato proximity for pest control", "releases capsaicinoids that may deter some pests"]
+    seedSource: "New Mexico State University"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "yellow-monster-sweet-pepper"
+    commonName: "Yellow Monster Sweet Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Giant yellow bell pepper producing fruits up to 8 inches long and 4 inches wide. Sweet, thick walls perfect for stuffing and fresh eating."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 30
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 80
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["benefits from tomato proximity for pest control", "large size may shade smaller companion plants"]
+    seedSource: "Specialty Seed Company"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 75
+      viabilityYears: 2
+
+  - id: "poblano-sweet-pepper"
+    commonName: "Poblano Sweet Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Mild poblano pepper with rich, earthy flavor. Dark green fruits perfect for chiles rellenos and roasting. Minimal heat when seeds removed."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["benefits from tomato proximity for pest control", "mild capsaicinoids may deter some pests"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "buena-mulata-hot-pepper"
+    commonName: "Buena Mulata Hot Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Ornamental hot pepper with purple and cream variegated foliage and purple fruits that ripen to red. Medium heat with fruity flavor."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 75
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["capsaicinoids deter many pests", "benefits from tomato proximity", "ornamental value attracts beneficial insects"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 20
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "anaheim-hot-pepper"
+    commonName: "Anaheim Hot Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Mild to medium heat pepper perfect for roasting and stuffing. Long, tapered green fruits that ripen to red. Essential for New Mexican cuisine."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 75
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["capsaicinoids deter many garden pests", "benefits from tomato proximity for pest control"]
+    seedSource: "New Mexico State University"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 85
+      viabilityYears: 2
+
+  - id: "banana-hot-pepper"
+    commonName: "Banana Hot Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Mild to medium heat pepper with sweet, tangy flavor. Yellow banana-shaped fruits perfect for pickling, salads, and cooking."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 85
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["strong capsaicinoids deter many pests", "benefits from tomato proximity", "requires warm conditions"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "lemon-drop-hot-pepper"
+    commonName: "Lemon Drop Hot Pepper"
+    latinName: "Capsicum baccatum"
+    plantFamily: "peppers"
+    description: "Peruvian heirloom pepper with bright yellow color and citrusy, fruity heat. Medium-hot with unique lemon flavor, excellent for salsas."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 30
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 80
+            unit: "fahrenheit"
+          max:
+            value: 95
+            unit: "fahrenheit"
+        soilMin:
+          value: 70
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 30
+            unit: "inches"
+          max:
+            value: 48
+            unit: "inches"
+        spread:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 28
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 85
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["strong capsaicinoids deter many pests", "benefits from tomato proximity", "larger size may compete with smaller plants"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "jalapeno-hot-pepper"
+    commonName: "Jalapeño Hot Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Classic medium-heat pepper essential for Mexican cuisine. Thick-walled green fruits perfect for fresh eating, pickling, and smoking into chipotles."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 75
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["capsaicinoids deter many pests", "benefits from tomato proximity", "ornamental value attracts beneficial insects"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "serrano-hot-pepper"
+    commonName: "Serrano Hot Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Small, fiery hot pepper with clean, bright heat. Thin-walled green fruits perfect for salsas, hot sauces, and fresh applications."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 75
+            unit: "fahrenheit"
+          max:
+            value: 90
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["high capsaicinoid content strongly deters pests", "benefits from tomato proximity for pest control"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 85
+      viabilityYears: 2
+
+  - id: "habanero-hot-pepper"
+    commonName: "Habanero Hot Pepper"
+    latinName: "Capsicum chinense"
+    plantFamily: "peppers"
+    description: "Very hot pepper with fruity, citrusy flavor. Small, lantern-shaped orange fruits pack intense heat. Essential for Caribbean and Mexican hot sauces."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 30
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 80
+            unit: "fahrenheit"
+          max:
+            value: 95
+            unit: "fahrenheit"
+        soilMin:
+          value: 70
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 28
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 85
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano", "parsley", "marigolds", "asparagus"]
+      badCompanions: ["fennel", "kohlrabi", "beans", "brassicas"]
+      allelopathicEffects: ["extremely high capsaicinoid content deters most pests", "benefits from tomato proximity", "requires warm conditions"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 75
+      viabilityYears: 2
+
+  - id: "arugula"
+    commonName: "Arugula"
+    latinName: "Eruca sativa"
+    plantFamily: "arugula"
+    description: "Peppery, nutty-flavored salad green with distinctive spicy bite. Fast-growing cool-season crop perfect for succession planting."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 2
+          unit: "inches"
+        max:
+          value: 4
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 45
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 10
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 5
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 30
+        unit: "days"
+      harvestMethod: "cut-and-come-again"
+      harvestWindow:
+        value: 21
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 6
+    companions:
+      goodCompanions: ["lettuce", "spinach", "carrots", "onions", "radishes", "tomatoes", "peppers", "strawberries"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "natural pest deterrent properties",
+          "attracts beneficial insects when flowering",
+          "grows well in partial shade of taller plants"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 500
+      germinationRate: 90
+      viabilityYears: 4
+
+  - id: "barese-chard"
+    commonName: "Barese Swiss Chard"
+    latinName: "Beta vulgaris"
+    plantFamily: "beets"
+    description: "Italian heirloom chard with thick white stems and dark green leaves. Excellent heat tolerance and continuous harvest potential."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      thinning:
+        min:
+          value: 4
+          unit: "inches"
+        max:
+          value: 6
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "summer", "fall"]
+        weeksBeforeLastFrost: 2
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves", "stem"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "cut-and-come-again"
+      harvestWindow:
+        value: 90
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["onions", "lettuce", "cabbage", "broccoli", "garlic", "carrots", "tomatoes", "beans"]
+      badCompanions: ["pole beans", "mustard", "corn"]
+      allelopathicEffects:
+        [
+          "tolerates partial shade from taller companions",
+          "attracts beneficial insects when flowering",
+          "deep taproot improves soil structure"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "bright-lights-chard"
+    commonName: "Bright Lights Swiss Chard"
+    latinName: "Beta vulgaris"
+    plantFamily: "beets"
+    description: "Colorful chard mix with stems in red, yellow, orange, pink, and white. Ornamental and edible with excellent flavor and heat tolerance."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      thinning:
+        min:
+          value: 4
+          unit: "inches"
+        max:
+          value: 6
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "summer", "fall"]
+        weeksBeforeLastFrost: 2
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves", "stem"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "cut-and-come-again"
+      harvestWindow:
+        value: 90
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["onions", "lettuce", "cabbage", "broccoli", "garlic", "carrots", "tomatoes", "beans"]
+      badCompanions: ["pole beans", "mustard", "corn"]
+      allelopathicEffects:
+        [
+          "tolerates partial shade from taller companions",
+          "attracts beneficial insects when flowering",
+          "colorful stems add ornamental value to garden"
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "alexandria-strawberry"
+    commonName: "Alexandria Alpine Strawberry"
+    latinName: "Fragaria vesca"
+    plantFamily: "strawberries"
+    description: "Everbearing alpine strawberry with small, intensely flavored fruits. Day-neutral variety that produces continuously from spring to frost."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 6
+        unit: "inches"
+      optimal:
+        value: 8
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "acidic"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "groundcover"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "both"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 2
+      seedDepth:
+        value: 0.125
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 28
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["ground-cover", "ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 120
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 150
+        unit: "days"
+    companions:
+      goodCompanions: ["lettuce", "spinach", "chives", "thyme", "borage", "arugula", "beans", "peas"]
+      badCompanions: ["brassicas", "fennel", "tomatoes", "potatoes", "peppers"]
+      allelopathicEffects:
+        [
+          "shallow roots don't compete with deep-rooted plants",
+          "attracts beneficial insects and pollinators",
+          "provides living mulch and ground cover",
+          "sensitive to allelopathic compounds from brassicas"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 70
+      viabilityYears: 2
+
+  - id: "comice-pear"
+    commonName: "Comice Pear"
+    latinName: "Pyrus communis"
+    plantFamily: "apples"
+    description: "Premium dessert pear with buttery, sweet flesh and exceptional flavor. Large, green-yellow fruits with excellent keeping quality."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1460
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 21
+        unit: "days"
+    companions:
+      goodCompanions: ["apples", "cherries", "chives", "nasturtiums", "marigolds", "comfrey", "clover"]
+      badCompanions: ["walnut trees", "fennel", "potatoes"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "fuji-apple"
+    commonName: "Fuji Apple"
+    latinName: "Malus domestica"
+    plantFamily: "apples"
+    description: "Sweet, crisp apple with excellent storage life. Red-striped skin over yellow background. Requires cross-pollination for fruit production."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1460
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["pears", "cherries", "chives", "nasturtiums", "marigolds", "comfrey", "clover", "dill"]
+      badCompanions: ["walnut trees", "fennel", "potatoes", "grass"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity",
+          "grass competition reduces fruit production"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "honeycrisp-apple"
+    commonName: "Honeycrisp Apple"
+    latinName: "Malus domestica"
+    plantFamily: "apples"
+    description: "Exceptionally crisp apple with sweet-tart flavor and explosive juice. Red and yellow skin. Requires cross-pollination for fruit production."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1460
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["pears", "cherries", "chives", "nasturtiums", "marigolds", "comfrey", "clover", "dill"]
+      badCompanions: ["walnut trees", "fennel", "potatoes", "grass"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity",
+          "grass competition reduces fruit production"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "granny-smith-apple"
+    commonName: "Granny Smith Apple"
+    latinName: "Malus domestica"
+    plantFamily: "apples"
+    description: "Tart, crisp green apple excellent for baking and fresh eating. Long storage life and late harvest. Requires cross-pollination for fruit production."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1460
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["pears", "cherries", "chives", "nasturtiums", "marigolds", "comfrey", "clover", "dill"]
+      badCompanions: ["walnut trees", "fennel", "potatoes", "grass"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity",
+          "grass competition reduces fruit production"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "red-delicious-apple"
+    commonName: "Red Delicious Apple"
+    latinName: "Malus domestica"
+    plantFamily: "apples"
+    description: "Classic red apple with mild, sweet flavor and distinctive elongated shape. Good for fresh eating. Requires cross-pollination for fruit production."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1460
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["pears", "cherries", "chives", "nasturtiums", "marigolds", "comfrey", "clover", "dill"]
+      badCompanions: ["walnut trees", "fennel", "potatoes", "grass"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity",
+          "grass competition reduces fruit production"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "pink-lady-apple"
+    commonName: "Pink Lady Apple"
+    latinName: "Malus domestica"
+    plantFamily: "apples"
+    description: "Tart-sweet apple with pink blush over yellow-green skin. Crisp texture and excellent storage. Late harvest variety requiring long growing season."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1460
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["pears", "cherries", "chives", "nasturtiums", "marigolds", "comfrey", "clover", "dill"]
+      badCompanions: ["walnut trees", "fennel", "potatoes", "grass"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity",
+          "grass competition reduces fruit production"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "bing-cherry"
+    commonName: "Bing Cherry"
+    latinName: "Prunus avium"
+    plantFamily: "cherries"
+    description: "Large, dark red sweet cherry with firm flesh and excellent flavor. Requires cross-pollination with another sweet cherry variety for fruit production."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1095
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 21
+        unit: "days"
+    companions:
+      goodCompanions: ["apples", "pears", "chives", "nasturtiums", "marigolds", "comfrey", "clover", "roses"]
+      badCompanions: ["walnut trees", "fennel", "potatoes", "grass"]
+      allelopathicEffects:
+        [
+          "benefits from pollinator-attracting companions",
+          "deep roots don't compete with shallow crops",
+          "provides beneficial shade for understory plants",
+          "susceptible to walnut juglone toxicity",
+          "early blooming attracts beneficial insects"
+        ]
+    seedSource: "Specialty Nursery"

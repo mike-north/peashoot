@@ -68,7 +68,7 @@ export const routes: RouteConfig[] = routeInfos.map((routeInfo) => ({
 	path: routeInfo.path,
 	component: routeInfo.component,
 	props: {
-		routeInfo
+		routeInfo,
 	},
 }))
 

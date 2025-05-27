@@ -76,7 +76,7 @@ const sampleTaskLists: TaskListType[] = [
 let taskLists: TaskListType[] = $state(sampleTaskLists)
 </script>
 
-<PageTitle {route} />
+<PageTitle route={route} />
 <div class="container mx-auto p-4">
 	<div class="flex justify-between items-center mb-6">
 		<button class="btn btn-primary">

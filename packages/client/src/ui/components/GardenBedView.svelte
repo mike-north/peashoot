@@ -1,220 +1,220 @@
 <script lang="ts">
-	import type { PlantPlacement } from '../../lib/plant-placement'
-	import PlantPlacementTile from './PlantPlacementTile.svelte'
-	import HorizontalBarMeter from './HorizontalBarMeter.svelte'
-	import {
-		GardenBedLayoutCalculator,
-		calculateEdgeBorders,
-		type Border,
-	} from '../../lib/garden-bed-layout-calculator'
-	import { dragState, isDragStatePopulated } from '../state/dragState'
-	import type { GardenBed } from '../../lib/garden-bed'
-	import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
+import type { PlantPlacement } from '../../lib/plant-placement'
+import PlantPlacementTile from './PlantPlacementTile.svelte'
+import HorizontalBarMeter from './HorizontalBarMeter.svelte'
+import {
+	GardenBedLayoutCalculator,
+	calculateEdgeBorders,
+	type Border,
+} from '../../lib/garden-bed-layout-calculator'
+import { dragState, isDragStatePopulated } from '../state/dragState'
+import type { GardenBed } from '../../lib/garden-bed'
+import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
 
-	interface GardenBedViewProps {
-		bed: GardenBed
-		onTileMouseDownFromParent?: (
-			plant: PlantPlacement,
-			bedId: string,
-			event: MouseEvent,
-		) => void
-		edgeIndicators?: {
-			id: string
-			plantAId: string
-			plantBId: string
-			color: string
-		}[]
+interface GardenBedViewProps {
+	bed: GardenBed
+	onTileMouseDownFromParent?: (
+		plant: PlantPlacement,
+		bedId: string,
+		event: MouseEvent,
+	) => void
+	edgeIndicators?: {
+		id: string
+		plantAId: string
+		plantBId: string
+		color: string
+	}[]
+}
+
+const {
+	bed,
+	onTileMouseDownFromParent,
+	edgeIndicators = [],
+}: GardenBedViewProps = $props()
+// Instantiate the layout calculator
+const layout = new GardenBedLayoutCalculator({
+	width: bed.width,
+	height: bed.height,
+	...DEFAULT_LAYOUT_PARAMS, // Use shared constants
+})
+
+// Use layout for all layout-related values
+const svgWidth = layout.svgWidth
+const svgHeight = layout.svgHeight
+const frameX = layout.frameX
+const frameY = layout.frameY
+const frameWidth = layout.frameWidth
+const frameHeight = layout.frameHeight
+const interiorX = layout.interiorX
+const interiorY = layout.interiorY
+const interiorWidth = layout.interiorWidth
+const interiorHeight = layout.interiorHeight
+const cellWidth = layout.cellWidth
+const cellHeight = layout.cellHeight
+
+// Grid lines
+const verticalLines = layout.getVerticalLines()
+const horizontalLines = layout.getHorizontalLines()
+
+// Function to convert garden coordinates (0,0 at bottom-left) to SVG coordinates
+const gardenToSvgX = (gardenX: number) => layout.gardenToSvgX(gardenX)
+const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
+
+// Use the factored-out isValidPlacement
+function isValidPlacement(x: number, y: number, size: number): boolean {
+	return layout.isValidPlacement(
+		x,
+		y,
+		size,
+		bed.plantPlacements,
+		$dragState.draggedPlant?.id,
+	)
+}
+
+// Use the factored-out calculateEdgeBorders
+let edgeBorders = $state<Border[]>([])
+$effect(() => {
+	const newBorders = calculateEdgeBorders(bed, edgeIndicators, layout)
+	if (
+		newBorders.length !== edgeBorders.length ||
+		newBorders.some((b, i) => JSON.stringify(b) !== JSON.stringify(edgeBorders[i]))
+	) {
+		edgeBorders = newBorders
 	}
+})
+// DEBUG: Log edgeIndicators and plant IDs in this bed
+bed.plantPlacements.forEach((p) => p.id)
 
-	const {
-		bed,
-		onTileMouseDownFromParent,
-		edgeIndicators = [],
-	}: GardenBedViewProps = $props()
-	// Instantiate the layout calculator
-	const layout = new GardenBedLayoutCalculator({
-		width: bed.width,
-		height: bed.height,
-		...DEFAULT_LAYOUT_PARAMS, // Use shared constants
-	})
+interface TileStyleProps {
+	left: string
+	top: string
+	width: string
+	height: string
+	zIndex: number
+	opacity: number
+	pointerEvents: 'none' | 'auto'
+}
 
-	// Use layout for all layout-related values
-	const svgWidth = layout.svgWidth
-	const svgHeight = layout.svgHeight
-	const frameX = layout.frameX
-	const frameY = layout.frameY
-	const frameWidth = layout.frameWidth
-	const frameHeight = layout.frameHeight
-	const interiorX = layout.interiorX
-	const interiorY = layout.interiorY
-	const interiorWidth = layout.interiorWidth
-	const interiorHeight = layout.interiorHeight
-	const cellWidth = layout.cellWidth
-	const cellHeight = layout.cellHeight
+function getTileComputedStyles(
+	placementId: string,
+	currentDragState: typeof $dragState,
+	overlayLayout: ReturnType<typeof layout.getTileOverlayLayoutInfo>,
+): TileStyleProps {
+	const isBeingDragged =
+		currentDragState.draggedPlant && currentDragState.draggedPlant.id === placementId
 
-	// Grid lines
-	const verticalLines = layout.getVerticalLines()
-	const horizontalLines = layout.getHorizontalLines()
+	// Since dragOffset is not used and tiles don't visually follow mouse,
+	// left/top are always based on overlayLayout.
+	const left = `${overlayLayout.svgX}px`
+	const top = `${overlayLayout.svgY}px`
 
-	// Function to convert garden coordinates (0,0 at bottom-left) to SVG coordinates
-	const gardenToSvgX = (gardenX: number) => layout.gardenToSvgX(gardenX)
-	const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
-
-	// Use the factored-out isValidPlacement
-	function isValidPlacement(x: number, y: number, size: number): boolean {
-		return layout.isValidPlacement(
-			x,
-			y,
-			size,
-			bed.plantPlacements,
-			$dragState.draggedPlant?.id,
-		)
+	return {
+		left,
+		top,
+		width: `${overlayLayout.width}px`,
+		height: `${overlayLayout.height}px`,
+		zIndex: isBeingDragged ? 100 : 2,
+		opacity: isBeingDragged ? 0.7 : 1,
+		pointerEvents:
+			currentDragState.draggedPlant && currentDragState.draggedPlant.id !== placementId
+				? 'none'
+				: 'auto',
 	}
-
-	// Use the factored-out calculateEdgeBorders
-	let edgeBorders = $state<Border[]>([])
-	$effect(() => {
-		const newBorders = calculateEdgeBorders(bed, edgeIndicators, layout)
-		if (
-			newBorders.length !== edgeBorders.length ||
-			newBorders.some((b, i) => JSON.stringify(b) !== JSON.stringify(edgeBorders[i]))
-		) {
-			edgeBorders = newBorders
-		}
-	})
-	// DEBUG: Log edgeIndicators and plant IDs in this bed
-	bed.plantPlacements.forEach((p) => p.id)
-
-	interface TileStyleProps {
-		left: string
-		top: string
-		width: string
-		height: string
-		zIndex: number
-		opacity: number
-		pointerEvents: 'none' | 'auto'
-	}
-
-	function getTileComputedStyles(
-		placementId: string,
-		currentDragState: typeof $dragState,
-		overlayLayout: ReturnType<typeof layout.getTileOverlayLayoutInfo>,
-	): TileStyleProps {
-		const isBeingDragged =
-			currentDragState.draggedPlant && currentDragState.draggedPlant.id === placementId
-
-		// Since dragOffset is not used and tiles don't visually follow mouse,
-		// left/top are always based on overlayLayout.
-		const left = `${overlayLayout.svgX}px`
-		const top = `${overlayLayout.svgY}px`
-
-		return {
-			left,
-			top,
-			width: `${overlayLayout.width}px`,
-			height: `${overlayLayout.height}px`,
-			zIndex: isBeingDragged ? 100 : 2,
-			opacity: isBeingDragged ? 0.7 : 1,
-			pointerEvents:
-				currentDragState.draggedPlant && currentDragState.draggedPlant.id !== placementId
-					? 'none'
-					: 'auto',
-		}
-	}
+}
 </script>
 
 <style lang="scss">
-	.tile-overlay {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		/* pointer-events: none; // allow SVG events through except for tiles */
+.tile-overlay {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	/* pointer-events: none; // allow SVG events through except for tiles */
+}
+.tile-overlay__tile {
+	position: absolute;
+	pointer-events: auto;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 6px;
+	box-shadow: 0 2px 6px #0002;
+	cursor: grab;
+	user-select: none;
+	font-size: 14px;
+	font-weight: bold;
+	color: #222;
+	border: 2px solid rgb(0, 0, 0, 0.4);
+	transition: box-shadow 0.1s;
+	box-sizing: border-box;
+}
+.raised-bed {
+	position: relative;
+	&__plantable-area {
+		fill: #90683d;
+		opacity: 0.4;
+		// stroke: red;
+		// stroke-width: 2 ;
 	}
-	.tile-overlay__tile {
-		position: absolute;
-		pointer-events: auto;
-		z-index: 2;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 6px;
-		box-shadow: 0 2px 6px #0002;
-		cursor: grab;
-		user-select: none;
-		font-size: 14px;
+	&__frame {
+		fill: none;
+		stroke: rgb(var(--color-soil-brown));
+		stroke-width: 4;
+		stroke-linejoin: round;
+	}
+	&__grid-line {
+		stroke: #4b4e6d;
+		stroke-width: 0.5;
+		opacity: 0.3;
+		stroke-dasharray: 2, 2;
+	}
+	&__title {
+		text-align: center;
+		font-family: Arial, sans-serif;
+		font-size: 1rem;
 		font-weight: bold;
-		color: #222;
-		border: 2px solid rgb(0, 0, 0, 0.4);
-		transition: box-shadow 0.1s;
-		box-sizing: border-box;
+		color: #5a3e36;
+		margin-bottom: 0.25em;
+		margin-top: 0.5em;
 	}
-	.raised-bed {
-		position: relative;
-		&__plantable-area {
-			fill: #90683d;
-			opacity: 0.4;
-			// stroke: red;
-			// stroke-width: 2 ;
-		}
-		&__frame {
-			fill: none;
-			stroke: rgb(var(--color-soil-brown));
-			stroke-width: 4;
-			stroke-linejoin: round;
-		}
-		&__grid-line {
-			stroke: #4b4e6d;
-			stroke-width: 0.5;
-			opacity: 0.3;
-			stroke-dasharray: 2, 2;
-		}
-		&__title {
-			text-align: center;
-			font-family: Arial, sans-serif;
-			font-size: 1rem;
-			font-weight: bold;
-			color: #5a3e36;
-			margin-bottom: 0.25em;
-			margin-top: 0.5em;
-		}
-		&__meters-row {
-			display: flex;
-			flex-direction: row;
-			gap: 48px;
-			justify-content: center;
-			align-items: center;
-			margin-bottom: 1em;
-			margin-top: 0;
-		}
+	&__meters-row {
+		display: flex;
+		flex-direction: row;
+		gap: 48px;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 1em;
+		margin-top: 0;
 	}
-	.tile-overlay__tiles {
-		width: 100%;
-		height: 100%;
-		position: relative;
-	}
-	.tile-overlay__highlight {
-		position: absolute;
-		z-index: 9999;
-		border: 6px solid #ffff00;
-		background: rgba(255, 255, 0, 0.25);
-		pointer-events: none;
-		border-radius: 0;
-		box-sizing: border-box;
-	}
-	.tile-overlay__highlight--invalid {
-		border: 6px solid #ff2222 !important;
-		background: rgba(255, 0, 0, 0.25) !important;
-	}
-	.tile-overlay__highlight--source {
-		border-color: #3498db !important;
-		background: rgba(52, 152, 219, 0.15) !important;
-	}
-	.tile-overlay__highlight--target {
-		border-color: #ffff00 !important;
-		background: rgba(255, 255, 0, 0.25) !important;
-	}
+}
+.tile-overlay__tiles {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+.tile-overlay__highlight {
+	position: absolute;
+	z-index: 9999;
+	border: 6px solid #ffff00;
+	background: rgba(255, 255, 0, 0.25);
+	pointer-events: none;
+	border-radius: 0;
+	box-sizing: border-box;
+}
+.tile-overlay__highlight--invalid {
+	border: 6px solid #ff2222 !important;
+	background: rgba(255, 0, 0, 0.25) !important;
+}
+.tile-overlay__highlight--source {
+	border-color: #3498db !important;
+	background: rgba(52, 152, 219, 0.15) !important;
+}
+.tile-overlay__highlight--target {
+	border-color: #ffff00 !important;
+	background: rgba(255, 255, 0, 0.25) !important;
+}
 </style>
 
 <!-- Title and meters OUTSIDE the .raised-bed box -->

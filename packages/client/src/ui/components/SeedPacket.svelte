@@ -1,70 +1,70 @@
 <script lang="ts">
-	import { Tween } from 'svelte/motion'
-	import { cubicOut } from 'svelte/easing'
+import { Tween } from 'svelte/motion'
+import { cubicOut } from 'svelte/easing'
 
-	let hovered = $state(false)
-	let flipped = $state(false)
-	const controlY = new Tween(0, { duration: 500, easing: cubicOut })
-	const controlYUp = new Tween(0, { duration: 500, easing: cubicOut })
+let hovered = $state(false)
+let flipped = $state(false)
+const controlY = new Tween(0, { duration: 500, easing: cubicOut })
+const controlYUp = new Tween(0, { duration: 500, easing: cubicOut })
 
-	$effect(() => {
-		controlY.set(hovered ? 40 : 0).catch((err: unknown) => {
-			console.error('Error setting controlY', err)
-		})
+$effect(() => {
+	controlY.set(hovered ? 40 : 0).catch((err: unknown) => {
+		console.error('Error setting controlY', err)
 	})
-	$effect(() => {
-		controlYUp.set(hovered ? -40 : 0).catch((err: unknown) => {
-			console.error('Error setting controlYUp', err)
-		})
+})
+$effect(() => {
+	controlYUp.set(hovered ? -40 : 0).catch((err: unknown) => {
+		console.error('Error setting controlYUp', err)
 	})
+})
 
-	function toggleFlip() {
-		flipped = !flipped
-	}
+function toggleFlip() {
+	flipped = !flipped
+}
 </script>
 
 <style lang="scss">
-	.packet {
-		cursor: pointer;
-		perspective: 1000px;
-		max-width: 300px;
-		aspect-ratio: 4 / 5;
-		/* Or for responsiveness: max-width: 400px; width: 100%; aspect-ratio: 4 / 5; */
-		.packet-inner {
-			position: relative;
-			width: 100%;
-			height: 100%;
-			transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-			transform-style: preserve-3d;
-		}
-		&.flipped .packet-inner {
-			transform: rotateY(180deg);
-		}
-		.packet-front,
-		.packet-back {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			backface-visibility: hidden;
-			border-radius: 12px;
-		}
-		.packet-back {
-			transform: rotateY(180deg);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.title {
-			pointer-events: none;
-		}
-	}
-	svg {
+.packet {
+	cursor: pointer;
+	perspective: 1000px;
+	max-width: 300px;
+	aspect-ratio: 4 / 5;
+	/* Or for responsiveness: max-width: 400px; width: 100%; aspect-ratio: 4 / 5; */
+	.packet-inner {
+		position: relative;
 		width: 100%;
 		height: 100%;
-		display: block;
+		transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+		transform-style: preserve-3d;
 	}
+	&.flipped .packet-inner {
+		transform: rotateY(180deg);
+	}
+	.packet-front,
+	.packet-back {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		backface-visibility: hidden;
+		border-radius: 12px;
+	}
+	.packet-back {
+		transform: rotateY(180deg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.title {
+		pointer-events: none;
+	}
+}
+svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
 </style>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->

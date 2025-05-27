@@ -1,47 +1,47 @@
 <script lang="ts">
-	interface HorizontalBarMeterProps {
-		id: string
-		value: number
-		max: number
-		label: string
-		filledColor: string
-		emptyColor: string
-		borderColor: string
-		labelColor: string
-	}
+interface HorizontalBarMeterProps {
+	id: string
+	value: number
+	max: number
+	label: string
+	filledColor: string
+	emptyColor: string
+	borderColor: string
+	labelColor: string
+}
 
-	const {
-		id,
-		value,
-		max,
-		label,
-		filledColor = '#3498db',
-		emptyColor = '#3498db22',
-		borderColor = '#3498db',
-		labelColor = '#3498db',
-	}: HorizontalBarMeterProps = $props()
+const {
+	id,
+	value,
+	max,
+	label,
+	filledColor = '#3498db',
+	emptyColor = '#3498db22',
+	borderColor = '#3498db',
+	labelColor = '#3498db',
+}: HorizontalBarMeterProps = $props()
 </script>
 
 <style lang="scss">
-	.horizontal-bar-meter {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 0;
+.horizontal-bar-meter {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0;
 
-		&__graph {
-			display: block;
-			align-self: center;
-		}
-
-		&__label {
-			line-height: 1rem;
-			font-size: 0.5rem;
-			font-weight: 600;
-			vertical-align: middle;
-			margin-top: -2px;
-		}
+	&__graph {
+		display: block;
+		align-self: center;
 	}
+
+	&__label {
+		line-height: 1rem;
+		font-size: 0.5rem;
+		font-weight: 600;
+		vertical-align: middle;
+		margin-top: -2px;
+	}
+}
 </style>
 
 <div class="horizontal-bar-meter">

@@ -5,10 +5,13 @@ import {
 	dragState,
 	isDraggingExistingPlant,
 	isDraggingNewPlant,
+	isDragStatePopulated,
+	getDraggedPlantInfo,
 } from '../state/dragState'
 import { dragManager } from '../../lib/drag-manager'
 import PlantToolbar from './PlantToolbar.svelte'
 import DeleteZone from './DeleteZone.svelte'
+import PlantPlacementTile from './PlantPlacementTile.svelte'
 import type { GardenBed } from '../../lib/garden-bed'
 import { onDestroy } from 'svelte'
 import type { Garden } from '../../lib/garden'
@@ -305,6 +308,16 @@ onDestroy(() => {
 </script>
 
 <style>
+.drag-preview {
+	position: fixed;
+	pointer-events: none;
+	z-index: 10000;
+	opacity: 0.7;
+	transform: rotate(2deg);
+	transition: none;
+	border-radius: 6px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
 </style>
 
 <div class="garden-container">
@@ -321,4 +334,81 @@ onDestroy(() => {
 	</div>
 
 	<DeleteZone />
+
+	<!-- Drag Preview -->
+	{#if isDragStatePopulated($dragState)}
+		{@const draggedInfo = getDraggedPlantInfo($dragState)}
+		{#if draggedInfo}
+			{@const cellSize = DEFAULT_LAYOUT_PARAMS.cellSize}
+			{@const previewSize = cellSize * draggedInfo.size}
+			<!-- Position the preview to align with the highlight when over a bed -->
+			{@const shouldAlignToGrid = $dragState.targetBedId && $dragState.highlightedCell}
+			{@const previewX = shouldAlignToGrid 
+				? (() => {
+					const targetBed = beds.find(b => b.id === $dragState.targetBedId)
+					if (!targetBed) return $dragState.dragPosition.x - previewSize / 2
+					const layout = new GardenBedLayoutCalculator({
+						width: targetBed.width,
+						height: targetBed.height,
+						...DEFAULT_LAYOUT_PARAMS,
+					})
+					const tileLayout = layout.getTileLayoutInfo({
+						x: $dragState.highlightedCell.x,
+						y: $dragState.highlightedCell.y,
+						size: draggedInfo.size,
+					})
+					const svgElement = document.querySelector(`[data-bed-id='${targetBed.id}'] svg`)
+					if (!svgElement) return $dragState.dragPosition.x - previewSize / 2
+					const rect = svgElement.getBoundingClientRect()
+					return rect.left + tileLayout.svgX
+				})()
+				: $dragState.dragPosition.x - previewSize / 2}
+			{@const previewY = shouldAlignToGrid 
+				? (() => {
+					const targetBed = beds.find(b => b.id === $dragState.targetBedId)
+					if (!targetBed) return $dragState.dragPosition.y - previewSize / 2
+					const layout = new GardenBedLayoutCalculator({
+						width: targetBed.width,
+						height: targetBed.height,
+						...DEFAULT_LAYOUT_PARAMS,
+					})
+					const tileLayout = layout.getTileLayoutInfo({
+						x: $dragState.highlightedCell.x,
+						y: $dragState.highlightedCell.y,
+						size: draggedInfo.size,
+					})
+					const svgElement = document.querySelector(`[data-bed-id='${targetBed.id}'] svg`)
+					if (!svgElement) return $dragState.dragPosition.y - previewSize / 2
+					const rect = svgElement.getBoundingClientRect()
+					return rect.top + tileLayout.svgY
+				})()
+				: $dragState.dragPosition.y - previewSize / 2}
+			<div
+				class="drag-preview"
+				style="
+					left: {previewX}px;
+					top: {previewY}px;
+					width: {previewSize}px;
+					height: {previewSize}px;
+				"
+			>
+				{#if isDraggingExistingPlant($dragState)}
+					<PlantPlacementTile 
+						plantPlacement={$dragState.draggedPlant} 
+						sizePx={previewSize} 
+					/>
+				{:else if isDraggingNewPlant($dragState)}
+					<PlantPlacementTile 
+						plantPlacement={{
+							id: 'preview',
+							x: 0,
+							y: 0,
+							plantTile: $dragState.draggedNewPlant
+						}} 
+						sizePx={previewSize} 
+					/>
+				{/if}
+			</div>
+		{/if}
+	{/if}
 </div>

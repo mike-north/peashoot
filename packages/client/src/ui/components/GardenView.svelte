@@ -1,6 +1,14 @@
 <script lang="ts">
 import type { PlantPlacement } from '../../lib/plant-placement'
-import { dragState } from '../state/dragState'
+import type { Plant } from '../../lib/plant'
+import {
+	dragState,
+	isDraggingExistingPlant,
+	isDraggingNewPlant,
+} from '../state/dragState'
+import { dragManager } from '../../lib/drag-manager'
+import PlantToolbar from './PlantToolbar.svelte'
+import DeleteZone from './DeleteZone.svelte'
 import type { GardenBed } from '../../lib/garden-bed'
 import { onDestroy } from 'svelte'
 import type { Garden } from '../../lib/garden'
@@ -22,6 +30,8 @@ interface GardenProps {
 		newX: number,
 		newY: number,
 	) => void
+	onAddNewPlant: (bedId: string, plant: Plant, x: number, y: number) => void
+	onDeletePlant: (plantId: string, bedId: string) => void
 	edgeIndicators: {
 		id: string
 		plantAId: string
@@ -30,28 +40,34 @@ interface GardenProps {
 	}[]
 }
 
-let { garden, onMovePlantInBed, onMovePlantToDifferentBed, edgeIndicators }: GardenProps =
-	$props()
+let {
+	garden,
+	onMovePlantInBed,
+	onMovePlantToDifferentBed,
+	onAddNewPlant,
+	onDeletePlant,
+	edgeIndicators,
+}: GardenProps = $props()
 
 let { beds } = $derived(garden)
 let gardenRef: HTMLDivElement | null = null
 
 function handleTileMouseDown(plant: PlantPlacement, bedId: string, event: MouseEvent) {
-	// Set dragState with draggedPlant, sourceBedId, and initial mouse position
-	dragState.set({
-		draggedPlant: plant,
-		draggedTileSize: plant.plantTile.size || 1,
-		dragOffset: { x: event.clientX, y: event.clientY },
-		dragPosition: { x: event.clientX, y: event.clientY },
-		highlightedCell: null,
-		sourceBedId: bedId,
-		targetBedId: bedId,
-	})
-	window.addEventListener('mousemove', onGardenMouseMove)
-	window.addEventListener('mouseup', onGardenMouseUp)
+	// Use the drag manager to start dragging an existing plant
+	dragManager.startDraggingExistingPlant(plant, bedId, event)
 }
 
 function onGardenMouseMove(event: MouseEvent) {
+	// Don't override delete zone targeting
+	if ($dragState.targetType === 'delete-zone') {
+		// Just update the drag position but keep the delete zone as target
+		dragState.update((s) => ({
+			...s,
+			dragPosition: { x: event.clientX, y: event.clientY },
+		}))
+		return
+	}
+
 	// For each bed, check if mouse is over its SVG
 	for (const bed of beds) {
 		const svgElement: (SVGSVGElement & SVGGraphicsElement) | null =
@@ -85,6 +101,7 @@ function onGardenMouseMove(event: MouseEvent) {
 			dragState.update((s) => ({
 				...s,
 				targetBedId: bed.id,
+				targetType: 'garden-bed',
 				dragPosition: { x: event.clientX, y: event.clientY },
 				highlightedCell: { x, y },
 			}))
@@ -95,6 +112,7 @@ function onGardenMouseMove(event: MouseEvent) {
 	dragState.update((s) => ({
 		...s,
 		targetBedId: null,
+		targetType: null,
 		highlightedCell: null,
 		dragPosition: { x: event.clientX, y: event.clientY },
 	}))
@@ -104,17 +122,18 @@ function onGardenMouseUp(_event: MouseEvent) {
 	const state = $dragState
 	console.log('[GardenView] onGardenMouseUp: state', JSON.parse(JSON.stringify(state)))
 
-	// Ensure all required state properties for a valid drop are non-null
-	if (
-		state.draggedPlant &&
-		state.sourceBedId &&
-		state.targetBedId &&
-		state.highlightedCell
-	) {
+	// Handle delete zone drops
+	if (isDraggingExistingPlant(state) && state.targetType === 'delete-zone') {
+		console.log('[GardenView] onGardenMouseUp: Deleting plant', state.draggedPlant.id, 'from bed', state.sourceBedId)
+		onDeletePlant(state.draggedPlant.id, state.sourceBedId)
+		cleanupDrag()
+		return
+	}
+
+	// Handle existing plant drops to garden beds
+	if (isDraggingExistingPlant(state) && state.targetBedId && state.highlightedCell) {
 		const draggedPlant = state.draggedPlant
 		const highlightedCell = state.highlightedCell
-		// After this check, sourceBedId, targetBedId are confirmed strings
-		// and highlightedCell is a confirmed object.
 		const currentSourceBedId = state.sourceBedId
 		const currentTargetBedId = state.targetBedId
 
@@ -181,27 +200,103 @@ function onGardenMouseUp(_event: MouseEvent) {
 				highlightedCell.y,
 			)
 		}
+	}
+	// Handle new plant drops from toolbar
+	else if (isDraggingNewPlant(state) && state.targetBedId && state.highlightedCell) {
+		const draggedNewPlant = state.draggedNewPlant
+		const highlightedCell = state.highlightedCell
+		const currentTargetBedId = state.targetBedId
+
+		const targetBed = beds.find((b: GardenBed) => b.id === currentTargetBedId)
+
+		console.log(
+			'[GardenView] onGardenMouseUp: New Plant Drop - ',
+			'Plant:',
+			draggedNewPlant.name,
+			'Size:',
+			state.draggedTileSize,
+			'Target Bed ID:',
+			targetBed ? targetBed.id : 'null',
+			'Highlighted Cell:',
+			highlightedCell,
+		)
+
+		if (!targetBed) {
+			console.log(
+				'[GardenView] onGardenMouseUp: No target bed found for new plant. Cleaning up.',
+			)
+			cleanupDrag()
+			return
+		}
+
+		// For new plants, we need to create a temporary placement to check validity
+		const tempPlacement: PlantPlacement = {
+			id: 'temp',
+			x: highlightedCell.x,
+			y: highlightedCell.y,
+			plantTile: draggedNewPlant,
+		}
+
+		const isValid = isValidDrop(
+			targetBed,
+			tempPlacement,
+			highlightedCell.x,
+			highlightedCell.y,
+		)
+
+		console.log(
+			'[GardenView] onGardenMouseUp: New plant isValidDrop returned:',
+			isValid,
+			'for cell:',
+			highlightedCell,
+			'in bed:',
+			currentTargetBedId,
+		)
+
+		if (!isValid) {
+			console.log(
+				'[GardenView] onGardenMouseUp: New plant drop is not valid. Cleaning up.',
+			)
+			cleanupDrag()
+			return
+		}
+
+		// Add the new plant
+		onAddNewPlant(
+			currentTargetBedId,
+			draggedNewPlant,
+			highlightedCell.x,
+			highlightedCell.y,
+		)
 	} else {
 		console.log(
-			'[GardenView] onGardenMouseUp: Aborted due to null state properties (draggedPlant, sourceBedId, targetBedId, or highlightedCell).',
+			'[GardenView] onGardenMouseUp: Aborted due to invalid drag state or missing target information.',
 		)
 	}
 	cleanupDrag()
 }
 
 function cleanupDrag(): void {
-	dragState.set({
-		draggedPlant: null,
-		draggedTileSize: 1,
-		dragOffset: null,
-		dragPosition: null,
-		highlightedCell: null,
-		sourceBedId: null,
-		targetBedId: null,
-	})
-	window.removeEventListener('mousemove', onGardenMouseMove)
-	window.removeEventListener('mouseup', onGardenMouseUp)
+	dragManager.cleanup()
 }
+
+// Manage mouse listeners based on drag state
+$effect(() => {
+	const state = $dragState
+	const isDragging = state.draggedPlant !== null || state.draggedNewPlant !== null
+	
+	if (isDragging) {
+		// Add listeners when any drag starts
+		window.addEventListener('mousemove', onGardenMouseMove)
+		window.addEventListener('mouseup', onGardenMouseUp)
+		
+		// Cleanup function
+		return () => {
+			window.removeEventListener('mousemove', onGardenMouseMove)
+			window.removeEventListener('mouseup', onGardenMouseUp)
+		}
+	}
+})
 
 onDestroy(() => {
 	window.removeEventListener('mousemove', onGardenMouseMove)
@@ -212,12 +307,18 @@ onDestroy(() => {
 <style>
 </style>
 
-<div class="garden" bind:this={gardenRef}>
-	{#each beds as bed (bed.id)}
-		<GardenBedView
-			bed={bed}
-			edgeIndicators={edgeIndicators}
-			onTileMouseDownFromParent={handleTileMouseDown}
-		/>
-	{/each}
+<div class="garden-container">
+	<PlantToolbar />
+
+	<div class="garden" bind:this={gardenRef}>
+		{#each beds as bed (bed.id)}
+			<GardenBedView
+				bed={bed}
+				edgeIndicators={edgeIndicators}
+				onTileMouseDownFromParent={handleTileMouseDown}
+			/>
+		{/each}
+	</div>
+
+	<DeleteZone />
 </div>

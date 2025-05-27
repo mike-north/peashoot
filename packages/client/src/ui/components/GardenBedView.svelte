@@ -62,13 +62,9 @@ const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
 
 // Use the factored-out isValidPlacement
 function isValidPlacement(x: number, y: number, size: number): boolean {
-	return layout.isValidPlacement(
-		x,
-		y,
-		size,
-		bed.plantPlacements,
-		$dragState.draggedPlant?.id,
-	)
+	// For existing plants, exclude the dragged plant from collision detection
+	const skipId = $dragState.draggedPlant?.id
+	return layout.isValidPlacement(x, y, size, bed.plantPlacements, skipId)
 }
 
 // Use the factored-out calculateEdgeBorders
@@ -334,8 +330,8 @@ function getTileComputedStyles(
 			class="tile-overlay__tiles"
 			style="width: {svgWidth}px; height: {svgHeight}px; position: relative;"
 		>
-			{#if $dragState.targetBedId === bed.id && $dragState.highlightedCell && $dragState.draggedPlant}
-				{@const size = isDragStatePopulated($dragState) ? $dragState.draggedTileSize : 1}
+			{#if $dragState.targetBedId === bed.id && $dragState.highlightedCell && isDragStatePopulated($dragState)}
+				{@const size = $dragState.draggedTileSize}
 				{@const tileLayout = layout.getTileLayoutInfo({
 					x: $dragState.highlightedCell.x,
 					y: $dragState.highlightedCell.y,

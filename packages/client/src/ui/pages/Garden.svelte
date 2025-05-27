@@ -3,6 +3,7 @@ import GardenView from '../components/GardenView.svelte'
 import type { GardenBed } from '../../lib/garden-bed'
 import { updatePlantPositionInBed } from '../../lib/garden-bed'
 import type { PlantPlacement } from '../../lib/plant-placement'
+import type { Plant } from '../../lib/plant'
 import type { Garden } from '../../lib/garden'
 import { movePlantBetweenBeds } from '../../lib/garden'
 import PageTitle from '../components/PageTitle.svelte'
@@ -187,6 +188,48 @@ function handleMovePlantToDifferentBed(
 		newY,
 	)
 }
+
+function handleAddNewPlant(bedId: string, plant: Plant, x: number, y: number) {
+	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
+	if (bed) {
+		// Generate a unique ID for the new plant placement
+		const newPlantId = `${plant.plantFamily.name}_${Date.now()}`
+
+		const newPlacement: PlantPlacement = {
+			id: newPlantId,
+			x,
+			y,
+			plantTile: plant,
+		}
+
+		// Add the new plant to the bed
+		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
+			b.id === bedId
+				? { ...b, plantPlacements: [...b.plantPlacements, newPlacement] }
+				: b,
+		)
+
+		console.log(`[Garden] Added new ${plant.name} to bed ${bedId} at (${x}, ${y})`)
+	} else {
+		console.error('[Garden] Bed not found for addNewPlant:', bedId)
+	}
+}
+
+function handleDeletePlant(plantId: string, bedId: string) {
+	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
+	if (bed) {
+		// Remove the plant from the bed
+		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
+			b.id === bedId
+				? { ...b, plantPlacements: b.plantPlacements.filter((p) => p.id !== plantId) }
+				: b,
+		)
+
+		console.log(`[Garden] Deleted plant ${plantId} from bed ${bedId}`)
+	} else {
+		console.error('[Garden] Bed not found for deletePlant:', bedId)
+	}
+}
 </script>
 
 <!-- You can add more UI elements here -->
@@ -200,5 +243,7 @@ function handleMovePlantToDifferentBed(
 	garden={gardenInstance}
 	onMovePlantInBed={handleMovePlantInBed}
 	onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
+	onAddNewPlant={handleAddNewPlant}
+	onDeletePlant={handleDeletePlant}
 	edgeIndicators={gardenInstance.edgeIndicators}
 />

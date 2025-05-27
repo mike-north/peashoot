@@ -2,6 +2,7 @@
 import GardenView from './GardenView.svelte'
 import type { GardenBed } from '../../lib/garden-bed'
 import type { PlantPlacement } from '../../lib/plant-placement'
+import type { Plant } from '../../lib/plant'
 import type { Garden } from '../../lib/garden'
 
 let gardenInstance = $state<Garden>({
@@ -37,6 +38,7 @@ let gardenInstance = $state<Garden>({
 						name: 'lettuce',
 						icon: '🌱',
 						size: 1,
+						plantFamily: { name: 'lettuce', colorVariant: 'green' },
 					},
 				},
 			],
@@ -52,7 +54,13 @@ let gardenInstance = $state<Garden>({
 					id: 'tomato_1',
 					x: 0,
 					y: 0,
-					plantTile: { id: 'tomato', name: 'tomato', icon: '🍅', size: 2 },
+					plantTile: {
+						id: 'tomato',
+						name: 'tomato',
+						icon: '🍅',
+						size: 2,
+						plantFamily: { name: 'tomatoes', colorVariant: 'red' },
+					},
 				},
 				{
 					id: 'lettuce_1',
@@ -63,6 +71,7 @@ let gardenInstance = $state<Garden>({
 						name: 'lettuce',
 						icon: '🥬',
 						size: 1,
+						plantFamily: { name: 'lettuce', colorVariant: 'green' },
 					},
 				},
 			],
@@ -78,13 +87,25 @@ let gardenInstance = $state<Garden>({
 					id: 'cherry_tomato_1',
 					x: 2,
 					y: 1,
-					plantTile: { id: 'cherry', name: 'cherry', icon: '🍒', size: 3 },
+					plantTile: {
+						id: 'cherry',
+						name: 'cherry',
+						icon: '🍒',
+						size: 3,
+						plantFamily: { name: 'cherries', colorVariant: 'red' },
+					},
 				},
 				{
 					id: 'tomato_2',
 					x: 0,
 					y: 0,
-					plantTile: { id: 'tomato', name: 'tomato', icon: '🍅', size: 2 },
+					plantTile: {
+						id: 'tomato',
+						name: 'tomato',
+						icon: '🍅',
+						size: 2,
+						plantFamily: { name: 'tomatoes', colorVariant: 'red' },
+					},
 				},
 				{
 					id: 'lettuce_2',
@@ -95,6 +116,7 @@ let gardenInstance = $state<Garden>({
 						name: 'lettuce',
 						icon: '🥬',
 						size: 1,
+						plantFamily: { name: 'lettuce', colorVariant: 'green' },
 					},
 				},
 			],
@@ -143,6 +165,40 @@ function handleMovePlantToDifferentBed(
 		)
 	}
 }
+
+function handleAddNewPlant(bedId: string, plant: Plant, x: number, y: number) {
+	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
+	if (bed) {
+		// Generate a unique ID for the new plant placement
+		const newPlantId = `${plant.plantFamily.name}_${Date.now()}`
+
+		const newPlacement: PlantPlacement = {
+			id: newPlantId,
+			x,
+			y,
+			plantTile: plant,
+		}
+
+		// Add the new plant to the bed
+		bed.plantPlacements.push(newPlacement)
+
+		console.log(`[Home] Added new ${plant.name} to bed ${bedId} at (${x}, ${y})`)
+	} else {
+		console.error('[Home] Bed not found for addNewPlant:', bedId)
+	}
+}
+
+function handleDeletePlant(plantId: string, bedId: string) {
+	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
+	if (bed) {
+		// Remove the plant from the bed
+		bed.plantPlacements = bed.plantPlacements.filter((p) => p.id !== plantId)
+
+		console.log(`[Home] Deleted plant ${plantId} from bed ${bedId}`)
+	} else {
+		console.error('[Home] Bed not found for deletePlant:', bedId)
+	}
+}
 </script>
 
 <style>
@@ -162,6 +218,8 @@ h1 {
 		garden={gardenInstance}
 		onMovePlantInBed={handleMovePlantInBed}
 		onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
+		onAddNewPlant={handleAddNewPlant}
+		onDeletePlant={handleDeletePlant}
 		edgeIndicators={gardenInstance.edgeIndicators}
 	/>
 	<!-- You can add more UI elements here -->

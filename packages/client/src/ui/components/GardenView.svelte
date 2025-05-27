@@ -7,6 +7,10 @@ import {
 	isDraggingNewPlant,
 	isDragStatePopulated,
 	getDraggedPlantInfo,
+	addPendingOperation,
+	updatePendingOperation,
+	removePendingOperation,
+	simulateAsyncValidation,
 } from '../state/dragState'
 import { dragManager } from '../../lib/drag-manager'
 import PlantToolbar from './PlantToolbar.svelte'
@@ -133,7 +137,11 @@ function onGardenMouseUp(_event: MouseEvent) {
 			'from bed',
 			state.sourceBedId,
 		)
-		onDeletePlant(state.draggedPlant.id, state.sourceBedId)
+		handleAsyncPlantRemoval(
+			state.draggedPlant.id,
+			state.sourceBedId,
+			state.draggedPlant.plantTile,
+		)
 		cleanupDrag()
 		return
 	}
@@ -190,24 +198,15 @@ function onGardenMouseUp(_event: MouseEvent) {
 			return
 		}
 
-		if (currentSourceBedId === currentTargetBedId) {
-			// Move within the same bed
-			onMovePlantInBed(
-				currentSourceBedId,
-				draggedPlant.id,
-				highlightedCell.x,
-				highlightedCell.y,
-			)
-		} else {
-			// Move to a different bed
-			onMovePlantToDifferentBed(
-				currentSourceBedId,
-				currentTargetBedId,
-				draggedPlant,
-				highlightedCell.x,
-				highlightedCell.y,
-			)
-		}
+		// Use async validation for plant moves
+		handleAsyncPlantPlacement(
+			currentTargetBedId,
+			draggedPlant.plantTile,
+			highlightedCell.x,
+			highlightedCell.y,
+			draggedPlant.id,
+			currentSourceBedId,
+		)
 	}
 	// Handle new plant drops from toolbar
 	else if (isDraggingNewPlant(state) && state.targetBedId && state.highlightedCell) {
@@ -269,8 +268,8 @@ function onGardenMouseUp(_event: MouseEvent) {
 			return
 		}
 
-		// Add the new plant
-		onAddNewPlant(
+		// Use async validation for new plant placement
+		handleAsyncPlantPlacement(
 			currentTargetBedId,
 			draggedNewPlant,
 			highlightedCell.x,
@@ -286,6 +285,87 @@ function onGardenMouseUp(_event: MouseEvent) {
 
 function cleanupDrag(): void {
 	dragManager.cleanup()
+}
+
+// Async handlers for plant operations
+async function handleAsyncPlantPlacement(
+	bedId: string,
+	plant: Plant,
+	x: number,
+	y: number,
+	originalPlantId?: string,
+	originalBedId?: string,
+) {
+	const operationId = addPendingOperation({
+		type: 'placement',
+		bedId,
+		x,
+		y,
+		size: plant.size || 1,
+		plant,
+		state: 'pending',
+	})
+
+	try {
+		await simulateAsyncValidation()
+		updatePendingOperation(operationId, 'success')
+
+		// Wait for success animation
+		setTimeout(() => {
+			removePendingOperation(operationId)
+			// Actually perform the operation after validation succeeds
+			if (originalPlantId && originalBedId) {
+				if (originalBedId === bedId) {
+					onMovePlantInBed(bedId, originalPlantId, x, y)
+				} else {
+					// Create a temporary placement for the move operation
+					const tempPlacement: PlantPlacement = {
+						id: originalPlantId,
+						x: 0, // Will be updated
+						y: 0, // Will be updated
+						plantTile: plant,
+					}
+					onMovePlantToDifferentBed(originalBedId, bedId, tempPlacement, x, y)
+				}
+			} else {
+				onAddNewPlant(bedId, plant, x, y)
+			}
+		}, 1500)
+	} catch (error) {
+		updatePendingOperation(operationId, 'error')
+
+		// Wait for error animation then remove
+		setTimeout(() => {
+			removePendingOperation(operationId)
+		}, 1500)
+	}
+}
+
+async function handleAsyncPlantRemoval(plantId: string, bedId: string, plant: Plant) {
+	const operationId = addPendingOperation({
+		type: 'removal',
+		size: plant.size || 1,
+		plant,
+		state: 'pending',
+	})
+
+	try {
+		await simulateAsyncValidation()
+		updatePendingOperation(operationId, 'success')
+
+		// Wait for success animation
+		setTimeout(() => {
+			removePendingOperation(operationId)
+			onDeletePlant(plantId, bedId)
+		}, 1500)
+	} catch (error) {
+		updatePendingOperation(operationId, 'error')
+
+		// Wait for error animation then remove
+		setTimeout(() => {
+			removePendingOperation(operationId)
+		}, 1500)
+	}
 }
 
 // Manage mouse listeners based on drag state

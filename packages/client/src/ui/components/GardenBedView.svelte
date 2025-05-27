@@ -1,13 +1,14 @@
 <script lang="ts">
 import type { PlantPlacement } from '../../lib/plant-placement'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
+import PendingOperationTile from './PendingOperationTile.svelte'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import {
 	GardenBedLayoutCalculator,
 	calculateEdgeBorders,
 	type Border,
 } from '../../lib/garden-bed-layout-calculator'
-import { dragState, isDragStatePopulated } from '../state/dragState'
+import { dragState, isDragStatePopulated, pendingOperations } from '../state/dragState'
 import type { GardenBed } from '../../lib/garden-bed'
 import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
 
@@ -145,6 +146,13 @@ function getTileComputedStyles(
 	border: 2px solid rgb(0, 0, 0, 0.4);
 	transition: box-shadow 0.1s;
 	box-sizing: border-box;
+
+	&--pending {
+		cursor: default;
+		pointer-events: none;
+		border: 2px solid rgba(0, 0, 0, 0.2);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	}
 }
 .raised-bed {
 	position: relative;
@@ -395,6 +403,40 @@ function getTileComputedStyles(
 					}}
 				>
 					<PlantPlacementTile plantPlacement={placement} sizePx={tileLayout.width} />
+				</div>
+			{/each}
+
+			<!-- Pending Operations -->
+			{#each $pendingOperations.filter(op => op.bedId === bed.id) as operation (operation.id)}
+				{@const tileLayout = layout.getTileLayoutInfo({
+					x: operation.x || 0,
+					y: operation.y || 0,
+					size: operation.size,
+				})}
+				{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+					x: operation.x || 0,
+					y: operation.y || 0,
+					size: operation.size,
+					strokeWidth: 2,
+				})}
+				{@const corners = layout.getTileFrameCornerPositions({
+					x: operation.x || 0,
+					y: operation.y || 0,
+					size: operation.size,
+					bedWidth: bed.width,
+					bedHeight: bed.height,
+				})}
+				{@const borderRadiusStyle = corners
+					.map((corner) => `border-${corner}-radius: 8px;`)
+					.join(' ')}
+				<div
+					class="tile-overlay__tile tile-overlay__tile--pending"
+					style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
+				>
+					<PendingOperationTile 
+						operation={operation} 
+						sizePx={tileLayout.width} 
+					/>
 				</div>
 			{/each}
 		</div>

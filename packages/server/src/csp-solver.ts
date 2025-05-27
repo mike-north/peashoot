@@ -1,6 +1,3 @@
-/* eslint-disable */
-// planting-csp-scaffold.ts
-
 import {
 	PlantingSolver,
 	SpacingConstraintRule,
@@ -8,7 +5,7 @@ import {
 	type Plant,
 	type SolverSolution,
 	type PlantName,
-} from './garden-planner'
+} from './optimizers/garden-planner-csp'
 
 // Define the beds
 const bedConfigs = [
@@ -94,15 +91,17 @@ if (solution1) {
 	bedConfigs.forEach((bedConfig) => {
 		console.log(`\n--- ${bedConfig.id.toUpperCase()} ---`)
 		const bedSolution = solution1[bedConfig.id]
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!bedSolution) {
+			// TODO: properly handle case where no solution is found
 			console.log(`No solution found for ${bedConfig.id}`)
 			return
 		}
 
 		// For a nicer table output, we can format it.
-		const tableFormattedSolution: any[] = []
+		const tableFormattedSolution: unknown[] = []
 		for (let r = 0; r < bedConfig.gridSize; r++) {
-			const row: Record<string, PlantName | string> = {} // Allow string for "Empty"
+			const row: Record<string, PlantName> = {} // Allow string for "Empty"
 			for (let c = 0; c < bedConfig.gridSize; c++) {
 				row[`Col ${c}`] = bedSolution[`${r},${c}`] || 'Empty'
 			}
@@ -117,15 +116,17 @@ if (solution2) {
 	bedConfigs.forEach((bedConfig) => {
 		console.log(`\n--- ${bedConfig.id.toUpperCase()} ---`)
 		const bedSolution = solution2[bedConfig.id]
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!bedSolution) {
+			// TODO: properly handle case where no solution is found
 			console.log(`No solution found for ${bedConfig.id}`)
 			return
 		}
 
 		// For a nicer table output, we can format it.
-		const tableFormattedSolution: any[] = []
+		const tableFormattedSolution: unknown[] = []
 		for (let r = 0; r < bedConfig.gridSize; r++) {
-			const row: Record<string, PlantName | string> = {} // Allow string for "Empty"
+			const row: Record<string, PlantName> = {} // Allow string for "Empty"
 			for (let c = 0; c < bedConfig.gridSize; c++) {
 				row[`Col ${c}`] = bedSolution[`${r},${c}`] || 'Empty'
 			}

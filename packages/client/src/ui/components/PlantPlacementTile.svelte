@@ -15,24 +15,24 @@ const getPlantColorVariable = (familyName: string, colorVariant: string): string
 	return `--color-${familyName}-${colorVariant}`
 }
 
-// Compute the background color CSS variable
-const backgroundColorVar = getPlantColorVariable(
+// Compute the background color CSS variable (reactive)
+const backgroundColorVar = $derived(getPlantColorVariable(
 	plantPlacement.plantTile.plantFamily.name,
 	plantPlacement.plantTile.plantFamily.colorVariant,
-)
+))
 
 // Determine if we need white text for dark backgrounds
 const isDarkBackground = (colorVariant: string): boolean => {
 	return ['dark', 'red', 'purple', 'brown'].includes(colorVariant)
 }
 
-const size = plantPlacement.plantTile.size || 1
-const iconSize = sizePx * 0.3
-const iconX = x + sizePx / 2
-const iconY = y + sizePx / 2
-const textColor = isDarkBackground(plantPlacement.plantTile.plantFamily.colorVariant)
+const size = $derived(plantPlacement.plantTile.size || 1)
+const iconSize = $derived(sizePx * 0.3)
+const iconX = $derived(x + sizePx / 2)
+const iconY = $derived(y + sizePx / 2)
+const textColor = $derived(isDarkBackground(plantPlacement.plantTile.plantFamily.colorVariant)
 	? 'white'
-	: '#4b4e6d'
+	: '#4b4e6d')
 </script>
 
 <style lang="scss">

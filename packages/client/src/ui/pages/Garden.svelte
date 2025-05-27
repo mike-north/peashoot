@@ -8,6 +8,7 @@ import type { Garden } from '../../lib/garden'
 import { movePlantBetweenBeds } from '../../lib/garden'
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
+import type { ValidationContext, AsyncValidationFunction } from '../state/dragState'
 
 const { route }: { route: RouteResult } = $props()
 
@@ -230,6 +231,109 @@ function handleDeletePlant(plantId: string, bedId: string) {
 		console.error('[Garden] Bed not found for deletePlant:', bedId)
 	}
 }
+
+// Custom validation function with realistic business logic
+const customAsyncValidation: AsyncValidationFunction = async (
+	context: ValidationContext,
+) => {
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			console.log('[Custom Validation]', context.operationType, {
+				plant: context.plant.name,
+				from: context.sourceBedId ? `bed ${context.sourceBedId}` : 'toolbar',
+				to: context.targetBedId ? `bed ${context.targetBedId}` : 'delete zone',
+				coordinates:
+					context.targetX !== undefined
+						? `(${context.targetX}, ${context.targetY})`
+						: 'N/A',
+			})
+
+			switch (context.operationType) {
+				case 'within-bed-move':
+					// Very high success rate for moves within same bed
+					if (Math.random() > 0.02) {
+						console.log('✅ Within-bed move approved')
+						resolve()
+					} else {
+						console.log('❌ Within-bed move rejected: Plant is too established to move')
+						reject(new Error('Plant is too established to move within bed'))
+					}
+					break
+
+				case 'across-beds-move': {
+					// Check if target bed has compatible conditions
+					const targetBed = context.garden.beds.find((b) => b.id === context.targetBedId)
+					const sourceBed = context.garden.beds.find((b) => b.id === context.sourceBedId)
+
+					if (!targetBed || !sourceBed) {
+						reject(new Error('Bed not found'))
+						return
+					}
+
+					// Example: Tomatoes need high sun levels
+					if (context.plant.plantFamily.name === 'tomatoes' && targetBed.sunLevel < 3) {
+						console.log('❌ Cross-bed move rejected: Insufficient sunlight for tomatoes')
+						reject(new Error('Target bed has insufficient sunlight for tomatoes'))
+					} else if (Math.random() > 0.1) {
+						console.log('✅ Cross-bed move approved')
+						resolve()
+					} else {
+						console.log('❌ Cross-bed move rejected: Soil compatibility issue')
+						reject(new Error('Soil compatibility issue between beds'))
+					}
+					break
+				}
+				case 'addition': {
+					// Check bed capacity and plant compatibility
+					const addTargetBed = context.garden.beds.find(
+						(b) => b.id === context.targetBedId,
+					)
+					if (!addTargetBed) {
+						reject(new Error('Target bed not found'))
+						return
+					}
+
+					// Example: Check if bed is getting too crowded
+					const occupiedCells = addTargetBed.plantPlacements.reduce((total, plant) => {
+						return total + (plant.plantTile.size || 1) ** 2
+					}, 0)
+					const totalCells = addTargetBed.width * addTargetBed.height
+					const occupancyRate = occupiedCells / totalCells
+
+					if (occupancyRate > 0.8) {
+						console.log('❌ Addition rejected: Bed is too crowded')
+						reject(new Error('Bed is too crowded for new plants'))
+					} else if (Math.random() > 0.05) {
+						console.log('✅ Plant addition approved')
+						resolve()
+					} else {
+						console.log('❌ Addition rejected: Seasonal planting restriction')
+						reject(new Error('Current season not suitable for this plant'))
+					}
+					break
+				}
+				case 'removal': {
+					// Very high success rate for removals, but check for dependencies
+					const hasEdgeIndicators = context.garden.edgeIndicators.some(
+						(edge) =>
+							edge.plantAId === context.plantId || edge.plantBId === context.plantId,
+					)
+
+					if (hasEdgeIndicators && Math.random() > 0.7) {
+						console.log('❌ Removal rejected: Plant has beneficial relationships')
+						reject(new Error('Plant has beneficial relationships with neighbors'))
+					} else {
+						console.log('✅ Plant removal approved')
+						resolve()
+					}
+					break
+				}
+				default:
+					reject(new Error('Unknown operation type'))
+			}
+		}, 200) // 1 second delay to simulate server call
+	})
+}
 </script>
 
 <!-- You can add more UI elements here -->
@@ -246,4 +350,5 @@ function handleDeletePlant(plantId: string, bedId: string) {
 	onAddNewPlant={handleAddNewPlant}
 	onDeletePlant={handleDeletePlant}
 	edgeIndicators={gardenInstance.edgeIndicators}
+	asyncValidation={customAsyncValidation}
 />

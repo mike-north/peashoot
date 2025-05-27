@@ -10,7 +10,10 @@ import {
 	addPendingOperation,
 	updatePendingOperation,
 	removePendingOperation,
-	simulateAsyncValidation,
+	defaultAsyncValidation,
+	type AsyncValidationFunction,
+	type ValidationContext,
+	type OperationType,
 } from '../state/dragState'
 import { dragManager } from '../../lib/drag-manager'
 import PlantToolbar from './PlantToolbar.svelte'
@@ -45,6 +48,7 @@ interface GardenProps {
 		plantBId: string
 		color: string
 	}[]
+	asyncValidation?: AsyncValidationFunction
 }
 
 let {
@@ -54,6 +58,7 @@ let {
 	onAddNewPlant,
 	onDeletePlant,
 	edgeIndicators,
+	asyncValidation = defaultAsyncValidation,
 }: GardenProps = $props()
 
 let { beds } = $derived(garden)
@@ -306,8 +311,49 @@ async function handleAsyncPlantPlacement(
 		state: 'pending',
 	})
 
+	// Determine operation type and build validation context
+	let operationType: OperationType
+	let validationContext: ValidationContext
+
+	if (originalPlantId && originalBedId) {
+		// This is a plant move
+		if (originalBedId === bedId) {
+			operationType = 'within-bed-move'
+		} else {
+			operationType = 'across-beds-move'
+		}
+		
+		// Find the original plant to get source coordinates
+		const sourceBed = beds.find(b => b.id === originalBedId)
+		const originalPlant = sourceBed?.plantPlacements.find(p => p.id === originalPlantId)
+		
+		validationContext = {
+			operationType,
+			garden,
+			plant,
+			plantId: originalPlantId,
+			sourceBedId: originalBedId,
+			targetBedId: bedId,
+			sourceX: originalPlant?.x,
+			sourceY: originalPlant?.y,
+			targetX: x,
+			targetY: y,
+		}
+	} else {
+		// This is a new plant addition
+		operationType = 'addition'
+		validationContext = {
+			operationType,
+			garden,
+			plant,
+			targetBedId: bedId,
+			targetX: x,
+			targetY: y,
+		}
+	}
+
 	try {
-		await simulateAsyncValidation()
+		await asyncValidation(validationContext)
 		updatePendingOperation(operationId, 'success')
 
 		// Wait for success animation
@@ -349,8 +395,22 @@ async function handleAsyncPlantRemoval(plantId: string, bedId: string, plant: Pl
 		state: 'pending',
 	})
 
+	// Find the plant to get source coordinates
+	const sourceBed = beds.find(b => b.id === bedId)
+	const plantToRemove = sourceBed?.plantPlacements.find(p => p.id === plantId)
+
+	const validationContext: ValidationContext = {
+		operationType: 'removal',
+		garden,
+		plant,
+		plantId,
+		sourceBedId: bedId,
+		sourceX: plantToRemove?.x,
+		sourceY: plantToRemove?.y,
+	}
+
 	try {
-		await simulateAsyncValidation()
+		await asyncValidation(validationContext)
 		updatePendingOperation(operationId, 'success')
 
 		// Wait for success animation

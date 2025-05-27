@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store'
 import type { PlantPlacement } from '../../lib/plant-placement'
 import type { Plant } from '../../lib/plant'
+import type { Garden } from '../../lib/garden'
 
 // Types of drag sources
 export type DragSourceType = 'existing-plant' | 'new-plant'
@@ -10,6 +11,26 @@ export type DropTargetType = 'garden-bed' | 'delete-zone'
 
 // Async validation states
 export type ValidationState = 'pending' | 'success' | 'error'
+
+// Operation types for validation
+export type OperationType = 'within-bed-move' | 'across-beds-move' | 'addition' | 'removal'
+
+// Validation context for async operations
+export interface ValidationContext {
+	operationType: OperationType
+	garden: Garden
+	plant: Plant
+	sourceBedId?: string
+	targetBedId?: string
+	sourceX?: number | undefined
+	sourceY?: number | undefined
+	targetX?: number | undefined
+	targetY?: number | undefined
+	plantId?: string // For existing plants
+}
+
+// Validation function type
+export type AsyncValidationFunction = (context: ValidationContext) => Promise<void>
 
 // Pending operation for async validation
 export interface PendingOperation {
@@ -124,15 +145,40 @@ export function removePendingOperation(id: string) {
 	pendingOperations.update(ops => ops.filter(op => op.id !== id))
 }
 
-// Simulate async validation
-export async function simulateAsyncValidation(): Promise<void> {
+// Default async validation function (can be overridden)
+export const defaultAsyncValidation: AsyncValidationFunction = async (context: ValidationContext) => {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
-			// 80% success rate for testing
-			if (Math.random() > 0.2) {
-				resolve()
-			} else {
-				reject(new Error('Server validation failed'))
+			console.log('[Validation]', context.operationType, context)
+			
+			// Example validation logic based on operation type
+			switch (context.operationType) {
+				case 'within-bed-move':
+					// 95% success rate for moves within same bed
+					if (Math.random() > 0.05) resolve()
+					else reject(new Error('Within-bed move validation failed'))
+					break
+					
+				case 'across-beds-move':
+					// 85% success rate for moves across beds
+					if (Math.random() > 0.15) resolve()
+					else reject(new Error('Cross-bed move validation failed'))
+					break
+					
+				case 'addition':
+					// 90% success rate for new plant additions
+					if (Math.random() > 0.10) resolve()
+					else reject(new Error('Plant addition validation failed'))
+					break
+					
+				case 'removal':
+					// 98% success rate for removals
+					if (Math.random() > 0.02) resolve()
+					else reject(new Error('Plant removal validation failed'))
+					break
+					
+				default:
+					reject(new Error('Unknown operation type'))
 			}
 		}, 1000)
 	})

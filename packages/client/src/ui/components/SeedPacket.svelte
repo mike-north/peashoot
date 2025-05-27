@@ -23,10 +23,54 @@
 	}
 </script>
 
+<style lang="scss">
+	.packet {
+		cursor: pointer;
+		perspective: 1000px;
+		max-width: 300px;
+		aspect-ratio: 4 / 5;
+		/* Or for responsiveness: max-width: 400px; width: 100%; aspect-ratio: 4 / 5; */
+		.packet-inner {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+			transform-style: preserve-3d;
+		}
+		&.flipped .packet-inner {
+			transform: rotateY(180deg);
+		}
+		.packet-front,
+		.packet-back {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			backface-visibility: hidden;
+			border-radius: 12px;
+		}
+		.packet-back {
+			transform: rotateY(180deg);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.title {
+			pointer-events: none;
+		}
+	}
+	svg {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+</style>
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="packet"
-	class:flipped
+	class:flipped={flipped}
 	onclick={toggleFlip}
 	role="button"
 	tabindex="0"
@@ -230,47 +274,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="scss">
-	.packet {
-		cursor: pointer;
-		perspective: 1000px;
-		max-width: 300px;
-		aspect-ratio: 4 / 5;
-		/* Or for responsiveness: max-width: 400px; width: 100%; aspect-ratio: 4 / 5; */
-		.packet-inner {
-			position: relative;
-			width: 100%;
-			height: 100%;
-			transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-			transform-style: preserve-3d;
-		}
-		&.flipped .packet-inner {
-			transform: rotateY(180deg);
-		}
-		.packet-front,
-		.packet-back {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			backface-visibility: hidden;
-			border-radius: 12px;
-		}
-		.packet-back {
-			transform: rotateY(180deg);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.title {
-			pointer-events: none;
-		}
-	}
-	svg {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-</style>

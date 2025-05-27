@@ -2,6 +2,10 @@
 	console.log('Home')
 </script>
 
+<style lang="scss">
+	/* Remove unused styles */
+</style>
+
 <div class="grid h-full place-items-center">
 	<div class="text-center">
 		<span class="text-2xl font-bold">Home</span>
@@ -13,7 +17,3 @@
 		</p>
 	</div>
 </div>
-
-<style lang="scss">
-	/* Remove unused styles */
-</style>

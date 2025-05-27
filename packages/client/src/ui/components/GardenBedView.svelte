@@ -123,6 +123,100 @@
 	}
 </script>
 
+<style lang="scss">
+	.tile-overlay {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		/* pointer-events: none; // allow SVG events through except for tiles */
+	}
+	.tile-overlay__tile {
+		position: absolute;
+		pointer-events: auto;
+		z-index: 2;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 6px;
+		box-shadow: 0 2px 6px #0002;
+		cursor: grab;
+		user-select: none;
+		font-size: 14px;
+		font-weight: bold;
+		color: #222;
+		border: 2px solid rgb(0, 0, 0, 0.4);
+		transition: box-shadow 0.1s;
+		box-sizing: border-box;
+	}
+	.raised-bed {
+		position: relative;
+		&__plantable-area {
+			fill: #90683d;
+			opacity: 0.4;
+			// stroke: red;
+			// stroke-width: 2 ;
+		}
+		&__frame {
+			fill: none;
+			stroke: rgb(var(--color-soil-brown));
+			stroke-width: 4;
+			stroke-linejoin: round;
+		}
+		&__grid-line {
+			stroke: #4b4e6d;
+			stroke-width: 0.5;
+			opacity: 0.3;
+			stroke-dasharray: 2, 2;
+		}
+		&__title {
+			text-align: center;
+			font-family: Arial, sans-serif;
+			font-size: 1rem;
+			font-weight: bold;
+			color: #5a3e36;
+			margin-bottom: 0.25em;
+			margin-top: 0.5em;
+		}
+		&__meters-row {
+			display: flex;
+			flex-direction: row;
+			gap: 48px;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 1em;
+			margin-top: 0;
+		}
+	}
+	.tile-overlay__tiles {
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+	.tile-overlay__highlight {
+		position: absolute;
+		z-index: 9999;
+		border: 6px solid #ffff00;
+		background: rgba(255, 255, 0, 0.25);
+		pointer-events: none;
+		border-radius: 0;
+		box-sizing: border-box;
+	}
+	.tile-overlay__highlight--invalid {
+		border: 6px solid #ff2222 !important;
+		background: rgba(255, 0, 0, 0.25) !important;
+	}
+	.tile-overlay__highlight--source {
+		border-color: #3498db !important;
+		background: rgba(52, 152, 219, 0.15) !important;
+	}
+	.tile-overlay__highlight--target {
+		border-color: #ffff00 !important;
+		background: rgba(255, 255, 0, 0.25) !important;
+	}
+</style>
+
 <!-- Title and meters OUTSIDE the .raised-bed box -->
 <div class="raised-bed__title">
 	Raised Garden Bed ({bed.width}×{bed.height} feet)
@@ -332,97 +426,3 @@
 
 <!-- DEBUG: Show edgeBorders length -->
 <p>edgeBorders: {edgeBorders.length}</p>
-
-<style lang="scss">
-	.tile-overlay {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		/* pointer-events: none; // allow SVG events through except for tiles */
-	}
-	.tile-overlay__tile {
-		position: absolute;
-		pointer-events: auto;
-		z-index: 2;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 6px;
-		box-shadow: 0 2px 6px #0002;
-		cursor: grab;
-		user-select: none;
-		font-size: 14px;
-		font-weight: bold;
-		color: #222;
-		border: 2px solid rgb(0, 0, 0, 0.4);
-		transition: box-shadow 0.1s;
-		box-sizing: border-box;
-	}
-	.raised-bed {
-		position: relative;
-		&__plantable-area {
-			fill: #90683d;
-			opacity: 0.4;
-			// stroke: red;
-			// stroke-width: 2 ;
-		}
-		&__frame {
-			fill: none;
-			stroke: rgb(var(--color-soil-brown));
-			stroke-width: 4;
-			stroke-linejoin: round;
-		}
-		&__grid-line {
-			stroke: #4b4e6d;
-			stroke-width: 0.5;
-			opacity: 0.3;
-			stroke-dasharray: 2, 2;
-		}
-		&__title {
-			text-align: center;
-			font-family: Arial, sans-serif;
-			font-size: 1rem;
-			font-weight: bold;
-			color: #5a3e36;
-			margin-bottom: 0.25em;
-			margin-top: 0.5em;
-		}
-		&__meters-row {
-			display: flex;
-			flex-direction: row;
-			gap: 48px;
-			justify-content: center;
-			align-items: center;
-			margin-bottom: 1em;
-			margin-top: 0;
-		}
-	}
-	.tile-overlay__tiles {
-		width: 100%;
-		height: 100%;
-		position: relative;
-	}
-	.tile-overlay__highlight {
-		position: absolute;
-		z-index: 9999;
-		border: 6px solid #ffff00;
-		background: rgba(255, 255, 0, 0.25);
-		pointer-events: none;
-		border-radius: 0;
-		box-sizing: border-box;
-	}
-	.tile-overlay__highlight--invalid {
-		border: 6px solid #ff2222 !important;
-		background: rgba(255, 0, 0, 0.25) !important;
-	}
-	.tile-overlay__highlight--source {
-		border-color: #3498db !important;
-		background: rgba(52, 152, 219, 0.15) !important;
-	}
-	.tile-overlay__highlight--target {
-		border-color: #ffff00 !important;
-		background: rgba(255, 255, 0, 0.25) !important;
-	}
-</style>

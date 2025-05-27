@@ -18,41 +18,6 @@
 	const iconY = y + sizePx / 2
 </script>
 
-<svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`} class={colorClass}>
-	<!-- Tile background -->
-	<rect {x} {y} width={sizePx} height={sizePx} class="plant-placement-tile__background" />
-	<!-- Plant icon -->
-	<circle
-		cx={iconX}
-		cy={iconY}
-		r={iconSize / 2}
-		class="plant-placement-tile__icon"
-		opacity="0.8"
-	/>
-	<!-- Plant name text -->
-	<text
-		x={iconX}
-		y={iconY + sizePx / 4}
-		text-anchor="middle"
-		class="plant-placement-tile__name"
-		font-size={Math.max(8, sizePx / 6)}
-	>
-		{plantPlacement.plantTile.name}
-	</text>
-	<!-- Size indicator for multi-cell plants -->
-	{#if size > 1}
-		<text
-			x={iconX}
-			y={iconY - sizePx / 4}
-			text-anchor="middle"
-			class="plant-placement-tile__size-indicator"
-			font-size={Math.max(6, sizePx / 8)}
-		>
-			{size}×{size}
-		</text>
-	{/if}
-</svg>
-
 <style lang="scss">
 	.plant-tile {
 		&__icon {
@@ -134,3 +99,44 @@
 		}
 	}
 </style>
+
+<svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`} class={colorClass}>
+	<!-- Tile background -->
+	<rect
+		x={x}
+		y={y}
+		width={sizePx}
+		height={sizePx}
+		class="plant-placement-tile__background"
+	/>
+	<!-- Plant icon -->
+	<circle
+		cx={iconX}
+		cy={iconY}
+		r={iconSize / 2}
+		class="plant-placement-tile__icon"
+		opacity="0.8"
+	/>
+	<!-- Plant name text -->
+	<text
+		x={iconX}
+		y={iconY + sizePx / 4}
+		text-anchor="middle"
+		class="plant-placement-tile__name"
+		font-size={Math.max(8, sizePx / 6)}
+	>
+		{plantPlacement.plantTile.name}
+	</text>
+	<!-- Size indicator for multi-cell plants -->
+	{#if size > 1}
+		<text
+			x={iconX}
+			y={iconY - sizePx / 4}
+			text-anchor="middle"
+			class="plant-placement-tile__size-indicator"
+			font-size={Math.max(6, sizePx / 8)}
+		>
+			{size}×{size}
+		</text>
+	{/if}
+</svg>

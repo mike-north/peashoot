@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy UI to GitHub Pages
 
 on:
   workflow_run:

@@ -4,9 +4,12 @@ import {
 	Column,
 	CreateDateColumn,
 	UpdateDateColumn,
+	ManyToOne,
 } from 'typeorm'
+import { PlantableArea } from './plantable-area'
+import { SeedPacket } from './seed-packet'
 
-export type PlantId = string & { readonly __brand: unique symbol }
+export type PlantId = string & { readonly __plant: unique symbol }
 
 @Entity({ name: 'plants' })
 export class Plant {
@@ -16,6 +19,12 @@ export class Plant {
 	get id(): PlantId {
 		return this._id as PlantId
 	}
+
+	@ManyToOne(() => SeedPacket, (seedPacket) => seedPacket.plants)
+	seedPacket?: SeedPacket
+
+	@ManyToOne(() => PlantableArea, (plantableArea) => plantableArea.plants)
+	plantableArea?: PlantableArea
 
 	@Column()
 	name!: string

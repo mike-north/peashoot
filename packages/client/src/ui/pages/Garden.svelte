@@ -138,6 +138,11 @@
 	}
 </script>
 
+<!-- You can add more UI elements here -->
+
+<style>
+</style>
+
 <span class="text-2xl font-bold">Garden</span>
 
 <GardenView
@@ -146,8 +151,3 @@
 	onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
 	edgeIndicators={gardenInstance.edgeIndicators}
 />
-
-<!-- You can add more UI elements here -->
-
-<style>
-</style>

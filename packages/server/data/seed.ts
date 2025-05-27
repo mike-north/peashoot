@@ -142,6 +142,18 @@ enum PlantGrowthRate {
  * which plants grow well together or should be kept apart.
  */
 enum PlantFamily {
+	buttercups = 'buttercups',
+	irises = 'irises',
+	begonias = 'begonias',
+	arums = 'arums',
+	cannas = 'cannas',
+	ranunculuses = 'ranunculuses',
+	daisies = 'daisies',
+	peonies = 'peonies',
+	snapdragons = 'snapdragons',
+	geraniums = 'geraniums',
+	grasses = 'grasses',
+
 	// Vegetables
 	tomatoes = 'tomatoes',
 	peppers = 'peppers',

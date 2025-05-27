@@ -2299,6 +2299,451 @@ seed-packets:
       germinationRate: 75
       viabilityYears: 2
 
+  - id: "calla-lily"
+    commonName: "Calla Lily"
+    latinName: "Zantedeschia aethiopica"
+    plantFamily: "arums"
+    description: "Elegant bulb with distinctive trumpet-shaped white flowers and arrow-shaped leaves. Excellent for cutting and water gardens."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "partial-sun"
+      water: "high"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "moisture-retentive"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+    functions:
+      primary: "ornamental"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["hostas", "ferns", "astilbe", "caladiums", "elephant ears"]
+      badCompanions: ["drought-tolerant plants"]
+      allelopathicEffects:
+        [
+          "requires consistent moisture unlike many companions",
+          "provides architectural interest in shade gardens",
+          "goes dormant in winter in cold climates"
+        ]
+    seedSource: "Specialty Nursery"
+    toxInfo:
+      humanToxicity:
+        level: "moderately-toxic"
+        toxicParts: ["whole-plant"]
+        symptoms: ["mouth irritation", "difficulty swallowing", "nausea"]
+        notes: "Contains calcium oxalate crystals - keep away from children and pets"
+
+  - id: "canna"
+    commonName: "Canna Lily"
+    latinName: "Canna indica"
+    plantFamily: "cannas"
+    description: "Tropical bulb with large, colorful flowers and bold foliage. Excellent for creating dramatic garden displays and containers."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "high"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "moisture-retentive"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "aggressive"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 120
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["elephant ears", "caladiums", "coleus", "impatiens", "begonias"]
+      badCompanions: ["drought-tolerant plants", "small delicate plants"]
+      allelopathicEffects:
+        [
+          "large size can shade out smaller companions",
+          "attracts hummingbirds and butterflies",
+          "requires consistent moisture and feeding"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "dahlia"
+    commonName: "Dahlia"
+    latinName: "Dahlia pinnata"
+    plantFamily: "daisies"
+    description: "Showy summer bulb with diverse flower forms and colors. Excellent for cutting gardens and late-season color."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 6
+            unit: "feet"
+        spread:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 120
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["zinnias", "marigolds", "cosmos", "sunflowers", "rudbeckia"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects and pollinators",
+          "provides late-season nectar when many flowers fade",
+          "tall varieties may need staking"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "gladiolus"
+    commonName: "Gladiolus"
+    latinName: "Gladiolus hybridus"
+    plantFamily: "irises"
+    description: "Tall spikes of colorful flowers perfect for cutting. Classic summer bulb with sword-like foliage and dramatic flower displays."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 2
+            unit: "feet"
+          max:
+            value: 5
+            unit: "feet"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["roses", "delphiniums", "lilies", "peonies", "iris"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "succession planting provides continuous blooms",
+          "tall spikes add vertical interest to gardens",
+          "narrow footprint allows intercropping"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "freesias"
+    commonName: "Freesia"
+    latinName: "Freesia refracta"
+    plantFamily: "irises"
+    description: "Fragrant spring bulb with delicate, tubular flowers. Excellent for cutting and forcing indoors."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 3
+        unit: "inches"
+      rowSpacing:
+        value: 6
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 3
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["fall"]
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["tulips", "daffodils", "grape hyacinths", "crocuses", "primroses"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "intense fragrance attracts beneficial insects",
+          "small size allows dense planting",
+          "goes dormant in summer"
+        ]
+    seedSource: "Specialty Nursery"
+
   - id: "mary-washington-asparagus"
     commonName: "Mary Washington Asparagus"
     latinName: "Asparagus officinalis"
@@ -4945,3 +5390,2107 @@ seed-packets:
           "early blooming attracts beneficial insects"
         ]
     seedSource: "Specialty Nursery"
+
+  - id: "japanese-perpetual-spinach"
+    commonName: "Japanese Perpetual Spinach"
+    latinName: "Spinacia oleracea"
+    plantFamily: "spinach"
+    description: "Heat-tolerant spinach variety that produces continuously through summer. Slow to bolt with excellent flavor and tender leaves."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 3
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 3
+          unit: "inches"
+        max:
+          value: 4
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 10
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "summer", "fall"]
+        weeksBeforeLastFrost: 6
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 45
+        unit: "days"
+      harvestMethod: "cut-and-come-again"
+      harvestWindow:
+        value: 90
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 6
+    companions:
+      goodCompanions: ["lettuce", "arugula", "carrots", "onions", "garlic", "radishes", "peas", "strawberries"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "grows well in partial shade of taller plants",
+          "shallow roots don't compete with deep-rooted crops",
+          "attracts beneficial insects when flowering"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 200
+      germinationRate: 85
+      viabilityYears: 3
+
+  - id: "spinach"
+    commonName: "Spinach"
+    latinName: "Spinacia oleracea"
+    plantFamily: "spinach"
+    description: "Classic cool-season leafy green with tender, nutritious leaves. Fast-growing and perfect for succession planting."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 2
+          unit: "inches"
+        max:
+          value: 4
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 45
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 6
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 40
+        unit: "days"
+      harvestMethod: "cut-and-come-again"
+      harvestWindow:
+        value: 21
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["lettuce", "arugula", "carrots", "onions", "garlic", "radishes", "peas", "strawberries", "cabbage"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "grows well in partial shade of taller plants",
+          "shallow roots don't compete with deep-rooted crops",
+          "attracts beneficial insects when flowering"
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 150
+      germinationRate: 85
+      viabilityYears: 3
+
+  - id: "fava-beans"
+    commonName: "Fava Beans"
+    latinName: "Vicia faba"
+    plantFamily: "beans"
+    description: "Cool-season legume with large, meaty beans. Excellent nitrogen fixer and cold-hardy. Also known as broad beans or horse beans."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 5
+            unit: "feet"
+        spread:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 2
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["seed", "leaves"]
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 21
+        unit: "days"
+    companions:
+      goodCompanions: ["carrots", "lettuce", "spinach", "cabbage", "broccoli", "potatoes", "corn"]
+      badCompanions: ["onions", "garlic", "shallots", "fennel", "sunflowers"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for companion plants",
+          "deep roots improve soil structure",
+          "provides beneficial insect habitat",
+          "can be used as green manure crop"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 90
+      viabilityYears: 3
+
+  - id: "cherokee-trail-of-tears-beans"
+    commonName: "Cherokee Trail of Tears Beans"
+    latinName: "Phaseolus vulgaris"
+    plantFamily: "beans"
+    description: "Historic Cherokee heirloom pole bean with purple pods and black seeds. Carried on the Trail of Tears, this variety has deep cultural significance."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "climbing"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 10
+            unit: "feet"
+        spread:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "trellis"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 1.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer"]
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "seed"]
+      harvestDuration:
+        value: 85
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["corn", "squash", "carrots", "radishes", "marigolds", "nasturtiums"]
+      badCompanions: ["onions", "garlic", "fennel", "sunflowers", "brassicas"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for other plants",
+          "three sisters planting with corn and squash",
+          "climbing habit provides vertical growing space"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 20
+      germinationRate: 85
+      viabilityYears: 3
+
+  - id: "dragons-tongue-beans"
+    commonName: "Dragon's Tongue Bush Bean"
+    latinName: "Phaseolus vulgaris"
+    plantFamily: "beans"
+    description: "Striking heirloom bush bean with cream-colored pods streaked with purple. Tender, stringless pods with excellent flavor."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 1
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer"]
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "seed"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 21
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 3
+    companions:
+      goodCompanions: ["corn", "squash", "carrots", "radishes", "marigolds", "nasturtiums"]
+      badCompanions: ["onions", "garlic", "fennel", "sunflowers", "brassicas"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for other plants",
+          "compact bush habit works well in intensive plantings",
+          "colorful pods add ornamental value"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 30
+      germinationRate: 90
+      viabilityYears: 3
+
+  - id: "scarlet-runner-beans"
+    commonName: "Scarlet Runner Beans"
+    latinName: "Phaseolus coccineus"
+    plantFamily: "beans"
+    description: "Vigorous climbing bean with brilliant red flowers and large, colorful seeds. Ornamental and edible with excellent heat tolerance."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 6
+        unit: "inches"
+      optimal:
+        value: 8
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "climbing"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 8
+            unit: "feet"
+          max:
+            value: 12
+            unit: "feet"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "trellis"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 1.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer", "ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "seed", "flower"]
+      harvestDuration:
+        value: 70
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 45
+        unit: "days"
+    companions:
+      goodCompanions: ["corn", "squash", "carrots", "radishes", "marigolds", "nasturtiums"]
+      badCompanions: ["onions", "garlic", "fennel", "sunflowers", "brassicas"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for other plants",
+          "attracts hummingbirds and beneficial insects",
+          "provides excellent vertical screen or windbreak",
+          "flowers are edible and attract pollinators"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 85
+      viabilityYears: 3
+
+  - id: "calabrese-green-broccoli"
+    commonName: "Calabrese Green Sprouting Broccoli"
+    latinName: "Brassica oleracea"
+    plantFamily: "broccoli"
+    description: "Classic Italian heirloom broccoli with large central heads followed by numerous side shoots. Excellent for succession harvests."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 45
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "both"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 5
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["flower", "leaves"]
+      harvestDuration:
+        value: 70
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["onions", "garlic", "carrots", "beets", "lettuce", "spinach", "herbs", "marigolds"]
+      badCompanions: ["tomatoes", "peppers", "strawberries", "beans", "mustard"]
+      allelopathicEffects:
+        [
+          "benefits from aromatic herb companions for pest control",
+          "releases compounds that may inhibit some plants",
+          "attracts beneficial insects when flowering",
+          "sensitive to allelopathic compounds from nightshades"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "cauliflower"
+    commonName: "Cauliflower"
+    latinName: "Brassica oleracea"
+    plantFamily: "cauliflower"
+    description: "Classic white-headed brassica with dense, creamy curds. Requires cool weather and consistent moisture for best head development."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 45
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "both"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 5
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["flower", "leaves"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 7
+        unit: "days"
+    companions:
+      goodCompanions: ["onions", "garlic", "carrots", "beets", "lettuce", "spinach", "herbs", "marigolds"]
+      badCompanions: ["tomatoes", "peppers", "strawberries", "beans", "mustard"]
+      allelopathicEffects:
+        [
+          "benefits from aromatic herb companions for pest control",
+          "releases compounds that may inhibit some plants",
+          "attracts beneficial insects when flowering",
+          "sensitive to allelopathic compounds from nightshades"
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 80
+      viabilityYears: 4
+
+  - id: "early-purple-sprouting-broccoli"
+    commonName: "Early Purple Sprouting Broccoli"
+    latinName: "Brassica oleracea"
+    plantFamily: "broccoli"
+    description: "Overwintering broccoli variety producing purple sprouting heads in early spring. Extremely cold hardy and productive."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 30
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "slow"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "both"
+      timing:
+        seasons: ["summer", "fall"]
+        weeksBeforeLastFrost: 12
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 5
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["flower", "leaves"]
+      harvestDuration:
+        value: 240
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["onions", "garlic", "carrots", "beets", "lettuce", "spinach", "herbs", "marigolds"]
+      badCompanions: ["tomatoes", "peppers", "strawberries", "beans", "mustard"]
+      allelopathicEffects:
+        [
+          "benefits from aromatic herb companions for pest control",
+          "releases compounds that may inhibit some plants",
+          "attracts beneficial insects when flowering",
+          "provides early spring food for pollinators"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 40
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "parisienne-carrots"
+    commonName: "Parisienne Carrots"
+    latinName: "Daucus carota"
+    plantFamily: "carrots"
+    description: "Small, round French heirloom carrots perfect for containers and heavy soils. Sweet, tender roots ideal for gourmet cooking."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 1
+        unit: "inches"
+      optimal:
+        value: 2
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 1
+          unit: "inches"
+        max:
+          value: 2
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 45
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+        spread:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["root"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "single-harvest"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions:
+        ["onions", "lettuce", "peas", "rosemary", "sage", "chives", "tomatoes", "radishes"]
+      badCompanions: ["dill", "parsnips", "fennel"]
+      allelopathicEffects:
+        [
+          "onions help repel carrot fly",
+          "attracts beneficial insects when flowering",
+          "shallow roots work well with deep-rooted companions"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 400
+      germinationRate: 75
+      viabilityYears: 3
+
+  - id: "lila-lu-sang-carrots"
+    commonName: "Lila Lu Sang Purple Carrots"
+    latinName: "Daucus carota"
+    plantFamily: "carrots"
+    description: "Striking purple carrots with orange cores. Sweet, crisp texture with high antioxidant content. Retains color when cooked."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 1
+        unit: "inches"
+      optimal:
+        value: 2
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 1
+          unit: "inches"
+        max:
+          value: 2
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 45
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 10
+            unit: "inches"
+          max:
+            value: 14
+            unit: "inches"
+        spread:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["root"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "single-harvest"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions:
+        ["onions", "lettuce", "peas", "rosemary", "sage", "chives", "tomatoes", "radishes"]
+      badCompanions: ["dill", "parsnips", "fennel"]
+      allelopathicEffects:
+        [
+          "onions help repel carrot fly",
+          "attracts beneficial insects when flowering",
+          "colorful roots add ornamental value to garden"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 300
+      germinationRate: 75
+      viabilityYears: 3
+
+  - id: "yukon-gold-potatoes"
+    commonName: "Yukon Gold Potatoes"
+    latinName: "Solanum tuberosum"
+    plantFamily: "potatoes"
+    description: "Popular yellow-fleshed potato with buttery flavor and smooth texture. Excellent for boiling, mashing, and roasting. Mid-season variety."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 15
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "acidic"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 45
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring"]
+        weeksBeforeLastFrost: 2
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["root"]
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 14
+        unit: "days"
+    companions:
+      goodCompanions: ["beans", "peas", "corn", "cabbage", "marigolds", "nasturtiums", "horseradish"]
+      badCompanions: ["tomatoes", "peppers", "eggplant", "cucumbers", "squash", "sunflowers", "asparagus", "carrots"]
+      allelopathicEffects:
+        [
+          "releases solanine which can inhibit some plants",
+          "benefits from marigold pest deterrent properties",
+          "susceptible to same diseases as other nightshades",
+          "horseradish companion helps deter potato beetles"
+        ]
+    seedSource: "Specialty Nursery"
+    toxInfo:
+      humanToxicity:
+        level: "mildly-toxic"
+        toxicParts: ["green-parts", "flowers", "fruits"]
+        symptoms: ["nausea", "vomiting", "diarrhea"]
+        notes: "Green potatoes and potato plants contain solanine - only eat properly stored tubers"
+
+  - id: "anemone"
+    commonName: "Anemone"
+    latinName: "Anemone coronaria"
+    plantFamily: "buttercups"
+    description: "Colorful spring-blooming bulb with papery, poppy-like flowers in vibrant colors. Excellent for cutting and naturalizing."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 3
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 6
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+        spread:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["fall"]
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 730
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["tulips", "daffodils", "crocuses", "grape hyacinths", "primroses", "violets"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "provides early nectar for beneficial insects",
+          "naturalizes well with other spring bulbs",
+          "goes dormant in summer allowing space for other plants"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "begonia"
+    commonName: "Begonia"
+    latinName: "Begonia semperflorens"
+    plantFamily: "begonias"
+    description: "Colorful annual bedding plant with waxy flowers and glossy leaves. Excellent for shade gardens and containers."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 6
+        unit: "inches"
+      optimal:
+        value: 8
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 10
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.125
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 120
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["impatiens", "caladiums", "hostas", "ferns", "coleus", "torenia"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "thrives in shade where many plants struggle",
+          "continuous blooming provides season-long color",
+          "shallow roots don't compete with deeper plants"
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 75
+      viabilityYears: 2
+
+  - id: "ranunculus"
+    commonName: "Ranunculus"
+    latinName: "Ranunculus asiaticus"
+    plantFamily: "buttercups"
+    description: "Layered, papery flowers in vibrant colors. Excellent for cutting with long-lasting blooms and delicate appearance."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 8
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["fall", "early-spring"]
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["anemones", "tulips", "daffodils", "sweet peas", "snapdragons"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "provides early season nectar for pollinators",
+          "cool-season blooming complements spring bulbs",
+          "excellent cut flower longevity"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "crocus"
+    commonName: "Crocus"
+    latinName: "Crocus vernus"
+    plantFamily: "irises"
+    description: "Early spring bulb with cup-shaped flowers. One of the first flowers to bloom, providing crucial early nectar for pollinators."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 3
+        unit: "inches"
+      rowSpacing:
+        value: 4
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "low"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 35
+            unit: "fahrenheit"
+          max:
+            value: 55
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+        spread:
+          min:
+            value: 2
+            unit: "inches"
+          max:
+            value: 4
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["fall"]
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 21
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["snowdrops", "daffodils", "grape hyacinths", "chionodoxa", "scilla"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "critical early nectar source for emerging bees",
+          "naturalizes well in lawns and meadows",
+          "small size allows underplanting with larger bulbs"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "peony"
+    commonName: "Peony"
+    latinName: "Paeonia lactiflora"
+    plantFamily: "peonies"
+    description: "Long-lived perennial with large, fragrant flowers. Excellent for cutting and provides decades of reliable blooms."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 24
+        unit: "inches"
+      optimal:
+        value: 36
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "bush"
+      rate: "slow"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["fall"]
+    functions:
+      primary: "ornamental"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 21
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["roses", "iris", "delphiniums", "clematis", "hostas"]
+      badCompanions: ["trees", "large shrubs"]
+      allelopathicEffects:
+        [
+          "attracts ants which help protect buds from pests",
+          "long-lived and dislikes root disturbance",
+          "provides excellent cut flowers"
+        ]
+    seedSource: "Specialty Nursery"
+
+  - id: "globe-thistle"
+    commonName: "Globe Thistle"
+    latinName: "Echinops ritro"
+    plantFamily: "daisies"
+    description: "Architectural perennial with spherical blue flowers and spiny foliage. Excellent for dried flowers and pollinator gardens."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 30
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "low"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "low"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 4
+            unit: "feet"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "moderate"
+    planting:
+      method: "both"
+      timing:
+        seasons: ["early-spring", "fall"]
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "ornamental"
+      secondary: ["pollinator"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["lavender", "salvia", "echinacea", "rudbeckia", "ornamental grasses"]
+      badCompanions: ["moisture-loving plants"]
+      allelopathicEffects:
+        [
+          "extremely attractive to bees and butterflies",
+          "drought tolerant once established",
+          "self-seeds readily in suitable conditions"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 70
+      viabilityYears: 3
+
+  - id: "chamomile"
+    commonName: "German Chamomile"
+    latinName: "Matricaria chamomilla"
+    plantFamily: "daisies"
+    description: "Aromatic herb with small daisy-like flowers. Excellent for tea, companion planting, and attracting beneficial insects."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 6
+        unit: "inches"
+      optimal:
+        value: 8
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "low"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "low"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 2
+      seedDepth:
+        value: 0.125
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pollinator"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["flower"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 90
+        unit: "days"
+    companions:
+      goodCompanions: ["cabbage", "onions", "cucumbers", "tomatoes", "herbs", "most vegetables"]
+      badCompanions: ["mint"]
+      allelopathicEffects:
+        [
+          "improves flavor and growth of nearby plants",
+          "attracts beneficial insects and parasitic wasps",
+          "natural fungicide properties",
+          "self-seeds readily"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 200
+      germinationRate: 80
+      viabilityYears: 3
+
+  - id: "stork"
+    commonName: "Stork's Bill"
+    latinName: "Erodium cicutarium"
+    plantFamily: "geraniums"
+    description: "Small wildflower with delicate pink flowers and distinctive seed pods. Excellent ground cover and pollinator plant."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 8
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "low"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "low"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "groundcover"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+      seedDepth:
+        value: 0.125
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "ornamental"
+      secondary: ["ground-cover", "pollinator"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: false
+      edibleParts: []
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["wildflowers", "native grasses", "drought-tolerant perennials"]
+      badCompanions: ["moisture-loving plants"]
+      allelopathicEffects:
+        [
+          "provides nectar for small beneficial insects",
+          "self-seeds and naturalizes easily",
+          "drought tolerant ground cover"
+        ]
+    seedSource: "Native Plant Nursery"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 75
+      viabilityYears: 2

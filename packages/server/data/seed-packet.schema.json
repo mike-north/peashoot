@@ -50,6 +50,7 @@
         "plantFamily": {
           "type": "string",
           "enum": [
+            "buttercups", "irises", "begonias", "arums", "cannas", "ranunculuses", "daisies", "peonies", "snapdragons", "geraniums", "grasses",
             "tomatoes", "peppers", "beans", "peas", "corn", "squash", "pumpkins", "cucumbers", 
             "carrots", "onions", "garlic", "shallots", "leeks", "lettuce", "spinach", "radishes", "beets", "potatoes", "sweet potatoes", "turnips", "rutabagas",
             "brassicas", "cabbage", "broccoli", "cauliflower", "kale", "kohlrabi", "mustard", "arugula",

@@ -1,0 +1,710 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://peashoot.dev/schemas/seed-packet.json",
+  "title": "SeedPacketCollection",
+  "description": "Collection of seed packets for garden planning and plant placement optimization",
+  "type": "object",
+  "required": ["seed-packets"],
+  "properties": {
+    "seed-packets": {
+      "type": "array",
+      "description": "Array of seed packet information",
+      "items": {
+        "$ref": "#/definitions/SeedPacket"
+      }
+    }
+  },
+  "definitions": {
+    "SeedPacket": {
+      "type": "object",
+      "description": "Complete information about a plant variety for garden planning and plant placement optimization",
+      "required": [
+        "id",
+        "commonName",
+        "plantFamily",
+        "propagationMethod",
+        "spacing",
+        "environmental",
+        "growth",
+        "resources",
+        "planting",
+        "functions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this plant variety"
+        },
+        "commonName": {
+          "type": "string",
+          "description": "Name most people know (e.g., 'Tomato')"
+        },
+        "latinName": {
+          "type": "string",
+          "description": "Scientific name (e.g., 'Solanum lycopersicum')"
+        },
+        "description": {
+          "type": "string",
+          "description": "Additional details about this variety"
+        },
+        "plantFamily": {
+          "type": "string",
+          "enum": [
+            "tomatoes", "peppers", "beans", "peas", "corn", "squash", "pumpkins", "cucumbers", 
+            "carrots", "onions", "garlic", "shallots", "leeks", "lettuce", "spinach", "radishes", "beets", "potatoes", "sweet potatoes", "turnips", "rutabagas",
+            "brassicas", "cabbage", "broccoli", "cauliflower", "kale", "kohlrabi", "mustard", "arugula",
+            "nightshades", "eggplant", "cucurbits", "watermelons", "cantaloupes", "alliums", "legumes",
+            "basil", "parsley", "chives", "dill", "sage", "oregano", "rosemary", "thyme", "cilantro", "mint", "lavender", "aromatic herbs",
+            "marigolds", "nasturtiums", "sunflowers", "roses", "calendula", "cosmos", "zinnias",
+            "grains", "wheat", "oats", "apples", "cherries", "apricots", "figs", "berries", "strawberries", "blueberries", "raspberries", "blackberries",
+            "fennel", "asparagus", "parsnips", "melons", "walnut trees", "pole beans", "celery", "okra", "artichokes", "rhubarb",
+            "clover", "buckwheat", "none known"
+          ],
+          "description": "Plant family for companion planting relationships"
+        },
+        "propagationMethod": {
+          "type": "string",
+          "enum": ["seed", "vegetative", "grafted"],
+          "description": "How this plant is typically started"
+        },
+        "storageStructure": {
+          "type": "string",
+          "enum": ["bulb", "tuber", "rhizome", "corm", "crown", "roots"],
+          "description": "Special storage organs if any"
+        },
+        "spacing": {
+          "$ref": "#/definitions/PlantSpacing"
+        },
+        "environmental": {
+          "$ref": "#/definitions/EnvironmentalRequirements"
+        },
+        "growth": {
+          "$ref": "#/definitions/GrowthCharacteristics"
+        },
+        "resources": {
+          "$ref": "#/definitions/ResourceRequirements"
+        },
+        "planting": {
+          "$ref": "#/definitions/PlantingInfo"
+        },
+        "functions": {
+          "$ref": "#/definitions/PlantFunctions"
+        },
+        "production": {
+          "$ref": "#/definitions/ProductionInfo"
+        },
+        "companions": {
+          "$ref": "#/definitions/CompanionPlanting"
+        },
+        "seedPacketInfo": {
+          "$ref": "#/definitions/SeedPacketInfo"
+        },
+        "care": {
+          "$ref": "#/definitions/PlantCareInfo"
+        },
+        "seedSource": {
+          "type": "string",
+          "description": "Company/supplier name"
+        },
+        "plantingInstructions": {
+          "type": "string",
+          "description": "Detailed growing instructions"
+        },
+        "sellBy": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Expiration date for seeds (ISO 8601)"
+        },
+        "toxInfo": {
+          "$ref": "#/definitions/ToxicityInfo"
+        }
+      }
+    },
+    "Distance": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["inches", "feet", "yards", "meters", "centimeters"]
+        }
+      }
+    },
+    "DistanceRange": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {
+          "$ref": "#/definitions/Distance"
+        },
+        "max": {
+          "$ref": "#/definitions/Distance"
+        }
+      }
+    },
+    "Temperature": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["fahrenheit", "celsius"]
+        }
+      }
+    },
+    "TemperatureRange": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {
+          "$ref": "#/definitions/Temperature"
+        },
+        "max": {
+          "$ref": "#/definitions/Temperature"
+        }
+      }
+    },
+    "TimeDuration": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["days", "hours", "minutes", "seconds"]
+        }
+      }
+    },
+    "TimeDurationRange": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": {
+          "$ref": "#/definitions/TimeDuration"
+        },
+        "max": {
+          "$ref": "#/definitions/TimeDuration"
+        }
+      }
+    },
+    "USDAHardinessZone": {
+      "type": "object",
+      "required": ["zone"],
+      "properties": {
+        "zone": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 11,
+          "description": "1-11, where 1 is coldest"
+        },
+        "subzone": {
+          "type": "integer",
+          "description": "'a' or 'b' for finer temperature ranges"
+        }
+      }
+    },
+    "PlantSpacing": {
+      "type": "object",
+      "required": ["minimum", "optimal"],
+      "properties": {
+        "minimum": {
+          "$ref": "#/definitions/Distance",
+          "description": "Closest plants can be without competing"
+        },
+        "optimal": {
+          "$ref": "#/definitions/Distance",
+          "description": "Best spacing for healthy growth"
+        },
+        "rowSpacing": {
+          "$ref": "#/definitions/Distance",
+          "description": "Space between rows if planted in rows"
+        },
+        "thinning": {
+          "$ref": "#/definitions/DistanceRange",
+          "description": "Final spacing after thinning seedlings"
+        },
+        "canIntercrop": {
+          "type": "boolean",
+          "description": "Can other plants be grown between these"
+        }
+      }
+    },
+    "EnvironmentalRequirements": {
+      "type": "object",
+      "required": ["light", "water"],
+      "properties": {
+        "light": {
+          "type": "string",
+          "enum": ["full-sun", "partial-sun", "shade"],
+          "description": "How much sunlight needed"
+        },
+        "water": {
+          "type": "string",
+          "enum": ["low", "moderate", "high", "consistent"],
+          "description": "Irrigation requirements"
+        },
+        "hardiness": {
+          "type": "object",
+          "properties": {
+            "usdaZone": {
+              "$ref": "#/definitions/USDAHardinessZone"
+            },
+            "frostHardy": {
+              "type": "boolean",
+              "description": "Can survive light frost"
+            },
+            "heatTolerant": {
+              "type": "boolean",
+              "description": "Handles high temperatures well"
+            },
+            "coolSeasonHardy": {
+              "type": "boolean",
+              "description": "Prefers cool weather"
+            }
+          }
+        },
+        "soil": {
+          "type": "object",
+          "properties": {
+            "texture": {
+              "type": "string",
+              "enum": ["sandy", "silt", "clay", "loamy", "rocky"],
+              "description": "Physical soil composition"
+            },
+            "drainage": {
+              "type": "string",
+              "enum": ["well-draining", "moisture-retentive", "wet", "dry"],
+              "description": "Water drainage needs"
+            },
+            "ph": {
+              "type": "string",
+              "enum": ["acidic", "neutral", "alkaline", "adaptable"],
+              "description": "Acidity/alkalinity preference"
+            },
+            "organicMatter": {
+              "type": "string",
+              "enum": ["low", "moderate", "high", "very-high"],
+              "description": "Fertility requirements"
+            }
+          }
+        },
+        "temperatureRanges": {
+          "type": "object",
+          "properties": {
+            "transplant": {
+              "$ref": "#/definitions/TemperatureRange",
+              "description": "Safe temperature for moving outdoors"
+            },
+            "ideal": {
+              "$ref": "#/definitions/TemperatureRange",
+              "description": "Optimal growing temperature"
+            },
+            "soilMin": {
+              "$ref": "#/definitions/Temperature",
+              "description": "Minimum soil temperature for planting"
+            }
+          }
+        }
+      }
+    },
+    "GrowthCharacteristics": {
+      "type": "object",
+      "required": ["lifespan", "habit", "matureSize", "rootDepth", "supportNeeds"],
+      "properties": {
+        "lifespan": {
+          "type": "string",
+          "enum": ["annual", "biennial", "perennial"],
+          "description": "How long the plant lives"
+        },
+        "habit": {
+          "type": "string",
+          "enum": ["bush", "vine", "tree", "groundcover", "upright", "rosette", "climbing", "trailing"],
+          "description": "Physical growth pattern"
+        },
+        "rate": {
+          "type": "string",
+          "enum": ["slow", "moderate", "fast"],
+          "description": "How quickly it grows"
+        },
+        "matureSize": {
+          "type": "object",
+          "required": ["height", "spread"],
+          "properties": {
+            "height": {
+              "$ref": "#/definitions/DistanceRange",
+              "description": "How tall it gets"
+            },
+            "spread": {
+              "$ref": "#/definitions/DistanceRange",
+              "description": "How wide it spreads"
+            }
+          }
+        },
+        "rootDepth": {
+          "type": "string",
+          "enum": ["shallow", "medium", "deep"],
+          "description": "How deep roots go"
+        },
+        "supportNeeds": {
+          "type": "string",
+          "enum": ["none", "stakes", "trellis", "cage", "arbor", "fence"],
+          "description": "What structures it needs for support"
+        }
+      }
+    },
+    "ResourceRequirements": {
+      "type": "object",
+      "required": ["nutrients", "competitiveNature"],
+      "properties": {
+        "nutrients": {
+          "type": "string",
+          "enum": ["light", "moderate", "heavy"],
+          "description": "Fertilizer requirements"
+        },
+        "competitiveNature": {
+          "type": "string",
+          "enum": ["aggressive", "moderate", "gentle"],
+          "description": "How aggressively it competes"
+        }
+      }
+    },
+    "PlantingInfo": {
+      "type": "object",
+      "required": ["method"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["direct-sow", "transplant", "both"],
+          "description": "Direct sow vs transplant"
+        },
+        "timing": {
+          "type": "object",
+          "properties": {
+            "seasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["early-spring", "spring", "late-spring", "summer", "fall", "winter"]
+              },
+              "description": "Which seasons to plant"
+            },
+            "weeksBeforeLastFrost": {
+              "type": "number",
+              "description": "Timing relative to last frost"
+            },
+            "weeksAfterLastFrost": {
+              "type": "number",
+              "description": "Timing relative to last frost"
+            }
+          }
+        },
+        "seedDepth": {
+          "oneOf": [
+            {"$ref": "#/definitions/Distance"},
+            {"$ref": "#/definitions/DistanceRange"}
+          ],
+          "description": "How deep to plant seeds"
+        },
+        "germinationDuration": {
+          "$ref": "#/definitions/TimeDuration",
+          "description": "How long until seeds sprout"
+        },
+        "daysToGermination": {
+          "$ref": "#/definitions/TimeDurationRange",
+          "description": "Range of germination time"
+        }
+      }
+    },
+    "PlantFunctions": {
+      "type": "object",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "enum": ["food", "pollinator", "pest-repellent", "nitrogen-fixer", "ground-cover", "windbreak", "ornamental"],
+          "description": "Main purpose (food, pollinator, etc.)"
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["food", "pollinator", "pest-repellent", "nitrogen-fixer", "ground-cover", "windbreak", "ornamental"]
+          },
+          "description": "Additional benefits"
+        },
+        "beneficialInsects": {
+          "type": "boolean",
+          "description": "Attracts helpful insects"
+        },
+        "pollinatorValue": {
+          "type": "boolean",
+          "description": "Important for pollinating other plants"
+        }
+      }
+    },
+    "ProductionInfo": {
+      "type": "object",
+      "required": ["producesFruit"],
+      "properties": {
+        "producesFruit": {
+          "type": "boolean",
+          "description": "Whether it produces edible parts"
+        },
+        "edibleParts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["leaves", "fruit", "root", "flower", "stem", "seed"]
+          },
+          "description": "Which parts are edible"
+        },
+        "harvestDuration": {
+          "$ref": "#/definitions/TimeDuration",
+          "description": "Time from planting to harvest"
+        },
+        "harvestMethod": {
+          "type": "string",
+          "enum": ["cut-and-come-again", "single-harvest", "continuous", "periodic"],
+          "description": "How to harvest"
+        },
+        "harvestWindow": {
+          "$ref": "#/definitions/TimeDuration",
+          "description": "How long harvest period lasts"
+        },
+        "successionPlanting": {
+          "type": "object",
+          "properties": {
+            "recommended": {
+              "type": "boolean",
+              "description": "Should you plant multiple times"
+            },
+            "intervalWeeks": {
+              "type": "number",
+              "description": "Weeks between plantings"
+            },
+            "maxSuccessions": {
+              "type": "number",
+              "description": "Maximum number of plantings"
+            },
+            "seasonalLimitations": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["early-spring", "spring", "late-spring", "summer", "fall", "winter"]
+              },
+              "description": "Which seasons work"
+            }
+          }
+        }
+      }
+    },
+    "CompanionPlanting": {
+      "type": "object",
+      "properties": {
+        "goodCompanions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Plants that grow well together"
+        },
+        "badCompanions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Plants that should be kept apart"
+        },
+        "allelopathicEffects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Chemicals this plant releases that affect others"
+        }
+      }
+    },
+    "SeedPacketInfo": {
+      "type": "object",
+      "properties": {
+        "seedCount": {
+          "type": "number",
+          "description": "Number of seeds in packet"
+        },
+        "ntWeightInOz": {
+          "type": "number",
+          "description": "Net weight of seeds in ounces"
+        },
+        "viabilityYears": {
+          "type": "number",
+          "description": "How many years seeds stay viable"
+        },
+        "germinationRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of seeds expected to sprout"
+        },
+        "treatmentRequired": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["scarification", "stratification", "soaking"]
+          },
+          "description": "Special treatments needed before planting"
+        },
+        "storageRequirements": {
+          "type": "string",
+          "description": "How to store unused seeds"
+        }
+      }
+    },
+    "PlantCareInfo": {
+      "type": "object",
+      "properties": {
+        "commonPests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Insects/animals that commonly attack"
+        },
+        "commonDiseases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Diseases this plant is prone to"
+        },
+        "organicTreatments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Natural pest/disease control methods"
+        },
+        "vulnerabilityPeriods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["early-spring", "spring", "late-spring", "summer", "fall", "winter"]
+          },
+          "description": "When plant is most susceptible"
+        }
+      }
+    },
+    "ToxicityInfo": {
+      "type": "object",
+      "properties": {
+        "humanToxicity": {
+          "type": "object",
+          "required": ["level"],
+          "properties": {
+            "level": {
+              "type": "string",
+              "enum": ["safe", "mildly-toxic", "moderately-toxic", "highly-toxic", "unknown"]
+            },
+            "toxicParts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["whole-plant", "leaves", "stems", "roots", "flowers", "fruits", "seeds", "sap", "bark", "green-parts"]
+              },
+              "description": "Which parts are toxic"
+            },
+            "symptoms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Common symptoms if consumed"
+            },
+            "notes": {
+              "type": "string",
+              "description": "Additional safety information"
+            }
+          }
+        },
+        "petToxicity": {
+          "type": "object",
+          "properties": {
+            "dogs": {
+              "type": "string",
+              "enum": ["safe", "mildly-toxic", "moderately-toxic", "highly-toxic", "unknown"],
+              "description": "Toxicity to dogs"
+            },
+            "cats": {
+              "type": "string",
+              "enum": ["safe", "mildly-toxic", "moderately-toxic", "highly-toxic", "unknown"],
+              "description": "Toxicity to cats"
+            },
+            "toxicParts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["whole-plant", "leaves", "stems", "roots", "flowers", "fruits", "seeds", "sap", "bark", "green-parts"]
+              },
+              "description": "Which parts are toxic to pets"
+            },
+            "symptoms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Symptoms in pets"
+            }
+          }
+        },
+        "livestockToxicity": {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "enum": ["safe", "mildly-toxic", "moderately-toxic", "highly-toxic", "unknown"]
+            },
+            "affectedAnimals": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Which livestock are affected"
+            },
+            "toxicParts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["whole-plant", "leaves", "stems", "roots", "flowers", "fruits", "seeds", "sap", "bark", "green-parts"]
+              }
+            }
+          }
+        },
+        "skinContact": {
+          "type": "object",
+          "properties": {
+            "irritant": {
+              "type": "boolean",
+              "description": "Causes skin irritation"
+            },
+            "allergen": {
+              "type": "boolean",
+              "description": "Common allergen"
+            },
+            "severity": {
+              "type": "string",
+              "enum": ["safe", "mildly-toxic", "moderately-toxic", "highly-toxic", "unknown"],
+              "description": "How severe contact reactions are"
+            }
+          }
+        }
+      }
+    }
+  }
+} 

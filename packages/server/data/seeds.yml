@@ -1,0 +1,2300 @@
+# yaml-language-server: $schema=./seed-packet.schema.json
+
+seed-packets:
+  - id: "burpee-big-boy-tomato"
+    commonName: "Big Boy Tomato"
+    latinName: "Solanum lycopersicum"
+    plantFamily: "tomatoes"
+    description: "Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+        spread:
+          min:
+            value: 2
+            unit: "feet"
+          max:
+            value: 3
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "cage"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 80
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions:
+        ["basil", "carrots", "onions", "parsley", "marigolds", "nasturtiums"]
+      badCompanions: ["fennel", "corn", "brassicas", "walnut trees"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects when planted with basil",
+          "improved flavor when grown near basil",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 30
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "burpee-buttercrunch-lettuce"
+    commonName: "Buttercrunch Lettuce"
+    latinName: "Lactuca sativa"
+    plantFamily: "lettuce"
+    description: "Butterhead type lettuce with tender, sweet leaves and crisp hearts. Heat tolerant and slow to bolt."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 6
+        unit: "inches"
+      optimal:
+        value: 8
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "partial-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 45
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 10
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "both"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.125
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "single-harvest"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 6
+    companions:
+      goodCompanions: ["carrots", "onions", "radishes", "tomatoes", "chives"]
+      badCompanions: ["none known"]
+      allelopathicEffects: ["grows well in partial shade of taller plants"]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 200
+      germinationRate: 90
+      viabilityYears: 3
+
+  - id: "burpee-chantenay-carrot"
+    commonName: "Chantenay Red Core Carrot"
+    latinName: "Daucus carota"
+    plantFamily: "carrots"
+    description: "Short, broad carrots perfect for heavy soils. Sweet, crisp texture with excellent storage qualities."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 1
+        unit: "inches"
+      optimal:
+        value: 2
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 1
+          unit: "inches"
+        max:
+          value: 2
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 45
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+        spread:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 14
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["root"]
+      harvestDuration:
+        value: 70
+        unit: "days"
+      harvestMethod: "single-harvest"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions:
+        ["onions", "lettuce", "peas", "rosemary", "sage", "chives"]
+      badCompanions: ["dill", "parsnips"]
+      allelopathicEffects:
+        [
+          "onions help repel carrot fly",
+          "attracts beneficial insects when flowering",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 500
+      germinationRate: 75
+      viabilityYears: 3
+
+  - id: "rareseeds-cherokee-purple-tomato"
+    commonName: "Cherokee Purple Tomato"
+    latinName: "Solanum lycopersicum"
+    plantFamily: "tomatoes"
+    description: "Heirloom beefsteak tomato with distinctive purple-brown color and exceptional sweet, smoky flavor. Pre-1890 variety from Tennessee."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 24
+        unit: "inches"
+      optimal:
+        value: 36
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 9
+            unit: "feet"
+        spread:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 4
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 45
+        unit: "days"
+    companions:
+      goodCompanions:
+        ["basil", "carrots", "onions", "parsley", "marigolds", "nasturtiums"]
+      badCompanions: ["fennel", "corn", "brassicas", "walnut trees"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects when planted with basil",
+          "improved flavor when grown near basil",
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 80
+      viabilityYears: 4
+
+  - id: "rareseeds-detroit-dark-red-beet"
+    commonName: "Detroit Dark Red Beet"
+    latinName: "Beta vulgaris"
+    plantFamily: "beets"
+    description: "Classic heirloom beet with deep red color throughout. Sweet, tender roots and nutritious greens. Excellent for canning."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 3
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 2
+          unit: "inches"
+        max:
+          value: 3
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["root", "leaves"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "single-harvest"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["onions", "lettuce", "cabbage", "broccoli", "garlic"]
+      badCompanions: ["pole beans", "mustard"]
+      allelopathicEffects:
+        ["beet greens can be harvested without harming root development"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "burpee-provider-bush-bean"
+    commonName: "Provider Bush Bean"
+    latinName: "Phaseolus vulgaris"
+    plantFamily: "beans"
+    description: "Reliable green bean variety that sets pods in cool weather. Stringless, tender pods with excellent flavor."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 1
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer"]
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "seed"]
+      harvestDuration:
+        value: 50
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 21
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["corn", "squash", "carrots", "radishes", "marigolds"]
+      badCompanions: ["onions", "garlic", "fennel", "sunflowers"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for other plants",
+          "three sisters planting with corn and squash",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 90
+      viabilityYears: 3
+
+  - id: "rareseeds-glass-gem-corn"
+    commonName: "Glass Gem Corn"
+    latinName: "Zea mays"
+    plantFamily: "corn"
+    description: "Stunning ornamental flint corn with translucent, multicolored kernels. Cherokee heirloom variety perfect for decoration and grinding."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 8
+        unit: "inches"
+      optimal:
+        value: 12
+        unit: "inches"
+      rowSpacing:
+        value: 30
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+        spread:
+          min:
+            value: 2
+            unit: "feet"
+          max:
+            value: 3
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "aggressive"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 1.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 12
+          unit: "days"
+    functions:
+      primary: "ornamental"
+      secondary: ["food"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["seed"]
+      harvestDuration:
+        value: 110
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["beans", "squash", "pumpkins", "sunflowers", "dill"]
+      badCompanions: ["tomatoes", "pole beans"]
+      allelopathicEffects:
+        [
+          "provides support structure for climbing beans",
+          "three sisters planting with beans and squash",
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 85
+      viabilityYears: 2
+
+  - id: "burpee-california-wonder-pepper"
+    commonName: "California Wonder Bell Pepper"
+    latinName: "Capsicum annuum"
+    plantFamily: "peppers"
+    description: "Classic sweet bell pepper with thick walls and mild flavor. Turns from green to red when fully ripe."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "consistent"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        transplant:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 30
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "stakes"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "onions", "carrots", "basil", "oregano"]
+      badCompanions: ["fennel", "kohlrabi"]
+      allelopathicEffects: ["benefits from tomato proximity for pest control"]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 30
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "rareseeds-lemon-cucumber"
+    commonName: "Lemon Cucumber"
+    latinName: "Cucumis sativus"
+    plantFamily: "cucumbers"
+    description: "Heirloom cucumber with round, yellow fruits resembling lemons. Crisp, mild flavor with tender skin that doesn't require peeling."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "high"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+        spread:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 4
+            unit: "feet"
+      rootDepth: "medium"
+      supportNeeds: "trellis"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "moderate"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 65
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions:
+        ["radishes", "beans", "corn", "peas", "marigolds", "nasturtiums"]
+      badCompanions: ["aromatic herbs", "melons"]
+      allelopathicEffects:
+        ["radishes help deter cucumber beetles", "benefits from corn windbreak"]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 20
+      germinationRate: 85
+      viabilityYears: 5
+
+  - id: "burpee-gourmet-gold-beet"
+    commonName: "Gourmet Gold Beet"
+    latinName: "Beta vulgaris"
+    plantFamily: "beets"
+    description: "Beautiful golden-yellow beets that won't bleed when cooked. Sweet, tender flesh with colorful stems and leaves."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 3
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 2
+          unit: "inches"
+        max:
+          value: 3
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "rosette"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 15
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["root", "leaves"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "single-harvest"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["onions", "lettuce", "cabbage", "broccoli", "garlic"]
+      badCompanions: ["pole beans", "mustard"]
+      allelopathicEffects:
+        ["beet greens can be harvested without harming root development"]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "burpee-limelight-zucchini"
+    commonName: "Limelight Zucchini"
+    latinName: "Cucurbita pepo"
+    plantFamily: "squash"
+    description: "Compact bush zucchini with light green fruits and excellent flavor. Perfect for small gardens and containers."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 24
+        unit: "inches"
+      optimal:
+        value: 36
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "high"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 36
+            unit: "inches"
+          max:
+            value: 48
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "aggressive"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "flower"]
+      harvestDuration:
+        value: 50
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 45
+        unit: "days"
+    companions:
+      goodCompanions: ["corn", "beans", "radishes", "nasturtiums", "marigolds"]
+      badCompanions: ["potatoes", "aromatic herbs"]
+      allelopathicEffects:
+        [
+          "three sisters planting with corn and beans",
+          "large leaves provide ground cover",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 90
+      viabilityYears: 4
+
+  - id: "rareseeds-yellow-crookneck-squash"
+    commonName: "Yellow Crookneck Summer Squash"
+    latinName: "Cucurbita pepo"
+    plantFamily: "squash"
+    description: "Classic heirloom summer squash with bright yellow, curved neck. Tender skin and mild, buttery flavor when harvested young."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 24
+        unit: "inches"
+      optimal:
+        value: 36
+        unit: "inches"
+      rowSpacing:
+        value: 48
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "high"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "bush"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 36
+            unit: "inches"
+          max:
+            value: 48
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "aggressive"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "food"
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "flower"]
+      harvestDuration:
+        value: 55
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 45
+        unit: "days"
+    companions:
+      goodCompanions: ["corn", "beans", "radishes", "nasturtiums", "marigolds"]
+      badCompanions: ["potatoes", "aromatic herbs"]
+      allelopathicEffects:
+        [
+          "three sisters planting with corn and beans",
+          "large leaves provide ground cover",
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 20
+      germinationRate: 90
+      viabilityYears: 4
+
+  - id: "burpee-jack-be-little-pumpkin"
+    commonName: "Jack Be Little Pumpkin"
+    latinName: "Cucurbita pepo"
+    plantFamily: "pumpkins"
+    description: "Miniature orange pumpkins perfect for decoration and cooking. Compact vines produce dozens of 3-inch fruits."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 36
+        unit: "inches"
+      optimal:
+        value: 48
+        unit: "inches"
+      rowSpacing:
+        value: 72
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "high"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "vine"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 8
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "heavy"
+      competitiveNature: "aggressive"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 10
+          unit: "days"
+    functions:
+      primary: "ornamental"
+      secondary: ["food"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "seed"]
+      harvestDuration:
+        value: 95
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions: ["corn", "beans", "radishes", "nasturtiums", "marigolds"]
+      badCompanions: ["potatoes", "aromatic herbs"]
+      allelopathicEffects:
+        [
+          "three sisters planting with corn and beans",
+          "large leaves suppress weeds",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 15
+      germinationRate: 85
+      viabilityYears: 4
+
+  - id: "rainier-cherry"
+    commonName: "Rainier Cherry"
+    latinName: "Prunus avium"
+    plantFamily: "cherries"
+    description: "Premium sweet cherry with yellow skin and red blush. Exceptionally sweet flavor and firm texture. Self-pollinating variety."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 15
+        unit: "feet"
+      optimal:
+        value: 20
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 25
+            unit: "feet"
+        spread:
+          min:
+            value: 15
+            unit: "feet"
+          max:
+            value: 20
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1095
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 21
+        unit: "days"
+    seedSource: "Specialty Nursery"
+
+  - id: "puget-gold-apricot"
+    commonName: "Puget Gold Apricot"
+    latinName: "Prunus armeniaca"
+    plantFamily: "apricots"
+    description: "Cold-hardy apricot developed for Pacific Northwest. Sweet, juicy fruits with excellent flavor. Self-pollinating."
+    propagationMethod: "grafted"
+    spacing:
+      minimum:
+        value: 12
+        unit: "feet"
+      optimal:
+        value: 15
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "feet"
+          max:
+            value: 18
+            unit: "feet"
+        spread:
+          min:
+            value: 12
+            unit: "feet"
+          max:
+            value: 15
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1095
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 14
+        unit: "days"
+    seedSource: "Specialty Nursery"
+
+  - id: "desert-king-fig"
+    commonName: "Desert King Fig"
+    latinName: "Ficus carica"
+    plantFamily: "figs"
+    description: "Cold-hardy fig variety that produces two crops per year. Large, sweet fruits with green skin and strawberry-colored flesh."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 8
+        unit: "feet"
+      optimal:
+        value: 12
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "tree"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 8
+            unit: "feet"
+          max:
+            value: 12
+            unit: "feet"
+        spread:
+          min:
+            value: 8
+            unit: "feet"
+          max:
+            value: 10
+            unit: "feet"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 730
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    seedSource: "Specialty Nursery"
+
+  - id: "honeyberry"
+    commonName: "Honeyberry"
+    latinName: "Lonicera caerulea"
+    plantFamily: "berries"
+    description: "Cold-hardy berry with blueberry-like flavor and raspberry tartness. Extremely hardy and productive in cool climates."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 4
+        unit: "feet"
+      optimal:
+        value: 6
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "acidic"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 50
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "bush"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 4
+            unit: "feet"
+          max:
+            value: 6
+            unit: "feet"
+        spread:
+          min:
+            value: 4
+            unit: "feet"
+          max:
+            value: 5
+            unit: "feet"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 1095
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 21
+        unit: "days"
+    seedSource: "Specialty Nursery"
+
+  - id: "salmonberry"
+    commonName: "Salmonberry"
+    latinName: "Rubus spectabilis"
+    plantFamily: "berries"
+    description: "Native Pacific Northwest berry with orange to red fruits. Excellent for naturalizing and wildlife habitat."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 3
+        unit: "feet"
+      optimal:
+        value: 4
+        unit: "feet"
+      canIntercrop: false
+    environmental:
+      light: "partial-sun"
+      water: "high"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "moisture-retentive"
+        ph: "acidic"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 45
+            unit: "fahrenheit"
+          max:
+            value: 65
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "bush"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "feet"
+          max:
+            value: 12
+            unit: "feet"
+        spread:
+          min:
+            value: 4
+            unit: "feet"
+          max:
+            value: 6
+            unit: "feet"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "aggressive"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["ornamental", "windbreak"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 730
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    seedSource: "Native Plant Nursery"
+
+  - id: "burpee-sugar-snap-peas"
+    commonName: "Sugar Snap Peas"
+    latinName: "Pisum sativum"
+    plantFamily: "peas"
+    description: "Sweet, crisp peas with edible pods. Excellent fresh eating and perfect for stir-fries. Climbing variety needs support."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "climbing"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 5
+            unit: "feet"
+          max:
+            value: 6
+            unit: "feet"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "trellis"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 6
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer"]
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "seed"]
+      harvestDuration:
+        value: 70
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 21
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 3
+    companions:
+      goodCompanions: ["carrots", "radishes", "lettuce", "spinach", "cucumbers"]
+      badCompanions: ["onions", "garlic", "shallots"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for companion plants",
+          "shallow roots don't compete with deep-rooted plants",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 40
+      germinationRate: 85
+      viabilityYears: 3
+
+  - id: "rareseeds-oregon-snow-peas"
+    commonName: "Oregon Snow Peas"
+    latinName: "Pisum sativum"
+    plantFamily: "peas"
+    description: "Heirloom snow pea variety with flat, tender pods. Excellent for Asian cuisine and fresh eating. Compact vines."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 2
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 18
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+        soilMin:
+          value: 40
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "climbing"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 4
+            unit: "feet"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "trellis"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 6
+      seedDepth:
+        value: 1
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["nitrogen-fixer"]
+      beneficialInsects: true
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 21
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 2
+        maxSuccessions: 3
+    companions:
+      goodCompanions: ["carrots", "radishes", "lettuce", "spinach", "cucumbers"]
+      badCompanions: ["onions", "garlic", "shallots"]
+      allelopathicEffects:
+        [
+          "fixes nitrogen in soil for companion plants",
+          "shallow roots don't compete with deep-rooted plants",
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 50
+      germinationRate: 85
+      viabilityYears: 3
+
+  - id: "burpee-evergreen-hardy-white-scallions"
+    commonName: "Evergreen Hardy White Scallions"
+    latinName: "Allium fistulosum"
+    plantFamily: "onions"
+    description: "Perennial bunching onions that regrow after cutting. Mild flavor, excellent for continuous harvest. Cold hardy to zone 3."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 1
+        unit: "inches"
+      optimal:
+        value: 2
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 1
+          unit: "inches"
+        max:
+          value: 2
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 18
+            unit: "inches"
+        spread:
+          min:
+            value: 1
+            unit: "inches"
+          max:
+            value: 2
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["leaves", "stem"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "cut-and-come-again"
+      harvestWindow:
+        value: 180
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions:
+        [
+          "tomatoes",
+          "peppers",
+          "carrots",
+          "lettuce",
+          "cabbage",
+          "broccoli",
+          "roses",
+        ]
+      badCompanions: ["beans", "peas", "asparagus"]
+      allelopathicEffects:
+        [
+          "releases sulfur compounds that deter aphids",
+          "repels carrot flies",
+          "deters cabbage worms",
+        ]
+    seedSource: "Burpee"
+    seedPacketInfo:
+      seedCount: 300
+      germinationRate: 80
+      viabilityYears: 2
+
+  - id: "rareseeds-yellow-of-parma-onion"
+    commonName: "Yellow of Parma Onion"
+    latinName: "Allium cepa"
+    plantFamily: "onions"
+    description: "Italian heirloom storage onion with sweet, mild flavor. Large, flattened bulbs with excellent keeping quality. Perfect for cooking."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 3
+        unit: "inches"
+      optimal:
+        value: 4
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      thinning:
+        min:
+          value: 3
+          unit: "inches"
+        max:
+          value: 4
+          unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 55
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+        soilMin:
+          value: 35
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 3
+            unit: "inches"
+          max:
+            value: 4
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 10
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["root", "leaves"]
+      harvestDuration:
+        value: 110
+        unit: "days"
+      harvestMethod: "single-harvest"
+    companions:
+      goodCompanions:
+        [
+          "tomatoes",
+          "peppers",
+          "carrots",
+          "lettuce",
+          "cabbage",
+          "broccoli",
+          "cauliflower",
+          "kale",
+          "spinach",
+        ]
+      badCompanions: ["beans", "peas", "asparagus", "sage"]
+      allelopathicEffects:
+        [
+          "releases sulfur compounds that deter aphids",
+          "repels carrot flies",
+          "deters cabbage worms",
+          "inhibits fungal diseases in nearby plants",
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 75
+      viabilityYears: 2

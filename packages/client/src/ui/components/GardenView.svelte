@@ -70,6 +70,13 @@ function handleTileMouseDown(plant: PlantPlacement, bedId: string, event: MouseE
 }
 
 function onGardenMouseMove(event: MouseEvent) {
+	// Update clone mode based on current modifier keys
+	const currentCloneMode = event.metaKey || event.altKey
+	dragState.update((s) => ({
+		...s,
+		isCloneMode: s.dragSourceType === 'existing-plant' ? currentCloneMode : false,
+	}))
+
 	// Don't override delete zone targeting
 	if ($dragState.targetType === 'delete-zone') {
 		// Just update the drag position but keep the delete zone as target
@@ -132,16 +139,9 @@ function onGardenMouseMove(event: MouseEvent) {
 
 function onGardenMouseUp(_event: MouseEvent) {
 	const state = $dragState
-	console.log('[GardenView] onGardenMouseUp: state', JSON.parse(JSON.stringify(state)))
 
 	// Handle delete zone drops
 	if (isDraggingExistingPlant(state) && state.targetType === 'delete-zone') {
-		console.log(
-			'[GardenView] onGardenMouseUp: Deleting plant',
-			state.draggedPlant.id,
-			'from bed',
-			state.sourceBedId,
-		)
 		handleAsyncPlantRemoval(
 			state.draggedPlant.id,
 			state.sourceBedId,
@@ -157,27 +157,11 @@ function onGardenMouseUp(_event: MouseEvent) {
 		const highlightedCell = state.highlightedCell
 		const currentSourceBedId = state.sourceBedId
 		const currentTargetBedId = state.targetBedId
+		const isCloneMode = state.isCloneMode
 
 		const targetBed = beds.find((b: GardenBed) => b.id === currentTargetBedId)
 
-		console.log(
-			'[GardenView] onGardenMouseUp: Details - ',
-			'Dragged Plant ID:',
-			draggedPlant.id,
-			'Original Coords:',
-			{ x: draggedPlant.x, y: draggedPlant.y },
-			'Size:',
-			state.draggedTileSize,
-			'Target Bed ID:',
-			targetBed ? targetBed.id : 'null',
-			'Source Bed ID:',
-			currentSourceBedId,
-			'Highlighted Cell:',
-			highlightedCell,
-		)
-
 		if (!targetBed) {
-			console.log('[GardenView] onGardenMouseUp: No target bed found. Cleaning up.')
 			cleanupDrag()
 			return
 		}
@@ -188,30 +172,35 @@ function onGardenMouseUp(_event: MouseEvent) {
 			highlightedCell.x,
 			highlightedCell.y,
 		)
-		console.log(
-			'[GardenView] onGardenMouseUp: isValidDrop returned:',
-			isValid,
-			'for cell:',
-			highlightedCell,
-			'in bed:',
-			currentTargetBedId,
-		)
 
 		if (!isValid) {
-			console.log('[GardenView] onGardenMouseUp: Drop is not valid. Cleaning up.')
 			cleanupDrag()
 			return
 		}
 
-		// Use async validation for plant moves
-		handleAsyncPlantPlacement(
-			currentTargetBedId,
-			draggedPlant.plantTile,
-			highlightedCell.x,
-			highlightedCell.y,
-			draggedPlant.id,
-			currentSourceBedId,
-		)
+		// Start async operation, but cleanup drag state immediately
+		if (isCloneMode) {
+			handleAsyncPlantCloning(
+				currentSourceBedId,
+				currentTargetBedId,
+				draggedPlant.plantTile,
+				draggedPlant.x,
+				draggedPlant.y,
+				highlightedCell.x,
+				highlightedCell.y,
+			)
+		} else {
+			handleAsyncPlantPlacement(
+				currentTargetBedId,
+				draggedPlant.plantTile,
+				highlightedCell.x,
+				highlightedCell.y,
+				draggedPlant.id,
+				currentSourceBedId,
+			)
+		}
+		cleanupDrag()
+		return
 	}
 	// Handle new plant drops from toolbar
 	else if (isDraggingNewPlant(state) && state.targetBedId && state.highlightedCell) {
@@ -219,24 +208,9 @@ function onGardenMouseUp(_event: MouseEvent) {
 		const highlightedCell = state.highlightedCell
 		const currentTargetBedId = state.targetBedId
 
-		const targetBed = beds.find((b: GardenBed) => b.id === currentTargetBedId)
-
-		console.log(
-			'[GardenView] onGardenMouseUp: New Plant Drop - ',
-			'Plant:',
-			draggedNewPlant.name,
-			'Size:',
-			state.draggedTileSize,
-			'Target Bed ID:',
-			targetBed ? targetBed.id : 'null',
-			'Highlighted Cell:',
-			highlightedCell,
-		)
+		const targetBed = beds.find((b) => b.id === currentTargetBedId)
 
 		if (!targetBed) {
-			console.log(
-				'[GardenView] onGardenMouseUp: No target bed found for new plant. Cleaning up.',
-			)
 			cleanupDrag()
 			return
 		}
@@ -256,36 +230,23 @@ function onGardenMouseUp(_event: MouseEvent) {
 			highlightedCell.y,
 		)
 
-		console.log(
-			'[GardenView] onGardenMouseUp: New plant isValidDrop returned:',
-			isValid,
-			'for cell:',
-			highlightedCell,
-			'in bed:',
-			currentTargetBedId,
-		)
-
 		if (!isValid) {
-			console.log(
-				'[GardenView] onGardenMouseUp: New plant drop is not valid. Cleaning up.',
-			)
 			cleanupDrag()
 			return
 		}
 
-		// Use async validation for new plant placement
+		// Start async operation, but cleanup drag state immediately
 		handleAsyncPlantPlacement(
 			currentTargetBedId,
 			draggedNewPlant,
 			highlightedCell.x,
 			highlightedCell.y,
 		)
+		cleanupDrag()
+		return
 	} else {
-		console.log(
-			'[GardenView] onGardenMouseUp: Aborted due to invalid drag state or missing target information.',
-		)
+		cleanupDrag()
 	}
-	cleanupDrag()
 }
 
 function cleanupDrag(): void {
@@ -322,11 +283,11 @@ async function handleAsyncPlantPlacement(
 		} else {
 			operationType = 'across-beds-move'
 		}
-		
+
 		// Find the original plant to get source coordinates
-		const sourceBed = beds.find(b => b.id === originalBedId)
-		const originalPlant = sourceBed?.plantPlacements.find(p => p.id === originalPlantId)
-		
+		const sourceBed = beds.find((b) => b.id === originalBedId)
+		const originalPlant = sourceBed?.plantPlacements.find((p) => p.id === originalPlantId)
+
 		validationContext = {
 			operationType,
 			garden,
@@ -377,7 +338,7 @@ async function handleAsyncPlantPlacement(
 				onAddNewPlant(bedId, plant, x, y)
 			}
 		}, 1500)
-	} catch (error) {
+	} catch (_error: unknown) {
 		updatePendingOperation(operationId, 'error')
 
 		// Wait for error animation then remove
@@ -396,8 +357,8 @@ async function handleAsyncPlantRemoval(plantId: string, bedId: string, plant: Pl
 	})
 
 	// Find the plant to get source coordinates
-	const sourceBed = beds.find(b => b.id === bedId)
-	const plantToRemove = sourceBed?.plantPlacements.find(p => p.id === plantId)
+	const sourceBed = beds.find((b) => b.id === bedId)
+	const plantToRemove = sourceBed?.plantPlacements.find((p) => p.id === plantId)
 
 	const validationContext: ValidationContext = {
 		operationType: 'removal',
@@ -419,6 +380,61 @@ async function handleAsyncPlantRemoval(plantId: string, bedId: string, plant: Pl
 			onDeletePlant(plantId, bedId)
 		}, 1500)
 	} catch (error) {
+		updatePendingOperation(operationId, 'error')
+
+		// Wait for error animation then remove
+		setTimeout(() => {
+			removePendingOperation(operationId)
+		}, 1500)
+	}
+}
+
+async function handleAsyncPlantCloning(
+	sourceBedId: string,
+	targetBedId: string,
+	plant: Plant,
+	sourceX: number,
+	sourceY: number,
+	targetX: number,
+	targetY: number,
+) {
+	const operationId = addPendingOperation({
+		type: 'placement',
+		bedId: targetBedId,
+		x: targetX,
+		y: targetY,
+		size: plant.size || 1,
+		plant,
+		state: 'pending',
+	})
+
+	const validationContext: ValidationContext = {
+		operationType: 'clone',
+		garden,
+		plant,
+		sourceBedId,
+		targetBedId,
+		sourceX,
+		sourceY,
+		targetX,
+		targetY,
+	}
+
+	try {
+		await asyncValidation(validationContext)
+		updatePendingOperation(operationId, 'success')
+
+		// Wait for success animation
+		setTimeout(() => {
+			removePendingOperation(operationId)
+			// Create a new plant with a unique ID for the clone
+			const clonedPlant: Plant = {
+				...plant,
+				id: `cloned-${plant.id}-${Date.now()}`,
+			}
+			onAddNewPlant(targetBedId, clonedPlant, targetX, targetY)
+		}, 1500)
+	} catch (_error: unknown) {
 		updatePendingOperation(operationId, 'error')
 
 		// Wait for error animation then remove
@@ -550,6 +566,30 @@ onDestroy(() => {
 						plantPlacement={$dragState.draggedPlant}
 						sizePx={previewSize}
 					/>
+					<!-- Clone mode indicator -->
+					{#if $dragState.isCloneMode}
+						<div
+							class="clone-indicator"
+							style="
+								position: absolute;
+								top: -8px;
+								right: -8px;
+								background: #28a745;
+								color: white;
+								border-radius: 50%;
+								width: 20px;
+								height: 20px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+								font-size: 12px;
+								font-weight: bold;
+								box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+							"
+						>
+							+
+						</div>
+					{/if}
 				{:else if isDraggingNewPlant($dragState)}
 					<PlantPlacementTile
 						plantPlacement={{

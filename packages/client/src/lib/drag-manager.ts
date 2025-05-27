@@ -32,6 +32,8 @@ export class DragManager {
 		sourceBedId: string,
 		event: MouseEvent,
 	) {
+		const isCloneMode = event.metaKey || event.altKey // cmd on Mac, alt on Windows/Linux
+		
 		dragState.set({
 			draggedPlant: plant,
 			draggedNewPlant: null,
@@ -43,6 +45,7 @@ export class DragManager {
 			sourceBedId,
 			targetBedId: null,
 			targetType: null,
+			isCloneMode,
 		})
 	}
 
@@ -59,6 +62,7 @@ export class DragManager {
 			sourceBedId: null,
 			targetBedId: null,
 			targetType: null,
+			isCloneMode: false, // Clone mode doesn't apply to new plants
 		})
 	}
 
@@ -75,6 +79,7 @@ export class DragManager {
 			sourceBedId: null,
 			targetBedId: null,
 			targetType: null,
+			isCloneMode: false,
 		})
 	}
 

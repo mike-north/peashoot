@@ -13,7 +13,12 @@ export type DropTargetType = 'garden-bed' | 'delete-zone'
 export type ValidationState = 'pending' | 'success' | 'error'
 
 // Operation types for validation
-export type OperationType = 'within-bed-move' | 'across-beds-move' | 'addition' | 'removal'
+export type OperationType =
+	| 'within-bed-move'
+	| 'across-beds-move'
+	| 'addition'
+	| 'removal'
+	| 'clone'
 
 // Validation context for async operations
 export interface ValidationContext {
@@ -57,6 +62,9 @@ export interface IDragState {
 	dragOffset: { x: number; y: number }
 	dragPosition: { x: number; y: number }
 
+	// Modifier keys
+	isCloneMode: boolean // True when cmd/alt is held during drag
+
 	// Target information
 	highlightedCell: { x: number; y: number } | null
 	sourceBedId: string | null // Only for existing plants
@@ -78,6 +86,7 @@ export const dragState = writable<IDragState>({
 	sourceBedId: null,
 	targetBedId: null,
 	targetType: null,
+	isCloneMode: false,
 })
 
 export function isDragStatePopulated(state: IDragState): boolean {
@@ -123,60 +132,58 @@ export function getDraggedPlantInfo(
 }
 
 // Helper functions for managing pending operations
-export function addPendingOperation(operation: Omit<PendingOperation, 'id' | 'timestamp'>): string {
+export function addPendingOperation(
+	operation: Omit<PendingOperation, 'id' | 'timestamp'>,
+): string {
 	const id = `pending-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 	const pendingOp: PendingOperation = {
 		...operation,
 		id,
 		timestamp: Date.now(),
 	}
-	
-	pendingOperations.update(ops => [...ops, pendingOp])
+
+	pendingOperations.update((ops) => [...ops, pendingOp])
 	return id
 }
 
 export function updatePendingOperation(id: string, state: ValidationState) {
-	pendingOperations.update(ops => 
-		ops.map(op => op.id === id ? { ...op, state } : op)
+	pendingOperations.update((ops) =>
+		ops.map((op) => (op.id === id ? { ...op, state } : op)),
 	)
 }
 
 export function removePendingOperation(id: string) {
-	pendingOperations.update(ops => ops.filter(op => op.id !== id))
+	pendingOperations.update((ops) => ops.filter((op) => op.id !== id))
 }
 
 // Default async validation function (can be overridden)
-export const defaultAsyncValidation: AsyncValidationFunction = async (context: ValidationContext) => {
+export const defaultAsyncValidation: AsyncValidationFunction = async (
+	context: ValidationContext,
+) => {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
-			console.log('[Validation]', context.operationType, context)
-			
 			// Example validation logic based on operation type
 			switch (context.operationType) {
 				case 'within-bed-move':
-					// 95% success rate for moves within same bed
 					if (Math.random() > 0.05) resolve()
 					else reject(new Error('Within-bed move validation failed'))
 					break
-					
 				case 'across-beds-move':
-					// 85% success rate for moves across beds
 					if (Math.random() > 0.15) resolve()
 					else reject(new Error('Cross-bed move validation failed'))
 					break
-					
 				case 'addition':
-					// 90% success rate for new plant additions
-					if (Math.random() > 0.10) resolve()
+					if (Math.random() > 0.1) resolve()
 					else reject(new Error('Plant addition validation failed'))
 					break
-					
+				case 'clone':
+					if (Math.random() > 0.12) resolve()
+					else reject(new Error('Plant cloning validation failed'))
+					break
 				case 'removal':
-					// 98% success rate for removals
 					if (Math.random() > 0.02) resolve()
 					else reject(new Error('Plant removal validation failed'))
 					break
-					
 				default:
 					reject(new Error('Unknown operation type'))
 			}

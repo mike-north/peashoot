@@ -2299,6 +2299,611 @@ seed-packets:
       germinationRate: 75
       viabilityYears: 2
 
+  - id: "okra"
+    commonName: "Okra"
+    latinName: "Abelmoschus esculentus"
+    plantFamily: "okra"
+    description: "Heat-loving vegetable with edible pods and beautiful hibiscus-like flowers. Excellent for hot climates and Southern cuisine."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 75
+            unit: "fahrenheit"
+          max:
+            value: 95
+            unit: "fahrenheit"
+        soilMin:
+          value: 65
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 3
+            unit: "feet"
+          max:
+            value: 6
+            unit: "feet"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["late-spring", "summer"]
+        weeksAfterLastFrost: 3
+      seedDepth:
+        value: 0.5
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["fruit", "leaves"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 90
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "peppers", "eggplant", "basil", "marigolds", "nasturtiums"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "attracts beneficial insects with flowers",
+          "provides shade for heat-sensitive plants",
+          "deep taproot improves soil structure"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 25
+      germinationRate: 85
+      viabilityYears: 2
+
+  - id: "mint"
+    commonName: "Mint"
+    latinName: "Mentha spicata"
+    plantFamily: "mint"
+    description: "Aromatic perennial herb with spreading habit. Excellent for culinary use, teas, and natural pest deterrent."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 12
+        unit: "inches"
+      optimal:
+        value: 18
+        unit: "inches"
+      rowSpacing:
+        value: 24
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "partial-sun"
+      water: "high"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "moisture-retentive"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "aggressive"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 180
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "cabbage", "carrots", "broccoli", "cauliflower"]
+      badCompanions: ["parsley", "chamomile", "most herbs"]
+      allelopathicEffects:
+        [
+          "repels ants, mice, and cabbage moths",
+          "spreads aggressively and can overtake other plants",
+          "attracts beneficial insects when flowering",
+          "should be contained or planted separately"
+        ]
+    seedSource: "Johnny's Seeds"
+
+  - id: "dill"
+    commonName: "Dill"
+    latinName: "Anethum graveolens"
+    plantFamily: "carrots"
+    description: "Aromatic annual herb with feathery foliage and umbrella-shaped flower heads. Excellent for pickling and attracting beneficial insects."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 70
+            unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "fast"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 48
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "late-spring", "summer"]
+        weeksBeforeLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 21
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pollinator"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves", "seed"]
+      harvestDuration:
+        value: 70
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 60
+        unit: "days"
+      successionPlanting:
+        recommended: true
+        intervalWeeks: 3
+        maxSuccessions: 4
+    companions:
+      goodCompanions: ["cucumbers", "lettuce", "onions", "corn", "cabbage"]
+      badCompanions: ["carrots", "tomatoes", "fennel"]
+      allelopathicEffects:
+        [
+          "attracts beneficial wasps and predatory insects",
+          "may inhibit carrot growth",
+          "self-seeds readily",
+          "flowers provide nectar for beneficial insects"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 80
+      viabilityYears: 3
+
+  - id: "rosemary"
+    commonName: "Rosemary"
+    latinName: "Rosmarinus officinalis"
+    plantFamily: "mint"
+    description: "Evergreen perennial herb with needle-like leaves and blue flowers. Excellent for culinary use and natural pest deterrent."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "low"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "alkaline"
+        organicMatter: "low"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 65
+            unit: "fahrenheit"
+          max:
+            value: 80
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "slow"
+      matureSize:
+        height:
+          min:
+            value: 24
+            unit: "inches"
+          max:
+            value: 48
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+      rootDepth: "deep"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent", "ornamental"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 90
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 365
+        unit: "days"
+    companions:
+      goodCompanions: ["beans", "cabbage", "carrots", "sage", "thyme"]
+      badCompanions: ["basil", "cucumber", "tomatoes"]
+      allelopathicEffects:
+        [
+          "repels cabbage moths, bean beetles, and carrot flies",
+          "attracts beneficial insects when flowering",
+          "drought-tolerant and improves soil drainage",
+          "strong scent may inhibit some sensitive plants"
+        ]
+    seedSource: "Mountain Rose Herbs"
+
+  - id: "thyme"
+    commonName: "Thyme"
+    latinName: "Thymus vulgaris"
+    plantFamily: "mint"
+    description: "Low-growing perennial herb with tiny aromatic leaves and small flowers. Excellent groundcover and culinary herb."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 6
+        unit: "inches"
+      optimal:
+        value: 8
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "low"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "sandy"
+        drainage: "well-draining"
+        ph: "alkaline"
+        organicMatter: "low"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "groundcover"
+      rate: "slow"
+      matureSize:
+        height:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+        spread:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 16
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["early-spring", "fall"]
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent", "ground-cover"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 365
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "eggplant", "potatoes", "strawberries", "rosemary"]
+      badCompanions: ["none known"]
+      allelopathicEffects:
+        [
+          "repels cabbage worms, whiteflies, and aphids",
+          "attracts beneficial insects and pollinators",
+          "improves flavor of neighboring tomatoes",
+          "excellent living mulch and groundcover"
+        ]
+    seedSource: "Johnny's Seeds"
+
+  - id: "groundcherry"
+    commonName: "Ground Cherry"
+    latinName: "Physalis pruinosa"
+    plantFamily: "nightshades"
+    description: "Small fruiting plant producing sweet, golden berries enclosed in papery husks. Also known as husk cherry."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 18
+        unit: "inches"
+      optimal:
+        value: 24
+        unit: "inches"
+      rowSpacing:
+        value: 36
+        unit: "inches"
+      canIntercrop: false
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: false
+        heatTolerant: true
+        coolSeasonHardy: false
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 70
+            unit: "fahrenheit"
+          max:
+            value: 85
+            unit: "fahrenheit"
+        soilMin:
+          value: 60
+          unit: "fahrenheit"
+    growth:
+      lifespan: "annual"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 36
+            unit: "inches"
+        spread:
+          min:
+            value: 18
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+      rootDepth: "medium"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "moderate"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["late-spring"]
+        weeksAfterLastFrost: 2
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["ornamental"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["fruit"]
+      harvestDuration:
+        value: 75
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 60
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "peppers", "eggplant", "basil", "marigolds"]
+      badCompanions: ["black walnut", "fennel"]
+      allelopathicEffects:
+        [
+          "self-seeds readily and may become weedy",
+          "related to tomatoes and shares similar growing needs",
+          "fruits drop when ripe for easy harvest"
+        ]
+    seedSource: "Baker Creek Rare Seeds"
+    seedPacketInfo:
+      seedCount: 30
+      germinationRate: 85
+      viabilityYears: 3
+
   - id: "calla-lily"
     commonName: "Calla Lily"
     latinName: "Zantedeschia aethiopica"
@@ -7494,3 +8099,203 @@ seed-packets:
       seedCount: 100
       germinationRate: 75
       viabilityYears: 2
+
+  - id: "chives"
+    commonName: "Chives"
+    latinName: "Allium schoenoprasum"
+    plantFamily: "onions"
+    description: "Perennial herb with hollow, grass-like leaves and purple flowers. Excellent companion plant and culinary herb."
+    propagationMethod: "seed"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: true
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "moderate"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "moderate"
+      matureSize:
+        height:
+          min:
+            value: 8
+            unit: "inches"
+          max:
+            value: 12
+            unit: "inches"
+        spread:
+          min:
+            value: 6
+            unit: "inches"
+          max:
+            value: 8
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "light"
+      competitiveNature: "gentle"
+    planting:
+      method: "direct-sow"
+      timing:
+        seasons: ["early-spring", "fall"]
+        weeksBeforeLastFrost: 4
+      seedDepth:
+        value: 0.25
+        unit: "inches"
+      daysToGermination:
+        min:
+          value: 7
+          unit: "days"
+        max:
+          value: 14
+          unit: "days"
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent", "pollinator"]
+      beneficialInsects: true
+      pollinatorValue: true
+    production:
+      producesFruit: true
+      edibleParts: ["leaves", "flower"]
+      harvestDuration:
+        value: 60
+        unit: "days"
+      harvestMethod: "continuous"
+      harvestWindow:
+        value: 365
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "carrots", "roses", "fruit trees", "most vegetables"]
+      badCompanions: ["beans", "peas"]
+      allelopathicEffects:
+        [
+          "repels aphids, carrot flies, and Japanese beetles",
+          "attracts beneficial insects when flowering",
+          "improves growth and flavor of tomatoes and carrots",
+          "natural fungicide properties"
+        ]
+    seedSource: "Johnny's Seeds"
+    seedPacketInfo:
+      seedCount: 100
+      germinationRate: 85
+      viabilityYears: 2
+
+  - id: "garlic"
+    commonName: "Garlic"
+    latinName: "Allium sativum"
+    plantFamily: "onions"
+    description: "Bulbous perennial herb with strong flavor and excellent pest-repelling properties. Plant cloves in fall for summer harvest."
+    propagationMethod: "vegetative"
+    spacing:
+      minimum:
+        value: 4
+        unit: "inches"
+      optimal:
+        value: 6
+        unit: "inches"
+      rowSpacing:
+        value: 12
+        unit: "inches"
+      canIntercrop: true
+    environmental:
+      light: "full-sun"
+      water: "moderate"
+      hardiness:
+        frostHardy: true
+        heatTolerant: false
+        coolSeasonHardy: true
+      soil:
+        texture: "loamy"
+        drainage: "well-draining"
+        ph: "neutral"
+        organicMatter: "high"
+      temperatureRanges:
+        ideal:
+          min:
+            value: 60
+            unit: "fahrenheit"
+          max:
+            value: 75
+            unit: "fahrenheit"
+    growth:
+      lifespan: "perennial"
+      habit: "upright"
+      rate: "slow"
+      matureSize:
+        height:
+          min:
+            value: 12
+            unit: "inches"
+          max:
+            value: 24
+            unit: "inches"
+        spread:
+          min:
+            value: 4
+            unit: "inches"
+          max:
+            value: 6
+            unit: "inches"
+      rootDepth: "shallow"
+      supportNeeds: "none"
+    resources:
+      nutrients: "moderate"
+      competitiveNature: "gentle"
+    planting:
+      method: "transplant"
+      timing:
+        seasons: ["fall"]
+        weeksBeforeFirstFrost: 6
+    functions:
+      primary: "food"
+      secondary: ["pest-repellent"]
+      beneficialInsects: false
+      pollinatorValue: false
+    production:
+      producesFruit: true
+      edibleParts: ["root", "leaves"]
+      harvestDuration:
+        value: 240
+        unit: "days"
+      harvestMethod: "single-harvest"
+      harvestWindow:
+        value: 30
+        unit: "days"
+    companions:
+      goodCompanions: ["tomatoes", "peppers", "eggplant", "cabbage", "broccoli", "roses"]
+      badCompanions: ["beans", "peas", "asparagus"]
+      allelopathicEffects:
+        [
+          "repels aphids, spider mites, and cabbage worms",
+          "natural fungicide and bactericide properties",
+          "improves growth and flavor of tomatoes and peppers",
+          "deters many soil-borne pests"
+        ]
+    seedSource: "Seed Savers Exchange"

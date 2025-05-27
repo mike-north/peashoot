@@ -357,9 +357,11 @@ onDestroy(() => {
 							height: targetBed.height,
 							...DEFAULT_LAYOUT_PARAMS,
 						})
+						const highlightedCell = $dragState.highlightedCell
+						if (!highlightedCell) return null
 						const tileLayout = layout.getTileLayoutInfo({
-							x: $dragState.highlightedCell.x,
-							y: $dragState.highlightedCell.y,
+							x: highlightedCell.x,
+							y: highlightedCell.y,
 							size: draggedInfo.size,
 						})
 						const svgElement = document.querySelector(
@@ -379,9 +381,11 @@ onDestroy(() => {
 							height: targetBed.height,
 							...DEFAULT_LAYOUT_PARAMS,
 						})
+						const { highlightedCell } = $dragState
+						if (!highlightedCell) return null
 						const tileLayout = layout.getTileLayoutInfo({
-							x: $dragState.highlightedCell.x,
-							y: $dragState.highlightedCell.y,
+							x: highlightedCell.x,
+							y: highlightedCell.y,
 							size: draggedInfo.size,
 						})
 						const svgElement = document.querySelector(

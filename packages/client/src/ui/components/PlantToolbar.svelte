@@ -2,6 +2,9 @@
 import type { Plant } from '../../lib/plant'
 import { dragManager } from '../../lib/drag-manager'
 import { dragState } from '../state/dragState'
+import PlantPlacementTile from './PlantPlacementTile.svelte'
+import type { PlantPlacement } from '../../lib/plant-placement'
+import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
 
 // Define available plant families with their variants and properties
 const plantFamilies = [
@@ -104,21 +107,28 @@ function createPlant(familyName: string, variant: string): Plant {
 	}
 }
 
+// Create a temporary PlantPlacement for toolbar display
+function createToolbarPlantPlacement(
+	familyName: string,
+	variant: string,
+): PlantPlacement {
+	const plant = createPlant(familyName, variant)
+	return {
+		id: `toolbar-${familyName}-${variant}`,
+		x: 0,
+		y: 0,
+		plantTile: plant,
+	}
+}
+
+// Calculate tile size for toolbar (always 1x1 display, but show size indicator)
+const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
+
 // Handle starting drag from toolbar
 function handleToolbarDrag(familyName: string, event: MouseEvent) {
 	const variant = selectedVariants[familyName]
 	const plant = createPlant(familyName, variant)
 	dragManager.startDraggingNewPlant(plant, event)
-}
-
-// Get CSS variable for plant color
-function getPlantColorVariable(familyName: string, colorVariant: string): string {
-	return `--color-${familyName}-${colorVariant}`
-}
-
-// Check if we should use white text for dark backgrounds
-function isDarkBackground(colorVariant: string): boolean {
-	return ['dark', 'red', 'purple', 'brown'].includes(colorVariant)
 }
 </script>
 
@@ -152,25 +162,30 @@ function isDarkBackground(colorVariant: string): boolean {
 		gap: 8px;
 	}
 
-	&__tile {
+	&__tile-container {
 		width: 60px;
 		height: 60px;
-		border-radius: 8px;
-		border: 2px solid rgba(0, 0, 0, 0.2);
+		position: relative;
 		cursor: grab;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 24px;
+		background-color: rgba(#90683d, 0.4);
 		transition:
 			transform 0.1s,
 			box-shadow 0.1s;
+
+		/* Match garden bed tile styling */
+		border-radius: 6px;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.13);
+		border: 2px solid rgba(0, 0, 0, 0.4);
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		user-select: none;
-		position: relative;
+		overflow: hidden;
 
 		&:hover {
 			transform: translateY(-2px);
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		}
 
 		&:active {
@@ -178,19 +193,17 @@ function isDarkBackground(colorVariant: string): boolean {
 			transform: translateY(0);
 		}
 
-		&--size-2 {
-			position: relative;
-			&::after {
-				content: '2×2';
-				position: absolute;
-				top: 2px;
-				right: 2px;
-				font-size: 8px;
-				background: rgba(0, 0, 0, 0.7);
-				color: white;
-				padding: 1px 3px;
-				border-radius: 2px;
-			}
+		&--size-2::after {
+			content: '2×2';
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			font-size: 8px;
+			background: rgba(0, 0, 0, 0.7);
+			color: white;
+			padding: 1px 3px;
+			border-radius: 2px;
+			z-index: 10;
 		}
 	}
 
@@ -219,7 +232,7 @@ function isDarkBackground(colorVariant: string): boolean {
 }
 
 .dragging {
-	.plant-toolbar__tile {
+	.plant-toolbar__tile-container {
 		pointer-events: none;
 		opacity: 0.5;
 	}
@@ -231,14 +244,15 @@ function isDarkBackground(colorVariant: string): boolean {
 	<div class="plant-toolbar__grid">
 		{#each plantFamilies as family (family.name)}
 			{@const selectedVariant = selectedVariants[family.name]}
-			{@const colorVar = getPlantColorVariable(family.name, selectedVariant)}
-			{@const textColor = isDarkBackground(selectedVariant) ? 'white' : '#4b4e6d'}
+			{@const toolbarPlacement = createToolbarPlantPlacement(
+				family.name,
+				selectedVariant,
+			)}
 
 			<div class="plant-toolbar__item">
 				<div
-					class="plant-toolbar__tile"
-					class:plant-toolbar__tile--size-2={family.size === 2}
-					style="background-color: var({colorVar}); color: {textColor};"
+					class="plant-toolbar__tile-container"
+					class:plant-toolbar__tile-container--size-2={family.size === 2}
 					role="button"
 					tabindex="0"
 					onmousedown={(e) => {
@@ -257,7 +271,10 @@ function isDarkBackground(colorVariant: string): boolean {
 						}
 					}}
 				>
-					{family.icon}
+					<PlantPlacementTile
+						plantPlacement={toolbarPlacement}
+						sizePx={toolbarTileSize}
+					/>
 				</div>
 
 				<div class="plant-toolbar__label">{family.displayName}</div>

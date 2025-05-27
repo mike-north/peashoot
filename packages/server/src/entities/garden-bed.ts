@@ -4,7 +4,7 @@ import {
 	Column,
 	CreateDateColumn,
 	UpdateDateColumn,
-  OneToMany,
+	OneToMany,
 } from 'typeorm'
 import { PlantableArea, PlantableAreaId } from './plantable-area'
 

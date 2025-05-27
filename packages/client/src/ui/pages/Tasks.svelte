@@ -91,7 +91,7 @@
 		</div>
 	{:else}
 		{#each taskLists as taskList (taskList.id)}
-			<TaskList {taskList} />
+			<TaskList taskList={taskList} />
 		{/each}
 	{/if}
 </div>

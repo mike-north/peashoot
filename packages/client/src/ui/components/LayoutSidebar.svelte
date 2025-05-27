@@ -4,6 +4,17 @@
 	import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
 </script>
 
+<style lang="scss">
+	.sidebar-logo {
+		/* TODO: if a dark mode image is provided, this style might need adjustment or removal: dark:hidden */
+		height: 40px;
+		object-fit: contain;
+	}
+	#layout-sidebar {
+		background: rgba(231, 240, 225);
+	}
+</style>
+
 <div
 	id="layout-sidebar"
 	class="hidden lg:flex h-100vh flex-col w-64 border-r border-green-900"
@@ -17,14 +28,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="scss">
-	.sidebar-logo {
-		/* TODO: if a dark mode image is provided, this style might need adjustment or removal: dark:hidden */
-		height: 40px;
-		object-fit: contain;
-	}
-	#layout-sidebar {
-		background: rgba(231, 240, 225);
-	}
-</style>

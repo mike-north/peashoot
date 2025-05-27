@@ -145,17 +145,6 @@
 	}
 </script>
 
-<main>
-	<h1>My Garden Planner</h1>
-	<GardenView
-		garden={gardenInstance}
-		onMovePlantInBed={handleMovePlantInBed}
-		onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
-		edgeIndicators={gardenInstance.edgeIndicators}
-	/>
-	<!-- You can add more UI elements here -->
-</main>
-
 <style>
 	main {
 		font-family: Arial, sans-serif;
@@ -166,3 +155,14 @@
 		text-align: center;
 	}
 </style>
+
+<main>
+	<h1>My Garden Planner</h1>
+	<GardenView
+		garden={gardenInstance}
+		onMovePlantInBed={handleMovePlantInBed}
+		onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
+		edgeIndicators={gardenInstance.edgeIndicators}
+	/>
+	<!-- You can add more UI elements here -->
+</main>

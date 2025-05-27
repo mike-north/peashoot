@@ -22,24 +22,6 @@
 	}: HorizontalBarMeterProps = $props()
 </script>
 
-<div class="horizontal-bar-meter">
-	<svg class="horizontal-bar-meter__graph" width={2 + max * 7.2 + 2} height="10">
-		{#each Array.from<unknown>({ length: max }) as _, i (`${id}-cell-${i}`)}
-			<rect
-				x={2 + i * 7.2}
-				y={1}
-				width={6}
-				height={6}
-				rx={1.5}
-				fill={i < value ? filledColor : emptyColor}
-				stroke={borderColor}
-				stroke-width="0.8"
-			/>
-		{/each}
-	</svg>
-	<span class="horizontal-bar-meter__label" style="color: {labelColor};">{label}</span>
-</div>
-
 <style lang="scss">
 	.horizontal-bar-meter {
 		display: flex;
@@ -61,3 +43,21 @@
 		}
 	}
 </style>
+
+<div class="horizontal-bar-meter">
+	<svg class="horizontal-bar-meter__graph" width={2 + max * 7.2 + 2} height="10">
+		{#each Array.from<unknown>({ length: max }) as _, i (`${id}-cell-${i}`)}
+			<rect
+				x={2 + i * 7.2}
+				y={1}
+				width={6}
+				height={6}
+				rx={1.5}
+				fill={i < value ? filledColor : emptyColor}
+				stroke={borderColor}
+				stroke-width="0.8"
+			/>
+		{/each}
+	</svg>
+	<span class="horizontal-bar-meter__label" style="color: {labelColor};">{label}</span>
+</div>

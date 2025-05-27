@@ -11,41 +11,6 @@
 		}))
 </script>
 
-<div id="sidebar-menu" class="p-2">
-	{#each topItems as item (item.href)}
-		<div class="collapse mb-1">
-			<!-- TODO: Add icon -->
-			<a class="top-level-item grow" href={item.href} use:route={defaultRouteConfig}>
-				{#if item.icon}
-					<item.icon class="size-4" />
-				{/if}
-				{item.label}
-			</a>
-		</div>
-	{/each}
-
-	<!-- {#each groups as group (group.label)}
-		<div class="group collapse mb-1">
-			<input
-				aria-label="Sidemenu item trigger"
-				class="peer"
-				type="checkbox"
-				name="sidebar-menu-parent-item"
-			/>
-			<div class="collapse-title" use:route={defaultRouteConfig}>
-				<span class="grow">{group.label}</span>
-			</div>
-			<div class="collapse-content">
-				{#each group.items as item (item.href)}
-					<a class="sidebar-menu-item" href={item.href} use:route={defaultRouteConfig}
-						>{item.label}</a
-					>
-				{/each}
-			</div>
-		</div>
-	{/each} -->
-</div>
-
 <style lang="scss">
 	#sidebar-menu {
 		:global(.top-level-item.active-route) {
@@ -81,3 +46,38 @@
 		}
 	}
 </style>
+
+<div id="sidebar-menu" class="p-2">
+	{#each topItems as item (item.href)}
+		<div class="collapse mb-1">
+			<!-- TODO: Add icon -->
+			<a class="top-level-item grow" href={item.href} use:route={defaultRouteConfig}>
+				{#if item.icon}
+					<item.icon class="size-4" />
+				{/if}
+				{item.label}
+			</a>
+		</div>
+	{/each}
+
+	<!-- {#each groups as group (group.label)}
+		<div class="group collapse mb-1">
+			<input
+				aria-label="Sidemenu item trigger"
+				class="peer"
+				type="checkbox"
+				name="sidebar-menu-parent-item"
+			/>
+			<div class="collapse-title" use:route={defaultRouteConfig}>
+				<span class="grow">{group.label}</span>
+			</div>
+			<div class="collapse-content">
+				{#each group.items as item (item.href)}
+					<a class="sidebar-menu-item" href={item.href} use:route={defaultRouteConfig}
+						>{item.label}</a
+					>
+				{/each}
+			</div>
+		</div>
+	{/each} -->
+</div>

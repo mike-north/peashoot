@@ -213,15 +213,15 @@
 	})
 </script>
 
+<style>
+</style>
+
 <div class="garden" bind:this={gardenRef}>
 	{#each beds as bed (bed.id)}
 		<GardenBedView
-			{bed}
-			{edgeIndicators}
+			bed={bed}
+			edgeIndicators={edgeIndicators}
 			onTileMouseDownFromParent={handleTileMouseDown}
 		/>
 	{/each}
 </div>
-
-<style>
-</style>

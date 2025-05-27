@@ -36,6 +36,11 @@
 	}
 </script>
 
+<style>
+	/* You can add component-specific styles here if needed, */
+	/* but try to use Tailwind utility classes as much as possible. */
+</style>
+
 <div class="card bg-base-100 shadow-xl mb-6">
 	<div class="card-body">
 		<h2 class="card-title text-xl font-semibold mb-4">{taskList.title}</h2>
@@ -109,8 +114,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	/* You can add component-specific styles here if needed, */
-	/* but try to use Tailwind utility classes as much as possible. */
-</style>

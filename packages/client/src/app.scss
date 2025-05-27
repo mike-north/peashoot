@@ -1,6 +1,6 @@
-@use "tailwindcss";
+@use 'tailwindcss';
 @plugin "daisyui" {
-  themes: garden --default;
+	themes: garden --default;
 }
 
 html,
@@ -10,54 +10,54 @@ body {
 }
 
 @theme {
-  --color-primary: var(--color-stone-700);
-  --color-amber-100: #fef3c7; /* Tailwind amber-100 */
-  --color-stone-700: #44403c; /* Tailwind stone-700 */
-  --color-tomato-red: rgb(214 40 40);
-  --color-red-delicious-apple: rgb(155 27 48);
-  --color-carrot-orange: rgb(255 167 38);
-  --color-pumpkin-orange: rgb(245 124 0);
-  --color-berry-red: rgb(229 57 53);
-  --color-lettuce-green: rgb(123 182 97);
-  --color-spinach-green: rgb(56 142 60);
-  --color-zucchini-skin: rgb(44 95 45);
-  --color-green-apple: rgb(168 225 12);
-  --color-cucumber-green: rgb(86 130 3);
-  --color-jalapeno-green: rgb(58 145 63);
-  --color-hot-chili-red: rgb(193 18 31);
-  --color-yellow-pepper: rgb(255 212 0);
-  --color-orange-habanero: rgb(247 92 3);
-  --color-purple-chili: rgb(128 0 128);
-  --color-kiwi-brown: rgb(109 76 65);
-  --color-blueberry-blue: rgb(63 81 181);
-  --color-strawberry-red: rgb(229 57 53);
-  --color-honeycrisp-apple: rgb(247 92 3);
-  --color-fuji-apple: rgb(253 184 19);
-  --color-granny-smith-green: rgb(168 225 12);
-  --color-watermelon-red: rgb(227 66 52);
-  --color-marigold-gold: rgb(253 184 19);
-  --color-lavender-purple: rgb(180 151 189);
-  --color-dahlia-pink: rgb(255 105 180);
-  --color-cornflower-blue: rgb(100 149 237);
-  --color-cherry-red: rgb(123, 31, 23);
-  --color-poppy-red: rgb(227 66 52);
-  --color-soil-brown: rgb(90 62 54);
-  --color-mulch-tan: rgb(194 178 128);
-  --color-dew-gray: rgb(220 225 222);
-  --color-slate-label-gray: rgb(75 78 109);
+	--color-primary: var(--color-stone-700);
+	--color-amber-100: #fef3c7; /* Tailwind amber-100 */
+	--color-stone-700: #44403c; /* Tailwind stone-700 */
+	--color-tomato-red: rgb(214 40 40);
+	--color-red-delicious-apple: rgb(155 27 48);
+	--color-carrot-orange: rgb(255 167 38);
+	--color-pumpkin-orange: rgb(245 124 0);
+	--color-berry-red: rgb(229 57 53);
+	--color-lettuce-green: rgb(123 182 97);
+	--color-spinach-green: rgb(56 142 60);
+	--color-zucchini-skin: rgb(44 95 45);
+	--color-green-apple: rgb(168 225 12);
+	--color-cucumber-green: rgb(86 130 3);
+	--color-jalapeno-green: rgb(58 145 63);
+	--color-hot-chili-red: rgb(193 18 31);
+	--color-yellow-pepper: rgb(255 212 0);
+	--color-orange-habanero: rgb(247 92 3);
+	--color-purple-chili: rgb(128 0 128);
+	--color-kiwi-brown: rgb(109 76 65);
+	--color-blueberry-blue: rgb(63 81 181);
+	--color-strawberry-red: rgb(229 57 53);
+	--color-honeycrisp-apple: rgb(247 92 3);
+	--color-fuji-apple: rgb(253 184 19);
+	--color-granny-smith-green: rgb(168 225 12);
+	--color-watermelon-red: rgb(227 66 52);
+	--color-marigold-gold: rgb(253 184 19);
+	--color-lavender-purple: rgb(180 151 189);
+	--color-dahlia-pink: rgb(255 105 180);
+	--color-cornflower-blue: rgb(100 149 237);
+	--color-cherry-red: rgb(123, 31, 23);
+	--color-poppy-red: rgb(227 66 52);
+	--color-soil-brown: rgb(90 62 54);
+	--color-mulch-tan: rgb(194 178 128);
+	--color-dew-gray: rgb(220 225 222);
+	--color-slate-label-gray: rgb(75 78 109);
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
 
-  color-scheme: light;
+	color-scheme: light;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 body {

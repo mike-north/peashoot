@@ -1,13 +1,8 @@
 <script lang="ts">
-	import { Router, type RouteConfig } from '@mateothegreat/svelte5-router'
-	import { routes as routeData } from '../../routes'
+import { Router } from '@mateothegreat/svelte5-router'
+import { routes } from '../../routes'
 
-	import LayoutSidebar from '../components/LayoutSidebar.svelte'
-
-	const routes: RouteConfig[] = routeData.map(
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-		(r) => r.forRouter as unknown as RouteConfig,
-	)
+import LayoutSidebar from '../components/LayoutSidebar.svelte'
 </script>
 
 <div class="size-full">

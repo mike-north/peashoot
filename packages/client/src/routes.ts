@@ -1,69 +1,76 @@
 import type { RouteConfig } from '@mateothegreat/svelte5-router'
-import type { Component } from 'svelte'
+import type { Component, Snippet } from 'svelte'
 import Acorn from '~icons/ph/acorn-duotone'
 import Farm from '~icons/ph/farm-duotone'
 import Checklist from '~icons/ph/list-checks-duotone'
-import WeatherIcon from '~icons/ph/cloud-sun-duotone'
+import CalculatorIcon from '~icons/ph/calculator-duotone'
 import Home from './ui/pages/Home.svelte'
 import Garden from './ui/pages/Garden.svelte'
 import Tasks from './ui/pages/Tasks.svelte'
-import Weather from './ui/pages/Weather.svelte'
+import Calculators from './ui/pages/Calculators.svelte'
 import SeedCatalog from './ui/pages/SeedCatalog.svelte'
+import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 
-export interface PeashootRouteInfo {
-	forRouter: RouteConfig
+export interface PeashootRoute {
+	component?:
+		| Component<{ route: RouteResult }>
+		| Snippet
+		| (() => Promise<Component<{ route: RouteResult }> | Snippet>)
 	label: string
 	icon?: Component<Record<string, unknown>>
 	path: string
 	hideInSidebar?: boolean
 }
 
-export const routes: PeashootRouteInfo[] = [
+export interface PeashootRouteInfo {
+	forRouter: RouteConfig
+	label: string
+	icon?: Component<Record<string, unknown>>
+	path: string
+}
+
+export const routeInfos: PeashootRoute[] = [
 	{
-		forRouter: {
-			component: Home,
-		},
+		component: Home,
 		label: 'Home',
 		path: '/',
 		hideInSidebar: true,
 	},
 	{
-		forRouter: {
-			path: '/garden',
-			component: Garden,
-		},
+		component: Garden,
 		label: 'Garden',
 		path: '/garden',
 		icon: Farm,
 	},
 	{
-		forRouter: {
-			path: '/seed-catalog',
-			component: SeedCatalog,
-		},
+		component: SeedCatalog,
 		label: 'Seed Catalog',
 		path: '/seed-catalog',
 		icon: Acorn,
 	},
 	{
-		forRouter: {
-			path: '/tasks',
-			component: Tasks,
-		},
+		component: Tasks,
+
 		label: 'Tasks',
 		path: '/tasks',
 		icon: Checklist,
 	},
 	{
-		forRouter: {
-			path: '/weather',
-			component: Weather,
-		},
-		label: 'Weather',
-		path: '/weather',
-		icon: WeatherIcon,
+		component: Calculators,
+
+		label: 'Calculators',
+		path: '/calculators',
+		icon: CalculatorIcon,
 	},
 ]
+
+export const routes: RouteConfig[] = routeInfos.map((routeInfo) => ({
+	path: routeInfo.path,
+	component: routeInfo.component,
+	props: {
+		routeInfo
+	},
+}))
 
 export const defaultRouteConfig: RouteConfig = {
 	active: {

@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { route } from '@mateothegreat/svelte5-router'
-	import logo from '../../assets/images/peashoot-sidebar-logo.png'
-	import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
+import { route } from '@mateothegreat/svelte5-router'
+import logo from '../../assets/images/peashoot-sidebar-logo.png'
+import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
 </script>
 
 <style lang="scss">
-	.sidebar-logo {
-		/* TODO: if a dark mode image is provided, this style might need adjustment or removal: dark:hidden */
-		height: 40px;
-		object-fit: contain;
-	}
-	#layout-sidebar {
-		background: rgba(231, 240, 225);
-	}
+.sidebar-logo {
+	/* TODO: if a dark mode image is provided, this style might need adjustment or removal: dark:hidden */
+	height: 40px;
+	object-fit: contain;
+}
+#layout-sidebar {
+	background: rgba(231, 240, 225);
+}
 </style>
 
 <div

@@ -3,4 +3,8 @@ export interface Plant {
 	readonly name: string
 	readonly icon: string
 	readonly size: number
+	readonly plantFamily: {
+		name: string
+		colorVariant: string
+	}
 }

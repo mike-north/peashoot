@@ -10,7 +10,9 @@ let isHovered = $state(false)
 function handleMouseEnter() {
 	isHovered = true
 	if (isDraggingExistingPlant($dragState)) {
-		console.log('[DeleteZone] Mouse entered delete zone, setting targetType to delete-zone')
+		console.log(
+			'[DeleteZone] Mouse entered delete zone, setting targetType to delete-zone',
+		)
 		dragState.update((state) => ({
 			...state,
 			targetType: 'delete-zone',

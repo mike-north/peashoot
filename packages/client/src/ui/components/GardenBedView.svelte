@@ -156,7 +156,7 @@ function getTileComputedStyles(
 	}
 	&__frame {
 		fill: none;
-		stroke: rgb(var(--color-soil-brown));
+		stroke: var(--color-soil-brown);
 		stroke-width: 4;
 		stroke-linejoin: round;
 	}

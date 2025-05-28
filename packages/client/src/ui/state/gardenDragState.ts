@@ -122,3 +122,34 @@ export function existingGardenItemToPlantPlacement(
 		plantTile: plantTile,
 	}
 }
+
+// New Request Detail Types for Garden <-> GardenView communication
+
+export interface PlacementRequestDetails {
+	itemData: GardenItem
+	targetZoneId: string
+	x: number
+	y: number
+	originalInstanceId?: string // For moves
+	sourceZoneId?: string // For moves
+	// OperationType helps Garden.svelte decide how to construct validation context & which handler to call
+	operationType: 'item-add-to-zone' | 'item-move-within-zone' | 'item-move-across-zones'
+}
+
+export interface RemovalRequestDetails {
+	itemData: GardenItem // Useful for context like item size, though primarily for instanceId
+	instanceId: string
+	sourceZoneId: string
+	operationType: 'item-remove-from-zone' // Explicit for clarity
+}
+
+export interface CloningRequestDetails {
+	itemDataToClone: GardenItem
+	sourceOriginalZoneId: string // Zone of the item being cloned
+	targetCloneZoneId: string // Zone where the clone will be placed
+	sourceOriginalX: number // Original item's X
+	sourceOriginalY: number // Original item's Y
+	targetCloneX: number // Target X for the clone
+	targetCloneY: number // Target Y for the clone
+	operationType: 'item-clone-in-zone' // Explicit for clarity
+}

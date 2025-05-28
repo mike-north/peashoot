@@ -52,3 +52,14 @@ export function movePlantBetweenBeds(
 		}),
 	}
 }
+
+export function findBed(garden: Garden, bedId: string): GardenBed | undefined {
+	return garden.beds.find((bed) => bed.id === bedId)
+}
+
+export function findPlantPlacement(
+	bed: GardenBed,
+	plantPlacementId: string,
+): PlantPlacement | undefined {
+	return bed.plantPlacements.find((pp) => pp.id === plantPlacementId)
+}

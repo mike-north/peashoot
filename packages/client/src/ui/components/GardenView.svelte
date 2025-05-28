@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { PlantPlacement } from '../../lib/plant-placement'
 import {
 	dragState,
 	isDraggingExistingItem,
@@ -9,12 +8,10 @@ import {
 	addPendingOperation,
 	updatePendingOperation,
 	removePendingOperation,
-	defaultAsyncValidation,
-	type OperationType as GenericOperationType,
 } from '../state/dragState'
 import PlantToolbar from './PlantToolbar.svelte'
 import DeleteZone from './DeleteZone.svelte'
-import PlantPlacementTile from './PlantPlacementTile.svelte' // Changed from PlantTile
+import PlantPlacementTile from './PlantPlacementTile.svelte'
 import { onDestroy } from 'svelte'
 import type { Garden } from '../../lib/garden'
 import GardenBedView from './GardenBedView.svelte'
@@ -24,28 +21,16 @@ import {
 } from '../../lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
 import {
-	plantPlacementToExistingGardenItem,
 	type GardenItem,
 	type ExistingGardenItem,
-	type GardenZoneContext,
-	type GardenValidationContext,
-	type GardenAsyncValidationFunction,
+	type PlacementRequestDetails,
+	type RemovalRequestDetails,
+	type CloningRequestDetails,
 	type GardenDragState,
 } from '../state/gardenDragState'
 import { dragState as genericDragState } from '../state/dragState'
 import { get } from 'svelte/store'
 import { dragManager, type DragManager } from '../../lib/dnd/drag-manager'
-
-// Custom Error for Async Validation Failures
-class AsyncValidationError extends Error {
-	originalError: unknown
-	constructor(message: string, originalError?: unknown) {
-		super(message)
-		this.name = 'AsyncValidationError'
-		this.originalError = originalError
-		Object.setPrototypeOf(this, AsyncValidationError.prototype)
-	}
-}
 
 interface GardenProps {
 	garden: Garden
@@ -65,10 +50,9 @@ interface GardenProps {
 		plantBId: string
 		color: string
 	}[]
-	asyncValidation?: GardenAsyncValidationFunction
-	onAsyncValidationStart?: () => void
-	onAsyncValidationSuccess?: () => void
-	onAsyncValidationError?: (errorMessage: string) => void
+	onRequestPlacement: (details: PlacementRequestDetails) => Promise<void>
+	onRequestRemoval: (details: RemovalRequestDetails) => Promise<void>
+	onRequestCloning: (details: CloningRequestDetails) => Promise<void>
 }
 
 let {
@@ -78,10 +62,9 @@ let {
 	onAddNewPlant,
 	onDeletePlant,
 	edgeIndicators,
-	asyncValidation = defaultAsyncValidation as GardenAsyncValidationFunction,
-	onAsyncValidationStart,
-	onAsyncValidationSuccess,
-	onAsyncValidationError,
+	onRequestPlacement,
+	onRequestRemoval,
+	onRequestCloning,
 }: GardenProps = $props()
 
 let { beds } = $derived(garden)
@@ -175,7 +158,7 @@ async function onGardenMouseUp(event: MouseEvent) {
 		currentDragStateVal.targetType === 'delete-zone'
 	) {
 		console.log('[GardenView] Drop on DeleteZone detected.')
-		await handleAsyncPlantRemoval(
+		await handlePlantRemovalRequest(
 			currentDragStateVal.draggedExistingItem.id,
 			currentDragStateVal.sourceZoneId,
 			currentDragStateVal.draggedExistingItem.itemData as GardenItem,
@@ -183,7 +166,7 @@ async function onGardenMouseUp(event: MouseEvent) {
 	} else if (
 		currentDragStateVal.targetType === 'drop-zone' &&
 		currentDragStateVal.targetZoneId &&
-		currentDragStateVal.highlightedCell // Ensure we have a cell to drop on
+		currentDragStateVal.highlightedCell
 	) {
 		const targetBedId = currentDragStateVal.targetZoneId
 		const targetX = currentDragStateVal.highlightedCell.x
@@ -197,22 +180,20 @@ async function onGardenMouseUp(event: MouseEvent) {
 				console.log(
 					`[GardenView] CLONE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`,
 				)
-				const gardenExistingItem = existingItem as ExistingGardenItem // Assert type
-				await handleAsyncPlantCloning(
+				await handlePlantCloningRequest(
 					sourceBedId,
 					targetBedId,
-					gardenExistingItem.itemData, // No cast needed now
-					gardenExistingItem.x, // Now number
-					gardenExistingItem.y, // Now number
+					existingItem.itemData as GardenItem,
+					existingItem.x ?? 0,
+					existingItem.y ?? 0,
 					targetX,
 					targetY,
 				)
 			} else {
-				// This covers both intra-bed move and cross-bed move
 				console.log(
 					`[GardenView] MOVE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`,
 				)
-				await handleAsyncPlantPlacement(
+				await handlePlantPlacementRequest(
 					targetBedId,
 					existingItem.itemData as GardenItem,
 					targetX,
@@ -223,12 +204,11 @@ async function onGardenMouseUp(event: MouseEvent) {
 			}
 		} else if (isDraggingNewItem(currentDragStateVal)) {
 			console.log(`[GardenView] ADD NEW ITEM operation to bed ${targetBedId}`)
-			await handleAsyncPlantPlacement(
+			await handlePlantPlacementRequest(
 				targetBedId,
 				currentDragStateVal.draggedNewItem as GardenItem,
 				targetX,
 				targetY,
-				// No originalInstanceId or sourceZoneId for new items from toolbar
 			)
 		} else {
 			console.log(
@@ -246,7 +226,7 @@ function cleanupDrag(): void {
 	gardenDragManager.cleanup()
 }
 
-async function handleAsyncPlantPlacement(
+async function handlePlantPlacementRequest(
 	targetZoneId: string,
 	itemData: GardenItem,
 	x: number,
@@ -264,113 +244,70 @@ async function handleAsyncPlantPlacement(
 		state: 'pending',
 	})
 
-	const sourceBedData = sourceZoneId ? beds.find((b) => b.id === sourceZoneId) : undefined
-	const targetBedData = beds.find((b) => b.id === targetZoneId)
-	let originalItemInSource: ExistingGardenItem | undefined = undefined
-	if (sourceBedData && originalInstanceId) {
-		const originalPp = sourceBedData.plantPlacements.find(
-			(p) => p.id === originalInstanceId,
-		)
-		if (originalPp) originalItemInSource = plantPlacementToExistingGardenItem(originalPp)
-	}
-
-	let operationType: GenericOperationType = 'item-add-to-zone' // Default
+	let operationType: PlacementRequestDetails['operationType'] = 'item-add-to-zone'
 	if (originalInstanceId && sourceZoneId) {
 		operationType =
 			sourceZoneId === targetZoneId ? 'item-move-within-zone' : 'item-move-across-zones'
 	}
 
-	const baseValidationContext: Partial<GardenValidationContext> = {
-		item: itemData,
-		targetZoneId: targetZoneId,
-		targetX: x,
-		targetY: y,
-		operationType: operationType,
-		applicationContext: { garden },
+	const placementDetails: PlacementRequestDetails = {
+		itemData,
+		targetZoneId,
+		x,
+		y,
+		operationType,
+		// Explicitly handle optional properties for exactOptionalPropertyTypes
+		...(originalInstanceId !== undefined && { originalInstanceId }),
+		...(sourceZoneId !== undefined && { sourceZoneId }),
 	}
-	if (targetBedData) {
-		baseValidationContext.targetZoneContext = {
-			...targetBedData,
-			plantPlacements: targetBedData.plantPlacements.map(
-				plantPlacementToExistingGardenItem,
-			),
-		} as GardenZoneContext
-	}
-	if (originalInstanceId) baseValidationContext.itemInstanceId = originalInstanceId
-	if (sourceZoneId) baseValidationContext.sourceZoneId = sourceZoneId
-	if (sourceBedData)
-		baseValidationContext.sourceZoneContext = {
-			...sourceBedData,
-			plantPlacements: sourceBedData.plantPlacements.map(
-				plantPlacementToExistingGardenItem,
-			),
-		} as GardenZoneContext
-	if (originalItemInSource) {
-		baseValidationContext.sourceX = originalItemInSource.x
-		baseValidationContext.sourceY = originalItemInSource.y
-	}
-
-	const validationContext = baseValidationContext as GardenValidationContext
 
 	try {
 		console.log(
-			'[GardenView] Placement: try block entered. Context:',
-			JSON.stringify(validationContext, null, 2),
+			'[GardenView] Placement Request: try block entered. Details:',
+			JSON.stringify(placementDetails, null, 2),
 		)
-		try {
-			onAsyncValidationStart?.()
-			await asyncValidation(validationContext)
-			onAsyncValidationSuccess?.()
-		} catch (validationError) {
-			const message =
-				validationError instanceof Error
-					? validationError.message
-					: String(validationError)
-			onAsyncValidationError?.(message)
-			throw new AsyncValidationError(
-				'asyncValidation function rejected or threw an error',
-				validationError,
-			)
-		}
-		console.log('[GardenView] Placement: asyncValidation SUCCEEDED.')
+		await onRequestPlacement(placementDetails)
+		console.log('[GardenView] Placement Request: onRequestPlacement SUCCEEDED.')
 		updatePendingOperation(operationId, 'success')
 
 		setTimeout(() => {
 			removePendingOperation(operationId)
-			if (originalInstanceId && sourceZoneId) {
-				if (sourceZoneId === targetZoneId) {
-					onMovePlantInBed(targetZoneId, originalInstanceId, x, y)
-				} else {
-					if (originalItemInSource)
-						onMovePlantToDifferentBed(
-							sourceZoneId,
-							targetZoneId,
-							originalItemInSource,
-							x,
-							y,
-						)
+			if (operationType === 'item-move-within-zone' && originalInstanceId) {
+				onMovePlantInBed(targetZoneId, originalInstanceId, x, y)
+			} else if (
+				operationType === 'item-move-across-zones' &&
+				originalInstanceId &&
+				sourceZoneId
+			) {
+				const sourceBedData = beds.find((b) => b.id === sourceZoneId)
+				const originalPp = sourceBedData?.plantPlacements.find(
+					(p) => p.id === originalInstanceId,
+				)
+				if (originalPp) {
+					const existingItemForCallback: ExistingGardenItem = {
+						id: originalPp.id,
+						x: originalPp.x,
+						y: originalPp.y,
+						itemData: itemData,
+						size: itemData.size ?? 1,
+					}
+					onMovePlantToDifferentBed(
+						sourceZoneId,
+						targetZoneId,
+						existingItemForCallback,
+						x,
+						y,
+					)
 				}
-			} else {
+			} else if (operationType === 'item-add-to-zone') {
 				onAddNewPlant(targetZoneId, itemData, x, y)
 			}
 		}, 1500)
 	} catch (error: unknown) {
-		if (error instanceof AsyncValidationError) {
-			console.error(
-				'[GardenView] Placement: CATCH block. asyncValidation REJECTED:',
-				error.message,
-				'Original error:',
-				error.originalError,
-			)
-		} else {
-			console.error(
-				'[GardenView] Placement: CATCH block. Error in surrounding logic:',
-				error,
-			)
-		}
 		console.error(
-			'[GardenView] Placement: Failing validationContext was:',
-			JSON.stringify(validationContext, null, 2),
+			'[GardenView] Placement Request: CATCH block. onRequestPlacement REJECTED:',
+			error instanceof Error ? error.message : String(error),
+			error,
 		)
 		updatePendingOperation(operationId, 'error')
 
@@ -380,7 +317,7 @@ async function handleAsyncPlantPlacement(
 	}
 }
 
-async function handleAsyncPlantRemoval(
+async function handlePlantRemovalRequest(
 	instanceId: string,
 	sourceZoneId: string,
 	itemData: GardenItem,
@@ -392,52 +329,20 @@ async function handleAsyncPlantRemoval(
 		state: 'pending',
 	})
 
-	const sourceBedData = beds.find((b) => b.id === sourceZoneId)
-	let itemToRemovePp: PlantPlacement | undefined
-	if (sourceBedData)
-		itemToRemovePp = sourceBedData.plantPlacements.find((p) => p.id === instanceId)
-
-	const baseValidationContext: Partial<GardenValidationContext> = {
+	const removalDetails: RemovalRequestDetails = {
+		itemData,
+		instanceId,
+		sourceZoneId,
 		operationType: 'item-remove-from-zone',
-		item: itemData,
-		itemInstanceId: instanceId,
-		sourceZoneId: sourceZoneId,
-		applicationContext: { garden },
 	}
-	if (sourceBedData)
-		baseValidationContext.sourceZoneContext = {
-			...sourceBedData,
-			plantPlacements: sourceBedData.plantPlacements.map(
-				plantPlacementToExistingGardenItem,
-			),
-		} as GardenZoneContext
-	if (itemToRemovePp) {
-		baseValidationContext.sourceX = itemToRemovePp.x
-		baseValidationContext.sourceY = itemToRemovePp.y
-	}
-	const validationContext = baseValidationContext as GardenValidationContext
 
 	try {
 		console.log(
-			'[GardenView] Removal: try block entered. Context:',
-			JSON.stringify(validationContext, null, 2),
+			'[GardenView] Removal Request: try block entered. Details:',
+			JSON.stringify(removalDetails, null, 2),
 		)
-		try {
-			onAsyncValidationStart?.()
-			await asyncValidation(validationContext)
-			onAsyncValidationSuccess?.()
-		} catch (validationError) {
-			const message =
-				validationError instanceof Error
-					? validationError.message
-					: String(validationError)
-			onAsyncValidationError?.(message)
-			throw new AsyncValidationError(
-				'asyncValidation function rejected or threw an error',
-				validationError,
-			)
-		}
-		console.log('[GardenView] Removal: asyncValidation SUCCEEDED.')
+		await onRequestRemoval(removalDetails)
+		console.log('[GardenView] Removal Request: onRequestRemoval SUCCEEDED.')
 		updatePendingOperation(operationId, 'success')
 
 		setTimeout(() => {
@@ -445,22 +350,10 @@ async function handleAsyncPlantRemoval(
 			onDeletePlant(instanceId, sourceZoneId)
 		}, 1500)
 	} catch (error: unknown) {
-		if (error instanceof AsyncValidationError) {
-			console.error(
-				'[GardenView] Removal: CATCH block. asyncValidation REJECTED:',
-				error.message,
-				'Original error:',
-				error.originalError,
-			)
-		} else {
-			console.error(
-				'[GardenView] Removal: CATCH block. Error in surrounding logic:',
-				error,
-			)
-		}
 		console.error(
-			'[GardenView] Removal: Failing validationContext was:',
-			JSON.stringify(validationContext, null, 2),
+			'[GardenView] Removal Request: CATCH block. onRequestRemoval REJECTED:',
+			error instanceof Error ? error.message : String(error),
+			error,
 		)
 		updatePendingOperation(operationId, 'error')
 
@@ -470,7 +363,7 @@ async function handleAsyncPlantRemoval(
 	}
 }
 
-async function handleAsyncPlantCloning(
+async function handlePlantCloningRequest(
 	sourceOriginalZoneId: string,
 	targetCloneZoneId: string,
 	itemDataToClone: GardenItem,
@@ -479,17 +372,8 @@ async function handleAsyncPlantCloning(
 	targetCloneX: number,
 	targetCloneY: number,
 ) {
-	console.log('[GardenView] handleAsyncPlantCloning called with:', {
-		sourceOriginalZoneId,
-		targetCloneZoneId,
-		itemDataToClone,
-		sourceOriginalX,
-		sourceOriginalY,
-		targetCloneX,
-		targetCloneY,
-	})
 	const operationId = addPendingOperation<GardenItem>({
-		type: 'placement', // Cloning results in a new placement
+		type: 'placement',
 		zoneId: targetCloneZoneId,
 		x: targetCloneX,
 		y: targetCloneY,
@@ -498,85 +382,38 @@ async function handleAsyncPlantCloning(
 		state: 'pending',
 	})
 
-	const sourceBedData = beds.find((b) => b.id === sourceOriginalZoneId)
-	const targetBedData = beds.find((b) => b.id === targetCloneZoneId)
-
-	const baseValidationContext: Partial<GardenValidationContext> = {
+	const cloningDetails: CloningRequestDetails = {
+		itemDataToClone,
+		sourceOriginalZoneId,
+		targetCloneZoneId,
+		sourceOriginalX,
+		sourceOriginalY,
+		targetCloneX,
+		targetCloneY,
 		operationType: 'item-clone-in-zone',
-		item: itemDataToClone,
-		sourceZoneId: sourceOriginalZoneId,
-		targetZoneId: targetCloneZoneId,
-		sourceX: sourceOriginalX,
-		sourceY: sourceOriginalY,
-		targetX: targetCloneX,
-		targetY: targetCloneY,
-		applicationContext: { garden },
 	}
-	if (sourceBedData)
-		baseValidationContext.sourceZoneContext = {
-			...sourceBedData,
-			plantPlacements: sourceBedData.plantPlacements.map(
-				plantPlacementToExistingGardenItem,
-			),
-		} as GardenZoneContext
-	if (targetBedData)
-		baseValidationContext.targetZoneContext = {
-			...targetBedData,
-			plantPlacements: targetBedData.plantPlacements.map(
-				plantPlacementToExistingGardenItem,
-			),
-		} as GardenZoneContext
-
-	const validationContext = baseValidationContext as GardenValidationContext
 
 	try {
 		console.log(
-			'[GardenView] Cloning: try block entered. Context:',
-			JSON.stringify(validationContext, null, 2),
+			'[GardenView] Cloning Request: try block entered. Details:',
+			JSON.stringify(cloningDetails, null, 2),
 		)
-		try {
-			onAsyncValidationStart?.()
-			await asyncValidation(validationContext)
-			onAsyncValidationSuccess?.()
-		} catch (validationError) {
-			const message =
-				validationError instanceof Error
-					? validationError.message
-					: String(validationError)
-			onAsyncValidationError?.(message)
-			throw new AsyncValidationError(
-				'asyncValidation function rejected or threw an error',
-				validationError,
-			)
-		}
-		console.log('[GardenView] Cloning: asyncValidation SUCCEEDED.')
+		await onRequestCloning(cloningDetails)
+		console.log('[GardenView] Cloning Request: onRequestCloning SUCCEEDED.')
 		updatePendingOperation(operationId, 'success')
 
 		setTimeout(() => {
 			removePendingOperation(operationId)
 			const clonedCoreItem: GardenItem = {
 				...itemDataToClone,
-				id: `cloned-${itemDataToClone.id}-${Date.now()}`,
 			}
 			onAddNewPlant(targetCloneZoneId, clonedCoreItem, targetCloneX, targetCloneY)
 		}, 1500)
 	} catch (error: unknown) {
-		if (error instanceof AsyncValidationError) {
-			console.error(
-				'[GardenView] Cloning: CATCH block. asyncValidation REJECTED:',
-				error.message,
-				'Original error:',
-				error.originalError,
-			)
-		} else {
-			console.error(
-				'[GardenView] Cloning: CATCH block. Error in surrounding logic:',
-				error,
-			)
-		}
 		console.error(
-			'[GardenView] Cloning: Failing validationContext was:',
-			JSON.stringify(validationContext, null, 2),
+			'[GardenView] Cloning Request: CATCH block. onRequestCloning REJECTED:',
+			error instanceof Error ? error.message : String(error),
+			error,
 		)
 		updatePendingOperation(operationId, 'error')
 

@@ -45,6 +45,7 @@ export default tseslint.config(
 					allowBoolean: true,
 				},
 			],
+			'@typescript-eslint/no-explicit-any': 'off',
 		},
 	},
 	// Svelte linting for client/src only

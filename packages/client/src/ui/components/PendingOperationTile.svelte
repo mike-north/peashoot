@@ -1,22 +1,26 @@
 <script lang="ts">
-import type { PendingOperation } from '../state/dragState'
+import type { GardenPendingOperation } from '../state/gardenDragStateTypes'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
+import type { ExistingGardenItem } from '../state/gardenDragStateTypes'
 
 interface PendingOperationTileProps {
-	operation: PendingOperation
+	operation: GardenPendingOperation
 	sizePx: number
 	circular?: boolean
 }
 
 let { operation, sizePx, circular = false }: PendingOperationTileProps = $props()
 
-// Create a temporary placement for rendering
-const tempPlacement = {
+// Create a temporary ExistingGardenItem for rendering with PlantPlacementTile
+const tempExistingItem: ExistingGardenItem = $derived({
 	id: operation.id,
-	x: operation.x || 0,
-	y: operation.y || 0,
-	plantTile: operation.plant,
-}
+	x: operation.x ?? 0,
+	y: operation.y ?? 0,
+	itemData: operation.item,
+	size: operation.item.size ?? 1,
+})
+
+const itemForDisplay = $derived(operation.item)
 </script>
 
 <style lang="scss">
@@ -87,8 +91,12 @@ const tempPlacement = {
 }
 
 @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 .fade-out {
@@ -100,29 +108,24 @@ const tempPlacement = {
 <div class="pending-tile" class:pending-tile--circular={circular}>
 	<!-- Base plant tile (dimmed) -->
 	<div style="opacity: 0.3;">
-		{#if circular}
+		{#if circular && itemForDisplay}
 			<!-- For circular mode, show just the plant icon -->
-			{@const plantFamily = operation.plant.plantFamily?.name || 'lettuce'}
-			{@const colorVariant = operation.plant.plantFamily?.colorVariant || 'green'}
-			{@const colorVar = `--color-${plantFamily}-${colorVariant}`}
-			<div 
+			{@const plantFamilyName = itemForDisplay.plantFamily.name || 'lettuce'}
+			{@const colorVariantName = itemForDisplay.plantFamily.colorVariant || 'green'}
+			{@const colorVar = `--color-${plantFamilyName}-${colorVariantName}`}
+			<div
 				class="pending-tile__circular-plant"
 				style="background-color: var({colorVar});"
 			>
-				{operation.plant.icon}
+				{itemForDisplay.icon}
 			</div>
-		{:else}
-			<PlantPlacementTile 
-				plantPlacement={tempPlacement} 
-				sizePx={sizePx} 
-			/>
+		{:else if itemForDisplay}
+			<PlantPlacementTile plantPlacement={tempExistingItem} sizePx={sizePx} />
 		{/if}
 	</div>
 
 	<!-- Status overlay -->
-	<div 
-		class="pending-tile__overlay pending-tile__overlay--{operation.state}"
-	>
+	<div class="pending-tile__overlay pending-tile__overlay--{operation.state}">
 		{#if operation.state === 'pending'}
 			<div class="pending-tile__spinner"></div>
 		{:else if operation.state === 'success'}
@@ -131,4 +134,4 @@ const tempPlacement = {
 			✗
 		{/if}
 	</div>
-</div> 
+</div>

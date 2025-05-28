@@ -172,6 +172,27 @@ export class GardenBedLayoutCalculator {
 	}
 
 	/**
+	 * Converts relative SVG coordinates (within the plantable area) to garden grid coordinates.
+	 * @param relativeSvgX X coordinate relative to the start of the plantable area SVG.
+	 * @param relativeSvgY Y coordinate relative to the start of the plantable area SVG.
+	 * @returns The {x, y} grid cell, or null if outside the grid.
+	 */
+	getGridCellFromRelativeSvgCoords(
+		relativeSvgX: number,
+		relativeSvgY: number,
+	): { x: number; y: number } | null {
+		const gridX = Math.floor((relativeSvgX - this.interiorX) / this.cellWidth)
+		// SVG Y is from top, garden Y is from bottom
+		const gridY =
+			this.height - 1 - Math.floor((relativeSvgY - this.interiorY) / this.cellHeight)
+
+		if (gridX >= 0 && gridX < this.width && gridY >= 0 && gridY < this.height) {
+			return { x: gridX, y: gridY }
+		}
+		return null
+	}
+
+	/**
 	 * Returns the positions of all vertical grid lines.
 	 */
 	getVerticalLines(): GridLine[] {

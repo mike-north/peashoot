@@ -8,30 +8,62 @@ import {
 	calculateEdgeBorders,
 	type Border,
 } from '../../lib/garden-bed-layout-calculator'
-import { dragState, isDragStatePopulated, pendingOperations } from '../state/dragState'
 import type { GardenBed } from '../../lib/garden-bed'
 import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
 
+import GenericDropZone from '../../lib/dnd/components/GenericDropZone.svelte'
+import GenericDraggable from '../../lib/dnd/components/GenericDraggable.svelte'
+import {
+	pendingOperations as genericPendingOperations,
+	isDragStatePopulated,
+	dragState as genericDragState,
+} from '../../lib/dnd/state'
+import type { DraggableItem } from '../../lib/dnd/types'
+import {
+	gardenAppDragState,
+	type GardenZoneContext,
+	type GardenItem,
+	plantPlacementToExistingGardenItem,
+	type GardenPendingOperation,
+	type ExistingGardenItem,
+} from '../state/gardenDragState'
+import { onDestroy } from 'svelte'
+import { get } from 'svelte/store'
+
 interface GardenBedViewProps {
 	bed: GardenBed
-	onTileMouseDownFromParent?: (
-		plant: PlantPlacement,
-		bedId: string,
-		event: MouseEvent,
-	) => void
 	edgeIndicators?: {
 		id: string
 		plantAId: string
 		plantBId: string
 		color: string
 	}[]
+	onMovePlantInBed?: (
+		bedId: string,
+		plantPlacementId: string,
+		newX: number,
+		newY: number,
+	) => void
+	onAddNewPlant?: (bedId: string, itemData: GardenItem, x: number, y: number) => void
+	onDeletePlant?: (plantPlacementId: string, bedId: string) => void
 }
 
 const {
 	bed,
-	onTileMouseDownFromParent,
 	edgeIndicators = [],
+	onMovePlantInBed,
+	onAddNewPlant,
+	onDeletePlant,
 }: GardenBedViewProps = $props()
+
+// Prepare zoneContextData for GenericDropZone
+const gardenBedZoneContext: GardenZoneContext = $derived.by(() => ({
+	...bed,
+	plantPlacements: bed.plantPlacements.map((pp) =>
+		plantPlacementToExistingGardenItem(pp),
+	),
+}))
+
 // Instantiate the layout calculator
 const layout = new GardenBedLayoutCalculator({
 	width: bed.width,
@@ -64,7 +96,7 @@ const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
 // Use the factored-out isValidPlacement
 function isValidPlacement(x: number, y: number, size: number): boolean {
 	// For existing plants, exclude the dragged plant from collision detection
-	const skipId = $dragState.draggedPlant?.id
+	const skipId = $genericDragState.draggedExistingItem?.id
 	return layout.isValidPlacement(x, y, size, bed.plantPlacements, skipId)
 }
 
@@ -79,8 +111,6 @@ $effect(() => {
 		edgeBorders = newBorders
 	}
 })
-// DEBUG: Log edgeIndicators and plant IDs in this bed
-bed.plantPlacements.forEach((p) => p.id)
 
 interface TileStyleProps {
 	left: string
@@ -94,11 +124,12 @@ interface TileStyleProps {
 
 function getTileComputedStyles(
 	placementId: string,
-	currentDragState: typeof $dragState,
 	overlayLayout: ReturnType<typeof layout.getTileOverlayLayoutInfo>,
 ): TileStyleProps {
+	const currentDragStateValue = $genericDragState
 	const isBeingDragged =
-		currentDragState.draggedPlant && currentDragState.draggedPlant.id === placementId
+		currentDragStateValue.draggedExistingItem &&
+		currentDragStateValue.draggedExistingItem.id === placementId
 
 	// Since dragOffset is not used and tiles don't visually follow mouse,
 	// left/top are always based on overlayLayout.
@@ -113,10 +144,90 @@ function getTileComputedStyles(
 		zIndex: isBeingDragged ? 100 : 2,
 		opacity: isBeingDragged ? 0.7 : 1,
 		pointerEvents:
-			currentDragState.draggedPlant && currentDragState.draggedPlant.id !== placementId
+			currentDragStateValue.draggedExistingItem &&
+			currentDragStateValue.draggedExistingItem.id !== placementId
 				? 'none'
 				: 'auto',
 	}
+}
+
+// REMOVED: $effect.pre logging block and associated derived states (isTargetZone, hasHighlightedCell, isPopulated)
+// REMOVED: Direct subscription to genericDragState (unsubscribeGenericDragState)
+// onDestroy can be removed if no other subscriptions are made in this component that need manual cleanup.
+// For now, keeping it in case we add subscriptions later, but it's empty if unsubscribeGenericDragState was the only one.
+onDestroy(() => {})
+
+// REMOVE handleCellDragOver as highlightedCell is now set globally by GardenView.onGardenMouseMove
+// function handleCellDragOver(event: CustomEvent<{ x: number; y: number; zoneId: string; zoneContextData: GardenZoneContext }>) {
+// 	// ... logic ...
+// }
+
+interface DropEventDetail {
+	item: DraggableItem
+	sourceZoneId: string | null
+	targetZoneId: string
+	x?: number
+	y?: number
+	isClone: boolean
+}
+
+function handleDrop(event: CustomEvent<DropEventDetail>) {
+	const detail = event.detail
+	console.log('[GardenBedView] Drop event received:', detail)
+
+	if (
+		detail.targetZoneId !== bed.id ||
+		detail.x === undefined ||
+		detail.y === undefined
+	) {
+		console.warn(
+			'[GardenBedView] Drop event not for this bed or missing/invalid coordinates.',
+		)
+		return
+	}
+	const { item, sourceZoneId, x, y, isClone } = detail
+	const itemSize = (item as GardenItem).size ?? 1
+
+	// Perform local placement validation (e.g., collision, bounds).
+	// This is a preliminary check. The full async validation will be done by GardenView.
+	if (!isValidPlacement(x, y, itemSize)) {
+		console.warn('[GardenBedView] Local validation failed: Invalid placement, drop rejected.')
+		// Optionally, update dragState here to indicate an invalid drop attempt to GenericDropZone/DragManager
+		// For now, just returning will prevent further processing in this component.
+		return
+	}
+
+	// For ALL drop types (new item, intra-bed move, cross-bed move, clones),
+	// GardenBedView will now NOT directly call onAddNewPlant or onMovePlantInBed.
+	// It has done its local validation. The final decision and async validation
+	// will be handled by GardenView's onGardenMouseUp -> handleAsyncPlantPlacement/Cloning.
+	console.log(`[GardenBedView] Drop validated locally for item '${item.id}' at (${x},${y}). Parent (GardenView) will handle finalization.`)
+
+	// const currentDragStateVal = get(genericDragState); // No longer needed here for direct action
+
+	// // Old logic commented out:
+	// if (sourceZoneId === bed.id) { // Move within the same bed
+	// 	if (isClone) {
+	// 		console.log('[GardenBedView] Intra-bed clone drop detected. Parent (GardenView) will handle async cloning.')
+	// 	} else if (onMovePlantInBed && currentDragStateVal.draggedExistingItem) {
+	// 		const plantPlacementId = currentDragStateVal.draggedExistingItem.id
+	// 		onMovePlantInBed(bed.id, plantPlacementId, x, y)
+	// 	} else {
+	// 		console.warn(
+	// 			'[GardenBedView] onMovePlantInBed callback not provided or draggedExistingItem missing for move within bed (and not a clone operation).',
+	// 		)
+	// 	}
+	// } else if (sourceZoneId === null) { // New item from toolbar
+	// 	if (onAddNewPlant) {
+	// 		onAddNewPlant(bed.id, item as GardenItem, x, y)
+	// 	} else {
+	// 		console.warn('[GardenBedView] onAddNewPlant callback not provided.')
+	// 	}
+	// } else {
+	// 	console.log(
+	// 		`[GardenBedView] Drop from different bed ${sourceZoneId} to ${bed.id}. Item ID: ${item.id}. Parent (GardenView) will handle.`,
+	// 	)
+	// }
 }
 </script>
 
@@ -260,7 +371,10 @@ function getTileComputedStyles(
 		viewBox="0 0 {svgWidth} {svgHeight}"
 		width={svgWidth}
 		height={svgHeight}
-		style="position: absolute; left: 0; top: 0; z-index: 1;"
+		style="position: absolute; left: 0; top: 0; z-index: 1; pointer-events: {$genericDragState.draggedNewItem ||
+		$genericDragState.draggedExistingItem
+			? 'none'
+			: 'auto'};"
 	>
 		<rect
 			x={interiorX}
@@ -334,112 +448,126 @@ function getTileComputedStyles(
 
 	<!-- HTML Plant Tiles (middle layer) -->
 	<div class="tile-overlay" style="width: {svgWidth}px; height: {svgHeight}px;">
-		<div
-			class="tile-overlay__tiles"
-			style="width: {svgWidth}px; height: {svgHeight}px; position: relative;"
+		<GenericDropZone
+			zoneId={bed.id}
+			zoneContextData={gardenBedZoneContext}
+			on:drop={handleDrop}
 		>
-			{#if $dragState.targetBedId === bed.id && $dragState.highlightedCell && isDragStatePopulated($dragState)}
-				{@const size = $dragState.draggedTileSize}
-				{@const tileLayout = layout.getTileLayoutInfo({
-					x: $dragState.highlightedCell.x,
-					y: $dragState.highlightedCell.y,
-					size,
-				})}
-				{@const valid = isValidPlacement(
-					$dragState.highlightedCell.x,
-					$dragState.highlightedCell.y,
-					size,
-				)}
-				{@const isSource = $dragState.sourceBedId === bed.id}
-				<div
-					class="tile-overlay__highlight
-            {valid ? '' : 'tile-overlay__highlight--invalid'}
-            {valid && isSource ? 'tile-overlay__highlight--source' : ''}
-            {valid && !isSource ? 'tile-overlay__highlight--target' : ''}"
-					style="
-            left: {tileLayout.svgX}px;
-            top: {tileLayout.svgY}px;
-            width: {tileLayout.width}px;
-            height: {tileLayout.height}px;
-          "
-				></div>
-			{/if}
-			{#each bed.plantPlacements as placement (placement.id)}
-				{@const size = placement.plantTile.size || 1}
-				{@const tileLayout = layout.getTileLayoutInfo({
-					x: placement.x,
-					y: placement.y,
-					size,
-				})}
-				{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-					x: placement.x,
-					y: placement.y,
-					size,
-					strokeWidth: 2,
-				})}
+			<div
+				class="tile-overlay__tiles"
+				style="width: {svgWidth}px; height: {svgHeight}px; position: relative; pointer-events: {$genericDragState.draggedNewItem ||
+				$genericDragState.draggedExistingItem
+					? 'none'
+					: 'auto'};"
+			>
+				{#if $genericDragState.targetZoneId === bed.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
+					{@const draggedItemData =
+						$genericDragState.draggedNewItem ??
+						$genericDragState.draggedExistingItem?.itemData}
+					{@const itemSize = (draggedItemData as GardenItem | null)?.size ?? 1}
+					{@const tileLayout = layout.getTileLayoutInfo({
+						x: $genericDragState.highlightedCell.x,
+						y: $genericDragState.highlightedCell.y,
+						size: itemSize,
+					})}
+					{@const valid = isValidPlacement(
+						$genericDragState.highlightedCell.x,
+						$genericDragState.highlightedCell.y,
+						itemSize,
+					)}
+					{@const isSource = $genericDragState.sourceZoneId === bed.id}
+					<div
+						class="tile-overlay__highlight
+						{valid ? '' : 'tile-overlay__highlight--invalid'}
+						{valid && isSource ? 'tile-overlay__highlight--source' : ''}
+						{valid && !isSource ? 'tile-overlay__highlight--target' : ''}"
+						style="
+						left: {tileLayout.svgX}px;
+						top: {tileLayout.svgY}px;
+						width: {tileLayout.width}px;
+						height: {tileLayout.height}px;
+					"
+					></div>
+				{/if}
+				{#each bed.plantPlacements as placement (placement.id)}
+					{@const existingGardenItem = plantPlacementToExistingGardenItem(placement)}
+					{@const itemDataSize = existingGardenItem.itemData.size || 1}
+					{@const tileLayout = layout.getTileLayoutInfo({
+						x: placement.x,
+						y: placement.y,
+						size: itemDataSize,
+					})}
+					{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+						x: placement.x,
+						y: placement.y,
+						size: itemDataSize,
+						strokeWidth: 2,
+					})}
 
-				{@const corners = layout.getTileFrameCornerPositions({
-					x: placement.x,
-					y: placement.y,
-					size,
-					bedWidth: bed.width,
-					bedHeight: bed.height,
-				})}
-				{@const borderRadiusStyle = corners
-					.map((corner) => `border-${corner}-radius: 8px;`)
-					.join(' ')}
-				{@const computedStyles = getTileComputedStyles(
-					placement.id,
-					$dragState,
-					overlayLayout,
-				)}
-				<div
-					class="tile-overlay__tile"
-					style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
-					role="button"
-					tabindex="0"
-					onmousedown={(e) => {
-						if (onTileMouseDownFromParent) onTileMouseDownFromParent(placement, bed.id, e)
-					}}
-				>
-					<PlantPlacementTile plantPlacement={placement} sizePx={tileLayout.width} />
-				</div>
-			{/each}
+					{@const corners = layout.getTileFrameCornerPositions({
+						x: placement.x,
+						y: placement.y,
+						size: itemDataSize,
+						bedWidth: bed.width,
+						bedHeight: bed.height,
+					})}
+					{@const borderRadiusStyle = corners
+						.map((corner) => `border-${corner}-radius: 8px;`)
+						.join(' ')}
+					{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
+					<GenericDraggable
+						itemData={existingGardenItem.itemData}
+						existingItemInstance={existingGardenItem}
+						sourceZoneId={bed.id}
+					>
+						<div
+							class="tile-overlay__tile"
+							style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
+						>
+							<PlantPlacementTile
+								plantPlacement={existingGardenItem}
+								sizePx={tileLayout.width}
+							/>
+						</div>
+					</GenericDraggable>
+				{/each}
 
-			<!-- Pending Operations -->
-			{#each $pendingOperations.filter(op => op.bedId === bed.id) as operation (operation.id)}
-				{@const tileLayout = layout.getTileLayoutInfo({
-					x: operation.x || 0,
-					y: operation.y || 0,
-					size: operation.size,
-				})}
-				{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-					x: operation.x || 0,
-					y: operation.y || 0,
-					size: operation.size,
-					strokeWidth: 2,
-				})}
-				{@const corners = layout.getTileFrameCornerPositions({
-					x: operation.x || 0,
-					y: operation.y || 0,
-					size: operation.size,
-					bedWidth: bed.width,
-					bedHeight: bed.height,
-				})}
-				{@const borderRadiusStyle = corners
-					.map((corner) => `border-${corner}-radius: 8px;`)
-					.join(' ')}
-				<div
-					class="tile-overlay__tile tile-overlay__tile--pending"
-					style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
-				>
-					<PendingOperationTile 
-						operation={operation} 
-						sizePx={tileLayout.width} 
-					/>
-				</div>
-			{/each}
-		</div>
+				<!-- Pending Operations -->
+				{#each $genericPendingOperations.filter((op) => op.zoneId === bed.id) as operation (operation.id)}
+					{@const itemOpSize = (operation.item as GardenItem).size ?? 1}
+					{@const tileLayout = layout.getTileLayoutInfo({
+						x: operation.x || 0,
+						y: operation.y || 0,
+						size: itemOpSize,
+					})}
+					{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+						x: operation.x || 0,
+						y: operation.y || 0,
+						size: itemOpSize,
+						strokeWidth: 2,
+					})}
+					{@const corners = layout.getTileFrameCornerPositions({
+						x: operation.x || 0,
+						y: operation.y || 0,
+						size: itemOpSize,
+						bedWidth: bed.width,
+						bedHeight: bed.height,
+					})}
+					{@const borderRadiusStyle = corners
+						.map((corner) => `border-${corner}-radius: 8px;`)
+						.join(' ')}
+					<div
+						class="tile-overlay__tile tile-overlay__tile--pending"
+						style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
+					>
+						<PendingOperationTile
+							operation={operation as GardenPendingOperation}
+							sizePx={tileLayout.width}
+						/>
+					</div>
+				{/each}
+			</div>
+		</GenericDropZone>
 	</div>
 
 	<!-- SVG Frame Border (top layer) -->

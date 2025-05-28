@@ -1,10 +1,12 @@
 <script lang="ts">
 import type { Plant } from '../../lib/plant'
-import { dragManager } from '../../lib/drag-manager'
+import { dragManager } from '../../lib/dnd/drag-manager'
 import { dragState } from '../state/dragState'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
 import type { PlantPlacement } from '../../lib/plant-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
+import { plantPlacementToExistingGardenItem, plantToGardenItem } from '../state/gardenDragState'
+
 
 // Define available plant families with their variants and properties
 const plantFamilies = [
@@ -78,13 +80,10 @@ const plantFamilies = [
 
 // Track selected variants for each plant family
 let selectedVariants: Record<string, string> = $state(
-	plantFamilies.reduce(
-		(acc, family) => {
-			acc[family.name] = family.variants[0].name
-			return acc
-		},
-		{} as Record<string, string>,
-	),
+	plantFamilies.reduce<Record<string, string>>((acc, family) => {
+		acc[family.name] = family.variants[0].name
+		return acc
+	}, {}),
 )
 
 // Track which dropdown is currently open
@@ -123,7 +122,7 @@ function handleTileMouseDown(familyName: string, event: MouseEvent) {
 }
 
 // Handle mouse up - if timer still running, it's a click
-function handleTileMouseUp(familyName: string, event: MouseEvent) {
+function handleTileMouseUp(familyName: string, _event: MouseEvent) {
 	if (dragTimer) {
 		window.clearTimeout(dragTimer)
 		dragTimer = null
@@ -213,7 +212,10 @@ function createPlant(familyName: string, variant: string): Plant {
 }
 
 // Create a PlantPlacement for toolbar display
-function createToolbarPlantPlacement(familyName: string, variant: string): PlantPlacement {
+function createToolbarPlantPlacement(
+	familyName: string,
+	variant: string,
+): PlantPlacement {
 	return {
 		id: `toolbar-${familyName}-${variant}`,
 		x: 0,
@@ -230,19 +232,9 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 	const variant = selectedVariants[familyName]
 	const family = plantFamilies.find((f) => f.name === familyName)
 	if (!family) return
-	
-	const plant: Plant = {
-		id: `new-${familyName}-${variant}-${Date.now()}`,
-		name: family.displayName,
-		icon: family.icon,
-		size: family.size,
-		plantFamily: {
-			name: familyName,
-			colorVariant: variant,
-		},
-	}
-	
-	dragManager.startDraggingNewPlant(plant, event)
+
+	const gardenItem = plantToGardenItem(createPlant(familyName, variant))
+	dragManager.startDraggingNewItem(gardenItem, event)
 }
 </script>
 
@@ -495,7 +487,7 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 }
 </style>
 
-<div class="plant-toolbar" class:dragging={$dragState.draggedNewPlant !== null}>
+<div class="plant-toolbar" class:dragging={$dragState.draggedNewItem !== null}>
 	<div class="plant-toolbar__title">Plant Toolbar</div>
 	<div class="plant-toolbar__grid">
 		{#each plantFamilies as family (family.name)}
@@ -538,7 +530,7 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 					}}
 				>
 					<PlantPlacementTile
-						plantPlacement={toolbarPlacement}
+						plantPlacement={plantPlacementToExistingGardenItem(toolbarPlacement)}
 						sizePx={toolbarTileSize}
 					/>
 
@@ -578,7 +570,10 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 									}
 								}}
 							>
-								<PlantPlacementTile plantPlacement={variantPlacement} sizePx={46} />
+								<PlantPlacementTile
+									plantPlacement={plantPlacementToExistingGardenItem(variantPlacement)}
+									sizePx={46}
+								/>
 							</div>
 						{/each}
 					</div>

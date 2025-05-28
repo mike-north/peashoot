@@ -2,6 +2,8 @@
 import { route } from '@mateothegreat/svelte5-router'
 import logo from '../../assets/images/peashoot-sidebar-logo.png'
 import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
+
+const { ...rest }: { [key: string]: string } = $props()
 </script>
 
 <style lang="scss">
@@ -11,13 +13,14 @@ import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
 	object-fit: contain;
 }
 #layout-sidebar {
+	width: 300px !important;
 	background: rgba(231, 240, 225);
 }
 </style>
 
 <div
 	id="layout-sidebar"
-	class="hidden lg:flex h-100vh flex-col w-64 border-r border-green-900"
+	class="flex h-100vh flex-col border-r border-green-900 {rest.class}"
 >
 	<a use:route class="flex min-h-16 items-center justify-center" href="/">
 		<img alt="logo" class="sidebar-logo h-5" src={logo} />

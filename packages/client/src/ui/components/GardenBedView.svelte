@@ -23,6 +23,7 @@ import {
 	plantPlacementToExistingGardenItem,
 	type GardenPendingOperation,
 } from '../state/gardenDragState'
+import { disablePointerEventsWhenDragging } from '../../lib/actions/disablePointerEventsWhenDragging'
 
 interface GardenBedViewProps {
 	bed: GardenBed
@@ -32,10 +33,10 @@ interface GardenBedViewProps {
 		plantBId: string
 		color: string
 	}[]
+	[k: string]: any
 }
 
-const { bed, edgeIndicators = [] }: GardenBedViewProps = $props()
-
+const { bed, edgeIndicators = [], ...rest }: GardenBedViewProps = $props()
 // Instantiate the layout calculator
 const layout = new GardenBedLayoutCalculator({
 	width: bed.width,
@@ -72,7 +73,6 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 	return layout.isValidPlacement(x, y, size, bed.plantPlacements, skipId)
 }
 
-// Use the factored-out calculateEdgeBorders
 let edgeBorders = $state<Border[]>([])
 $effect(() => {
 	const newBorders = calculateEdgeBorders(bed, edgeIndicators, layout)
@@ -195,7 +195,19 @@ function handleDropProp(payload: DropEventPayload) {
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 }
+
 .raised-bed {
+	.figure-container {
+		overflow-x: scroll;
+		background-color: var(--color-neutral-200);
+		width: 100%;
+		height: 250px;
+		display: block;
+		padding: 2em;
+	}
+}
+
+.raised-bed__diagram {
 	position: relative;
 	&__plantable-area {
 		fill: #90683d;
@@ -262,256 +274,272 @@ function handleDropProp(payload: DropEventPayload) {
 }
 </style>
 
-<!-- Title and meters OUTSIDE the .raised-bed box -->
-<div class="raised-bed__title">
-	Raised Garden Bed ({bed.width}×{bed.height} feet)
-</div>
-<div class="raised-bed__meters-row">
-	<HorizontalBarMeter
-		id={`${bed.id}-water`}
-		value={bed.waterLevel}
-		max={5}
-		filledColor="#3498db"
-		emptyColor="#3498db22"
-		borderColor="#3498db"
-		label="Water"
-		labelColor="#3498db"
-	/>
-	<HorizontalBarMeter
-		id={`${bed.id}-sun`}
-		value={bed.sunLevel}
-		max={5}
-		filledColor="#FFD600"
-		emptyColor="#FFD60022"
-		borderColor="#FFD600"
-		label="Sun"
-		labelColor="#FF6666"
-	/>
-</div>
-
 <!-- The actual bed, grid, overlays, and frame -->
-<div
-	class="raised-bed"
-	data-bed-id={bed.id}
-	style="width: {svgWidth}px; height: {svgHeight}px;"
->
-	<!-- SVG Plantable Area and Grid (background) -->
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 {svgWidth} {svgHeight}"
-		width={svgWidth}
-		height={svgHeight}
-		style="position: absolute; left: 0; top: 0; z-index: 1; pointer-events: {$genericDragState.draggedNewItem ||
-		$genericDragState.draggedExistingItem
-			? 'none'
-			: 'auto'};"
-	>
-		<rect
-			x={interiorX}
-			y={interiorY}
-			width={interiorWidth}
-			height={interiorHeight}
-			class="raised-bed__plantable-area"
-			opacity="0.2"
-		/>
-		<!-- Grid lines -->
-		{#each verticalLines as line (line.key)}
-			<line
-				x1={line.points[0].x}
-				y1={line.points[0].y}
-				x2={line.points[1].x}
-				y2={line.points[1].y}
-				class="raised-bed__grid-line"
-			/>
-		{/each}
-		{#each horizontalLines as line (line.key)}
-			<line
-				x1={line.points[0].x}
-				y1={line.points[0].y}
-				x2={line.points[1].x}
-				y2={line.points[1].y}
-				class="raised-bed__grid-line"
-			/>
-		{/each}
-		<!-- Edge Indicator Lines -->
-		{#each edgeBorders as border (border.key)}
-			<line
-				x1={border.points[0].x}
-				y1={border.points[0].y}
-				x2={border.points[1].x}
-				y2={border.points[1].y}
-				stroke={border.color}
-				stroke-width={layout.frameThickness}
-				stroke-linecap="round"
-				opacity="0.95"
-			/>
-		{/each}
-		{#if bed.width <= 8 && bed.height <= 8}
-			<g id="raised-bed__coordinate-labels" opacity="0.6">
-				{#each Array.from({ length: bed.width }, (_, i) => i) as x (`${bed.id}-${x}`)}
-					<text
-						x={gardenToSvgX(x) + cellWidth / 2}
-						y={svgHeight - 5}
-						text-anchor="middle"
-						font-family="Arial, sans-serif"
-						font-size="10"
-						class="slate-label-gray"
-					>
-						{x}
-					</text>
-				{/each}
-				{#each Array.from({ length: bed.height }, (_, i) => i) as y (`${bed.id}-${y}`)}
-					<text
-						x="5"
-						y={gardenToSvgY(y) + cellHeight / 2 + 3}
-						text-anchor="middle"
-						font-family="Arial, sans-serif"
-						font-size="10"
-						class="slate-label-gray"
-					>
-						{y}
-					</text>
-				{/each}
-			</g>
-		{/if}
-	</svg>
+<!-- Title and meters OUTSIDE the .raised-bed box -->
+<!-- <div class="">
+  <figure>
+    <img
+      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+      alt="Shoes" />
+  </figure>
+  <div class="card-body">
+    <h2 class="card-title">Card Title</h2>
+    <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
+    <div class="card-actions justify-end">
+      <button class="btn btn-primary">Buy Now</button>
+    </div>
+  </div>
+</div> -->
 
-	<!-- HTML Plant Tiles (middle layer) -->
-	<div class="tile-overlay" style="width: {svgWidth}px; height: {svgHeight}px;">
-		<GenericDropZone zoneId={bed.id} onDrop={handleDropProp}>
-			<div
-				class="tile-overlay__tiles"
-				style="width: {svgWidth}px; height: {svgHeight}px; position: relative; pointer-events: {$genericDragState.draggedNewItem ||
-				$genericDragState.draggedExistingItem
-					? 'none'
-					: 'auto'};"
+<div class="raised-bed card bg-base-100 shadow-sm {rest.class}">
+	<div class="figure-container">
+		<figure
+			class="raised-bed__diagram"
+			data-bed-id={bed.id}
+			style="width: {svgWidth}px; height: {svgHeight}px;"
+		>
+			<!-- SVG Plantable Area and Grid (background) -->
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 {svgWidth} {svgHeight}"
+				width={svgWidth}
+				height={svgHeight}
+				style="position: absolute; left: 0; top: 0; z-index: 1;"
+				use:disablePointerEventsWhenDragging={$genericDragState}
 			>
-				{#if $genericDragState.targetZoneId === bed.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
-					{@const draggedItemData =
-						$genericDragState.draggedNewItem ??
-						$genericDragState.draggedExistingItem?.itemData}
-					{@const itemSize = (draggedItemData as GardenItem | null)?.size ?? 1}
-					{@const tileLayout = layout.getTileLayoutInfo({
-						x: $genericDragState.highlightedCell.x,
-						y: $genericDragState.highlightedCell.y,
-						size: itemSize,
-					})}
-					{@const valid = isValidPlacement(
-						$genericDragState.highlightedCell.x,
-						$genericDragState.highlightedCell.y,
-						itemSize,
-					)}
-					{@const isSource = $genericDragState.sourceZoneId === bed.id}
+				<rect
+					x={interiorX}
+					y={interiorY}
+					width={interiorWidth}
+					height={interiorHeight}
+					class="raised-bed__diagram__plantable-area"
+					opacity="0.2"
+				/>
+				<!-- Grid lines -->
+				{#each verticalLines as line (line.key)}
+					<line
+						x1={line.points[0].x}
+						y1={line.points[0].y}
+						x2={line.points[1].x}
+						y2={line.points[1].y}
+						class="raised-bed__diagram__grid-line"
+					/>
+				{/each}
+				{#each horizontalLines as line (line.key)}
+					<line
+						x1={line.points[0].x}
+						y1={line.points[0].y}
+						x2={line.points[1].x}
+						y2={line.points[1].y}
+						class="raised-bed__diagram__grid-line"
+					/>
+				{/each}
+				<!-- Edge Indicator Lines -->
+				{#each edgeBorders as border (border.key)}
+					<line
+						x1={border.points[0].x}
+						y1={border.points[0].y}
+						x2={border.points[1].x}
+						y2={border.points[1].y}
+						stroke={border.color}
+						stroke-width={layout.frameThickness}
+						stroke-linecap="round"
+						opacity="0.95"
+					/>
+				{/each}
+				{#if bed.width <= 8 && bed.height <= 8}
+					<g id="raised-bed__diagram__coordinate-labels" opacity="0.6">
+						{#each Array.from({ length: bed.width }, (_, i) => i) as x (`${bed.id}-${x}`)}
+							<text
+								x={gardenToSvgX(x) + cellWidth / 2}
+								y={svgHeight - 5}
+								text-anchor="middle"
+								font-family="Arial, sans-serif"
+								font-size="10"
+								class="slate-label-gray"
+							>
+								{x}
+							</text>
+						{/each}
+						{#each Array.from({ length: bed.height }, (_, i) => i) as y (`${bed.id}-${y}`)}
+							<text
+								x="5"
+								y={gardenToSvgY(y) + cellHeight / 2 + 3}
+								text-anchor="middle"
+								font-family="Arial, sans-serif"
+								font-size="10"
+								class="slate-label-gray"
+							>
+								{y}
+							</text>
+						{/each}
+					</g>
+				{/if}
+			</svg>
+
+			<!-- HTML Plant Tiles (middle layer) -->
+			<div class="tile-overlay" style="width: {svgWidth}px; height: {svgHeight}px;">
+				<GenericDropZone zoneId={bed.id} onDrop={handleDropProp}>
 					<div
-						class="tile-overlay__highlight
+						class="tile-overlay__tiles"
+						style="width: {svgWidth}px; height: {svgHeight}px; position: relative;"
+						use:disablePointerEventsWhenDragging={$genericDragState}
+					>
+						{#if $genericDragState.targetZoneId === bed.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
+							{@const draggedItemData =
+								$genericDragState.draggedNewItem ??
+								$genericDragState.draggedExistingItem?.itemData}
+							{@const itemSize = (draggedItemData as GardenItem | null)?.size ?? 1}
+							{@const tileLayout = layout.getTileLayoutInfo({
+								x: $genericDragState.highlightedCell.x,
+								y: $genericDragState.highlightedCell.y,
+								size: itemSize,
+							})}
+							{@const valid = isValidPlacement(
+								$genericDragState.highlightedCell.x,
+								$genericDragState.highlightedCell.y,
+								itemSize,
+							)}
+							{@const isSource = $genericDragState.sourceZoneId === bed.id}
+							<div
+								class="tile-overlay__highlight
 						{valid ? '' : 'tile-overlay__highlight--invalid'}
 						{valid && isSource ? 'tile-overlay__highlight--source' : ''}
 						{valid && !isSource ? 'tile-overlay__highlight--target' : ''}"
-						style="
+								style="
 						left: {tileLayout.svgX}px;
 						top: {tileLayout.svgY}px;
 						width: {tileLayout.width}px;
 						height: {tileLayout.height}px;
 					"
-					></div>
-				{/if}
-				{#each bed.plantPlacements as placement (placement.id)}
-					{@const existingGardenItem = plantPlacementToExistingGardenItem(placement)}
-					{@const itemDataSize = existingGardenItem.itemData.size || 1}
-					{@const tileLayout = layout.getTileLayoutInfo({
-						x: placement.x,
-						y: placement.y,
-						size: itemDataSize,
-					})}
-					{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-						x: placement.x,
-						y: placement.y,
-						size: itemDataSize,
-						strokeWidth: 2,
-					})}
+							></div>
+						{/if}
+						{#each bed.plantPlacements as placement (placement.id)}
+							{@const existingGardenItem = plantPlacementToExistingGardenItem(placement)}
+							{@const itemDataSize = existingGardenItem.itemData.size || 1}
+							{@const tileLayout = layout.getTileLayoutInfo({
+								x: placement.x,
+								y: placement.y,
+								size: itemDataSize,
+							})}
+							{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+								x: placement.x,
+								y: placement.y,
+								size: itemDataSize,
+								strokeWidth: 2,
+							})}
 
-					{@const corners = layout.getTileFrameCornerPositions({
-						x: placement.x,
-						y: placement.y,
-						size: itemDataSize,
-						bedWidth: bed.width,
-						bedHeight: bed.height,
-					})}
-					{@const borderRadiusStyle = corners
-						.map((corner) => `border-${corner}-radius: 8px;`)
-						.join(' ')}
-					{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
-					<GenericDraggable
-						itemData={existingGardenItem.itemData}
-						existingItemInstance={existingGardenItem}
-						sourceZoneId={bed.id}
-					>
-						<div
-							class="tile-overlay__tile"
-							style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
-						>
-							<PlantPlacementTile
-								plantPlacement={existingGardenItem}
-								sizePx={tileLayout.width}
-							/>
-						</div>
-					</GenericDraggable>
-				{/each}
+							{@const corners = layout.getTileFrameCornerPositions({
+								x: placement.x,
+								y: placement.y,
+								size: itemDataSize,
+								bedWidth: bed.width,
+								bedHeight: bed.height,
+							})}
+							{@const borderRadiusStyle = corners
+								.map((corner) => `border-${corner}-radius: 8px;`)
+								.join(' ')}
+							{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
+							<GenericDraggable
+								itemData={existingGardenItem.itemData}
+								existingItemInstance={existingGardenItem}
+								sourceZoneId={bed.id}
+							>
+								<div
+									class="tile-overlay__tile"
+									style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
+								>
+									<PlantPlacementTile
+										plantPlacement={existingGardenItem}
+										sizePx={tileLayout.width}
+									/>
+								</div>
+							</GenericDraggable>
+						{/each}
 
-				<!-- Pending Operations -->
-				{#each $genericPendingOperations.filter((op) => op.zoneId === bed.id) as operation (operation.id)}
-					{@const itemOpSize = (operation.item as GardenItem).size ?? 1}
-					{@const tileLayout = layout.getTileLayoutInfo({
-						x: operation.x || 0,
-						y: operation.y || 0,
-						size: itemOpSize,
-					})}
-					{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-						x: operation.x || 0,
-						y: operation.y || 0,
-						size: itemOpSize,
-						strokeWidth: 2,
-					})}
-					{@const corners = layout.getTileFrameCornerPositions({
-						x: operation.x || 0,
-						y: operation.y || 0,
-						size: itemOpSize,
-						bedWidth: bed.width,
-						bedHeight: bed.height,
-					})}
-					{@const borderRadiusStyle = corners
-						.map((corner) => `border-${corner}-radius: 8px;`)
-						.join(' ')}
-					<div
-						class="tile-overlay__tile tile-overlay__tile--pending"
-						style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
-					>
-						<PendingOperationTile
-							operation={operation as GardenPendingOperation}
-							sizePx={tileLayout.width}
-						/>
+						<!-- Pending Operations -->
+						{#each $genericPendingOperations.filter((op) => op.zoneId === bed.id) as operation (operation.id)}
+							{@const itemOpSize = (operation.item as GardenItem).size ?? 1}
+							{@const tileLayout = layout.getTileLayoutInfo({
+								x: operation.x || 0,
+								y: operation.y || 0,
+								size: itemOpSize,
+							})}
+							{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+								x: operation.x || 0,
+								y: operation.y || 0,
+								size: itemOpSize,
+								strokeWidth: 2,
+							})}
+							{@const corners = layout.getTileFrameCornerPositions({
+								x: operation.x || 0,
+								y: operation.y || 0,
+								size: itemOpSize,
+								bedWidth: bed.width,
+								bedHeight: bed.height,
+							})}
+							{@const borderRadiusStyle = corners
+								.map((corner) => `border-${corner}-radius: 8px;`)
+								.join(' ')}
+							<div
+								class="tile-overlay__tile tile-overlay__tile--pending"
+								style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
+							>
+								<PendingOperationTile
+									operation={operation as GardenPendingOperation}
+									sizePx={tileLayout.width}
+								/>
+							</div>
+						{/each}
 					</div>
-				{/each}
+				</GenericDropZone>
 			</div>
-		</GenericDropZone>
-	</div>
 
-	<!-- SVG Frame Border (top layer) -->
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 {svgWidth} {svgHeight}"
-		width={svgWidth}
-		height={svgHeight}
-		style="position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none;"
-	>
-		<rect
-			x={frameX}
-			y={frameY}
-			width={frameWidth}
-			height={frameHeight}
-			class="raised-bed__frame"
-			rx="10"
-			ry="10"
-		/>
-	</svg>
+			<!-- SVG Frame Border (top layer) -->
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 {svgWidth} {svgHeight}"
+				width={svgWidth}
+				height={svgHeight}
+				style="position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none;"
+			>
+				<rect
+					x={frameX}
+					y={frameY}
+					width={frameWidth}
+					height={frameHeight}
+					class="raised-bed__diagram__frame"
+					rx="10"
+					ry="10"
+				/>
+			</svg>
+		</figure>
+	</div>
+	<div class="card-body">
+		<div class="card-title">
+			Raised Garden Bed ({bed.width}×{bed.height} feet)
+		</div>
+		<div class="raised-bed__meters-row">
+			<HorizontalBarMeter
+				id={`${bed.id}-water`}
+				value={bed.waterLevel}
+				max={5}
+				filledColor="#3498db"
+				emptyColor="#3498db22"
+				borderColor="#3498db"
+				label="Water"
+				labelColor="#3498db"
+			/>
+			<HorizontalBarMeter
+				id={`${bed.id}-sun`}
+				value={bed.sunLevel}
+				max={5}
+				filledColor="#FFD600"
+				emptyColor="#FFD60022"
+				borderColor="#FFD600"
+				label="Sun"
+				labelColor="#FF6666"
+			/>
+		</div>
+	</div>
 </div>

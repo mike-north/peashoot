@@ -1,41 +1,22 @@
 <script lang="ts">
 import { dragState, isDraggingExistingItem, pendingOperations } from '../state/dragState'
 import PendingOperationTile from './PendingOperationTile.svelte'
-import type { GardenPendingOperation } from '../state/gardenDragState'
+import { isGardenItemRemovalOperation } from '../state/gardenDragState'
+import { deleteZoneDragEvents } from '../../lib/actions/deleteZoneDragEvents'
+import TrashIcon from '~icons/ph/trash-duotone'
 
 // Show delete zone only when dragging an existing plant
 let showDeleteZone = $derived(isDraggingExistingItem($dragState))
 
 // Get pending removal operations
-let pendingRemovals = $derived($pendingOperations.filter((op) => op.type === 'removal'))
+let pendingRemovals = $derived($pendingOperations.filter(isGardenItemRemovalOperation))
 
 // Track if mouse is over delete zone
 let isHovered = $state(false)
 
-function handleMouseEnter() {
-	isHovered = true
-	if (isDraggingExistingItem($dragState)) {
-		console.log(
-			'[DeleteZone] Mouse entered delete zone, setting targetType to delete-zone',
-		)
-		dragState.update((state) => ({
-			...state,
-			targetType: 'delete-zone',
-			targetBedId: null,
-			highlightedCell: null,
-		}))
-	}
-}
-
-function handleMouseLeave() {
-	isHovered = false
-	if (isDraggingExistingItem($dragState)) {
-		console.log('[DeleteZone] Mouse left delete zone, clearing targetType')
-		dragState.update((state) => ({
-			...state,
-			targetType: null,
-		}))
-	}
+// Callback for the action to update isHovered
+function setIsHovered(hovered: boolean) {
+	isHovered = hovered
 }
 </script>
 
@@ -149,10 +130,14 @@ function handleMouseLeave() {
 	class:delete-zone--hovered={isHovered && showDeleteZone}
 	role="button"
 	tabindex="0"
-	onmouseenter={handleMouseEnter}
-	onmouseleave={handleMouseLeave}
+	use:deleteZoneDragEvents={{
+		dragStateStore: dragState,
+		setIsHovered: setIsHovered,
+	}}
 >
-	<div class="delete-zone__icon">🗑️</div>
+	<div class="delete-zone__icon">
+		<TrashIcon class="delete-zone__icon-trash" />
+	</div>
 	<div class="delete-zone__text">Drop to Delete</div>
 </div>
 
@@ -166,11 +151,7 @@ function handleMouseLeave() {
 		"
 	>
 		<div class="pending-removal__container">
-			<PendingOperationTile
-				operation={removal as GardenPendingOperation}
-				sizePx={56}
-				circular={true}
-			/>
+			<PendingOperationTile operation={removal} sizePx={56} circular={true} />
 		</div>
 	</div>
 {/each}

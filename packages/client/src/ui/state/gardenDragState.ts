@@ -24,6 +24,10 @@ export interface GardenItem extends DraggableItem {
 	// other plant-specific properties...
 }
 
+export function isGardenItem(item: DraggableItem): item is GardenItem {
+	return 'name' in item && 'icon' in item && 'plantFamily' in item
+}
+
 // 2. Define what an existing/placed item looks like in the garden (PlantPlacement)
 // It includes the original PlantPlacement props plus itemData (which is GardenItem)
 export interface ExistingGardenItem
@@ -61,6 +65,17 @@ export type GardenAsyncValidationFunction = AsyncValidationFunction<
 
 // 6. Specialize the pending operation for the garden app
 export type GardenPendingOperation = PendingOperation<GardenItem>
+
+export function isGardenPendingOperation(
+	operation: PendingOperation<DraggableItem>,
+): operation is GardenPendingOperation {
+	return isGardenItem(operation.item)
+}
+export function isGardenItemRemovalOperation(
+	op: PendingOperation<DraggableItem>,
+): op is GardenPendingOperation {
+	return isGardenPendingOperation(op) && op.type === 'removal'
+}
 
 // Function to adapt Plant to GardenItem
 export function plantToGardenItem(plant: Plant): GardenItem {

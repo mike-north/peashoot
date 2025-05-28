@@ -1,35 +1,32 @@
-<!-- packages/client/src/lib/dnd/components/GenericDropZone.svelte -->
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script lang="ts" generics="TZoneCtx extends DropZoneContext">
 import type { Snippet } from 'svelte'
-import { dragState as genericDragState } from '../state' // Ensure genericDragState is imported
-import { get } from 'svelte/store' // Import get
-import type { DropZoneContext, DraggableItem } from '../types' // Added DraggableItem
-import { createEventDispatcher } from 'svelte'
+import { dragState as genericDragState } from '../state'
+import { get } from 'svelte/store'
+import type { DropZoneContext, DraggableItem } from '../types'
+
+interface DropEventPayload {
+	item: DraggableItem
+	sourceZoneId: string | null
+	targetZoneId: string
+	x?: number
+	y?: number
+	isClone: boolean
+}
 
 interface Props {
 	zoneId: string
 	children: Snippet
-	zoneContextData: TZoneCtx
+	onDrop?: (payload: DropEventPayload) => void
 	// TODO: Add props for enabling/disabling drop, validation functions, etc.
 	// acceptFilter?: (item: DraggableItem) => boolean;
-	// onDrop?: (item: DraggableItem, zoneContext: TZoneCtx) => void;
+	// onDrop?: (item: DraggableItem, zoneContext: TZoneCtx) => void; // This was a comment, we'll use the one above
 	// onDragEnter?: (item: DraggableItem, zoneContext: TZoneCtx) => void;
 	// onDragLeave?: (item: DraggableItem, zoneContext: TZoneCtx) => void;
 	// onDragOver?: (item: DraggableItem, zoneContext: TZoneCtx, x: number, y:number) => void;
 }
 
-const { zoneId, children, zoneContextData }: Props = $props()
-const dispatch = createEventDispatcher<{
-	drop: {
-		item: DraggableItem
-		sourceZoneId: string | null
-		targetZoneId: string
-		x?: number
-		y?: number
-		isClone: boolean
-	}
-	// testevent: { message: string }; // REMOVED
-}>()
+const { zoneId, children, onDrop }: Props = $props()
 
 let zoneElement: HTMLElement | null = null
 
@@ -68,31 +65,33 @@ function handleMouseLeave(_event: MouseEvent) {
 
 // handleMouseMove and celldragover dispatch removed
 
-function handleMouseUp(event: MouseEvent) {
-	const currentDragStateVal = get(genericDragState);
+function handleMouseUp(_event: MouseEvent) {
+	const currentDragStateVal = get(genericDragState)
 
 	if (currentDragStateVal.draggedNewItem || currentDragStateVal.draggedExistingItem) {
 		// console.log(`[GenericDropZone] MouseUp on zone ${zoneId}.`);
-		
-		const itemToDrop = currentDragStateVal.draggedNewItem || currentDragStateVal.draggedExistingItem?.itemData;
-		
-		if (itemToDrop) {
-			const payloadBase = {
-				item: itemToDrop as DraggableItem, 
+
+		const itemToDrop =
+			currentDragStateVal.draggedNewItem ||
+			currentDragStateVal.draggedExistingItem?.itemData
+
+		if (itemToDrop && onDrop) {
+			const payloadBase: DropEventPayload = {
+				item: itemToDrop,
 				sourceZoneId: currentDragStateVal.sourceZoneId,
 				targetZoneId: zoneId,
-				isClone: currentDragStateVal.isCloneMode
-			};
+				isClone: currentDragStateVal.isCloneMode,
+			}
 
 			// console.log(`[GenericDropZone ${zoneId}] Dispatching drop event.`);
 			if (currentDragStateVal.highlightedCell) {
-				dispatch('drop', {
+				onDrop({
 					...payloadBase,
 					x: currentDragStateVal.highlightedCell.x,
-					y: currentDragStateVal.highlightedCell.y
-				});
+					y: currentDragStateVal.highlightedCell.y,
+				})
 			} else {
-				dispatch('drop', payloadBase);
+				onDrop(payloadBase)
 			}
 		}
 	}

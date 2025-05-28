@@ -21,12 +21,10 @@ import GardenBedView from './GardenBedView.svelte'
 import {
 	GardenBedLayoutCalculator,
 	screenToGridCoordinates,
-	isValidDrop as genericIsValidDrop,
 } from '../../lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
 import {
 	plantPlacementToExistingGardenItem,
-	plantToGardenItem,
 	type GardenItem,
 	type ExistingGardenItem,
 	type GardenZoneContext,
@@ -36,16 +34,8 @@ import {
 } from '../state/gardenDragState'
 import { dragState as genericDragState } from '../state/dragState'
 import { get } from 'svelte/store'
-import type { GardenBed } from '../../lib/garden-bed'
-// import type { EdgeIndicator } from '../../lib/edge-indicator'; // Path unclear, commented out
 import { dragManager, type DragManager } from '../../lib/dnd/drag-manager'
-import { createEventDispatcher } from 'svelte'
-import { flip } from 'svelte/animate'
-import { quintOut } from 'svelte/easing'
-import { crossfade } from 'svelte/transition'
-import Trash2 from '~icons/ph/trash-duotone'
-import PhPlant from '~icons/ph/plant-duotone'
-import Duplicate from '~icons/ph/copy-duotone'
+
 // Custom Error for Async Validation Failures
 class AsyncValidationError extends Error {
 	originalError: unknown
@@ -97,7 +87,7 @@ let {
 let { beds } = $derived(garden)
 let gardenRef: HTMLDivElement | null = null
 
-const gardenDragManager = dragManager as DragManager<GardenItem, ExistingGardenItem>
+const gardenDragManager = dragManager as DragManager<GardenItem>
 
 function onGardenMouseMove(event: MouseEvent) {
 	const currentCloneMode = event.metaKey || event.altKey
@@ -142,7 +132,7 @@ function onGardenMouseMove(event: MouseEvent) {
 					})
 					// Use screenToGridCoordinates as it handles SVG transforms if any
 					const gridCoords = screenToGridCoordinates(
-						svgElement as SVGSVGElement, // Cast needed
+						svgElement,
 						layout,
 						event.clientX,
 						event.clientY,
@@ -160,8 +150,8 @@ function onGardenMouseMove(event: MouseEvent) {
 		...s,
 		dragPosition: { x: event.clientX, y: event.clientY },
 		isCloneMode: s.dragSourceType === 'existing-item' ? currentCloneMode : false,
-		targetZoneId: newTargetZoneId !== undefined ? newTargetZoneId : s.targetZoneId, // Keep old if delete zone was target
-		targetType: newTargetType !== undefined ? newTargetType : s.targetType, // Keep old if delete zone was target
+		targetZoneId: newTargetZoneId, // Keep old if delete zone was target
+		targetType: newTargetType, // Keep old if delete zone was target
 		highlightedCell: newHighlightedCell,
 	}))
 }
@@ -187,7 +177,7 @@ async function onGardenMouseUp(event: MouseEvent) {
 		console.log('[GardenView] Drop on DeleteZone detected.')
 		await handleAsyncPlantRemoval(
 			currentDragStateVal.draggedExistingItem.id,
-			currentDragStateVal.sourceZoneId!,
+			currentDragStateVal.sourceZoneId,
 			currentDragStateVal.draggedExistingItem.itemData as GardenItem,
 		)
 	} else if (
@@ -201,22 +191,27 @@ async function onGardenMouseUp(event: MouseEvent) {
 
 		if (isDraggingExistingItem(currentDragStateVal)) {
 			const existingItem = currentDragStateVal.draggedExistingItem
-			const sourceBedId = currentDragStateVal.sourceZoneId!
+			const sourceBedId = currentDragStateVal.sourceZoneId
 
 			if (currentDragStateVal.isCloneMode) {
-				console.log(`[GardenView] CLONE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`)
+				console.log(
+					`[GardenView] CLONE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`,
+				)
+				const gardenExistingItem = existingItem as ExistingGardenItem // Assert type
 				await handleAsyncPlantCloning(
 					sourceBedId,
 					targetBedId,
-					existingItem.itemData as GardenItem,
-					existingItem.x!,
-					existingItem.y!,
+					gardenExistingItem.itemData, // No cast needed now
+					gardenExistingItem.x, // Now number
+					gardenExistingItem.y, // Now number
 					targetX,
 					targetY,
 				)
 			} else {
 				// This covers both intra-bed move and cross-bed move
-				console.log(`[GardenView] MOVE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`)
+				console.log(
+					`[GardenView] MOVE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`,
+				)
 				await handleAsyncPlantPlacement(
 					targetBedId,
 					existingItem.itemData as GardenItem,
@@ -236,7 +231,9 @@ async function onGardenMouseUp(event: MouseEvent) {
 				// No originalInstanceId or sourceZoneId for new items from toolbar
 			)
 		} else {
-			console.log('[GardenView] Drop on bed zone, but no draggable item identified correctly.')
+			console.log(
+				'[GardenView] Drop on bed zone, but no draggable item identified correctly.',
+			)
 		}
 	} else {
 		console.log('[GardenView] Drop on unhandled area or drag cancelled.')
@@ -595,10 +592,12 @@ $effect(() => {
 
 	if (isDragging) {
 		window.addEventListener('mousemove', onGardenMouseMove)
+		// eslint-disable-next-line @typescript-eslint/no-misused-promises
 		window.addEventListener('mouseup', onGardenMouseUp)
 
 		return () => {
 			window.removeEventListener('mousemove', onGardenMouseMove)
+			// eslint-disable-next-line @typescript-eslint/no-misused-promises
 			window.removeEventListener('mouseup', onGardenMouseUp)
 		}
 	}
@@ -606,6 +605,7 @@ $effect(() => {
 
 onDestroy(() => {
 	window.removeEventListener('mousemove', onGardenMouseMove)
+	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	window.removeEventListener('mouseup', onGardenMouseUp)
 })
 </script>
@@ -628,13 +628,7 @@ onDestroy(() => {
 
 	<div class="garden" bind:this={gardenRef}>
 		{#each beds as bed (bed.id)}
-			<GardenBedView
-				bed={bed}
-				edgeIndicators={edgeIndicators}
-				onMovePlantInBed={onMovePlantInBed}
-				onAddNewPlant={onAddNewPlant}
-				onDeletePlant={onDeletePlant}
-			/>
+			<GardenBedView bed={bed} edgeIndicators={edgeIndicators} />
 		{/each}
 	</div>
 

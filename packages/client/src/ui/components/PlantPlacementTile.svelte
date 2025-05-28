@@ -1,6 +1,7 @@
 <script lang="ts">
+import type { ExistingGardenItem } from '../state/gardenDragState'
+
 // import type { PlantPlacement } from '../../lib/plant-placement' // Old type
-import type { ExistingGardenItem } from '../state/gardenDragStateTypes' // New type
 
 interface Props {
 	plantPlacement: ExistingGardenItem // Changed to ExistingGardenItem
@@ -13,7 +14,7 @@ interface Props {
 let { plantPlacement, xPos = 0, yPos = 0, sizePx = 40 }: Props = $props()
 
 // Access the core plant data via itemData
-const corePlantData = $derived(plantPlacement?.itemData)
+const corePlantData = $derived(plantPlacement.itemData)
 
 // Generate CSS variable name from plant family and color variant
 const getPlantColorVariable = (familyName: string, colorVariant: string): string => {

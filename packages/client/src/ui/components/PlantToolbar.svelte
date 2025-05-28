@@ -5,8 +5,10 @@ import { dragState } from '../state/dragState'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
 import type { PlantPlacement } from '../../lib/plant-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
-import { plantPlacementToExistingGardenItem, plantToGardenItem } from '../state/gardenDragState'
-
+import {
+	plantPlacementToExistingGardenItem,
+	plantToGardenItem,
+} from '../state/gardenDragState'
 
 // Define available plant families with their variants and properties
 const plantFamilies = [

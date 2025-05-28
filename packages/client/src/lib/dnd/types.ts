@@ -80,4 +80,4 @@ export interface IDragState<
 	sourceZoneId: string | null
 	targetZoneId: string | null
 	targetType: DropTargetType | null
-} 
+}

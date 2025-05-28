@@ -69,9 +69,9 @@ export function plantToGardenItem(plant: Plant): GardenItem {
 	return {
 		...plant,
 		id: plant.id, // Assuming Plant has an id
-		size: plant.size ?? 1,
+		size: plant.size,
 		// Ensure plantFamily is correctly structured if different on Plant type
-		plantFamily: plant.plantFamily || { name: 'Unknown', colorVariant: 'default' },
+		plantFamily: plant.plantFamily,
 	}
 }
 
@@ -83,7 +83,7 @@ export function plantPlacementToExistingGardenItem(
 	return {
 		...restOfPp, // Includes id, x, y from PlantPlacement
 		itemData: plantToGardenItem(plantTile),
-		size: plantTile.size ?? 1, // Or pp.size if it can differ from plantTile.size
+		size: plantTile.size, // Or pp.size if it can differ from plantTile.size
 	}
 }
 
@@ -107,9 +107,6 @@ export const gardenAppDragState = writable<GardenDragState>({
 export function existingGardenItemToPlantPlacement(
 	egi: ExistingGardenItem,
 ): PlantPlacement {
-	if (!egi.itemData)
-		throw new Error('ExistingGardenItem must have itemData to convert to PlantPlacement')
-
 	const plantTile: Plant = {
 		id: egi.itemData.id,
 		name: egi.itemData.name,

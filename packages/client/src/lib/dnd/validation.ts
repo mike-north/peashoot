@@ -17,7 +17,7 @@ export type AsyncValidationFunction<
 export function addPendingOperation<TItem extends DraggableItem>(
 	operation: Omit<PendingOperation<TItem>, 'id' | 'timestamp'>,
 ): string {
-	const id = `pending-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+	const id = `pending-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
 	const pendingOp: PendingOperation<TItem> = {
 		...(operation as PendingOperation<TItem>),
 		id,

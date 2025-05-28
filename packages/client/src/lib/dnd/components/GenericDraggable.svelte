@@ -1,4 +1,3 @@
-<!-- packages/client/src/lib/dnd/components/GenericDraggable.svelte -->
 <script
 	lang="ts"
 	generics="TItem extends DraggableItem, TExisting extends ExistingDraggableItem<TItem>"

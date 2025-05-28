@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { PlantPlacement } from '../../lib/plant-placement'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
 import PendingOperationTile from './PendingOperationTile.svelte'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
@@ -20,15 +19,10 @@ import {
 } from '../../lib/dnd/state'
 import type { DraggableItem } from '../../lib/dnd/types'
 import {
-	gardenAppDragState,
-	type GardenZoneContext,
 	type GardenItem,
 	plantPlacementToExistingGardenItem,
 	type GardenPendingOperation,
-	type ExistingGardenItem,
 } from '../state/gardenDragState'
-import { onDestroy } from 'svelte'
-import { get } from 'svelte/store'
 
 interface GardenBedViewProps {
 	bed: GardenBed
@@ -38,31 +32,9 @@ interface GardenBedViewProps {
 		plantBId: string
 		color: string
 	}[]
-	onMovePlantInBed?: (
-		bedId: string,
-		plantPlacementId: string,
-		newX: number,
-		newY: number,
-	) => void
-	onAddNewPlant?: (bedId: string, itemData: GardenItem, x: number, y: number) => void
-	onDeletePlant?: (plantPlacementId: string, bedId: string) => void
 }
 
-const {
-	bed,
-	edgeIndicators = [],
-	onMovePlantInBed,
-	onAddNewPlant,
-	onDeletePlant,
-}: GardenBedViewProps = $props()
-
-// Prepare zoneContextData for GenericDropZone
-const gardenBedZoneContext: GardenZoneContext = $derived.by(() => ({
-	...bed,
-	plantPlacements: bed.plantPlacements.map((pp) =>
-		plantPlacementToExistingGardenItem(pp),
-	),
-}))
+const { bed, edgeIndicators = [] }: GardenBedViewProps = $props()
 
 // Instantiate the layout calculator
 const layout = new GardenBedLayoutCalculator({
@@ -151,18 +123,7 @@ function getTileComputedStyles(
 	}
 }
 
-// REMOVED: $effect.pre logging block and associated derived states (isTargetZone, hasHighlightedCell, isPopulated)
-// REMOVED: Direct subscription to genericDragState (unsubscribeGenericDragState)
-// onDestroy can be removed if no other subscriptions are made in this component that need manual cleanup.
-// For now, keeping it in case we add subscriptions later, but it's empty if unsubscribeGenericDragState was the only one.
-onDestroy(() => {})
-
-// REMOVE handleCellDragOver as highlightedCell is now set globally by GardenView.onGardenMouseMove
-// function handleCellDragOver(event: CustomEvent<{ x: number; y: number; zoneId: string; zoneContextData: GardenZoneContext }>) {
-// 	// ... logic ...
-// }
-
-interface DropEventDetail {
+interface DropEventPayload {
 	item: DraggableItem
 	sourceZoneId: string | null
 	targetZoneId: string
@@ -171,63 +132,32 @@ interface DropEventDetail {
 	isClone: boolean
 }
 
-function handleDrop(event: CustomEvent<DropEventDetail>) {
-	const detail = event.detail
-	console.log('[GardenBedView] Drop event received:', detail)
+function handleDropProp(payload: DropEventPayload) {
+	console.log('[GardenBedView] Drop event received via prop:', payload)
 
 	if (
-		detail.targetZoneId !== bed.id ||
-		detail.x === undefined ||
-		detail.y === undefined
+		payload.targetZoneId !== bed.id ||
+		payload.x === undefined ||
+		payload.y === undefined
 	) {
 		console.warn(
 			'[GardenBedView] Drop event not for this bed or missing/invalid coordinates.',
 		)
 		return
 	}
-	const { item, sourceZoneId, x, y, isClone } = detail
+	const { item, x, y } = payload
 	const itemSize = (item as GardenItem).size ?? 1
 
 	// Perform local placement validation (e.g., collision, bounds).
 	// This is a preliminary check. The full async validation will be done by GardenView.
 	if (!isValidPlacement(x, y, itemSize)) {
-		console.warn('[GardenBedView] Local validation failed: Invalid placement, drop rejected.')
+		console.warn(
+			'[GardenBedView] Local validation failed: Invalid placement, drop rejected.',
+		)
 		// Optionally, update dragState here to indicate an invalid drop attempt to GenericDropZone/DragManager
 		// For now, just returning will prevent further processing in this component.
 		return
 	}
-
-	// For ALL drop types (new item, intra-bed move, cross-bed move, clones),
-	// GardenBedView will now NOT directly call onAddNewPlant or onMovePlantInBed.
-	// It has done its local validation. The final decision and async validation
-	// will be handled by GardenView's onGardenMouseUp -> handleAsyncPlantPlacement/Cloning.
-	console.log(`[GardenBedView] Drop validated locally for item '${item.id}' at (${x},${y}). Parent (GardenView) will handle finalization.`)
-
-	// const currentDragStateVal = get(genericDragState); // No longer needed here for direct action
-
-	// // Old logic commented out:
-	// if (sourceZoneId === bed.id) { // Move within the same bed
-	// 	if (isClone) {
-	// 		console.log('[GardenBedView] Intra-bed clone drop detected. Parent (GardenView) will handle async cloning.')
-	// 	} else if (onMovePlantInBed && currentDragStateVal.draggedExistingItem) {
-	// 		const plantPlacementId = currentDragStateVal.draggedExistingItem.id
-	// 		onMovePlantInBed(bed.id, plantPlacementId, x, y)
-	// 	} else {
-	// 		console.warn(
-	// 			'[GardenBedView] onMovePlantInBed callback not provided or draggedExistingItem missing for move within bed (and not a clone operation).',
-	// 		)
-	// 	}
-	// } else if (sourceZoneId === null) { // New item from toolbar
-	// 	if (onAddNewPlant) {
-	// 		onAddNewPlant(bed.id, item as GardenItem, x, y)
-	// 	} else {
-	// 		console.warn('[GardenBedView] onAddNewPlant callback not provided.')
-	// 	}
-	// } else {
-	// 	console.log(
-	// 		`[GardenBedView] Drop from different bed ${sourceZoneId} to ${bed.id}. Item ID: ${item.id}. Parent (GardenView) will handle.`,
-	// 	)
-	// }
 }
 </script>
 
@@ -448,11 +378,7 @@ function handleDrop(event: CustomEvent<DropEventDetail>) {
 
 	<!-- HTML Plant Tiles (middle layer) -->
 	<div class="tile-overlay" style="width: {svgWidth}px; height: {svgHeight}px;">
-		<GenericDropZone
-			zoneId={bed.id}
-			zoneContextData={gardenBedZoneContext}
-			on:drop={handleDrop}
-		>
+		<GenericDropZone zoneId={bed.id} onDrop={handleDropProp}>
 			<div
 				class="tile-overlay__tiles"
 				style="width: {svgWidth}px; height: {svgHeight}px; position: relative; pointer-events: {$genericDragState.draggedNewItem ||
@@ -589,6 +515,3 @@ function handleDrop(event: CustomEvent<DropEventDetail>) {
 		/>
 	</svg>
 </div>
-
-<!-- DEBUG: Show edgeBorders length -->
-<p>edgeBorders: {edgeBorders.length}</p>

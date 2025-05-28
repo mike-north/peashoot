@@ -1,24 +1,24 @@
 import { dragState } from './state'
-import type { DraggableItem, ExistingDraggableItem } from './types'
+import type { DraggableItem, ExistingDraggableItem, IDragState } from './types'
 
-export class DragManager<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
-> {
+// Type alias for what the global dragState store holds for its "existing item" part.
+type GlobalStoreExistingItem = ExistingDraggableItem<DraggableItem>
+
+export class DragManager<TItem extends DraggableItem> {
 	// The maps for registeredDraggableAreas and registeredDropZones are removed.
 	// This functionality will be handled by the Svelte component structure and event bubbling/dispatching.
 
 	// Start dragging an existing item from a zone
 	startDraggingExistingItem(
-		existingItem: TExisting,
+		existingItem: ExistingDraggableItem<TItem>,
 		sourceZoneId: string,
 		event: MouseEvent,
 	) {
 		const isCloneMode = event.metaKey || event.altKey
 
-		dragState.update((s) => ({
+		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,
-			draggedExistingItem: existingItem,
+			draggedExistingItem: existingItem as GlobalStoreExistingItem,
 			draggedNewItem: null,
 			draggedItemEffectiveSize: existingItem.size ?? existingItem.itemData.size ?? 1,
 			dragSourceType: 'existing-item',
@@ -74,6 +74,5 @@ export class DragManager<
 	}
 }
 
-// Global instance - This will now be implicitly generic.
-// When used in the garden app, it will be effectively DragManager<GardenItem, ExistingGardenItem>.
-export const dragManager = new DragManager()
+// Global instance - TItem will be DraggableItem.
+export const dragManager = new DragManager<DraggableItem>()

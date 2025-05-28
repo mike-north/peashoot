@@ -88,9 +88,7 @@ let taskLists: TaskListType[] = $state(sampleTaskLists)
 	{#if taskLists.length === 0}
 		<div class="text-center py-16 rounded-lg bg-base-100 shadow-sm">
 			<ListChecks class="w-12 h-12 mx-auto mb-4 text-primary" />
-			<p class="text-xl text-base-content/70 mb-2">
-				No task lists yet.
-			</p>
+			<p class="text-xl text-base-content/70 mb-2">No task lists yet.</p>
 			<p class="text-md text-base-content/60">
 				Get started by adding one using the button above!
 			</p>

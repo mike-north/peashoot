@@ -10,7 +10,6 @@ import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 import {
 	existingGardenItemToPlantPlacement,
-	plantToGardenItem,
 	type GardenItem,
 	type ExistingGardenItem,
 	type GardenValidationContext,
@@ -165,25 +164,25 @@ let gardenInstance = $state<Garden>({
 	],
 })
 
-let isAsyncValidating = $state<boolean>(false);
-let validationError = $state<string | null>(null);
+let isAsyncValidating = $state<boolean>(false)
+let validationError = $state<string | null>(null)
 
 function handleAsyncValidationStart() {
-	isAsyncValidating = true;
-	validationError = null;
+	isAsyncValidating = true
+	validationError = null
 }
 
 function handleAsyncValidationSuccess() {
-	isAsyncValidating = false;
-	validationError = null;
+	isAsyncValidating = false
+	validationError = null
 }
 
 function handleAsyncValidationError(errorMessage: string) {
-	isAsyncValidating = false;
-	validationError = errorMessage;
+	isAsyncValidating = false
+	validationError = errorMessage
 	setTimeout(() => {
-		validationError = null;
-	}, 7000); // Clear error after 7 seconds
+		validationError = null
+	}, 7000) // Clear error after 7 seconds
 }
 
 function handleMovePlantInBed(
@@ -274,7 +273,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 			new Error('Garden application context not provided in validation'),
 		)
 	}
-	const currentGarden = context.applicationContext.garden;
+	const currentGarden = context.applicationContext.garden
 
 	// Helper function for collision detection
 	const checkPlacementValidity = (
@@ -282,7 +281,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 		itemX: number,
 		itemY: number,
 		itemSize: number,
-		excludeItemId?: string
+		excludeItemId?: string,
 	): { isValid: boolean; reason?: string } => {
 		if (
 			itemX < 0 ||
@@ -290,24 +289,27 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 			itemX + itemSize > targetBed.width ||
 			itemY + itemSize > targetBed.height
 		) {
-			return { isValid: false, reason: 'Placement is out of bounds.' };
+			return { isValid: false, reason: 'Placement is out of bounds.' }
 		}
 		for (const existingPlant of targetBed.plantPlacements) {
 			if (excludeItemId && existingPlant.id === excludeItemId) {
-				continue;
+				continue
 			}
-			const existingSize = existingPlant.plantTile.size || 1;
+			const existingSize = existingPlant.plantTile.size || 1
 			if (
 				itemX < existingPlant.x + existingSize &&
 				itemX + itemSize > existingPlant.x &&
 				itemY < existingPlant.y + existingSize &&
 				itemY + itemSize > existingPlant.y
 			) {
-				return { isValid: false, reason: `Overlaps with existing plant '${existingPlant.plantTile.name}' (ID: ${existingPlant.id}).` };
+				return {
+					isValid: false,
+					reason: `Overlaps with existing plant '${existingPlant.plantTile.name}' (ID: ${existingPlant.id}).`,
+				}
 			}
 		}
-		return { isValid: true };
-	};
+		return { isValid: true }
+	}
 
 	return new Promise<void>((resolve, reject) => {
 		setTimeout(() => {
@@ -321,80 +323,105 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 				case 'item-move-across-zones': {
 					const targetBed = currentGarden.beds.find(
 						(b: GardenBed) => b.id === context.targetZoneId,
-					);
+					)
 					const sourceBed = currentGarden.beds.find(
 						(b: GardenBed) => b.id === context.sourceZoneId,
-					);
+					)
 					if (!targetBed || !sourceBed) {
-						reject(new Error('Bed not found for cross-zone move'));
-						return;
+						reject(new Error('Bed not found for cross-zone move'))
+						return
 					}
-					if (context.targetX === undefined || context.targetY === undefined || context.item.size === undefined) {
-						reject(new Error('Missing target coordinates or item size for collision check.'));
-						return;
+					if (
+						context.targetX === undefined ||
+						context.targetY === undefined ||
+						context.item.size === undefined
+					) {
+						reject(
+							new Error('Missing target coordinates or item size for collision check.'),
+						)
+						return
 					}
-					const placementCheck = checkPlacementValidity(targetBed, context.targetX, context.targetY, context.item.size, context.itemInstanceId);
+					const placementCheck = checkPlacementValidity(
+						targetBed,
+						context.targetX,
+						context.targetY,
+						context.item.size,
+						context.itemInstanceId,
+					)
 					if (!placementCheck.isValid) {
-						reject(new Error(`Cannot move plant: ${placementCheck.reason}`));
-						return;
+						reject(new Error(`Cannot move plant: ${placementCheck.reason}`))
+						return
 					}
 					// Existing sunlight check
 					if (context.item.plantFamily.name === 'tomatoes' && targetBed.sunLevel < 3) {
-						reject(new Error('Target bed has insufficient sunlight for tomatoes'));
-					} else if (Math.random() > 0.1) resolve();
-					else reject(new Error('Soil compatibility issue between beds'));
-					break;
+						reject(new Error('Target bed has insufficient sunlight for tomatoes'))
+					} else if (Math.random() > 0.1) resolve()
+					else reject(new Error('Soil compatibility issue between beds'))
+					break
 				}
 				case 'item-add-to-zone': {
 					const addTargetBed = currentGarden.beds.find(
 						(b: GardenBed) => b.id === context.targetZoneId,
-					);
+					)
 					if (!addTargetBed) {
-						reject(new Error('Target bed not found for add operation'));
-						return;
+						reject(new Error('Target bed not found for add operation'))
+						return
 					}
-          // Note: item-add-to-zone is handled by GardenBedView's isValidPlacement via handleDrop
-          // This part handles general bed capacity, not specific cell collision for new items.
+					// Note: item-add-to-zone is handled by GardenBedView's isValidPlacement via handleDrop
+					// This part handles general bed capacity, not specific cell collision for new items.
 					const occupiedCells = addTargetBed.plantPlacements.reduce(
 						(total: number, plant: PlantPlacement) => {
 							return total + (plant.plantTile.size || 1) ** 2
 						},
 						0,
-					);
-					const totalCells = addTargetBed.width * addTargetBed.height;
-					const occupancyRate = occupiedCells / totalCells;
-					if (occupancyRate > 0.8) reject(new Error('Bed is too crowded for new plants'));
-					else if (Math.random() > 0.05) resolve();
-					else reject(new Error('Current season not suitable for this plant'));
-					break;
+					)
+					const totalCells = addTargetBed.width * addTargetBed.height
+					const occupancyRate = occupiedCells / totalCells
+					if (occupancyRate > 0.8) reject(new Error('Bed is too crowded for new plants'))
+					else if (Math.random() > 0.05) resolve()
+					else reject(new Error('Current season not suitable for this plant'))
+					break
 				}
 				case 'item-remove-from-zone': {
 					const hasEdgeIndicators = currentGarden.edgeIndicators.some(
 						(edge) =>
 							edge.plantAId === context.itemInstanceId ||
 							edge.plantBId === context.itemInstanceId,
-					);
+					)
 					if (hasEdgeIndicators && Math.random() > 0.7)
-						reject(new Error('Plant has beneficial relationships with neighbors'));
-					else resolve();
-					break;
+						reject(new Error('Plant has beneficial relationships with neighbors'))
+					else resolve()
+					break
 				}
 				case 'item-clone-in-zone': {
 					const cloneTargetBed = currentGarden.beds.find(
 						(b: GardenBed) => b.id === context.targetZoneId,
-					);
+					)
 					if (!cloneTargetBed) {
-						reject(new Error('Target bed not found for clone operation'));
-						return;
+						reject(new Error('Target bed not found for clone operation'))
+						return
 					}
-					if (context.targetX === undefined || context.targetY === undefined || context.item.size === undefined) {
-						reject(new Error('Missing target coordinates or item size for clone collision check.'));
-						return;
+					if (
+						context.targetX === undefined ||
+						context.targetY === undefined ||
+						context.item.size === undefined
+					) {
+						reject(
+							new Error(
+								'Missing target coordinates or item size for clone collision check.',
+							),
+						)
+						return
 					}
-					const clonePlacementCheck = checkPlacementValidity(cloneTargetBed, context.targetX, context.targetY, context.item.size);
+					const clonePlacementCheck = checkPlacementValidity(
+						cloneTargetBed,
+						context.targetX,
+						context.targetY,
+						context.item.size,
+					)
 					if (!clonePlacementCheck.isValid) {
-						reject(new Error(`Cannot clone plant: ${clonePlacementCheck.reason}`));
-						return;
+						reject(new Error(`Cannot clone plant: ${clonePlacementCheck.reason}`))
+						return
 					}
 
 					const occupiedCells = cloneTargetBed.plantPlacements.reduce(
@@ -402,25 +429,29 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 							return total + (plant.plantTile.size || 1) ** 2
 						},
 						0,
-					);
-					const totalCells = cloneTargetBed.width * cloneTargetBed.height;
-					const occupancyRate = occupiedCells / totalCells;
-					if (occupancyRate > 0.75) // Keep existing capacity check
-						reject(new Error('Target bed is too crowded for cloning (capacity check)'));
-					else if (Math.random() > 0.12) resolve();
-					else reject(new Error('Plant genetics not stable enough for cloning (random check)'));
-					break;
+					)
+					const totalCells = cloneTargetBed.width * cloneTargetBed.height
+					const occupancyRate = occupiedCells / totalCells
+					if (occupancyRate > 0.75)
+						// Keep existing capacity check
+						reject(new Error('Target bed is too crowded for cloning (capacity check)'))
+					else if (Math.random() > 0.12) resolve()
+					else
+						reject(
+							new Error('Plant genetics not stable enough for cloning (random check)'),
+						)
+					break
 				}
 				default:
 					console.warn(
 						'[Garden.svelte] customAsyncValidation: Unknown operationType in context:',
 						context.operationType,
-					);
-					reject(new UnreachableError(context.operationType, `Unknown operation type`));
+					)
+					reject(new UnreachableError(context.operationType, `Unknown operation type`))
 			}
-		}, 200);
-	});
-};
+		}, 200)
+	})
+}
 </script>
 
 <!-- You can add more UI elements here -->
@@ -441,7 +472,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 	padding: 10px 15px;
 	color: white;
 	border-radius: 5px;
-	box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 	min-width: 250px;
 	text-align: center;
 }

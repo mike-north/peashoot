@@ -1,7 +1,6 @@
 <script lang="ts">
-import type { GardenPendingOperation } from '../state/gardenDragStateTypes'
+import type { ExistingGardenItem, GardenPendingOperation } from '../state/gardenDragState'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
-import type { ExistingGardenItem } from '../state/gardenDragStateTypes'
 
 interface PendingOperationTileProps {
 	operation: GardenPendingOperation

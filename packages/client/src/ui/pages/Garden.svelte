@@ -5,15 +5,20 @@ import { updatePlantPositionInBed } from '../../lib/garden-bed'
 import type { PlantPlacement } from '../../lib/plant-placement'
 import type { Plant } from '../../lib/plant'
 import type { Garden } from '../../lib/garden'
-import { movePlantBetweenBeds } from '../../lib/garden'
+import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 import {
 	existingGardenItemToPlantPlacement,
+	plantPlacementToExistingGardenItem,
 	type GardenItem,
 	type ExistingGardenItem,
 	type GardenValidationContext,
 	type GardenAsyncValidationFunction,
+	type PlacementRequestDetails,
+	type RemovalRequestDetails,
+	type CloningRequestDetails,
+	type GardenZoneContext,
 } from '../state/gardenDragState'
 import { UnreachableError } from '../../errors/unreachabe'
 
@@ -265,6 +270,176 @@ function handleDeletePlant(plantId: string, bedId: string) {
 	}
 }
 
+function buildGardenZoneContext(
+	bed: GardenBed | undefined,
+): GardenZoneContext | undefined {
+	if (!bed) return undefined
+	return {
+		...bed,
+		plantPlacements: bed.plantPlacements.map(plantPlacementToExistingGardenItem),
+	} as GardenZoneContext
+}
+
+async function handleRequestPlacement(details: PlacementRequestDetails): Promise<void> {
+	handleAsyncValidationStart()
+
+	const targetBed = findBed(gardenInstance, details.targetZoneId)
+	const sourceBed = details.sourceZoneId
+		? findBed(gardenInstance, details.sourceZoneId)
+		: undefined
+
+	const baseValidationContext: Partial<GardenValidationContext> = {
+		item: details.itemData,
+		targetZoneId: details.targetZoneId,
+		targetX: details.x,
+		targetY: details.y,
+		operationType: details.operationType,
+		applicationContext: { garden: gardenInstance },
+	}
+
+	const targetCtx = buildGardenZoneContext(targetBed)
+	if (targetCtx) baseValidationContext.targetZoneContext = targetCtx
+	if (details.originalInstanceId)
+		baseValidationContext.itemInstanceId = details.originalInstanceId
+	if (details.sourceZoneId) baseValidationContext.sourceZoneId = details.sourceZoneId
+	const sourceCtx = buildGardenZoneContext(sourceBed)
+	if (sourceCtx) baseValidationContext.sourceZoneContext = sourceCtx
+
+	if (details.originalInstanceId && sourceBed) {
+		const originalPlantPlacement = findPlantPlacement(
+			sourceBed,
+			details.originalInstanceId,
+		)
+		if (originalPlantPlacement) {
+			baseValidationContext.sourceX = originalPlantPlacement.x
+			baseValidationContext.sourceY = originalPlantPlacement.y
+		}
+	}
+
+	const validationContext = baseValidationContext as GardenValidationContext
+
+	try {
+		await customAsyncValidation(validationContext)
+		handleAsyncValidationSuccess()
+
+		if (details.operationType === 'item-move-within-zone' && details.originalInstanceId) {
+			handleMovePlantInBed(
+				details.targetZoneId,
+				details.originalInstanceId,
+				details.x,
+				details.y,
+			)
+		} else if (
+			details.operationType === 'item-move-across-zones' &&
+			details.originalInstanceId &&
+			details.sourceZoneId
+		) {
+			const sourceBedForCallback = findBed(gardenInstance, details.sourceZoneId)
+			const plantPlacementForCallback = sourceBedForCallback
+				? findPlantPlacement(sourceBedForCallback, details.originalInstanceId)
+				: undefined
+			if (plantPlacementForCallback) {
+				const existingItem = plantPlacementToExistingGardenItem(plantPlacementForCallback)
+				handleMovePlantToDifferentBed(
+					details.sourceZoneId,
+					details.targetZoneId,
+					existingItem,
+					details.x,
+					details.y,
+				)
+			} else {
+				console.error(
+					'[Garden] Could not find original plant for move-across-zones callback after validation.',
+				)
+			}
+		} else if (details.operationType === 'item-add-to-zone') {
+			handleAddNewPlant(details.targetZoneId, details.itemData, details.x, details.y)
+		}
+		return
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error)
+		handleAsyncValidationError(message)
+		throw error
+	}
+}
+
+async function handleRequestRemoval(details: RemovalRequestDetails): Promise<void> {
+	handleAsyncValidationStart()
+
+	const sourceBed = findBed(gardenInstance, details.sourceZoneId)
+	const plantToRemove = sourceBed
+		? findPlantPlacement(sourceBed, details.instanceId)
+		: undefined
+
+	const baseValidationContext: Partial<GardenValidationContext> = {
+		operationType: 'item-remove-from-zone',
+		item: details.itemData,
+		itemInstanceId: details.instanceId,
+		sourceZoneId: details.sourceZoneId,
+		applicationContext: { garden: gardenInstance },
+	}
+	const remSourceCtx = buildGardenZoneContext(sourceBed)
+	if (remSourceCtx) baseValidationContext.sourceZoneContext = remSourceCtx
+	if (plantToRemove) {
+		baseValidationContext.sourceX = plantToRemove.x
+		baseValidationContext.sourceY = plantToRemove.y
+	}
+
+	const validationContext = baseValidationContext as GardenValidationContext
+
+	try {
+		await customAsyncValidation(validationContext)
+		handleAsyncValidationSuccess()
+		handleDeletePlant(details.instanceId, details.sourceZoneId)
+		return
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error)
+		handleAsyncValidationError(message)
+		throw error
+	}
+}
+
+async function handleRequestCloning(details: CloningRequestDetails): Promise<void> {
+	handleAsyncValidationStart()
+
+	const sourceBed = findBed(gardenInstance, details.sourceOriginalZoneId)
+	const targetBed = findBed(gardenInstance, details.targetCloneZoneId)
+
+	const baseValidationContext: Partial<GardenValidationContext> = {
+		operationType: 'item-clone-in-zone',
+		item: details.itemDataToClone,
+		sourceZoneId: details.sourceOriginalZoneId,
+		targetZoneId: details.targetCloneZoneId,
+		sourceX: details.sourceOriginalX,
+		sourceY: details.sourceOriginalY,
+		targetX: details.targetCloneX,
+		targetY: details.targetCloneY,
+		applicationContext: { garden: gardenInstance },
+	}
+	const cloneSourceCtx = buildGardenZoneContext(sourceBed)
+	if (cloneSourceCtx) baseValidationContext.sourceZoneContext = cloneSourceCtx
+	const cloneTargetCtx = buildGardenZoneContext(targetBed)
+	if (cloneTargetCtx) baseValidationContext.targetZoneContext = cloneTargetCtx
+
+	const validationContext = baseValidationContext as GardenValidationContext
+
+	try {
+		await customAsyncValidation(validationContext)
+		handleAsyncValidationSuccess()
+		handleAddNewPlant(
+			details.targetCloneZoneId,
+			details.itemDataToClone,
+			details.targetCloneX,
+			details.targetCloneY,
+		)
+		return
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error)
+		handleAsyncValidationError(message)
+		throw error
+	}
+}
+
 const customAsyncValidation: GardenAsyncValidationFunction = async (
 	context: GardenValidationContext,
 ) => {
@@ -275,7 +450,6 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 	}
 	const currentGarden = context.applicationContext.garden
 
-	// Helper function for collision detection
 	const checkPlacementValidity = (
 		targetBed: GardenBed,
 		itemX: number,
@@ -315,8 +489,6 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 		setTimeout(() => {
 			switch (context.operationType) {
 				case 'item-move-within-zone':
-					// For moving within a zone, the GardenBedView's isValidPlacement already handles detailed collision.
-					// This custom validation might be for other rules (e.g., plant too established).
 					if (Math.random() > 0.02) resolve()
 					else reject(new Error('Plant is too established to move within bed'))
 					break
@@ -352,7 +524,6 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 						reject(new Error(`Cannot move plant: ${placementCheck.reason}`))
 						return
 					}
-					// Existing sunlight check
 					if (context.item.plantFamily.name === 'tomatoes' && targetBed.sunLevel < 3) {
 						reject(new Error('Target bed has insufficient sunlight for tomatoes'))
 					} else if (Math.random() > 0.1) resolve()
@@ -367,8 +538,6 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 						reject(new Error('Target bed not found for add operation'))
 						return
 					}
-					// Note: item-add-to-zone is handled by GardenBedView's isValidPlacement via handleDrop
-					// This part handles general bed capacity, not specific cell collision for new items.
 					const occupiedCells = addTargetBed.plantPlacements.reduce(
 						(total: number, plant: PlantPlacement) => {
 							return total + (plant.plantTile.size || 1) ** 2
@@ -433,7 +602,6 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 					const totalCells = cloneTargetBed.width * cloneTargetBed.height
 					const occupancyRate = occupiedCells / totalCells
 					if (occupancyRate > 0.75)
-						// Keep existing capacity check
 						reject(new Error('Target bed is too crowded for cloning (capacity check)'))
 					else if (Math.random() > 0.12) resolve()
 					else
@@ -506,8 +674,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 	onAddNewPlant={handleAddNewPlant}
 	onDeletePlant={handleDeletePlant}
 	edgeIndicators={gardenInstance.edgeIndicators}
-	asyncValidation={customAsyncValidation}
-	onAsyncValidationStart={handleAsyncValidationStart}
-	onAsyncValidationSuccess={handleAsyncValidationSuccess}
-	onAsyncValidationError={handleAsyncValidationError}
+	onRequestPlacement={handleRequestPlacement}
+	onRequestRemoval={handleRequestRemoval}
+	onRequestCloning={handleRequestCloning}
 />

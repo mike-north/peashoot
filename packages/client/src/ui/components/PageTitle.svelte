@@ -7,7 +7,7 @@ const {
 	...rest
 }: {
 	route: RouteResult
-	[k: string]: any
+	[k: string]: unknown
 } = $props()
 const routeInfo = route.route?.props?.routeInfo as PeashootRouteInfo | undefined
 </script>

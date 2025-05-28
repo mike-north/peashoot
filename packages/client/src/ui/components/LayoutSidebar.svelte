@@ -3,7 +3,7 @@ import { route } from '@mateothegreat/svelte5-router'
 import logo from '../../assets/images/peashoot-sidebar-logo.png'
 import LayoutSidebarMenu from './LayoutSidebarMenu.svelte'
 
-const { ...rest }: { [key: string]: string } = $props()
+const { ...rest }: Partial<Record<string, string>> = $props()
 </script>
 
 <style lang="scss">

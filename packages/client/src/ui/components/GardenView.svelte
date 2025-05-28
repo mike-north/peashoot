@@ -31,6 +31,11 @@ import {
 } from '../state/gardenDragState'
 import { dragState as genericDragState } from '../state/dragState'
 import { get } from 'svelte/store'
+import {
+	DROP_ERROR_TILE_INDICATOR_HANG_TIME_MS,
+	DROP_SUCCESS_TILE_INDICATOR_HANG_TIME_MS,
+} from '../../lib/dnd/constants'
+import { AsyncValidationError } from '../../errors/async-validation'
 
 interface GardenProps {
 	garden: Garden
@@ -139,6 +144,9 @@ function onGardenMouseMove(event: MouseEvent) {
 async function onGardenMouseUp(_event: MouseEvent) {
 	const currentDragStateVal = get(genericDragState)
 
+	// Immediately cleanup drag state to hide preview
+	cleanupDrag()
+
 	if (
 		isDraggingExistingItem(currentDragStateVal) &&
 		currentDragStateVal.targetType === 'delete-zone'
@@ -170,6 +178,7 @@ async function onGardenMouseUp(_event: MouseEvent) {
 					existingItem.y ?? 0,
 					targetX,
 					targetY,
+					existingItem.id,
 				)
 			} else {
 				await handlePlantPlacementRequest(
@@ -190,8 +199,6 @@ async function onGardenMouseUp(_event: MouseEvent) {
 			)
 		}
 	}
-
-	cleanupDrag()
 }
 
 function cleanupDrag(): void {
@@ -226,6 +233,8 @@ async function handlePlantPlacementRequest(
 		size: itemData.size ?? 1,
 		item: itemData,
 		state: 'pending',
+		...(originalInstanceId && { originalInstanceId }),
+		...(sourceZoneId && { originalSourceZoneId: sourceZoneId }),
 	})
 
 	let operationType: PlacementRequestDetails['operationType'] = 'item-add-to-zone'
@@ -240,7 +249,6 @@ async function handlePlantPlacementRequest(
 		x,
 		y,
 		operationType,
-		// Explicitly handle optional properties for exactOptionalPropertyTypes
 		...(originalInstanceId !== undefined && { originalInstanceId }),
 		...(sourceZoneId !== undefined && { sourceZoneId }),
 	}
@@ -281,13 +289,26 @@ async function handlePlantPlacementRequest(
 			} else if (operationType === 'item-add-to-zone') {
 				onAddNewPlant(targetZoneId, itemData, x, y)
 			}
-		}, 1500)
-	} catch (_error: unknown) {
+		}, DROP_SUCCESS_TILE_INDICATOR_HANG_TIME_MS)
+	} catch (error: unknown) {
+		if (error instanceof AsyncValidationError) {
+			console.warn('Validation rejected plant placement', {
+				targetZoneId,
+				itemData,
+				x,
+				y,
+			})
+		} else if (error instanceof Error) {
+			throw new Error('Error handling plant placement request', { cause: error })
+		} else {
+			throw new Error(`Error handling plant placement request ${JSON.stringify(error)}`)
+		}
 		updatePendingOperation(operationId, 'error')
 
 		setTimeout(() => {
+			console.log('Removing pending operation', operationId)
 			removePendingOperation(operationId)
-		}, 1500)
+		}, DROP_ERROR_TILE_INDICATOR_HANG_TIME_MS)
 	}
 }
 
@@ -301,6 +322,8 @@ async function handlePlantRemovalRequest(
 		size: itemData.size ?? 1,
 		item: itemData,
 		state: 'pending',
+		originalInstanceId: instanceId,
+		originalSourceZoneId: sourceZoneId,
 	})
 
 	const removalDetails: RemovalRequestDetails = {
@@ -320,7 +343,17 @@ async function handlePlantRemovalRequest(
 		}, 1500)
 	} catch (error: unknown) {
 		updatePendingOperation(operationId, 'error')
-
+		if (error instanceof AsyncValidationError) {
+			console.error('Validation rejected plant removal', {
+				instanceId,
+				sourceZoneId,
+				itemData,
+			})
+		} else if (error instanceof Error) {
+			throw new Error('Error handling plant removal request', { cause: error })
+		} else {
+			throw new Error(`Error handling plant removal request ${JSON.stringify(error)}`)
+		}
 		setTimeout(() => {
 			removePendingOperation(operationId)
 		}, 1500)
@@ -335,15 +368,18 @@ async function handlePlantCloningRequest(
 	sourceOriginalY: number,
 	targetCloneX: number,
 	targetCloneY: number,
+	originalInstanceId: string,
 ) {
 	const operationId = addPendingOperation<GardenItem>({
-		type: 'placement',
+		type: 'clone',
 		zoneId: targetCloneZoneId,
 		x: targetCloneX,
 		y: targetCloneY,
 		size: itemDataToClone.size ?? 1,
 		item: itemDataToClone,
 		state: 'pending',
+		originalInstanceId: originalInstanceId,
+		originalSourceZoneId: sourceOriginalZoneId,
 	})
 
 	const cloningDetails: CloningRequestDetails = {
@@ -369,6 +405,22 @@ async function handlePlantCloningRequest(
 			onAddNewPlant(targetCloneZoneId, clonedCoreItem, targetCloneX, targetCloneY)
 		}, 1500)
 	} catch (error: unknown) {
+		if (error instanceof AsyncValidationError) {
+			console.warn('Validation rejected plant cloning', {
+				sourceOriginalZoneId,
+				targetCloneZoneId,
+				itemDataToClone,
+				sourceOriginalX,
+				sourceOriginalY,
+				targetCloneX,
+				targetCloneY,
+				originalInstanceId,
+			})
+		} else if (error instanceof Error) {
+			throw new Error('Error handling plant cloning request', { cause: error })
+		} else {
+			throw new Error(`Error handling plant cloning request ${JSON.stringify(error)}`)
+		}
 		updatePendingOperation(operationId, 'error')
 
 		setTimeout(() => {
@@ -414,40 +466,6 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 	transition: none;
 	border-radius: 6px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.custom-garden-grid {
-	display: grid;
-	gap: 1rem; /* Or your preferred gap, e.g., 16px */
-	grid-template-columns: 1fr; /* Default to 1 column */
-}
-
-/* Medium screens, e.g., tablets */
-@media (min-width: 768px) {
-	.custom-garden-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-/* Large screens, e.g., small laptops */
-@media (min-width: 1024px) {
-	.custom-garden-grid {
-		grid-template-columns: repeat(3, 1fr);
-	}
-}
-
-/* Extra-large screens, e.g., desktops */
-@media (min-width: 1280px) {
-	.custom-garden-grid {
-		grid-template-columns: repeat(4, 1fr);
-	}
-}
-
-/* XXL screens, e.g., large desktops */
-@media (min-width: 1536px) {
-	.custom-garden-grid {
-		grid-template-columns: repeat(5, 1fr);
-	}
 }
 </style>
 
@@ -544,7 +562,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			>
 				{#if isDraggingExistingItem(currentPreviewDragState)}
 					<PlantPlacementTile
-						plantPlacement={currentPreviewDragState.draggedExistingItem as any}
+						plantPlacement={currentPreviewDragState.draggedExistingItem}
 						sizePx={previewSize}
 					/>
 					{#if currentPreviewDragState.isCloneMode}
@@ -577,7 +595,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 							x: 0,
 							y: 0,
 							itemData: currentPreviewDragState.draggedNewItem,
-						} as any}
+						}}
 						sizePx={previewSize}
 					/>
 				{/if}

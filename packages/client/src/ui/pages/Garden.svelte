@@ -21,6 +21,8 @@ import {
 	type GardenZoneContext,
 } from '../state/gardenDragState'
 import { UnreachableError } from '../../errors/unreachabe'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../lib/dnd/constants'
+import { AsyncValidationError } from '../../errors/async-validation'
 
 const { route }: { route: RouteResult } = $props()
 
@@ -421,7 +423,7 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		handleAsyncValidationError(message)
-		throw error
+		throw new AsyncValidationError(`Error while handling placement request`, error)
 	}
 }
 
@@ -457,7 +459,7 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		handleAsyncValidationError(message)
-		throw error
+		throw new AsyncValidationError(`Error while handling removal request`, error)
 	}
 }
 
@@ -498,13 +500,14 @@ async function handleRequestCloning(details: CloningRequestDetails): Promise<voi
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		handleAsyncValidationError(message)
-		throw error
+		throw new AsyncValidationError(`Error while handling cloning request`, error)
 	}
 }
 
 const customAsyncValidation: GardenAsyncValidationFunction = async (
 	context: GardenValidationContext,
 ) => {
+	await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
 	if (!context.applicationContext) {
 		return Promise.reject(
 			new Error('Garden application context not provided in validation'),

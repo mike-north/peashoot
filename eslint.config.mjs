@@ -1,9 +1,22 @@
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
+import { TSESLint } from '@typescript-eslint/utils'
 import svelte from 'eslint-plugin-svelte'
 import n from 'eslint-plugin-n'
 import svelteConfig from './packages/client/svelte.config.js'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+
+/** @type {TSESLint.FlatConfig.Config} */
+const tsRules = {
+	'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+	'@typescript-eslint/restrict-template-expressions': [
+		'error',
+		{
+			allowNumber: true,
+			allowBoolean: true,
+		},
+	],
+}
 
 export default tseslint.config(
 	{
@@ -36,17 +49,6 @@ export default tseslint.config(
 				tsconfigRootDir: import.meta.dirname,
 			},
 		},
-		rules: {
-			'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-			'@typescript-eslint/restrict-template-expressions': [
-				'error',
-				{
-					allowNumber: true,
-					allowBoolean: true,
-				},
-			],
-			'@typescript-eslint/no-explicit-any': 'off',
-		},
 	},
 	// Svelte linting for client/src only
 	{
@@ -69,6 +71,10 @@ export default tseslint.config(
 				clearInterval: 'readonly',
 			},
 		},
+
+		rules: {
+			...tsRules,
+		},
 	},
 
 	// TypeScript linting for all .ts/.tsx files
@@ -79,6 +85,9 @@ export default tseslint.config(
 				project: ['./tsconfig.json', './packages/server/tsconfig.json'],
 				tsconfigRootDir: import.meta.dirname,
 			},
+		},
+		rules: {
+			...tsRules,
 		},
 	},
 	{

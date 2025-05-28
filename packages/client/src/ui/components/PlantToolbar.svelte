@@ -13,7 +13,7 @@ import { clickOrHold } from '../../lib/actions/clickOrHold'
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 interface PlantToolbarProps {
-	[k: string]: any
+	[k: string]: unknown
 }
 
 const { ...rest }: PlantToolbarProps = $props()

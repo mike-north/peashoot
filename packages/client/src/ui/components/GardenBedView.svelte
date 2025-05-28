@@ -25,6 +25,27 @@ import {
 } from '../state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../lib/actions/disablePointerEventsWhenDragging'
 
+// Define a type for the operation that should cause pulsing
+type PulsingSourceOperation = GardenPendingOperation & {
+	type: 'placement' | 'removal'
+	originalSourceZoneId: string
+	originalInstanceId: string
+}
+
+// Type guard function
+function isPulsingSourceOperation(
+	op: GardenPendingOperation,
+	currentBedId: string,
+): op is PulsingSourceOperation {
+	return (
+		(op.type === 'placement' || op.type === 'removal') &&
+		op.state === 'pending' &&
+		op.originalSourceZoneId === currentBedId &&
+		typeof op.originalInstanceId === 'string' &&
+		op.originalInstanceId.length > 0
+	)
+}
+
 interface GardenBedViewProps {
 	bed: GardenBed
 	edgeIndicators?: {
@@ -33,10 +54,18 @@ interface GardenBedViewProps {
 		plantBId: string
 		color: string
 	}[]
-	[k: string]: any
+	[k: string]: unknown
 }
 
 const { bed, edgeIndicators = [], ...rest }: GardenBedViewProps = $props()
+
+// Identify plant placements in this bed that are the source of a pending move or clone
+let pendingSourcePlantIds = $derived(
+	($genericPendingOperations as GardenPendingOperation[])
+		.filter((op): op is PulsingSourceOperation => isPulsingSourceOperation(op, bed.id))
+		.map((op) => op.originalInstanceId), // No need for '!' due to type guard
+)
+
 // Instantiate the layout calculator
 const layout = new GardenBedLayoutCalculator({
 	width: bed.width,
@@ -440,6 +469,7 @@ function handleDropProp(payload: DropEventPayload) {
 								.map((corner) => `border-${corner}-radius: 8px;`)
 								.join(' ')}
 							{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
+							{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
 							<GenericDraggable
 								itemData={existingGardenItem.itemData}
 								existingItemInstance={existingGardenItem}
@@ -452,6 +482,7 @@ function handleDropProp(payload: DropEventPayload) {
 									<PlantPlacementTile
 										plantPlacement={existingGardenItem}
 										sizePx={tileLayout.width}
+										isSourceOfPendingMoveOrClone={isPendingSource}
 									/>
 								</div>
 							</GenericDraggable>

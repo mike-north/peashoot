@@ -17,7 +17,11 @@ export const disablePointerEventsWhenDragging: Action<
 	setPointerEvents(!!(dragState.draggedNewItem || dragState.draggedExistingItem))
 
 	return {
-		update(newDragState: Readonly<IDragState<any, any>>) {
+		update(
+			newDragState: Readonly<
+				IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
+			>,
+		) {
 			// Update pointer events when the drag state changes
 			setPointerEvents(
 				!!(newDragState.draggedNewItem || newDragState.draggedExistingItem),

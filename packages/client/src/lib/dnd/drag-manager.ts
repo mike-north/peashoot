@@ -18,7 +18,7 @@ export class DragManager<TItem extends DraggableItem> {
 
 		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,
-			draggedExistingItem: existingItem as GlobalStoreExistingItem,
+			draggedExistingItem: existingItem,
 			draggedNewItem: null,
 			draggedItemEffectiveSize: existingItem.size ?? existingItem.itemData.size ?? 1,
 			dragSourceType: 'existing-item',

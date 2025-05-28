@@ -45,6 +45,7 @@ export default tseslint.config(
 					allowBoolean: true,
 				},
 			],
+			'@typescript-eslint/no-explicit-any': 'off',
 		},
 	},
 	// Svelte linting for client/src only
@@ -62,6 +63,10 @@ export default tseslint.config(
 				window: 'readonly',
 				document: 'readonly',
 				console: 'readonly',
+				setTimeout: 'readonly',
+				clearTimeout: 'readonly',
+				setInterval: 'readonly',
+				clearInterval: 'readonly',
 			},
 		},
 	},

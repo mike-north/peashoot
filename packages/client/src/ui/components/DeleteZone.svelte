@@ -1,15 +1,20 @@
 <script lang="ts">
-import { dragState, isDraggingExistingPlant } from '../state/dragState'
+import { dragState, isDraggingExistingItem, pendingOperations } from '../state/dragState'
+import PendingOperationTile from './PendingOperationTile.svelte'
+import type { GardenPendingOperation } from '../state/gardenDragState'
 
 // Show delete zone only when dragging an existing plant
-let showDeleteZone = $derived(isDraggingExistingPlant($dragState))
+let showDeleteZone = $derived(isDraggingExistingItem($dragState))
+
+// Get pending removal operations
+let pendingRemovals = $derived($pendingOperations.filter((op) => op.type === 'removal'))
 
 // Track if mouse is over delete zone
 let isHovered = $state(false)
 
 function handleMouseEnter() {
 	isHovered = true
-	if (isDraggingExistingPlant($dragState)) {
+	if (isDraggingExistingItem($dragState)) {
 		console.log(
 			'[DeleteZone] Mouse entered delete zone, setting targetType to delete-zone',
 		)
@@ -24,7 +29,7 @@ function handleMouseEnter() {
 
 function handleMouseLeave() {
 	isHovered = false
-	if (isDraggingExistingPlant($dragState)) {
+	if (isDraggingExistingItem($dragState)) {
 		console.log('[DeleteZone] Mouse left delete zone, clearing targetType')
 		dragState.update((state) => ({
 			...state,
@@ -109,6 +114,33 @@ function handleMouseLeave() {
 		transform: translateX(2px);
 	}
 }
+
+.pending-removal {
+	position: absolute;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	border: 2px solid rgba(0, 0, 0, 0.4);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	z-index: 999;
+
+	&__container {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		overflow: hidden;
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
 </style>
 
 <div
@@ -123,3 +155,22 @@ function handleMouseLeave() {
 	<div class="delete-zone__icon">🗑️</div>
 	<div class="delete-zone__text">Drop to Delete</div>
 </div>
+
+<!-- Pending Removal Indicators -->
+{#each pendingRemovals as removal, _index (removal.id)}
+	<div
+		class="pending-removal"
+		style="
+			right: 50px;
+			bottom: 50px;
+		"
+	>
+		<div class="pending-removal__container">
+			<PendingOperationTile
+				operation={removal as GardenPendingOperation}
+				sizePx={56}
+				circular={true}
+			/>
+		</div>
+	</div>
+{/each}

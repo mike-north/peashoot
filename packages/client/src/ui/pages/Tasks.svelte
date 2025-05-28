@@ -77,25 +77,27 @@ let taskLists: TaskListType[] = $state(sampleTaskLists)
 </script>
 
 <PageTitle route={route} />
-<div class="container mx-auto p-4">
-	<div class="flex justify-between items-center mb-6">
-		<button class="btn btn-primary">
-			<!-- Placeholder for an icon, e.g., Plus from Phosphor icons  -->
+<div class="container mx-auto p-6 md:p-8">
+	<div class="flex justify-start items-center mb-8">
+		<button class="btn btn-primary shadow-md">
 			<Plus class="w-5 h-5 mr-2" />
 			Add New List
 		</button>
 	</div>
 
 	{#if taskLists.length === 0}
-		<div class="text-center py-10">
-			<p class="text-xl text-base-content/70">
-				No task lists yet. Get started by adding one!
+		<div class="text-center py-16 rounded-lg bg-base-100 shadow-sm">
+			<ListChecks class="w-12 h-12 mx-auto mb-4 text-primary" />
+			<p class="text-xl text-base-content/70 mb-2">No task lists yet.</p>
+			<p class="text-md text-base-content/60">
+				Get started by adding one using the button above!
 			</p>
-			<ListChecks class="w-5 h-5" />
 		</div>
 	{:else}
-		{#each taskLists as taskList (taskList.id)}
-			<TaskList taskList={taskList} />
-		{/each}
+		<div class="space-y-8">
+			{#each taskLists as taskList (taskList.id)}
+				<TaskList taskList={taskList} />
+			{/each}
+		</div>
 	{/if}
 </div>

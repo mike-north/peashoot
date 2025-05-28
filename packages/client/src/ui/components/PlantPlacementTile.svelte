@@ -1,24 +1,32 @@
 <script lang="ts">
-import type { PlantPlacement } from '../../lib/plant-placement'
+import type { ExistingGardenItem } from '../state/gardenDragState'
+
+// import type { PlantPlacement } from '../../lib/plant-placement' // Old type
 
 interface Props {
-	plantPlacement: PlantPlacement
-	x?: number // SVG x position
-	y?: number // SVG y position
+	plantPlacement: ExistingGardenItem // Changed to ExistingGardenItem
+	xPos?: number // SVG x position (renamed from x to avoid conflict with ExistingGardenItem.x)
+	yPos?: number // SVG y position (renamed from y to avoid conflict with ExistingGardenItem.y)
 	sizePx?: number // SVG width (cellWidth * size)
 }
 
-let { plantPlacement, x = 0, y = 0, sizePx = 40 }: Props = $props()
+// Use destructured props, providing defaults
+let { plantPlacement, xPos = 0, yPos = 0, sizePx = 40 }: Props = $props()
+
+// Access the core plant data via itemData
+const corePlantData = $derived(plantPlacement.itemData)
 
 // Generate CSS variable name from plant family and color variant
 const getPlantColorVariable = (familyName: string, colorVariant: string): string => {
 	return `--color-${familyName}-${colorVariant}`
 }
 
-// Compute the background color CSS variable
-const backgroundColorVar = getPlantColorVariable(
-	plantPlacement.plantTile.plantFamily.name,
-	plantPlacement.plantTile.plantFamily.colorVariant,
+// Compute the background color CSS variable (reactive)
+const backgroundColorVar = $derived(
+	getPlantColorVariable(
+		corePlantData.plantFamily.name,
+		corePlantData.plantFamily.colorVariant,
+	),
 )
 
 // Determine if we need white text for dark backgrounds
@@ -26,13 +34,14 @@ const isDarkBackground = (colorVariant: string): boolean => {
 	return ['dark', 'red', 'purple', 'brown'].includes(colorVariant)
 }
 
-const size = plantPlacement.plantTile.size || 1
-const iconSize = sizePx * 0.3
-const iconX = x + sizePx / 2
-const iconY = y + sizePx / 2
-const textColor = isDarkBackground(plantPlacement.plantTile.plantFamily.colorVariant)
-	? 'white'
-	: '#4b4e6d'
+// Use size from the core itemData, or the instance, or default
+const itemSize = $derived(plantPlacement.size ?? corePlantData.size ?? 1)
+const iconDisplaySize = $derived(sizePx * 0.3)
+const iconX = $derived(xPos + sizePx / 2)
+const iconY = $derived(yPos + sizePx / 2)
+const textColor = $derived(
+	isDarkBackground(corePlantData.plantFamily.colorVariant) ? 'white' : '#4b4e6d',
+)
 </script>
 
 <style lang="scss">
@@ -49,11 +58,6 @@ const textColor = isDarkBackground(plantPlacement.plantTile.plantFamily.colorVar
 		opacity: 0.5;
 		fill-opacity: 0.7;
 	}
-	&__border {
-		stroke: #222;
-		stroke-width: 1;
-		fill: none;
-	}
 	&__background {
 		fill-opacity: 0.3;
 	}
@@ -63,36 +67,44 @@ const textColor = isDarkBackground(plantPlacement.plantTile.plantFamily.colorVar
 <svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`} class="plant-tile">
 	<!-- Tile background -->
 	<rect
-		x={x}
-		y={y}
+		x={xPos}
+		y={yPos}
 		width={sizePx}
 		height={sizePx}
 		class="plant-tile__background"
 		style={`fill: var(${backgroundColorVar})`}
 	/>
 	<!-- Plant icon -->
-	<circle cx={iconX} cy={iconY} r={iconSize / 2} class="plant-tile__icon" opacity="0.8" />
-	<!-- Plant name text -->
-	<text
-		x={iconX}
-		y={iconY + sizePx / 4}
-		text-anchor="middle"
-		class="plant-tile__name"
-		font-size={Math.max(8, sizePx / 6)}
-		fill={textColor}
-	>
-		{plantPlacement.plantTile.name}
-	</text>
-	<!-- Size indicator for multi-cell plants -->
-	{#if size > 1}
+	{#if corePlantData}
+		<circle
+			cx={iconX}
+			cy={iconY}
+			r={iconDisplaySize / 2}
+			class="plant-tile__icon"
+			opacity="0.8"
+		/>
+		<!-- Plant name text -->
 		<text
 			x={iconX}
-			y={iconY - sizePx / 4}
+			y={iconY + sizePx / 4}
 			text-anchor="middle"
-			class="plant-tile__size-indicator"
-			font-size={Math.max(6, sizePx / 8)}
+			class="plant-tile__name"
+			font-size={Math.max(8, sizePx / 6)}
+			fill={textColor}
 		>
-			{size}×{size}
+			{corePlantData.name}
 		</text>
+		<!-- Size indicator for multi-cell plants -->
+		{#if itemSize > 1}
+			<text
+				x={iconX}
+				y={iconY - sizePx / 4}
+				text-anchor="middle"
+				class="plant-tile__size-indicator"
+				font-size={Math.max(6, sizePx / 8)}
+			>
+				{itemSize}×{itemSize}
+			</text>
+		{/if}
 	{/if}
 </svg>

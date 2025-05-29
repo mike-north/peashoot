@@ -1,12 +1,12 @@
 // Generic type for the item being dragged. This is the core data.
-export type DraggableItem = Record<string, unknown> & { id: string; size?: number } // Must have an ID, size is optional
+export interface DraggableItem {
+	id: string
+	size?: number
+} // Must have an ID, size is optional
 
 // Generic type for an item that exists in a zone (e.g., a placed item).
 // It must contain the core DraggableItem data.
-export type ExistingDraggableItem<TItem extends DraggableItem> = Record<
-	string,
-	unknown
-> & {
+export interface ExistingDraggableItem<TItem extends DraggableItem> {
 	id: string // ID of the placed instance
 	itemData: TItem // The actual draggable item data
 	x?: number // Optional coordinates if relevant to the zone
@@ -15,7 +15,9 @@ export type ExistingDraggableItem<TItem extends DraggableItem> = Record<
 }
 
 // Generic type for data associated with a drop zone
-export type DropZoneContext = Record<string, unknown> & { id: string } // Must have an ID
+export interface DropZoneContext {
+	id: string
+} // Must have an ID
 
 // Types of drag sources
 export type DragSourceType = 'existing-item' | 'new-item'

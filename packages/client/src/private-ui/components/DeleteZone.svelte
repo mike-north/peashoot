@@ -151,7 +151,7 @@ function setIsHovered(hovered: boolean) {
 		"
 	>
 		<div class="pending-removal__container">
-			<PendingOperationTile operation={removal} sizePx={56} circular={true} />
+			<PendingOperationTile operation={removal} sizePx={56} />
 		</div>
 	</div>
 {/each}

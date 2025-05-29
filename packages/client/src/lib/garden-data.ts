@@ -1,5 +1,7 @@
 import type { Garden } from '../private-lib/garden'
 import { timeout } from '../utils/promise'
+import { makeUniqueId } from './id'
+
 
 export async function fetchGardens(): Promise<Garden[]> {
 	await timeout(300) // Fake delay to simulate network call
@@ -23,189 +25,123 @@ export async function fetchGardens(): Promise<Garden[]> {
 			],
 			beds: [
 				{
-					id: 'bed_-2',
+					id: makeUniqueId('bed'),
 					width: 12,
 					height: 2,
 					waterLevel: 0,
-					sunLevel: 0,
+					sunLevel: 2,
 					plantPlacements: [],
 				},
 				{
-					id: 'bed_-1',
+					id: makeUniqueId('bed'),
 					width: 1,
 					height: 1,
 					waterLevel: 0,
 					sunLevel: 0,
 					plantPlacements: [
 						{
-							id: 'placeholder_000',
+							id: makeUniqueId('plant_placement'),
 							x: 0,
 							y: 0,
-							plantTile: {
-								id: 'lettuce_0',
-								name: 'lettuce',
-								icon: '🌱',
-								size: 1,
-								plantFamily: { name: 'lettuce', colorVariant: 'green' },
-							},
+							plantId: 'tomatoes-burpee-big-boy-tomato',
 						},
 					],
 				},
 				{
-					id: 'bed_0',
+					id: makeUniqueId('bed'),
 					width: 1,
 					height: 1,
 					waterLevel: 0,
 					sunLevel: 0,
 					plantPlacements: [
 						{
-							id: 'placeholder_0',
+							id: makeUniqueId('plant_placement'),
 							x: 0,
 							y: 0,
-							plantTile: {
-								id: 'lettuce_0',
-								name: 'lettuce',
-								icon: '🌱',
-								size: 1,
-								plantFamily: { name: 'lettuce', colorVariant: 'green' },
-							},
+							plantId: 'lettuce-burpee-buttercrunch-lettuce',
 						},
 					],
 				},
 				{
-					id: 'bed_1',
+					id: makeUniqueId('bed'),
 					width: 6,
 					height: 2,
 					waterLevel: 2,
 					sunLevel: 4,
 					plantPlacements: [
 						{
-							id: 'tomato_1',
+							id: makeUniqueId('plant_placement'),
 							x: 0,
 							y: 0,
-							plantTile: {
-								id: 'tomato',
-								name: 'tomato',
-								icon: '🍅',
-								size: 2,
-								plantFamily: { name: 'tomatoes', colorVariant: 'red' },
-							},
+							plantId: 'tomatoes-burpee-big-boy-tomato',
 						},
 						{
-							id: 'lettuce_1',
+							id: makeUniqueId('plant_placement'),
 							x: 2,
 							y: 0,
-							plantTile: {
-								id: 'lettuce',
-								name: 'lettuce',
-								icon: '🥬',
-								size: 1,
-								plantFamily: { name: 'lettuce', colorVariant: 'green' },
-							},
+							plantId: 'lettuce-burpee-buttercrunch-lettuce',
 						},
 					],
 				},
 				{
-					id: 'bed_2',
+					id: makeUniqueId('bed'),
 					width: 6,
 					height: 2,
 					waterLevel: 2,
 					sunLevel: 4,
 					plantPlacements: [
 						{
-							id: 'tomato_44',
+							id: makeUniqueId('plant_placement'),
 							x: 0,
 							y: 0,
-							plantTile: {
-								id: 'tomato',
-								name: 'tomato',
-								icon: '🍅',
-								size: 2,
-								plantFamily: { name: 'tomatoes', colorVariant: 'red' },
-							},
+							plantId: 'arugula-arugula',
 						},
 						{
-							id: 'lettuce_44',
+							id: makeUniqueId('plant_placement'),
 							x: 2,
 							y: 0,
-							plantTile: {
-								id: 'lettuce',
-								name: 'lettuce',
-								icon: '🥬',
-								size: 1,
-								plantFamily: { name: 'lettuce', colorVariant: 'green' },
-							},
+							plantId: 'spinach-japanese-perpetual-spinach',
 						},
 					],
 				},
 				{
-					id: 'bed_3',
+					id: makeUniqueId('bed'),
 					width: 12,
 					height: 4,
 					waterLevel: 3,
 					sunLevel: 3,
 					plantPlacements: [
 						{
-							id: 'bing_cherry_1',
+							id: makeUniqueId('plant_placement'),
 							x: 2,
 							y: 1,
-							plantTile: {
-								id: 'cherry',
-								name: 'cherry',
-								icon: '🍒',
-								size: 3,
-								plantFamily: { name: 'cherries', colorVariant: 'red' },
-							},
+							plantId: 'cherries-rainier-cherry',
 						},
 						{
-							id: 'tomato_2',
+							id: makeUniqueId('plant_placement'),
 							x: 0,
 							y: 0,
-							plantTile: {
-								id: 'tomato',
-								name: 'tomato',
-								icon: '🍅',
-								size: 2,
-								plantFamily: { name: 'tomatoes', colorVariant: 'red' },
-							},
+							plantId: 'tomatoes-burpee-big-boy-tomato',
 						},
 						{
-							id: 'lettuce_2',
+							id: makeUniqueId('plant_placement'),
 							x: 2,
 							y: 0,
-							plantTile: {
-								id: 'lettuce',
-								name: 'lettuce',
-								icon: '🥬',
-								size: 1,
-								plantFamily: { name: 'lettuce', colorVariant: 'green' },
-							},
+							plantId: 'lettuce-burpee-buttercrunch-lettuce',
 						},
 
 						{
-							id: 'strawberry_1',
+							id: makeUniqueId('plant_placement'),
 							x: 6,
 							y: 0,
-							plantTile: {
-								id: 'strawberry',
-								name: 'Strawberry',
-								icon: '🍓',
-								size: 1,
-								plantFamily: { name: 'strawberries', colorVariant: 'red' },
-							},
+							plantId: 'strawberries-alexandria-strawberry',
 						},
 
 						{
-							id: 'daisy_1',
+							id: makeUniqueId('plant_placement'),
 							x: 6,
 							y: 3,
-							plantTile: {
-								id: 'daisy',
-								name: 'Daisy',
-								icon: '🌼',
-								size: 1,
-								plantFamily: { name: 'daisies', colorVariant: 'white' },
-							},
+							plantId: 'daisies-zinnia',
 						},
 					],
 				},

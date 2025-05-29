@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Plant } from '../../private-lib/plant'
+import type { Plant, PlantVisualPresentation } from '../../private-lib/plant'
 import { dragManager } from '../../private-lib/dnd/drag-manager'
 import { dragState } from '../state/dragState'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
@@ -7,34 +7,70 @@ import type { PlantPlacement } from '../../private-lib/plant-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
 import {
 	plantPlacementToExistingGardenItem,
-	plantToGardenItem,
+	plantToExistingGardenItem,
 } from '../state/gardenDragState'
 import { clickOrHold } from '../../private-lib/actions/clickOrHold'
 
 interface PlantToolbarProps {
-	plantFamilies: PlantToolbarPlantFamily[]
+	plants: Plant[]
 	[k: string]: unknown
 }
 
-export interface PlantToolbarPlantVariant {
-	name: string
-	displayName: string
+interface PlantToolbarPlantVariant {
+	plantDisplayName: string
+	iconPath: string
+	presentation: PlantVisualPresentation
+	plantingDistanceInFeet: number
 }
 
-export interface PlantToolbarPlantFamily {
-	name: string
-	displayName: string
-	icon: string
-	size: number
+interface PlantToolbarPlantFamily {
+	familyDisplayName: string
+	iconPath: string
+	presentation: PlantVisualPresentation
 	variants: PlantToolbarPlantVariant[]
 }
 
-const { plantFamilies, ...rest }: PlantToolbarProps = $props()
+export type { PlantToolbarPlantFamily }
+
+const { plants, ...rest }: PlantToolbarProps = $props()
+
+const plantListToToolbarPlantFamilies = (plants: Plant[]): PlantToolbarPlantFamily[] => {
+	const plantFamilies = new Map<string, PlantToolbarPlantFamily>()
+	for (const plant of plants) {
+		const family = plantFamilies.get(plant.family)
+		if (!family) {
+			// Create a new family and add the current plant as the first variant
+			plantFamilies.set(plant.family, {
+				familyDisplayName: plant.family,
+				iconPath: plant.presentation.tileIconPath,
+				presentation: plant.presentation,
+				variants: [
+					{
+						plantingDistanceInFeet: plant.plantingDistanceInFeet,
+						plantDisplayName: plant.displayName,
+						iconPath: plant.presentation.tileIconPath,
+						presentation: plant.presentation,
+					},
+				],
+			})
+		} else {
+			family.variants.push({
+				plantingDistanceInFeet: plant.plantingDistanceInFeet,
+				plantDisplayName: plant.displayName,
+				iconPath: plant.presentation.tileIconPath,
+				presentation: plant.presentation,
+			})
+		}
+	}
+	return Array.from(plantFamilies.values())
+}
+
+const plantFamilies = plantListToToolbarPlantFamilies(plants)
 
 // Track selected variants for each plant family
 let selectedVariants: Record<string, string> = $state(
 	plantFamilies.reduce<Record<string, string>>((acc, family) => {
-		acc[family.name] = family.variants[0].name
+		acc[family.familyDisplayName] = family.variants[0].plantDisplayName
 		return acc
 	}, {}),
 )
@@ -60,11 +96,9 @@ function selectVariant(familyName: string, variantName: string) {
 // Handle starting drag from toolbar
 function handleToolbarDrag(familyName: string, event: MouseEvent) {
 	const variant = selectedVariants[familyName]
-	const family = plantFamilies.find((f) => f.name === familyName)
-	if (!family) return
-
-	const gardenItem = plantToGardenItem(createPlant(familyName, variant))
-	dragManager.startDraggingNewItem(gardenItem, event)
+	const plant = createPlant(familyName, variant)
+	const gardenItem = plantToExistingGardenItem(plant)
+	dragManager.startDraggingNewItem(gardenItem.itemData, event)
 }
 
 // Close dropdown when clicking outside
@@ -77,20 +111,11 @@ function handleClickOutside(event: MouseEvent) {
 
 // Create a plant object from family and variant
 function createPlant(familyName: string, variant: string): Plant {
-	const family = plantFamilies.find((f) => f.name === familyName)
-	if (!family) {
-		throw new Error(`Plant family not found: ${familyName}`)
+	const plant = plants.find((p) => p.family === familyName && p.displayName === variant)
+	if (!plant) {
+		throw new Error(`Plant not found: ${familyName} ${variant}`)
 	}
-	return {
-		id: `toolbar-${familyName}-${variant}`,
-		name: family.displayName,
-		icon: family.icon,
-		size: family.size,
-		plantFamily: {
-			name: familyName,
-			colorVariant: variant,
-		},
-	}
+	return plant
 }
 
 // Create a PlantPlacement for toolbar display
@@ -98,11 +123,15 @@ function createToolbarPlantPlacement(
 	familyName: string,
 	variant: string,
 ): PlantPlacement {
+	const plant = plants.find((p) => p.family === familyName && p.displayName === variant)
+	if (!plant) {
+		throw new Error(`Plant not found: ${familyName} ${variant}`)
+	}
 	return {
 		id: `toolbar-${familyName}-${variant}`,
 		x: 0,
 		y: 0,
-		plantTile: createPlant(familyName, variant),
+		plantId: plant.id,
 	}
 }
 
@@ -366,37 +395,40 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 >
 	<div class="plant-toolbar__title">Plant Toolbar</div>
 	<div class="plant-toolbar__grid">
-		{#each plantFamilies as family (family.name)}
-			{@const selectedVariant = selectedVariants[family.name]}
+		{#each plantFamilies as family (family.familyDisplayName)}
+			{@const selectedVariant = selectedVariants[family.familyDisplayName]}
 			{@const toolbarPlacement = createToolbarPlantPlacement(
-				family.name,
+				family.familyDisplayName,
 				selectedVariant,
 			)}
+			{@const plant = createPlant(family.familyDisplayName, selectedVariant)}
 
 			<div class="plant-toolbar__item">
 				<!-- Main tile (selected variant) -->
 				<div
 					class="plant-toolbar__tile-container"
-					class:plant-toolbar__tile-container--size-2={family.size === 2}
+					class:plant-toolbar__tile-container--size-2={family.variants[0]
+						.plantingDistanceInFeet === 2}
 					class:plant-toolbar__tile-container--clickable={family.variants.length > 1}
-					class:plant-toolbar__tile-container--open={openDropdown === family.name}
+					class:plant-toolbar__tile-container--open={openDropdown ===
+						family.familyDisplayName}
 					role="button"
 					tabindex="0"
 					use:clickOrHold={{
 						onClick: () => {
 							if (family.variants.length > 1) {
-								toggleDropdown(family.name)
+								toggleDropdown(family.familyDisplayName)
 							}
 						},
 						onHold: (e) => {
-							handleToolbarDrag(family.name, e)
+							handleToolbarDrag(family.familyDisplayName, e)
 						},
 					}}
 					onkeydown={(e) => {
 						if (e.key === 'Enter' || e.key === ' ') {
 							e.preventDefault()
 							if (family.variants.length > 1) {
-								toggleDropdown(family.name)
+								toggleDropdown(family.familyDisplayName)
 							} else {
 								// Synthesize a mousedown event for drag initiation on keydown for single variant items
 								const syntheticEvent = new MouseEvent('mousedown', {
@@ -404,56 +436,64 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 									clientY: 0,
 									bubbles: true,
 								})
-								handleToolbarDrag(family.name, syntheticEvent)
+								handleToolbarDrag(family.familyDisplayName, syntheticEvent)
 							}
 						}
 					}}
 				>
 					<PlantPlacementTile
-						plantPlacement={plantPlacementToExistingGardenItem(toolbarPlacement)}
+						plantPlacement={plantPlacementToExistingGardenItem(toolbarPlacement, plant)}
 						sizePx={toolbarTileSize}
 					/>
 
 					<!-- Dropdown arrow for families with multiple variants -->
 					{#if family.variants.length > 1}
 						<div class="plant-toolbar__dropdown-arrow">
-							{openDropdown === family.name ? '▲' : '▼'}
+							{openDropdown === family.familyDisplayName ? '▲' : '▼'}
 						</div>
 					{/if}
 				</div>
 
 				<!-- Dropdown with variant options -->
-				{#if openDropdown === family.name && family.variants.length > 1}
+				{#if openDropdown === family.familyDisplayName && family.variants.length > 1}
 					<div class="plant-toolbar__dropdown">
-						{#each family.variants as variant (variant.name)}
+						{#each family.variants as variant (variant.plantDisplayName)}
 							{@const variantPlacement = createToolbarPlantPlacement(
-								family.name,
-								variant.name,
+								family.familyDisplayName,
+								variant.plantDisplayName,
+							)}
+							{@const variantPlant = createPlant(
+								family.familyDisplayName,
+								variant.plantDisplayName,
 							)}
 							<div
 								class="plant-toolbar__tile-container plant-toolbar__tile-container--variant"
-								class:plant-toolbar__tile-container--size-2={family.size === 2}
+								class:plant-toolbar__tile-container--size-2={variant.plantingDistanceInFeet ===
+									2}
 								role="button"
 								tabindex="0"
 								use:clickOrHold={{
 									onClick: () => {
-										selectVariant(family.name, variant.name)
+										selectVariant(family.familyDisplayName, variant.plantDisplayName)
 									},
 									onHold: (e) => {
-										selectVariant(family.name, variant.name) // Select first, then drag
-										handleToolbarDrag(family.name, e)
+										selectVariant(family.familyDisplayName, variant.plantDisplayName) // Select first, then drag
+										handleToolbarDrag(family.familyDisplayName, e)
 									},
 								}}
 								onkeydown={(e) => {
 									if (e.key === 'Enter' || e.key === ' ') {
 										e.preventDefault()
 										e.stopPropagation() // Prevent main tile keydown
-										selectVariant(family.name, variant.name)
+										selectVariant(family.familyDisplayName, variant.plantDisplayName)
 									}
 								}}
 							>
 								<PlantPlacementTile
-									plantPlacement={plantPlacementToExistingGardenItem(variantPlacement)}
+									plantPlacement={plantPlacementToExistingGardenItem(
+										variantPlacement,
+										variantPlant,
+									)}
 									sizePx={46}
 								/>
 							</div>
@@ -461,7 +501,7 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 					</div>
 				{/if}
 
-				<div class="plant-toolbar__label">{family.displayName}</div>
+				<div class="plant-toolbar__label">{family.familyDisplayName}</div>
 			</div>
 		{/each}
 	</div>

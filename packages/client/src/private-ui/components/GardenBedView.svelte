@@ -19,11 +19,12 @@ import {
 } from '../../private-lib/dnd/state'
 import type { DraggableItem } from '../../private-lib/dnd/types'
 import {
-	type GardenItem,
 	plantPlacementToExistingGardenItem,
 	type GardenPendingOperation,
+	getPlantSize,
 } from '../state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
+import type { Plant } from '../../private-lib/plant'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GardenPendingOperation & {
@@ -48,6 +49,7 @@ function isPulsingSourceOperation(
 
 interface GardenBedViewProps {
 	bed: GardenBed
+	plants: Plant[]
 	edgeIndicators?: {
 		id: string
 		plantAId: string
@@ -58,7 +60,13 @@ interface GardenBedViewProps {
 	[k: string]: unknown
 }
 
-const { bed, edgeIndicators = [], colSpan = 1, ...rest }: GardenBedViewProps = $props()
+const {
+	bed,
+	plants,
+	edgeIndicators = [],
+	colSpan = 1,
+	...rest
+}: GardenBedViewProps = $props()
 
 // Map colSpan number to Tailwind class
 const colSpanClass = $derived(
@@ -120,12 +128,39 @@ const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
 function isValidPlacement(x: number, y: number, size: number): boolean {
 	// For existing plants, exclude the dragged plant from collision detection
 	const skipId = $genericDragState.draggedExistingItem?.id
-	return layout.isValidPlacement(x, y, size, bed.plantPlacements, skipId)
+	// Convert PlantPlacement array to expected format for the layout calculator
+	const placementsWithSize = bed.plantPlacements.map((placement) => {
+		const plant = plants.find((p) => p.id === placement.plantId)
+		return {
+			x: placement.x,
+			y: placement.y,
+			id: placement.id,
+			plantTile: {
+				size: plant ? getPlantSize(plant) : 1,
+			},
+		}
+	})
+	return layout.isValidPlacement(x, y, size, placementsWithSize, skipId)
 }
 
 let edgeBorders = $state<Border[]>([])
 $effect(() => {
-	const newBorders = calculateEdgeBorders(bed, edgeIndicators, layout)
+	// Convert GardenBed to expected format for calculateEdgeBorders
+	const bedWithSizes = {
+		...bed,
+		plantPlacements: bed.plantPlacements.map((placement) => {
+			const plant = plants.find((p) => p.id === placement.plantId)
+			return {
+				x: placement.x,
+				y: placement.y,
+				id: placement.id,
+				plantTile: {
+					size: plant ? getPlantSize(plant) : 1,
+				},
+			}
+		}),
+	}
+	const newBorders = calculateEdgeBorders(bedWithSizes, edgeIndicators, layout)
 	if (
 		newBorders.length !== edgeBorders.length ||
 		newBorders.some((b, i) => JSON.stringify(b) !== JSON.stringify(edgeBorders[i]))
@@ -196,7 +231,7 @@ function handleDropProp(payload: DropEventPayload) {
 		return
 	}
 	const { item, x, y } = payload
-	const itemSize = (item as GardenItem).size ?? 1
+	const itemSize = getPlantSize(item as Plant)
 
 	// Perform local placement validation (e.g., collision, bounds).
 	// This is a preliminary check. The full async validation will be done by GardenView.
@@ -458,7 +493,9 @@ function handleDropProp(payload: DropEventPayload) {
 							{@const draggedItemData =
 								$genericDragState.draggedNewItem ??
 								$genericDragState.draggedExistingItem?.itemData}
-							{@const itemSize = (draggedItemData as GardenItem | null)?.size ?? 1}
+							{@const itemSize = draggedItemData
+								? getPlantSize(draggedItemData as Plant)
+								: 1}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: $genericDragState.highlightedCell.x,
 								y: $genericDragState.highlightedCell.y,
@@ -484,53 +521,111 @@ function handleDropProp(payload: DropEventPayload) {
 							></div>
 						{/if}
 						{#each bed.plantPlacements as placement (placement.id)}
-							{@const existingGardenItem = plantPlacementToExistingGardenItem(placement)}
-							{@const itemDataSize = existingGardenItem.itemData.size || 1}
-							{@const tileLayout = layout.getTileLayoutInfo({
-								x: placement.x,
-								y: placement.y,
-								size: itemDataSize,
-							})}
-							{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-								x: placement.x,
-								y: placement.y,
-								size: itemDataSize,
-								strokeWidth: 2,
-							})}
-
-							{@const corners = layout.getTileFrameCornerPositions({
-								x: placement.x,
-								y: placement.y,
-								size: itemDataSize,
-								bedWidth: bed.width,
-								bedHeight: bed.height,
-							})}
-							{@const borderRadiusStyle = corners
-								.map((corner) => `border-${corner}-radius: 8px;`)
-								.join(' ')}
-							{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
-							{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
-							<GenericDraggable
-								itemData={existingGardenItem.itemData}
-								existingItemInstance={existingGardenItem}
-								sourceZoneId={bed.id}
-							>
+							{@const plant = plants.find((p) => p.id === placement.plantId)}
+							{#if plant}
+								{@const existingGardenItem = plantPlacementToExistingGardenItem(
+									placement,
+									plant,
+								)}
+								{@const itemDataSize = getPlantSize(existingGardenItem.itemData)}
+								{@const tileLayout = layout.getTileLayoutInfo({
+									x: placement.x,
+									y: placement.y,
+									size: itemDataSize,
+								})}
+								{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+									x: placement.x,
+									y: placement.y,
+									size: itemDataSize,
+									strokeWidth: 2,
+								})}
+								{@const _ = console.log('[GardenBedView] Rendering plant tile:', {
+									placementId: placement.id,
+									plantId: plant.id,
+									displayName: plant.displayName,
+									plantingDistanceInFeet: plant.plantingDistanceInFeet,
+									calculatedSize: itemDataSize,
+									position: { x: placement.x, y: placement.y },
+									tileLayoutPixels: {
+										svgX: tileLayout.svgX,
+										svgY: tileLayout.svgY,
+										width: tileLayout.width,
+										height: tileLayout.height
+									},
+									overlayLayoutPixels: {
+										svgX: overlayLayout.svgX,
+										svgY: overlayLayout.svgY,
+										width: overlayLayout.width,
+										height: overlayLayout.height
+									}
+								})}
+								{@const corners = layout.getTileFrameCornerPositions({
+									x: placement.x,
+									y: placement.y,
+									size: itemDataSize,
+									bedWidth: bed.width,
+									bedHeight: bed.height,
+								})}
+								{@const borderRadiusStyle = corners
+									.map((corner) => `border-${corner}-radius: 8px;`)
+									.join(' ')}
+								{@const computedStyles = getTileComputedStyles(
+									placement.id,
+									overlayLayout,
+								)}
+								{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
+								<GenericDraggable
+									itemData={existingGardenItem.itemData}
+									existingItemInstance={existingGardenItem}
+									sourceZoneId={bed.id}
+								>
+									<div
+										class="tile-overlay__tile"
+										style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
+									>
+										<PlantPlacementTile
+											plantPlacement={existingGardenItem}
+											sizePx={tileLayout.width}
+											isSourceOfPendingMoveOrClone={isPendingSource}
+										/>
+									</div>
+								</GenericDraggable>
+							{:else}
+								<!-- Render placeholder for missing plant data -->
+								{@const _ = console.warn(
+									`[GardenBedView] Plant not found for placement ID ${placement.id} with plantId ${placement.plantId}. Available plant IDs:`,
+									plants.map((p) => p.id),
+								)}
+								{@const tileLayout = layout.getTileLayoutInfo({
+									x: placement.x,
+									y: placement.y,
+									size: 1, // Default size for missing plants
+								})}
+								{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+									x: placement.x,
+									y: placement.y,
+									size: 1,
+									strokeWidth: 2,
+								})}
 								<div
 									class="tile-overlay__tile"
-									style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
+									style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 2; background: #ff0000; opacity: 0.5; border: 2px solid #000;"
+									title="Missing plant data for ID: {placement.plantId}"
 								>
-									<PlantPlacementTile
-										plantPlacement={existingGardenItem}
-										sizePx={tileLayout.width}
-										isSourceOfPendingMoveOrClone={isPendingSource}
-									/>
+									<div
+										style="color: white; text-align: center; font-size: 8px; padding: 2px;"
+									>
+										Missing Plant
+										<br />
+										ID: {placement.plantId}
+									</div>
 								</div>
-							</GenericDraggable>
+							{/if}
 						{/each}
 
 						<!-- Pending Operations -->
 						{#each $genericPendingOperations.filter((op) => op.zoneId === bed.id) as operation (operation.id)}
-							{@const itemOpSize = (operation.item as GardenItem).size ?? 1}
+							{@const itemOpSize = getPlantSize(operation.item as Plant)}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
 								y: operation.y || 0,

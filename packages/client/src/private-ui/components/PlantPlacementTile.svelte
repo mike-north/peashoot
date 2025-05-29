@@ -10,7 +10,6 @@ interface Props {
 	sizePx?: number // SVG width (cellWidth * size)
 	isSourceOfPendingMoveOrClone?: boolean // New prop
 }
-
 // Use destructured props, providing defaults
 let {
 	plantPlacement,
@@ -23,32 +22,24 @@ let {
 // Access the core plant data via itemData
 const corePlantData = $derived(plantPlacement.itemData)
 
-// Generate CSS variable name from plant family and color variant
-const getPlantColorVariable = (familyName: string, colorVariant: string): string => {
-	return `--color-${familyName}-${colorVariant}`
-}
-
-// Compute the background color CSS variable (reactive)
-const backgroundColorVar = $derived(
-	getPlantColorVariable(
-		corePlantData.plantFamily.name,
-		corePlantData.plantFamily.colorVariant,
-	),
-)
-
-// Determine if we need white text for dark backgrounds
-const isDarkBackground = (colorVariant: string): boolean => {
-	return ['dark', 'red', 'purple', 'brown'].includes(colorVariant)
-}
-
-// Use size from the core itemData, or the instance, or default
-const itemSize = $derived(plantPlacement.size ?? corePlantData.size ?? 1)
-const iconDisplaySize = $derived(sizePx * 0.3)
+// Use size from the core itemData using plantingDistanceInFeet
+const itemSize = $derived(plantPlacement.size ?? corePlantData.plantingDistanceInFeet)
+const iconDisplaySize = $derived(sizePx * 0.9)
 const iconX = $derived(xPos + sizePx / 2)
 const iconY = $derived(yPos + sizePx / 2)
-const textColor = $derived(
-	isDarkBackground(corePlantData.plantFamily.colorVariant) ? 'white' : '#4b4e6d',
-)
+
+// Debug logging for missing background colors
+$effect(() => {
+	if (!corePlantData.presentation?.accentColor) {
+		console.warn(`[PlantPlacementTile] Missing accentColor for plant:`, {
+			plantId: corePlantData.id,
+			displayName: corePlantData.displayName,
+			family: corePlantData.family,
+			presentation: corePlantData.presentation,
+			fullPlantData: corePlantData
+		})
+	}
+})
 </script>
 
 <style lang="scss">
@@ -80,7 +71,7 @@ const textColor = $derived(
 		fill-opacity: 0.7;
 	}
 	&__background {
-		fill-opacity: 0.3;
+		fill-opacity: 0.6;
 	}
 }
 </style>
@@ -90,6 +81,8 @@ const textColor = $derived(
 	height="100%"
 	viewBox={`0 0 ${sizePx} ${sizePx}`}
 	class="plant-tile"
+	data-plant-family={corePlantData.family}
+	data-plant-color-variant={corePlantData.variant}
 	class:is-pending-source={isSourceOfPendingMoveOrClone}
 >
 	<!-- Tile background -->
@@ -99,14 +92,16 @@ const textColor = $derived(
 		width={sizePx}
 		height={sizePx}
 		class="plant-tile__background"
-		style={`fill: var(${backgroundColorVar})`}
+		style={`fill: ${corePlantData.presentation.accentColor}; opacity: 0.3;`}
 	/>
 	<!-- Plant icon -->
 	{#if corePlantData}
-		<circle
-			cx={iconX}
-			cy={iconY}
-			r={iconDisplaySize / 2}
+		<image
+			href={`plant-icons/${corePlantData.presentation.tileIconPath}`}
+			x={iconX - iconDisplaySize / 2}
+			y={iconY - iconDisplaySize / 2}
+			width={iconDisplaySize}
+			height={iconDisplaySize}
 			class="plant-tile__icon"
 			opacity="0.8"
 		/>
@@ -117,9 +112,9 @@ const textColor = $derived(
 			text-anchor="middle"
 			class="plant-tile__name"
 			font-size={Math.max(8, sizePx / 6)}
-			fill={textColor}
+			fill="white"
 		>
-			{corePlantData.name}
+			{corePlantData.displayName}
 		</text>
 		<!-- Size indicator for multi-cell plants -->
 		{#if itemSize > 1}

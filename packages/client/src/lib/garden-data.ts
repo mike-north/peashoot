@@ -25,7 +25,7 @@ export async function fetchGardens(): Promise<Garden[]> {
 				{
 					id: 'bed_-2',
 					width: 12,
-					height: 3,
+					height: 2,
 					waterLevel: 0,
 					sunLevel: 0,
 					plantPlacements: [],

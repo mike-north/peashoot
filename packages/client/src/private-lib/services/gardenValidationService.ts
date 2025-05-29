@@ -1,9 +1,10 @@
 import type { GardenBed } from '../garden-bed'
 import type { PlantPlacement } from '../plant-placement'
-import type { Garden } from '../garden'
-import type { GardenAsyncValidationFunction, GardenValidationContext } from '../../private-ui/state/gardenDragState'
+import type {
+	GardenAsyncValidationFunction,
+	GardenValidationContext,
+} from '../../private-ui/state/gardenDragState'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
-import { AsyncValidationError } from '../../errors/async-validation'
 import { UnreachableError } from '../../errors/unreachabe'
 
 interface PlacementValidityResult {
@@ -53,11 +54,11 @@ export class GardenValidationService {
 	createAsyncValidator(): GardenAsyncValidationFunction {
 		return async (context: GardenValidationContext) => {
 			await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
-			
+
 			if (!context.applicationContext) {
 				throw new Error('Garden application context not provided in validation')
 			}
-			
+
 			const currentGarden = context.applicationContext.garden
 
 			return new Promise<void>((resolve, reject) => {
@@ -68,7 +69,7 @@ export class GardenValidationService {
 								if (Math.random() > 0.02) resolve()
 								else reject(new Error('Plant is too established to move within bed'))
 								break
-								
+
 							case 'item-move-across-zones': {
 								const targetBed = currentGarden.beds.find(
 									(b: GardenBed) => b.id === context.targetZoneId,
@@ -86,7 +87,9 @@ export class GardenValidationService {
 									context.item.size === undefined
 								) {
 									reject(
-										new Error('Missing target coordinates or item size for collision check.'),
+										new Error(
+											'Missing target coordinates or item size for collision check.',
+										),
 									)
 									return
 								}
@@ -101,13 +104,16 @@ export class GardenValidationService {
 									reject(new Error(`Cannot move plant: ${placementCheck.reason}`))
 									return
 								}
-								if (context.item.plantFamily.name === 'tomatoes' && targetBed.sunLevel < 3) {
+								if (
+									context.item.plantFamily.name === 'tomatoes' &&
+									targetBed.sunLevel < 3
+								) {
 									reject(new Error('Target bed has insufficient sunlight for tomatoes'))
 								} else if (Math.random() > 0.1) resolve()
 								else reject(new Error('Soil compatibility issue between beds'))
 								break
 							}
-							
+
 							case 'item-add-to-zone': {
 								const addTargetBed = currentGarden.beds.find(
 									(b: GardenBed) => b.id === context.targetZoneId,
@@ -124,12 +130,13 @@ export class GardenValidationService {
 								)
 								const totalCells = addTargetBed.width * addTargetBed.height
 								const occupancyRate = occupiedCells / totalCells
-								if (occupancyRate > 0.8) reject(new Error('Bed is too crowded for new plants'))
+								if (occupancyRate > 0.8)
+									reject(new Error('Bed is too crowded for new plants'))
 								else if (Math.random() > 0.05) resolve()
 								else reject(new Error('Current season not suitable for this plant'))
 								break
 							}
-							
+
 							case 'item-remove-from-zone': {
 								const hasEdgeIndicators = currentGarden.edgeIndicators.some(
 									(edge) =>
@@ -141,7 +148,7 @@ export class GardenValidationService {
 								else resolve()
 								break
 							}
-							
+
 							case 'item-clone-in-zone': {
 								const cloneTargetBed = currentGarden.beds.find(
 									(b: GardenBed) => b.id === context.targetZoneId,
@@ -182,27 +189,37 @@ export class GardenValidationService {
 								const totalCells = cloneTargetBed.width * cloneTargetBed.height
 								const occupancyRate = occupiedCells / totalCells
 								if (occupancyRate > 0.75)
-									reject(new Error('Target bed is too crowded for cloning (capacity check)'))
+									reject(
+										new Error('Target bed is too crowded for cloning (capacity check)'),
+									)
 								else if (Math.random() > 0.12) resolve()
 								else
 									reject(
-										new Error('Plant genetics not stable enough for cloning (random check)'),
+										new Error(
+											'Plant genetics not stable enough for cloning (random check)',
+										),
 									)
 								break
 							}
-							
+
 							default:
 								console.warn(
 									'[GardenValidationService] Unknown operationType in context:',
 									context.operationType,
 								)
-								reject(new UnreachableError(context.operationType, `Unknown operation type`))
+								reject(
+									new UnreachableError(context.operationType, `Unknown operation type`),
+								)
 						}
-					} catch (error) {
-						reject(error)
+					} catch (error: unknown) {
+						if (error instanceof Error) {
+							reject(error)
+						} else {
+							reject(new Error(`Unknown error: ${String(error)}`))
+						}
 					}
 				}, 200)
 			})
 		}
 	}
-} 
+}

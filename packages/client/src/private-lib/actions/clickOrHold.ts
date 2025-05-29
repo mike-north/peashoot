@@ -13,18 +13,20 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 ) => {
 	let timer: number | null = null
 	let isDragStarted = false
-	const { holdDuration } = options
+	let hasMouseLeft = false
+	let currentOptions = options
 
 	function handleMouseDown(event: MouseEvent) {
 		event.preventDefault()
 		isDragStarted = false
+		hasMouseLeft = false
 
 		timer = window.setTimeout(() => {
 			isDragStarted = true
-			if (options.onHold) {
-				options.onHold(event)
+			if (currentOptions.onHold) {
+				currentOptions.onHold(event)
 			}
-		}, holdDuration)
+		}, currentOptions.holdDuration ?? DEFAULT_HOLD_DURATION_MS)
 	}
 
 	function handleMouseUp(event: MouseEvent) {
@@ -33,10 +35,12 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 			timer = null
 		}
 
-		if (!isDragStarted && options.onClick) {
-			options.onClick(event)
+		// Only trigger click if drag wasn't started and mouse hasn't left the element
+		if (!isDragStarted && !hasMouseLeft && currentOptions.onClick) {
+			currentOptions.onClick(event)
 		}
 		isDragStarted = false
+		hasMouseLeft = false
 	}
 
 	function handleMouseLeave() {
@@ -44,21 +48,22 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 			window.clearTimeout(timer)
 			timer = null
 		}
-		// isDragStarted can remain true if a hold was initiated and mouse left
+		hasMouseLeft = true
 	}
 
 	function handleTouchStart(event: TouchEvent) {
 		event.preventDefault()
 		isDragStarted = false
+		hasMouseLeft = false
 
 		timer = window.setTimeout(() => {
 			isDragStarted = true
-			if (options.onHold) {
+			if (currentOptions.onHold) {
 				// We need to synthesize a MouseEvent or adapt onHold to accept TouchEvent
 				// For now, let's assume onHold can handle it or we adapt it later
-				options.onHold(event as unknown as MouseEvent)
+				currentOptions.onHold(event as unknown as MouseEvent)
 			}
-		}, holdDuration)
+		}, currentOptions.holdDuration ?? DEFAULT_HOLD_DURATION_MS)
 	}
 
 	function handleTouchEnd(event: TouchEvent) {
@@ -67,11 +72,12 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 			timer = null
 		}
 
-		if (!isDragStarted && options.onClick) {
+		if (!isDragStarted && !hasMouseLeft && currentOptions.onClick) {
 			// We need to synthesize a MouseEvent or adapt onClick to accept TouchEvent
-			options.onClick(event as unknown as MouseEvent)
+			currentOptions.onClick(event as unknown as MouseEvent)
 		}
 		isDragStarted = false
+		hasMouseLeft = false
 	}
 
 	function handleContextMenu(event: Event) {
@@ -87,7 +93,7 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 
 	return {
 		update(newOptions: ClickOrHoldOptions) {
-			options = newOptions
+			currentOptions = newOptions
 		},
 		destroy() {
 			node.removeEventListener('mousedown', handleMouseDown)

@@ -10,11 +10,9 @@ import {
 	plantToGardenItem,
 } from '../state/gardenDragState'
 import { clickOrHold } from '../../private-lib/actions/clickOrHold'
-import type { IPlantFamily } from '../../../../types/dist'
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 interface PlantToolbarProps {
-	plantFamilies: IPlantFamily[]
+	plantFamilies: PlantToolbarPlantFamily[]
 	[k: string]: unknown
 }
 

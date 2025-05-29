@@ -1,19 +1,19 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { writable, get } from 'svelte/store'
-import { deleteZoneDragEvents } from '../src/lib/actions/deleteZoneDragEvents.js'
+import { deleteZoneDragEvents } from '../src/private-lib/actions/deleteZoneDragEvents.js'
 import type { ActionReturn } from 'svelte/action'
 import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,
-} from '../src/lib/dnd/types.js'
-import * as dndState from '../src/lib/dnd/state.js'
+} from '../src/private-lib/dnd/types.js'
+import { isDraggingExistingItem } from '../src/private-lib/dnd/state.js'
 
 // Mock the isDraggingExistingItem function from the correct module
-vi.mock('../src/lib/dnd/state.js', async (importOriginal) => {
-	const actual: typeof dndState = await importOriginal()
+vi.mock('../src/private-lib/dnd/state.js', async (importOriginal) => {
+	const actual = await importOriginal()
 	return {
-		...actual,
+		...(actual as object),
 		isDraggingExistingItem: vi.fn(),
 	}
 })
@@ -27,7 +27,7 @@ interface DeleteZoneOptions {
 }
 
 // Use vi.mocked for typed mock
-const mockedIsDraggingExistingItem = vi.mocked(dndState.isDraggingExistingItem)
+const mockedIsDraggingExistingItem = vi.mocked(isDraggingExistingItem)
 
 describe('deleteZoneDragEvents', () => {
 	let node: HTMLElement
@@ -66,7 +66,10 @@ describe('deleteZoneDragEvents', () => {
 	})
 
 	const mountAction = (options: DeleteZoneOptions) => {
-		action = deleteZoneDragEvents(node, options) as { update?(...args: any[]): void; destroy?(): void; };
+		action = deleteZoneDragEvents(node, options) as {
+			update?(...args: unknown[]): void
+			destroy?(): void
+		}
 	}
 
 	it('should add and remove event listeners on mount and destroy', () => {

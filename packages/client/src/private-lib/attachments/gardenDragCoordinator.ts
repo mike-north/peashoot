@@ -23,7 +23,7 @@ interface GardenDragCoordinatorOptions {
 export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): Attachment {
 	return (element) => {
 		const htmlElement = element as HTMLElement
-		let currentOptions = options
+		const currentOptions = options
 
 		function handleMouseMove(event: MouseEvent) {
 			const currentCloneMode = event.metaKey || event.altKey
@@ -48,7 +48,9 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 			} else {
 				// Iterate over beds to find the target
 				for (const bed of currentOptions.beds) {
-					const bedComponentElement = htmlElement.querySelector(`[data-bed-id='${bed.id}']`)
+					const bedComponentElement = htmlElement.querySelector(
+						`[data-bed-id='${bed.id}']`,
+					)
 					const svgElement = bedComponentElement?.querySelector('svg')
 
 					if (bedComponentElement && svgElement) {

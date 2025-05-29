@@ -5,8 +5,8 @@ import {
 	getSharedBorders,
 	calculateEdgeBorders,
 	isValidDrop,
-} from '../src/lib/garden-bed-layout-calculator.js'
-import type { GardenBed } from '../src/lib/garden-bed.js'
+} from '../src/private-lib/garden-bed-layout-calculator.js'
+import type { GardenBed } from '../src/private-lib/garden-bed.js'
 
 const layoutParams = { width: 4, height: 4 }
 const layout = new GardenBedLayoutCalculator(layoutParams)

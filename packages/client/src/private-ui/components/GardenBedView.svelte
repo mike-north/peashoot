@@ -54,10 +54,31 @@ interface GardenBedViewProps {
 		plantBId: string
 		color: string
 	}[]
+	colSpan?: number
 	[k: string]: unknown
 }
 
-const { bed, edgeIndicators = [], ...rest }: GardenBedViewProps = $props()
+const { bed, edgeIndicators = [], colSpan = 1, ...rest }: GardenBedViewProps = $props()
+
+// Map colSpan number to Tailwind class
+const colSpanClass = $derived(
+	(() => {
+		switch (colSpan) {
+			case 1:
+				return 'col-span-1'
+			case 2:
+				return 'col-span-2'
+			case 3:
+				return 'col-span-3'
+			case 4:
+				return 'col-span-4'
+			case 5:
+				return 'col-span-5'
+			default:
+				return 'col-span-1'
+		}
+	})(),
+)
 
 // Identify plant placements in this bed that are the source of a pending move or clone
 let pendingSourcePlantIds = $derived(
@@ -303,7 +324,7 @@ function handleDropProp(payload: DropEventPayload) {
 }
 </style>
 
-<div class="raised-bed card bg-base-100 shadow-sm {rest.class}">
+<div class="raised-bed card bg-base-100 shadow-sm {colSpanClass} {rest.class || ''}">
 	<div class="figure-container">
 		<figure
 			class="raised-bed__diagram"
@@ -359,9 +380,12 @@ function handleDropProp(payload: DropEventPayload) {
 						opacity="0.95"
 					/>
 				{/each}
-				{#if bed.width <= 8 && bed.height <= 8}
-					<g id="raised-bed__diagram__coordinate-labels" opacity="0.6">
-						{#each Array.from({ length: bed.width }, (_, i) => i) as x (`${bed.id}-${x}`)}
+				<!-- Coordinate Labels -->
+				<g id="raised-bed__diagram__coordinate-labels" opacity="0.6">
+					<!-- X-axis labels (below) -->
+					{#if bed.width <= 16}
+						<!-- Show all labels for beds up to 16 wide -->
+						{#each Array.from({ length: bed.width }, (_, i) => i) as x (`${bed.id}-x-${x}`)}
 							<text
 								x={gardenToSvgX(x) + cellWidth / 2}
 								y={svgHeight - 5}
@@ -373,7 +397,26 @@ function handleDropProp(payload: DropEventPayload) {
 								{x}
 							</text>
 						{/each}
-						{#each Array.from({ length: bed.height }, (_, i) => i) as y (`${bed.id}-${y}`)}
+					{:else}
+						<!-- For very wide beds, show labels every 5 cells -->
+						{#each Array.from({ length: bed.width }, (_, i) => i).filter((x) => x % 5 === 0 || x === bed.width - 1) as x (`${bed.id}-x-${x}`)}
+							<text
+								x={gardenToSvgX(x) + cellWidth / 2}
+								y={svgHeight - 5}
+								text-anchor="middle"
+								font-family="Arial, sans-serif"
+								font-size="10"
+								class="slate-label-gray"
+							>
+								{x}
+							</text>
+						{/each}
+					{/if}
+
+					<!-- Y-axis labels (left) -->
+					{#if bed.height <= 16}
+						<!-- Show all labels for beds up to 16 tall -->
+						{#each Array.from({ length: bed.height }, (_, i) => i) as y (`${bed.id}-y-${y}`)}
 							<text
 								x="5"
 								y={gardenToSvgY(y) + cellHeight / 2 + 3}
@@ -385,8 +428,22 @@ function handleDropProp(payload: DropEventPayload) {
 								{y}
 							</text>
 						{/each}
-					</g>
-				{/if}
+					{:else}
+						<!-- For very tall beds, show labels every 5 cells -->
+						{#each Array.from({ length: bed.height }, (_, i) => i).filter((y) => y % 5 === 0 || y === bed.height - 1) as y (`${bed.id}-y-${y}`)}
+							<text
+								x="5"
+								y={gardenToSvgY(y) + cellHeight / 2 + 3}
+								text-anchor="middle"
+								font-family="Arial, sans-serif"
+								font-size="10"
+								class="slate-label-gray"
+							>
+								{y}
+							</text>
+						{/each}
+					{/if}
+				</g>
 			</svg>
 
 			<!-- HTML Plant Tiles (middle layer) -->

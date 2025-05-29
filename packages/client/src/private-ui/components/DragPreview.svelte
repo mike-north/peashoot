@@ -1,11 +1,11 @@
 <script lang="ts">
 import PlantPlacementTile from './PlantPlacementTile.svelte'
 import { dragState as genericDragState } from '../state/dragState'
-import { 
-	isDragStatePopulated, 
+import {
+	isDragStatePopulated,
 	getDraggedItemInfo,
 	isDraggingExistingItem,
-	isDraggingNewItem
+	isDraggingNewItem,
 } from '../state/dragState'
 import type { GardenDragState } from '../state/gardenDragState'
 import type { GardenBed } from '../../private-lib/garden-bed'
@@ -20,65 +20,66 @@ const { beds }: Props = $props()
 
 let currentDragState = $derived($genericDragState as GardenDragState)
 let draggedInfo = $derived(
-	isDragStatePopulated(currentDragState) ? getDraggedItemInfo(currentDragState) : null
+	isDragStatePopulated(currentDragState) ? getDraggedItemInfo(currentDragState) : null,
 )
 
 let previewPosition = $derived.by(() => {
 	if (!draggedInfo) return null
-	
+
 	const effectiveSize = draggedInfo.effectiveSize
 	const cellSize = DEFAULT_LAYOUT_PARAMS.cellSize
 	const previewSize = cellSize * effectiveSize
-	
-	const shouldAlignToGrid = currentDragState.targetZoneId && currentDragState.highlightedCell
-	
+
+	const shouldAlignToGrid =
+		currentDragState.targetZoneId && currentDragState.highlightedCell
+
 	if (!shouldAlignToGrid) {
 		return {
 			x: currentDragState.dragPosition.x - previewSize / 2,
 			y: currentDragState.dragPosition.y - previewSize / 2,
-			size: previewSize
+			size: previewSize,
 		}
 	}
-	
+
 	// Calculate grid-aligned position
-	const targetBed = beds.find(b => b.id === currentDragState.targetZoneId)
+	const targetBed = beds.find((b) => b.id === currentDragState.targetZoneId)
 	if (!targetBed || !currentDragState.highlightedCell) {
 		return {
 			x: currentDragState.dragPosition.x - previewSize / 2,
 			y: currentDragState.dragPosition.y - previewSize / 2,
-			size: previewSize
+			size: previewSize,
 		}
 	}
-	
+
 	const layout = new GardenBedLayoutCalculator({
 		width: targetBed.width,
 		height: targetBed.height,
 		...DEFAULT_LAYOUT_PARAMS,
 	})
-	
+
 	const tileLayout = layout.getTileLayoutInfo({
 		x: currentDragState.highlightedCell.x,
 		y: currentDragState.highlightedCell.y,
 		size: effectiveSize,
 	})
-	
+
 	const svgElement = document.querySelector<SVGSVGElement>(
 		`[data-bed-id='${targetBed.id}'] svg`,
 	)
-	
+
 	if (!svgElement) {
 		return {
 			x: currentDragState.dragPosition.x - previewSize / 2,
 			y: currentDragState.dragPosition.y - previewSize / 2,
-			size: previewSize
+			size: previewSize,
 		}
 	}
-	
+
 	const svgRect = svgElement.getBoundingClientRect()
 	return {
 		x: svgRect.left + tileLayout.svgX,
 		y: svgRect.top + tileLayout.svgY,
-		size: previewSize
+		size: previewSize,
 	}
 })
 </script>
@@ -109,7 +110,7 @@ let previewPosition = $derived.by(() => {
 	justify-content: center;
 	font-size: 12px;
 	font-weight: bold;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 </style>
 
@@ -143,4 +144,4 @@ let previewPosition = $derived.by(() => {
 			/>
 		{/if}
 	</div>
-{/if} 
+{/if}

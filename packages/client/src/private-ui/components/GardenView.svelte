@@ -16,6 +16,11 @@ import type {
 } from '../state/gardenDragState'
 import { gardenDragCoordinator } from '../../private-lib/attachments/gardenDragCoordinator'
 import { fetchPlantFamilies } from '../../lib/plant-data'
+import {
+	addPendingOperation,
+	updatePendingOperation,
+	removePendingOperation,
+} from '../../private-lib/dnd/validation'
 
 interface GardenProps {
 	garden: Garden
@@ -92,6 +97,17 @@ async function handleDrop(dropInfo: {
 	const { sourceZoneId, draggedExistingItem } = currentDragState
 	// Handle different drop scenarios
 	if (sourceZoneId && dropInfo.targetType === 'delete-zone' && draggedExistingItem) {
+		// Create pending operation for removal
+		const pendingOpId = addPendingOperation({
+			type: 'removal',
+			state: 'pending',
+			zoneId: sourceZoneId,
+			item: draggedExistingItem.itemData,
+			size: (draggedExistingItem.itemData as GardenItem).size ?? 1,
+			originalSourceZoneId: sourceZoneId,
+			originalInstanceId: draggedExistingItem.id,
+		})
+
 		try {
 			await onRequestRemoval({
 				itemData: draggedExistingItem.itemData as GardenItem,
@@ -99,10 +115,20 @@ async function handleDrop(dropInfo: {
 				sourceZoneId: sourceZoneId,
 				operationType: 'item-remove-from-zone',
 			})
+			// Update to success state
+			updatePendingOperation(pendingOpId, 'success')
 			// Perform the actual deletion after successful validation
-			onDeletePlant(draggedExistingItem.id, sourceZoneId)
+			setTimeout(() => {
+				onDeletePlant(draggedExistingItem.id, sourceZoneId)
+				removePendingOperation(pendingOpId)
+			}, 1000) // Show success for 1 second
 		} catch (error) {
 			console.error('Removal validation failed:', error)
+			// Update to error state
+			updatePendingOperation(pendingOpId, 'error')
+			setTimeout(() => {
+				removePendingOperation(pendingOpId)
+			}, 2000) // Show error for 2 seconds
 		}
 	} else if (
 		dropInfo.targetType === 'drop-zone' &&
@@ -116,6 +142,19 @@ async function handleDrop(dropInfo: {
 			const sourceBedId = sourceZoneId
 
 			if (dropInfo.isCloneMode) {
+				// Create pending operation for cloning
+				const pendingOpId = addPendingOperation({
+					type: 'placement',
+					state: 'pending',
+					zoneId: dropInfo.targetZoneId,
+					item: existingItem.itemData,
+					size: (existingItem.itemData as GardenItem).size ?? 1,
+					x,
+					y,
+					originalSourceZoneId: sourceBedId,
+					originalInstanceId: existingItem.id,
+				})
+
 				try {
 					await onRequestCloning({
 						itemDataToClone: existingItem.itemData as GardenItem,
@@ -127,16 +166,45 @@ async function handleDrop(dropInfo: {
 						targetCloneY: y,
 						operationType: 'item-clone-in-zone',
 					})
+					// Update to success state
+					updatePendingOperation(pendingOpId, 'success')
 					// Perform the actual clone after successful validation
-					onAddNewPlant(dropInfo.targetZoneId, existingItem.itemData as GardenItem, x, y)
+					setTimeout(() => {
+						if (!dropInfo.targetZoneId) return
+						onAddNewPlant(
+							dropInfo.targetZoneId,
+							existingItem.itemData as GardenItem,
+							x,
+							y,
+						)
+						removePendingOperation(pendingOpId)
+					}, 1000) // Show success for 1 second
 				} catch (error) {
 					console.error('Cloning validation failed:', error)
+					// Update to error state
+					updatePendingOperation(pendingOpId, 'error')
+					setTimeout(() => {
+						removePendingOperation(pendingOpId)
+					}, 2000) // Show error for 2 seconds
 				}
 			} else {
 				const operationType =
 					sourceBedId === dropInfo.targetZoneId
 						? 'item-move-within-zone'
 						: 'item-move-across-zones'
+
+				// Create pending operation for move
+				const pendingOpId = addPendingOperation({
+					type: 'placement',
+					state: 'pending',
+					zoneId: dropInfo.targetZoneId,
+					item: existingItem.itemData,
+					size: (existingItem.itemData as GardenItem).size ?? 1,
+					x,
+					y,
+					originalSourceZoneId: sourceBedId,
+					originalInstanceId: existingItem.id,
+				})
 
 				try {
 					await onRequestPlacement({
@@ -148,6 +216,8 @@ async function handleDrop(dropInfo: {
 						originalInstanceId: existingItem.id,
 						sourceZoneId: sourceBedId,
 					})
+					// Update to success state
+					updatePendingOperation(pendingOpId, 'success')
 					// Perform the actual move after successful validation
 					if (operationType === 'item-move-within-zone') {
 						onMovePlantInBed(dropInfo.targetZoneId, existingItem.id, x, y)
@@ -160,11 +230,30 @@ async function handleDrop(dropInfo: {
 							y,
 						)
 					}
+					setTimeout(() => {
+						removePendingOperation(pendingOpId)
+					}, 1000) // Show success for 1 second
 				} catch (error) {
 					console.error('Placement validation failed:', error)
+					// Update to error state
+					updatePendingOperation(pendingOpId, 'error')
+					setTimeout(() => {
+						removePendingOperation(pendingOpId)
+					}, 2000) // Show error for 2 seconds
 				}
 			}
 		} else if (currentDragState.draggedNewItem) {
+			// Create pending operation for new plant
+			const pendingOpId = addPendingOperation({
+				type: 'placement',
+				state: 'pending',
+				zoneId: dropInfo.targetZoneId,
+				item: currentDragState.draggedNewItem,
+				size: (currentDragState.draggedNewItem as GardenItem).size ?? 1,
+				x,
+				y,
+			})
+
 			try {
 				await onRequestPlacement({
 					itemData: currentDragState.draggedNewItem as GardenItem,
@@ -173,15 +262,26 @@ async function handleDrop(dropInfo: {
 					y,
 					operationType: 'item-add-to-zone',
 				})
+				// Update to success state
+				updatePendingOperation(pendingOpId, 'success')
 				// Perform the actual add after successful validation
-				onAddNewPlant(
-					dropInfo.targetZoneId,
-					currentDragState.draggedNewItem as GardenItem,
-					x,
-					y,
-				)
+				setTimeout(() => {
+					if (!dropInfo.targetZoneId) return
+					onAddNewPlant(
+						dropInfo.targetZoneId,
+						currentDragState.draggedNewItem as GardenItem,
+						x,
+						y,
+					)
+					removePendingOperation(pendingOpId)
+				}, 1000) // Show success for 1 second
 			} catch (error) {
 				console.error('Placement validation failed:', error)
+				// Update to error state
+				updatePendingOperation(pendingOpId, 'error')
+				setTimeout(() => {
+					removePendingOperation(pendingOpId)
+				}, 2000) // Show error for 2 seconds
 			}
 		}
 	}
@@ -227,7 +327,9 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			},
 		})}
 	>
-		<div class="grid grid-flow-row-dense grid-cols-4 gap-4">
+		<div
+			class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+		>
 			{#each beds as bed (bed.id)}
 				<GardenBedView
 					bed={bed}

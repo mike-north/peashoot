@@ -12,7 +12,8 @@
 		"global.d.ts",
 		"packages/server/src/csp-solver._ts",
 		"packages/client/postcss.config.cjs",
-		"packages/client/tailwind.config.cjs"
+		"packages/client/tailwind.config.cjs",
+		"packages/client/tests/**/*"
 	],
 	"exclude": ["./node_modules/*", "./public/*", "coverage/**/*"]
 }

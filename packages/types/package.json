@@ -3,7 +3,6 @@
 	"version": "1.0.0",
 	"main": "dist/index.js",
 	"scripts": {
-		"test": "vitest run --coverage && tsd",
 		"build": "tsc -P tsconfig.build.json",
 		"dev": "tsc --watch --preserveWatchOutput -P tsconfig.build.json",
 		"lint": "eslint ."

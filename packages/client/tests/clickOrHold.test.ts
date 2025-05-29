@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { clickOrHold } from '../src/lib/actions/clickOrHold.js'
-import { DEFAULT_HOLD_DURATION_MS } from '../src/lib/dnd/constants.js'
+import { clickOrHold } from '../src/private-lib/actions/clickOrHold.js'
+import { DEFAULT_HOLD_DURATION_MS } from '../src/private-lib/dnd/constants.js'
 import type { ActionReturn } from 'svelte/action'
 
 interface ClickOrHoldOptions {
@@ -47,7 +47,9 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should call onClick when mouseup occurs before holdDuration', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		dispatchMouseEvent('mousedown')
 		vi.advanceTimersByTime(50)
 		const upEvent = dispatchMouseEvent('mouseup')
@@ -57,7 +59,9 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should call onHold when mousedown lasts longer than holdDuration', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		const downEvent = dispatchMouseEvent('mousedown')
 		vi.advanceTimersByTime(150)
 		expect(onHold).toHaveBeenCalledOnce()
@@ -69,14 +73,18 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should use DEFAULT_HOLD_DURATION_MS if holdDuration is not provided', () => {
-		action = clickOrHold(node, { onClick, onHold }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		dispatchMouseEvent('mousedown')
 		vi.advanceTimersByTime(DEFAULT_HOLD_DURATION_MS + 50)
 		expect(onHold).toHaveBeenCalledOnce()
 	})
 
 	it('should clear timer on mouseleave', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		dispatchMouseEvent('mousedown')
 		vi.advanceTimersByTime(50)
 		dispatchMouseEvent('mouseleave')
@@ -88,7 +96,9 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should prevent default on mousedown and touchstart', () => {
-		action = clickOrHold(node, { onClick, onHold }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		const mouseDownEvent = dispatchMouseEvent('mousedown')
 		expect(mouseDownEvent.defaultPrevented).toBe(true)
 		const touchStartEvent = dispatchTouchEvent('touchstart')
@@ -103,7 +113,9 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should update options via the update method', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		const newOnClick = vi.fn()
 		const newOnHold = vi.fn()
 		if (action && 'update' in action && typeof action.update === 'function') {
@@ -127,7 +139,9 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should correctly handle touch events for click', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		dispatchTouchEvent('touchstart')
 		vi.advanceTimersByTime(50)
 		const endEvent = dispatchTouchEvent('touchend')
@@ -137,7 +151,9 @@ describe('clickOrHold Action', () => {
 	})
 
 	it('should correctly handle touch events for hold', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		const startEvent = dispatchTouchEvent('touchstart')
 		vi.advanceTimersByTime(150)
 		expect(onHold).toHaveBeenCalledOnce()
@@ -150,7 +166,9 @@ describe('clickOrHold Action', () => {
 	it('should remove all event listeners on destroy', () => {
 		const addEventListenerSpy = vi.spyOn(node, 'addEventListener')
 		const removeEventListenerSpy = vi.spyOn(node, 'removeEventListener')
-		action = clickOrHold(node, { onClick, onHold }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 
 		const handlers: Record<string, EventListenerOrEventListenerObject | undefined> = {}
 		addEventListenerSpy.mock.calls.forEach((call) => {
@@ -176,7 +194,9 @@ describe('clickOrHold Action', () => {
 
 	it('should clear timer on destroy if active', () => {
 		const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout')
-		action = clickOrHold(node, { onHold, holdDuration: 100 }) as ActionReturn<ClickOrHoldOptions> | undefined
+		action = clickOrHold(node, { onHold, holdDuration: 100 }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
 		dispatchMouseEvent('mousedown') // Start timer
 		vi.advanceTimersByTime(50) // Timer is active but not fired
 

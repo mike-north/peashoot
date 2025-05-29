@@ -5,6 +5,7 @@ import type { Keyed } from './types/ui'
 import { DEFAULT_LAYOUT_PARAMS } from './layout-constants'
 import type { GardenBed } from './garden-bed'
 import type { PlantPlacement } from './plant-placement'
+import type { Garden } from './garden'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -539,4 +540,39 @@ export function isValidDrop(
 	})
 	const size = draggedPlant.plantTile.size || 1
 	return layout.isValidPlacement(x, y, size, targetBed.plantPlacements, draggedPlant.id)
+}
+
+export interface GardenBedViewCardSize {
+	maxCols: number
+	colSpan: number
+}
+
+export const gardenBedViewCardSizes: GardenBedViewCardSize[] = [
+	{ maxCols: 5, colSpan: 1 },
+	{ maxCols: 8, colSpan: 2 },
+	{ maxCols: 12, colSpan: 3 }, // Beds 9-12 wide
+	{ maxCols: 16, colSpan: 4 }, // Beds 13-16 wide
+	// For beds wider than 16, assume they should take the max available columns
+	// based on the current GardenView grid (e.g., 5 for 3xl:grid-cols-5)
+	// If GardenView's max columns change, this might need adjustment.
+	{ maxCols: Infinity, colSpan: 5 },
+]
+
+export function getGardenBedViewCardColSpan(maxCols: number): number | null {
+	for (const width of gardenBedViewCardSizes) {
+		if (maxCols <= width.maxCols) {
+			return width.colSpan
+		}
+	}
+	return null
+}
+
+export function calculateGardenBedViewColSpans(garden: Garden): Record<string, number> {
+	return garden.beds.reduce<Record<string, number>>((acc, bed) => {
+		const colSpan = getGardenBedViewCardColSpan(bed.width)
+		if (colSpan) {
+			acc[bed.id] = colSpan
+		}
+		return acc
+	}, {})
 }

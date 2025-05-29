@@ -9,6 +9,14 @@ import {
 	plantPlacementToExistingGardenItem,
 	plantToGardenItem,
 } from '../state/gardenDragState'
+import { clickOrHold } from '../../lib/actions/clickOrHold'
+
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+interface PlantToolbarProps {
+	[k: string]: unknown
+}
+
+const { ...rest }: PlantToolbarProps = $props()
 
 // Define available plant families with their variants and properties
 const plantFamilies = [
@@ -91,10 +99,6 @@ let selectedVariants: Record<string, string> = $state(
 // Track which dropdown is currently open
 let openDropdown: string | null = $state(null)
 
-// Track drag timing for click vs hold detection
-let dragTimer: number | null = null
-let isDragStarted = false
-
 // Toggle dropdown for a plant family
 function toggleDropdown(familyName: string) {
 	if (openDropdown === familyName) {
@@ -110,81 +114,14 @@ function selectVariant(familyName: string, variantName: string) {
 	openDropdown = null
 }
 
-// Handle mouse down with timing for click vs hold
-function handleTileMouseDown(familyName: string, event: MouseEvent) {
-	event.preventDefault()
-	isDragStarted = false
-
-	// Start timer for hold detection
-	dragTimer = window.setTimeout(() => {
-		// This is a hold - start drag
-		isDragStarted = true
-		handleToolbarDrag(familyName, event)
-	}, 200) // 200ms hold threshold
-}
-
-// Handle mouse up - if timer still running, it's a click
-function handleTileMouseUp(familyName: string, _event: MouseEvent) {
-	if (dragTimer) {
-		window.clearTimeout(dragTimer)
-		dragTimer = null
-	}
-
-	// If drag wasn't started and we have variants, it's a click to toggle dropdown
+// Handle starting drag from toolbar
+function handleToolbarDrag(familyName: string, event: MouseEvent) {
+	const variant = selectedVariants[familyName]
 	const family = plantFamilies.find((f) => f.name === familyName)
-	if (!isDragStarted && family && family.variants.length > 1) {
-		toggleDropdown(familyName)
-	}
+	if (!family) return
 
-	isDragStarted = false
-}
-
-// Handle variant mouse down with timing for click vs hold
-function handleVariantMouseDown(
-	familyName: string,
-	variantName: string,
-	event: MouseEvent,
-) {
-	event.preventDefault()
-	event.stopPropagation()
-	isDragStarted = false
-
-	// Start timer for hold detection
-	dragTimer = window.setTimeout(() => {
-		// This is a hold - select variant and start drag
-		isDragStarted = true
-		selectVariant(familyName, variantName)
-		handleToolbarDrag(familyName, event)
-	}, 200) // 200ms hold threshold
-}
-
-// Handle variant mouse up - if timer still running, it's a click to select
-function handleVariantMouseUp(
-	familyName: string,
-	variantName: string,
-	event: MouseEvent,
-) {
-	event.stopPropagation()
-
-	if (dragTimer) {
-		window.clearTimeout(dragTimer)
-		dragTimer = null
-	}
-
-	// If drag wasn't started, it's a click to select variant
-	if (!isDragStarted) {
-		selectVariant(familyName, variantName)
-	}
-
-	isDragStarted = false
-}
-
-// Handle mouse leave - clear timer if dragging out
-function handleTileMouseLeave() {
-	if (dragTimer) {
-		window.clearTimeout(dragTimer)
-		dragTimer = null
-	}
+	const gardenItem = plantToGardenItem(createPlant(familyName, variant))
+	dragManager.startDraggingNewItem(gardenItem, event)
 }
 
 // Close dropdown when clicking outside
@@ -228,16 +165,6 @@ function createToolbarPlantPlacement(
 
 // Calculate tile size for toolbar (always 1x1 display, but show size indicator)
 const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
-
-// Handle starting drag from toolbar
-function handleToolbarDrag(familyName: string, event: MouseEvent) {
-	const variant = selectedVariants[familyName]
-	const family = plantFamilies.find((f) => f.name === familyName)
-	if (!family) return
-
-	const gardenItem = plantToGardenItem(createPlant(familyName, variant))
-	dragManager.startDraggingNewItem(gardenItem, event)
-}
 </script>
 
 <style lang="scss">
@@ -264,7 +191,7 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 	&__grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-		gap: 12px;
+		// gap: 12px;
 	}
 
 	&__item {
@@ -489,7 +416,11 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 }
 </style>
 
-<div class="plant-toolbar" class:dragging={$dragState.draggedNewItem !== null}>
+<div
+	{...rest}
+	class="plant-toolbar {rest.class}"
+	class:dragging={$dragState.draggedNewItem !== null}
+>
 	<div class="plant-toolbar__title">Plant Toolbar</div>
 	<div class="plant-toolbar__grid">
 		{#each plantFamilies as family (family.name)}
@@ -508,19 +439,23 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 					class:plant-toolbar__tile-container--open={openDropdown === family.name}
 					role="button"
 					tabindex="0"
-					onmousedown={(e) => {
-						handleTileMouseDown(family.name, e)
+					use:clickOrHold={{
+						onClick: () => {
+							if (family.variants.length > 1) {
+								toggleDropdown(family.name)
+							}
+						},
+						onHold: (e) => {
+							handleToolbarDrag(family.name, e)
+						},
 					}}
-					onmouseup={(e) => {
-						handleTileMouseUp(family.name, e)
-					}}
-					onmouseleave={handleTileMouseLeave}
 					onkeydown={(e) => {
 						if (e.key === 'Enter' || e.key === ' ') {
 							e.preventDefault()
 							if (family.variants.length > 1) {
 								toggleDropdown(family.name)
 							} else {
+								// Synthesize a mousedown event for drag initiation on keydown for single variant items
 								const syntheticEvent = new MouseEvent('mousedown', {
 									clientX: 0,
 									clientY: 0,
@@ -557,17 +492,19 @@ function handleToolbarDrag(familyName: string, event: MouseEvent) {
 								class:plant-toolbar__tile-container--size-2={family.size === 2}
 								role="button"
 								tabindex="0"
-								onmousedown={(e) => {
-									handleVariantMouseDown(family.name, variant.name, e)
+								use:clickOrHold={{
+									onClick: () => {
+										selectVariant(family.name, variant.name)
+									},
+									onHold: (e) => {
+										selectVariant(family.name, variant.name) // Select first, then drag
+										handleToolbarDrag(family.name, e)
+									},
 								}}
-								onmouseup={(e) => {
-									handleVariantMouseUp(family.name, variant.name, e)
-								}}
-								onmouseleave={handleTileMouseLeave}
 								onkeydown={(e) => {
 									if (e.key === 'Enter' || e.key === ' ') {
 										e.preventDefault()
-										e.stopPropagation()
+										e.stopPropagation() // Prevent main tile keydown
 										selectVariant(family.name, variant.name)
 									}
 								}}

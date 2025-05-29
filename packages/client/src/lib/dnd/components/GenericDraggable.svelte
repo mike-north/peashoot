@@ -18,8 +18,7 @@ const { itemData, existingItemInstance, sourceZoneId, children }: Props = $props
 function handleMouseDown(event: MouseEvent) {
 	if (existingItemInstance && sourceZoneId) {
 		// Ensure that TExisting passed to dragManager matches its expectation
-		const typedExistingItem = existingItemInstance as ExistingDraggableItem<TItem>
-		dragManager.startDraggingExistingItem(typedExistingItem, sourceZoneId, event)
+		dragManager.startDraggingExistingItem(existingItemInstance, sourceZoneId, event)
 	} else {
 		dragManager.startDraggingNewItem(itemData, event)
 	}

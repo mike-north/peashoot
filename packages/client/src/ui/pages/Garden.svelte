@@ -21,6 +21,8 @@ import {
 	type GardenZoneContext,
 } from '../state/gardenDragState'
 import { UnreachableError } from '../../errors/unreachabe'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../lib/dnd/constants'
+import { AsyncValidationError } from '../../errors/async-validation'
 
 const { route }: { route: RouteResult } = $props()
 
@@ -41,6 +43,35 @@ let gardenInstance = $state<Garden>({
 		},
 	],
 	beds: [
+		{
+			id: 'bed_-2',
+			width: 12,
+			height: 3,
+			waterLevel: 0,
+			sunLevel: 0,
+			plantPlacements: [],
+		},
+		{
+			id: 'bed_-1',
+			width: 1,
+			height: 1,
+			waterLevel: 0,
+			sunLevel: 0,
+			plantPlacements: [
+				{
+					id: 'placeholder_000',
+					x: 0,
+					y: 0,
+					plantTile: {
+						id: 'lettuce_0',
+						name: 'lettuce',
+						icon: '🌱',
+						size: 1,
+						plantFamily: { name: 'lettuce', colorVariant: 'green' },
+					},
+				},
+			],
+		},
 		{
 			id: 'bed_0',
 			width: 1,
@@ -97,7 +128,40 @@ let gardenInstance = $state<Garden>({
 		},
 		{
 			id: 'bed_2',
-			width: 7,
+			width: 6,
+			height: 2,
+			waterLevel: 2,
+			sunLevel: 4,
+			plantPlacements: [
+				{
+					id: 'tomato_44',
+					x: 0,
+					y: 0,
+					plantTile: {
+						id: 'tomato',
+						name: 'tomato',
+						icon: '🍅',
+						size: 2,
+						plantFamily: { name: 'tomatoes', colorVariant: 'red' },
+					},
+				},
+				{
+					id: 'lettuce_44',
+					x: 2,
+					y: 0,
+					plantTile: {
+						id: 'lettuce',
+						name: 'lettuce',
+						icon: '🥬',
+						size: 1,
+						plantFamily: { name: 'lettuce', colorVariant: 'green' },
+					},
+				},
+			],
+		},
+		{
+			id: 'bed_3',
+			width: 12,
 			height: 4,
 			waterLevel: 3,
 			sunLevel: 3,
@@ -359,7 +423,7 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		handleAsyncValidationError(message)
-		throw error
+		throw new AsyncValidationError(`Error while handling placement request`, error)
 	}
 }
 
@@ -395,7 +459,7 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		handleAsyncValidationError(message)
-		throw error
+		throw new AsyncValidationError(`Error while handling removal request`, error)
 	}
 }
 
@@ -436,13 +500,14 @@ async function handleRequestCloning(details: CloningRequestDetails): Promise<voi
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		handleAsyncValidationError(message)
-		throw error
+		throw new AsyncValidationError(`Error while handling cloning request`, error)
 	}
 }
 
 const customAsyncValidation: GardenAsyncValidationFunction = async (
 	context: GardenValidationContext,
 ) => {
+	await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
 	if (!context.applicationContext) {
 		return Promise.reject(
 			new Error('Garden application context not provided in validation'),

@@ -12,7 +12,6 @@ const { route }: { route: RouteResult } = $props()
 <PageTitle route={route} />
 <div class="grid h-full place-items-center">
 	<div class="text-center">
-		<span class="text-2xl font-bold">Home</span>
 		<p class="mt-4">
 			Check out the <a href="/seed-catalog" class="link-primary link">seed catalog</a>
 			or

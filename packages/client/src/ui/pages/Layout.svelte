@@ -6,13 +6,11 @@ import LayoutSidebar from '../components/LayoutSidebar.svelte'
 </script>
 
 <div class="size-full">
-	<div class="flex h-full">
-		<LayoutSidebar />
+	<div class="flex flex-row h-full">
+		<LayoutSidebar class="flex-none" />
 
-		<div class="flex h-full min-w-0 grow flex-col overflow-auto">
-			<div id="layout-content" class="grid flex-1 p-6">
-				<Router routes={routes} />
-			</div>
+		<div class="grow h-full min-w-0 grid-cols-9 overflow-scroll p-4">
+			<Router routes={routes} />
 		</div>
 	</div>
 </div>

@@ -1,3 +1,4 @@
+import type { Writable } from 'svelte/store'
 import { dragState } from './state'
 import type { DraggableItem, ExistingDraggableItem, IDragState } from './types'
 
@@ -18,7 +19,7 @@ export class DragManager<TItem extends DraggableItem> {
 
 		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,
-			draggedExistingItem: existingItem as GlobalStoreExistingItem,
+			draggedExistingItem: existingItem,
 			draggedNewItem: null,
 			draggedItemEffectiveSize: existingItem.size ?? existingItem.itemData.size ?? 1,
 			dragSourceType: 'existing-item',
@@ -69,7 +70,9 @@ export class DragManager<TItem extends DraggableItem> {
 	}
 
 	// Get the current drag state (remains useful for non-Svelte parts or imperative logic)
-	getCurrentDragState() {
+	getCurrentDragState(): Writable<
+		IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
+	> {
 		return dragState // This still returns the writable store itself
 	}
 }

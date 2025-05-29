@@ -2,10 +2,16 @@
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 import type { PeashootRouteInfo } from '../../routes'
 
-export let route: RouteResult
-// TODO: fix unsafe assignment
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const routeInfo: PeashootRouteInfo | undefined = route.route?.props?.routeInfo
+const {
+	route,
+	...rest
+}: {
+	route: RouteResult
+	[k: string]: unknown
+} = $props()
+const routeInfo = route.route?.props?.routeInfo as PeashootRouteInfo | undefined
 </script>
 
-<h1 class="text-4xl font-bold text-primary">{routeInfo?.label}</h1>
+<h1 {...rest} class="text-4xl font-bold text-primary mb-4 mt-4 {rest.class}">
+	{routeInfo?.label}
+</h1>

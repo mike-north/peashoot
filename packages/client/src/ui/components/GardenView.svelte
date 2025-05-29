@@ -16,6 +16,7 @@ import { onDestroy } from 'svelte'
 import type { Garden } from '../../lib/garden'
 import GardenBedView from './GardenBedView.svelte'
 import {
+	calculateGardenBedViewColSpans,
 	GardenBedLayoutCalculator,
 	screenToGridCoordinates,
 } from '../../lib/garden-bed-layout-calculator'
@@ -30,7 +31,11 @@ import {
 } from '../state/gardenDragState'
 import { dragState as genericDragState } from '../state/dragState'
 import { get } from 'svelte/store'
-import { dragManager, type DragManager } from '../../lib/dnd/drag-manager'
+import {
+	DROP_ERROR_TILE_INDICATOR_HANG_TIME_MS,
+	DROP_SUCCESS_TILE_INDICATOR_HANG_TIME_MS,
+} from '../../lib/dnd/constants'
+import { AsyncValidationError } from '../../errors/async-validation'
 
 interface GardenProps {
 	garden: Garden
@@ -70,11 +75,8 @@ let {
 let { beds } = $derived(garden)
 let gardenRef: HTMLDivElement | null = null
 
-const gardenDragManager = dragManager as DragManager<GardenItem>
-
 function onGardenMouseMove(event: MouseEvent) {
 	const currentCloneMode = event.metaKey || event.altKey
-	// console.log('[GardenView onGardenMouseMove] event.target:', event.target)
 
 	const currentDragStateVal = get(genericDragState)
 
@@ -139,25 +141,16 @@ function onGardenMouseMove(event: MouseEvent) {
 	}))
 }
 
-async function onGardenMouseUp(event: MouseEvent) {
+async function onGardenMouseUp(_event: MouseEvent) {
 	const currentDragStateVal = get(genericDragState)
-	console.log('[GardenView onGardenMouseUp] Event Target:', event.target)
-	console.log(
-		'[GardenView onGardenMouseUp] State at start:',
-		JSON.parse(JSON.stringify(currentDragStateVal)),
-	)
-	console.log(
-		'[GardenView onGardenMouseUp] Clone Mode Check - isCloneMode:',
-		currentDragStateVal.isCloneMode,
-		'isDraggingExistingItem:',
-		isDraggingExistingItem(currentDragStateVal),
-	)
+
+	// Immediately cleanup drag state to hide preview
+	cleanupDrag()
 
 	if (
 		isDraggingExistingItem(currentDragStateVal) &&
 		currentDragStateVal.targetType === 'delete-zone'
 	) {
-		console.log('[GardenView] Drop on DeleteZone detected.')
 		await handlePlantRemovalRequest(
 			currentDragStateVal.draggedExistingItem.id,
 			currentDragStateVal.sourceZoneId,
@@ -177,9 +170,6 @@ async function onGardenMouseUp(event: MouseEvent) {
 			const sourceBedId = currentDragStateVal.sourceZoneId
 
 			if (currentDragStateVal.isCloneMode) {
-				console.log(
-					`[GardenView] CLONE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`,
-				)
 				await handlePlantCloningRequest(
 					sourceBedId,
 					targetBedId,
@@ -188,11 +178,9 @@ async function onGardenMouseUp(event: MouseEvent) {
 					existingItem.y ?? 0,
 					targetX,
 					targetY,
+					existingItem.id,
 				)
 			} else {
-				console.log(
-					`[GardenView] MOVE operation detected. Source: ${sourceBedId}, Target: ${targetBedId}`,
-				)
 				await handlePlantPlacementRequest(
 					targetBedId,
 					existingItem.itemData as GardenItem,
@@ -203,27 +191,30 @@ async function onGardenMouseUp(event: MouseEvent) {
 				)
 			}
 		} else if (isDraggingNewItem(currentDragStateVal)) {
-			console.log(`[GardenView] ADD NEW ITEM operation to bed ${targetBedId}`)
 			await handlePlantPlacementRequest(
 				targetBedId,
 				currentDragStateVal.draggedNewItem as GardenItem,
 				targetX,
 				targetY,
 			)
-		} else {
-			console.log(
-				'[GardenView] Drop on bed zone, but no draggable item identified correctly.',
-			)
 		}
-	} else {
-		console.log('[GardenView] Drop on unhandled area or drag cancelled.')
 	}
-
-	cleanupDrag()
 }
 
 function cleanupDrag(): void {
-	gardenDragManager.cleanup()
+	genericDragState.set({
+		draggedNewItem: null,
+		draggedExistingItem: null,
+		dragSourceType: 'existing-item',
+		sourceZoneId: null,
+		targetZoneId: null,
+		targetType: null,
+		dragPosition: { x: 0, y: 0 },
+		dragOffset: { x: 0, y: 0 },
+		highlightedCell: null,
+		isCloneMode: false,
+		draggedItemEffectiveSize: 1,
+	})
 }
 
 async function handlePlantPlacementRequest(
@@ -242,6 +233,8 @@ async function handlePlantPlacementRequest(
 		size: itemData.size ?? 1,
 		item: itemData,
 		state: 'pending',
+		...(originalInstanceId && { originalInstanceId }),
+		...(sourceZoneId && { originalSourceZoneId: sourceZoneId }),
 	})
 
 	let operationType: PlacementRequestDetails['operationType'] = 'item-add-to-zone'
@@ -256,18 +249,12 @@ async function handlePlantPlacementRequest(
 		x,
 		y,
 		operationType,
-		// Explicitly handle optional properties for exactOptionalPropertyTypes
 		...(originalInstanceId !== undefined && { originalInstanceId }),
 		...(sourceZoneId !== undefined && { sourceZoneId }),
 	}
 
 	try {
-		console.log(
-			'[GardenView] Placement Request: try block entered. Details:',
-			JSON.stringify(placementDetails, null, 2),
-		)
 		await onRequestPlacement(placementDetails)
-		console.log('[GardenView] Placement Request: onRequestPlacement SUCCEEDED.')
 		updatePendingOperation(operationId, 'success')
 
 		setTimeout(() => {
@@ -302,18 +289,26 @@ async function handlePlantPlacementRequest(
 			} else if (operationType === 'item-add-to-zone') {
 				onAddNewPlant(targetZoneId, itemData, x, y)
 			}
-		}, 1500)
+		}, DROP_SUCCESS_TILE_INDICATOR_HANG_TIME_MS)
 	} catch (error: unknown) {
-		console.error(
-			'[GardenView] Placement Request: CATCH block. onRequestPlacement REJECTED:',
-			error instanceof Error ? error.message : String(error),
-			error,
-		)
+		if (error instanceof AsyncValidationError) {
+			console.warn('Validation rejected plant placement', {
+				targetZoneId,
+				itemData,
+				x,
+				y,
+			})
+		} else if (error instanceof Error) {
+			throw new Error('Error handling plant placement request', { cause: error })
+		} else {
+			throw new Error(`Error handling plant placement request ${JSON.stringify(error)}`)
+		}
 		updatePendingOperation(operationId, 'error')
 
 		setTimeout(() => {
+			console.log('Removing pending operation', operationId)
 			removePendingOperation(operationId)
-		}, 1500)
+		}, DROP_ERROR_TILE_INDICATOR_HANG_TIME_MS)
 	}
 }
 
@@ -327,6 +322,8 @@ async function handlePlantRemovalRequest(
 		size: itemData.size ?? 1,
 		item: itemData,
 		state: 'pending',
+		originalInstanceId: instanceId,
+		originalSourceZoneId: sourceZoneId,
 	})
 
 	const removalDetails: RemovalRequestDetails = {
@@ -337,12 +334,7 @@ async function handlePlantRemovalRequest(
 	}
 
 	try {
-		console.log(
-			'[GardenView] Removal Request: try block entered. Details:',
-			JSON.stringify(removalDetails, null, 2),
-		)
 		await onRequestRemoval(removalDetails)
-		console.log('[GardenView] Removal Request: onRequestRemoval SUCCEEDED.')
 		updatePendingOperation(operationId, 'success')
 
 		setTimeout(() => {
@@ -350,13 +342,18 @@ async function handlePlantRemovalRequest(
 			onDeletePlant(instanceId, sourceZoneId)
 		}, 1500)
 	} catch (error: unknown) {
-		console.error(
-			'[GardenView] Removal Request: CATCH block. onRequestRemoval REJECTED:',
-			error instanceof Error ? error.message : String(error),
-			error,
-		)
 		updatePendingOperation(operationId, 'error')
-
+		if (error instanceof AsyncValidationError) {
+			console.error('Validation rejected plant removal', {
+				instanceId,
+				sourceZoneId,
+				itemData,
+			})
+		} else if (error instanceof Error) {
+			throw new Error('Error handling plant removal request', { cause: error })
+		} else {
+			throw new Error(`Error handling plant removal request ${JSON.stringify(error)}`)
+		}
 		setTimeout(() => {
 			removePendingOperation(operationId)
 		}, 1500)
@@ -371,15 +368,18 @@ async function handlePlantCloningRequest(
 	sourceOriginalY: number,
 	targetCloneX: number,
 	targetCloneY: number,
+	originalInstanceId: string,
 ) {
 	const operationId = addPendingOperation<GardenItem>({
-		type: 'placement',
+		type: 'clone',
 		zoneId: targetCloneZoneId,
 		x: targetCloneX,
 		y: targetCloneY,
 		size: itemDataToClone.size ?? 1,
 		item: itemDataToClone,
 		state: 'pending',
+		originalInstanceId: originalInstanceId,
+		originalSourceZoneId: sourceOriginalZoneId,
 	})
 
 	const cloningDetails: CloningRequestDetails = {
@@ -394,12 +394,7 @@ async function handlePlantCloningRequest(
 	}
 
 	try {
-		console.log(
-			'[GardenView] Cloning Request: try block entered. Details:',
-			JSON.stringify(cloningDetails, null, 2),
-		)
 		await onRequestCloning(cloningDetails)
-		console.log('[GardenView] Cloning Request: onRequestCloning SUCCEEDED.')
 		updatePendingOperation(operationId, 'success')
 
 		setTimeout(() => {
@@ -410,11 +405,22 @@ async function handlePlantCloningRequest(
 			onAddNewPlant(targetCloneZoneId, clonedCoreItem, targetCloneX, targetCloneY)
 		}, 1500)
 	} catch (error: unknown) {
-		console.error(
-			'[GardenView] Cloning Request: CATCH block. onRequestCloning REJECTED:',
-			error instanceof Error ? error.message : String(error),
-			error,
-		)
+		if (error instanceof AsyncValidationError) {
+			console.warn('Validation rejected plant cloning', {
+				sourceOriginalZoneId,
+				targetCloneZoneId,
+				itemDataToClone,
+				sourceOriginalX,
+				sourceOriginalY,
+				targetCloneX,
+				targetCloneY,
+				originalInstanceId,
+			})
+		} else if (error instanceof Error) {
+			throw new Error('Error handling plant cloning request', { cause: error })
+		} else {
+			throw new Error(`Error handling plant cloning request ${JSON.stringify(error)}`)
+		}
 		updatePendingOperation(operationId, 'error')
 
 		setTimeout(() => {
@@ -445,6 +451,9 @@ onDestroy(() => {
 	// eslint-disable-next-line @typescript-eslint/no-misused-promises
 	window.removeEventListener('mouseup', onGardenMouseUp)
 })
+
+// Reinstate the reactive calculation for column spans using the original garden object
+let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 </script>
 
 <style>
@@ -464,14 +473,23 @@ onDestroy(() => {
 	<PlantToolbar />
 
 	<div class="garden" bind:this={gardenRef}>
-		{#each beds as bed (bed.id)}
-			<GardenBedView bed={bed} edgeIndicators={edgeIndicators} />
-		{/each}
+		<div class="grid grid-flow-row-dense grid-cols-4 gap-4">
+			{#each beds as bed (bed.id)}
+				<GardenBedView
+					bed={bed}
+					edgeIndicators={edgeIndicators.filter(
+						(indicator) =>
+							bed.plantPlacements.some((p) => p.id === indicator.plantAId) ||
+							bed.plantPlacements.some((p) => p.id === indicator.plantBId),
+					)}
+					class="col-span-{gardenBedCardColSpans[bed.id]}"
+				/>
+			{/each}
+		</div>
 	</div>
 
 	<DeleteZone />
 
-	<!-- TEMPORARILY DISABLED DRAG PREVIEW FOR DEBUGGING -->
 	{#if isDragStatePopulated($genericDragState as GardenDragState)}
 		{@const draggedInfo = getDraggedItemInfo($genericDragState as GardenDragState)}
 		{#if draggedInfo}
@@ -544,7 +562,7 @@ onDestroy(() => {
 			>
 				{#if isDraggingExistingItem(currentPreviewDragState)}
 					<PlantPlacementTile
-						plantPlacement={currentPreviewDragState.draggedExistingItem as any}
+						plantPlacement={currentPreviewDragState.draggedExistingItem}
 						sizePx={previewSize}
 					/>
 					{#if currentPreviewDragState.isCloneMode}
@@ -577,7 +595,7 @@ onDestroy(() => {
 							x: 0,
 							y: 0,
 							itemData: currentPreviewDragState.draggedNewItem,
-						} as any}
+						}}
 						sizePx={previewSize}
 					/>
 				{/if}

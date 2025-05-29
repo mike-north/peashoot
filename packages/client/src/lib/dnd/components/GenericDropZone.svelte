@@ -103,7 +103,7 @@ function handleMouseUp(_event: MouseEvent) {
 	bind:this={zoneElement}
 	class="generic-drop-zone"
 	data-zone-id={zoneId}
-	style="display: block; border: 1px dashed gray; min-height: 50px; position: relative;"
+	style="display: block; min-height: 50px; position: relative;"
 	onmouseenter={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
 	onmouseup={handleMouseUp}

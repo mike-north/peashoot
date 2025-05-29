@@ -8,10 +8,17 @@ interface Props {
 	xPos?: number // SVG x position (renamed from x to avoid conflict with ExistingGardenItem.x)
 	yPos?: number // SVG y position (renamed from y to avoid conflict with ExistingGardenItem.y)
 	sizePx?: number // SVG width (cellWidth * size)
+	isSourceOfPendingMoveOrClone?: boolean // New prop
 }
 
 // Use destructured props, providing defaults
-let { plantPlacement, xPos = 0, yPos = 0, sizePx = 40 }: Props = $props()
+let {
+	plantPlacement,
+	xPos = 0,
+	yPos = 0,
+	sizePx = 40,
+	isSourceOfPendingMoveOrClone = false,
+}: Props = $props()
 
 // Access the core plant data via itemData
 const corePlantData = $derived(plantPlacement.itemData)
@@ -45,7 +52,21 @@ const textColor = $derived(
 </script>
 
 <style lang="scss">
+@keyframes pulse-opacity {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
 .plant-tile {
+	&.is-pending-source {
+		animation: pulse-opacity 1.5s infinite;
+	}
+
 	&__icon {
 		opacity: 0.8;
 	}
@@ -64,7 +85,13 @@ const textColor = $derived(
 }
 </style>
 
-<svg width="100%" height="100%" viewBox={`0 0 ${sizePx} ${sizePx}`} class="plant-tile">
+<svg
+	width="100%"
+	height="100%"
+	viewBox={`0 0 ${sizePx} ${sizePx}`}
+	class="plant-tile"
+	class:is-pending-source={isSourceOfPendingMoveOrClone}
+>
 	<!-- Tile background -->
 	<rect
 		x={xPos}

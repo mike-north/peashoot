@@ -19,13 +19,11 @@ export function addPendingOperation<TItem extends DraggableItem>(
 ): string {
 	const id = `pending-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
 	const pendingOp: PendingOperation<TItem> = {
-		...(operation as PendingOperation<TItem>),
+		...operation,
 		id,
 		timestamp: Date.now(),
 	}
-	pendingOperations.update(
-		(ops) => [...ops, pendingOp] as PendingOperation<DraggableItem>[],
-	)
+	pendingOperations.update((ops) => [...ops, pendingOp])
 	return id
 }
 

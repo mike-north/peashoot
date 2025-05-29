@@ -1,9 +1,12 @@
 // Generic type for the item being dragged. This is the core data.
-export type DraggableItem = Record<string, any> & { id: string; size?: number } // Must have an ID, size is optional
+export type DraggableItem = Record<string, unknown> & { id: string; size?: number } // Must have an ID, size is optional
 
 // Generic type for an item that exists in a zone (e.g., a placed item).
 // It must contain the core DraggableItem data.
-export type ExistingDraggableItem<TItem extends DraggableItem> = Record<string, any> & {
+export type ExistingDraggableItem<TItem extends DraggableItem> = Record<
+	string,
+	unknown
+> & {
 	id: string // ID of the placed instance
 	itemData: TItem // The actual draggable item data
 	x?: number // Optional coordinates if relevant to the zone
@@ -12,7 +15,7 @@ export type ExistingDraggableItem<TItem extends DraggableItem> = Record<string, 
 }
 
 // Generic type for data associated with a drop zone
-export type DropZoneContext = Record<string, any> & { id: string } // Must have an ID
+export type DropZoneContext = Record<string, unknown> & { id: string } // Must have an ID
 
 // Types of drag sources
 export type DragSourceType = 'existing-item' | 'new-item'
@@ -53,15 +56,17 @@ export interface ValidationContext<
 
 // Pending operation for async validation
 export interface PendingOperation<TItem extends DraggableItem> {
-	id: string // ID of the pending operation itself
-	type: 'placement' | 'removal' // More abstract: 'add', 'update', 'remove'
-	zoneId?: string // Target zone for placements
-	x?: number // Target x for placements
-	y?: number // Target y for placements
-	size?: number // Size of the item in the operation
-	item: TItem // The core item data
+	id: string
+	type: 'placement' | 'removal' | 'clone' // Added 'clone'
+	item: TItem
+	zoneId?: string // For placement, target zone; for removal, source zone
+	x?: number
+	y?: number
+	size: number // Effective size for display
 	state: ValidationState
 	timestamp: number
+	originalInstanceId?: string // For move/clone: ID of the original item instance
+	originalSourceZoneId?: string // For move/clone: Zone ID of the original item instance
 }
 
 // Enhanced drag state

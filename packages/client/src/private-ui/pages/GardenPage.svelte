@@ -583,7 +583,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 					)
 					reject(new UnreachableError(context.operationType, `Unknown operation type`))
 			}
-		}, 200)
+		}, 100)
 	})
 }
 </script>

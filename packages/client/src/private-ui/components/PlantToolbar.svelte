@@ -444,6 +444,7 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 					<PlantPlacementTile
 						plantPlacement={plantPlacementToExistingGardenItem(toolbarPlacement, plant)}
 						sizePx={toolbarTileSize}
+						showSizeBadge={true}
 					/>
 
 					<!-- Dropdown arrow for families with multiple variants -->
@@ -495,6 +496,7 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 										variantPlant,
 									)}
 									sizePx={46}
+									showSizeBadge={true}
 								/>
 							</div>
 						{/each}

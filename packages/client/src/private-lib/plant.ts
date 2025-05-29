@@ -1,5 +1,10 @@
 export interface PlantVisualPresentation {
-	readonly accentColor: string
+	readonly accentColor: {
+		r: number
+		g: number
+		b: number
+		a?: number
+	}
 	readonly tileIconPath: string
 }
 

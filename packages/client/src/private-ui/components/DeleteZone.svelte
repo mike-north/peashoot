@@ -2,7 +2,7 @@
 import { dragState, isDraggingExistingItem, pendingOperations } from '../state/dragState'
 import PendingOperationTile from './PendingOperationTile.svelte'
 import { isGardenItemRemovalOperation } from '../state/gardenDragState'
-import { deleteZoneDragEvents } from '../../lib/actions/deleteZoneDragEvents'
+import { deleteZoneDragEvents } from '../../private-lib/actions/deleteZoneDragEvents'
 import TrashIcon from '~icons/ph/trash-duotone'
 
 // Show delete zone only when dragging an existing plant

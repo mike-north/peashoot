@@ -1,11 +1,15 @@
 <script lang="ts">
 import GardenView from '../components/GardenView.svelte'
-import type { GardenBed } from '../../lib/garden-bed'
-import { updatePlantPositionInBed } from '../../lib/garden-bed'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import type { Plant } from '../../lib/plant'
-import type { Garden } from '../../lib/garden'
-import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
+import type { GardenBed } from '../../private-lib/garden-bed'
+import { updatePlantPositionInBed } from '../../private-lib/garden-bed'
+import type { PlantPlacement } from '../../private-lib/plant-placement'
+import type { Plant } from '../../private-lib/plant'
+import type { Garden } from '../../private-lib/garden'
+import {
+	movePlantBetweenBeds,
+	findBed,
+	findPlantPlacement,
+} from '../../private-lib/garden'
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 import {
@@ -21,220 +25,27 @@ import {
 	type GardenZoneContext,
 } from '../state/gardenDragState'
 import { UnreachableError } from '../../errors/unreachabe'
-import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../lib/dnd/constants'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../private-lib/dnd/constants'
 import { AsyncValidationError } from '../../errors/async-validation'
+import { fetchGardens } from '../../lib/garden-data'
+import { onMount } from 'svelte'
 
 const { route }: { route: RouteResult } = $props()
 
-let gardenInstance = $state<Garden>({
-	id: 'garden_0',
-	edgeIndicators: [
-		{
-			id: 'edge_indicator_0',
-			plantAId: 'lettuce_1',
-			plantBId: 'tomato_1',
-			color: 'red',
-		},
-		{
-			id: 'edge_indicator_1',
-			plantAId: 'cherry_tomato_1',
-			plantBId: 'tomato_2',
-			color: 'red',
-		},
-	],
-	beds: [
-		{
-			id: 'bed_-2',
-			width: 12,
-			height: 3,
-			waterLevel: 0,
-			sunLevel: 0,
-			plantPlacements: [],
-		},
-		{
-			id: 'bed_-1',
-			width: 1,
-			height: 1,
-			waterLevel: 0,
-			sunLevel: 0,
-			plantPlacements: [
-				{
-					id: 'placeholder_000',
-					x: 0,
-					y: 0,
-					plantTile: {
-						id: 'lettuce_0',
-						name: 'lettuce',
-						icon: '🌱',
-						size: 1,
-						plantFamily: { name: 'lettuce', colorVariant: 'green' },
-					},
-				},
-			],
-		},
-		{
-			id: 'bed_0',
-			width: 1,
-			height: 1,
-			waterLevel: 0,
-			sunLevel: 0,
-			plantPlacements: [
-				{
-					id: 'placeholder_0',
-					x: 0,
-					y: 0,
-					plantTile: {
-						id: 'lettuce_0',
-						name: 'lettuce',
-						icon: '🌱',
-						size: 1,
-						plantFamily: { name: 'lettuce', colorVariant: 'green' },
-					},
-				},
-			],
-		},
-		{
-			id: 'bed_1',
-			width: 6,
-			height: 2,
-			waterLevel: 2,
-			sunLevel: 4,
-			plantPlacements: [
-				{
-					id: 'tomato_1',
-					x: 0,
-					y: 0,
-					plantTile: {
-						id: 'tomato',
-						name: 'tomato',
-						icon: '🍅',
-						size: 2,
-						plantFamily: { name: 'tomatoes', colorVariant: 'red' },
-					},
-				},
-				{
-					id: 'lettuce_1',
-					x: 2,
-					y: 0,
-					plantTile: {
-						id: 'lettuce',
-						name: 'lettuce',
-						icon: '🥬',
-						size: 1,
-						plantFamily: { name: 'lettuce', colorVariant: 'green' },
-					},
-				},
-			],
-		},
-		{
-			id: 'bed_2',
-			width: 6,
-			height: 2,
-			waterLevel: 2,
-			sunLevel: 4,
-			plantPlacements: [
-				{
-					id: 'tomato_44',
-					x: 0,
-					y: 0,
-					plantTile: {
-						id: 'tomato',
-						name: 'tomato',
-						icon: '🍅',
-						size: 2,
-						plantFamily: { name: 'tomatoes', colorVariant: 'red' },
-					},
-				},
-				{
-					id: 'lettuce_44',
-					x: 2,
-					y: 0,
-					plantTile: {
-						id: 'lettuce',
-						name: 'lettuce',
-						icon: '🥬',
-						size: 1,
-						plantFamily: { name: 'lettuce', colorVariant: 'green' },
-					},
-				},
-			],
-		},
-		{
-			id: 'bed_3',
-			width: 12,
-			height: 4,
-			waterLevel: 3,
-			sunLevel: 3,
-			plantPlacements: [
-				{
-					id: 'bing_cherry_1',
-					x: 2,
-					y: 1,
-					plantTile: {
-						id: 'cherry',
-						name: 'cherry',
-						icon: '🍒',
-						size: 3,
-						plantFamily: { name: 'cherries', colorVariant: 'red' },
-					},
-				},
-				{
-					id: 'tomato_2',
-					x: 0,
-					y: 0,
-					plantTile: {
-						id: 'tomato',
-						name: 'tomato',
-						icon: '🍅',
-						size: 2,
-						plantFamily: { name: 'tomatoes', colorVariant: 'red' },
-					},
-				},
-				{
-					id: 'lettuce_2',
-					x: 2,
-					y: 0,
-					plantTile: {
-						id: 'lettuce',
-						name: 'lettuce',
-						icon: '🥬',
-						size: 1,
-						plantFamily: { name: 'lettuce', colorVariant: 'green' },
-					},
-				},
-
-				{
-					id: 'strawberry_1',
-					x: 6,
-					y: 0,
-					plantTile: {
-						id: 'strawberry',
-						name: 'Strawberry',
-						icon: '🍓',
-						size: 1,
-						plantFamily: { name: 'strawberries', colorVariant: 'red' },
-					},
-				},
-
-				{
-					id: 'daisy_1',
-					x: 6,
-					y: 3,
-					plantTile: {
-						id: 'daisy',
-						name: 'Daisy',
-						icon: '🌼',
-						size: 1,
-						plantFamily: { name: 'daisies', colorVariant: 'white' },
-					},
-				},
-			],
-		},
-	],
-})
+let gardenInstance: Garden | undefined = $state<Garden | undefined>(undefined)
 
 let isAsyncValidating = $state<boolean>(false)
 let validationError = $state<string | null>(null)
+
+onMount(() => {
+	fetchGardens()
+		.then((gardens) => {
+			gardenInstance = gardens[0]
+		})
+		.catch((err: unknown) => {
+			console.error('Error fetching gardens', { cause: err })
+		})
+})
 
 function handleAsyncValidationStart() {
 	isAsyncValidating = true
@@ -260,6 +71,7 @@ function handleMovePlantInBed(
 	newX: number,
 	newY: number,
 ) {
+	if (!gardenInstance) return
 	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
 	if (bed) {
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
@@ -278,6 +90,7 @@ function handleMovePlantToDifferentBed(
 	newY: number,
 ) {
 	const plantPlacementArg = existingGardenItemToPlantPlacement(existingItem)
+	if (!gardenInstance) return
 	gardenInstance = movePlantBetweenBeds(
 		gardenInstance,
 		sourceBedId,
@@ -289,6 +102,7 @@ function handleMovePlantToDifferentBed(
 }
 
 function handleAddNewPlant(bedId: string, item: GardenItem, x: number, y: number) {
+	if (!gardenInstance) return
 	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
 	if (bed) {
 		const plantForPlacement: Plant = {
@@ -320,6 +134,7 @@ function handleAddNewPlant(bedId: string, item: GardenItem, x: number, y: number
 }
 
 function handleDeletePlant(plantId: string, bedId: string) {
+	if (!gardenInstance) return
 	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
 	if (bed) {
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
@@ -345,6 +160,7 @@ function buildGardenZoneContext(
 }
 
 async function handleRequestPlacement(details: PlacementRequestDetails): Promise<void> {
+	if (!gardenInstance) return
 	handleAsyncValidationStart()
 
 	const targetBed = findBed(gardenInstance, details.targetZoneId)
@@ -385,40 +201,7 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 	try {
 		await customAsyncValidation(validationContext)
 		handleAsyncValidationSuccess()
-
-		if (details.operationType === 'item-move-within-zone' && details.originalInstanceId) {
-			handleMovePlantInBed(
-				details.targetZoneId,
-				details.originalInstanceId,
-				details.x,
-				details.y,
-			)
-		} else if (
-			details.operationType === 'item-move-across-zones' &&
-			details.originalInstanceId &&
-			details.sourceZoneId
-		) {
-			const sourceBedForCallback = findBed(gardenInstance, details.sourceZoneId)
-			const plantPlacementForCallback = sourceBedForCallback
-				? findPlantPlacement(sourceBedForCallback, details.originalInstanceId)
-				: undefined
-			if (plantPlacementForCallback) {
-				const existingItem = plantPlacementToExistingGardenItem(plantPlacementForCallback)
-				handleMovePlantToDifferentBed(
-					details.sourceZoneId,
-					details.targetZoneId,
-					existingItem,
-					details.x,
-					details.y,
-				)
-			} else {
-				console.error(
-					'[Garden] Could not find original plant for move-across-zones callback after validation.',
-				)
-			}
-		} else if (details.operationType === 'item-add-to-zone') {
-			handleAddNewPlant(details.targetZoneId, details.itemData, details.x, details.y)
-		}
+		// Don't perform operations here - let the caller handle them after validation succeeds
 		return
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
@@ -428,6 +211,7 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 }
 
 async function handleRequestRemoval(details: RemovalRequestDetails): Promise<void> {
+	if (!gardenInstance) return
 	handleAsyncValidationStart()
 
 	const sourceBed = findBed(gardenInstance, details.sourceZoneId)
@@ -454,7 +238,7 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 	try {
 		await customAsyncValidation(validationContext)
 		handleAsyncValidationSuccess()
-		handleDeletePlant(details.instanceId, details.sourceZoneId)
+		// Don't perform operations here - let the caller handle them after validation succeeds
 		return
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
@@ -464,6 +248,7 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 }
 
 async function handleRequestCloning(details: CloningRequestDetails): Promise<void> {
+	if (!gardenInstance) return
 	handleAsyncValidationStart()
 
 	const sourceBed = findBed(gardenInstance, details.sourceOriginalZoneId)
@@ -490,12 +275,7 @@ async function handleRequestCloning(details: CloningRequestDetails): Promise<voi
 	try {
 		await customAsyncValidation(validationContext)
 		handleAsyncValidationSuccess()
-		handleAddNewPlant(
-			details.targetCloneZoneId,
-			details.itemDataToClone,
-			details.targetCloneX,
-			details.targetCloneY,
-		)
+		// Don't perform operations here - let the caller handle them after validation succeeds
 		return
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
@@ -732,14 +512,21 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 	{/if}
 </div>
 
-<GardenView
-	garden={gardenInstance}
-	onMovePlantInBed={handleMovePlantInBed}
-	onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
-	onAddNewPlant={handleAddNewPlant}
-	onDeletePlant={handleDeletePlant}
-	edgeIndicators={gardenInstance.edgeIndicators}
-	onRequestPlacement={handleRequestPlacement}
-	onRequestRemoval={handleRequestRemoval}
-	onRequestCloning={handleRequestCloning}
-/>
+{#if gardenInstance}
+	<GardenView
+		garden={gardenInstance}
+		onMovePlantInBed={handleMovePlantInBed}
+		onMovePlantToDifferentBed={handleMovePlantToDifferentBed}
+		onAddNewPlant={handleAddNewPlant}
+		onDeletePlant={handleDeletePlant}
+		edgeIndicators={gardenInstance.edgeIndicators}
+		onRequestPlacement={handleRequestPlacement}
+		onRequestRemoval={handleRequestRemoval}
+		onRequestCloning={handleRequestCloning}
+	/>
+{:else}
+	<div class="flex justify-center items-center h-full p-8">
+		<span class="loading loading-ring loading-xl"></span>
+		<div class="text-md font-bold">Loading garden...</div>
+	</div>
+{/if}

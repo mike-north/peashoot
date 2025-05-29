@@ -1,92 +1,37 @@
 <script lang="ts">
-import type { Plant } from '../../lib/plant'
-import { dragManager } from '../../lib/dnd/drag-manager'
+import type { Plant } from '../../private-lib/plant'
+import { dragManager } from '../../private-lib/dnd/drag-manager'
 import { dragState } from '../state/dragState'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
+import type { PlantPlacement } from '../../private-lib/plant-placement'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
 import {
 	plantPlacementToExistingGardenItem,
 	plantToGardenItem,
 } from '../state/gardenDragState'
-import { clickOrHold } from '../../lib/actions/clickOrHold'
+import { clickOrHold } from '../../private-lib/actions/clickOrHold'
+import type { IPlantFamily } from '../../../../types/dist'
 
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 interface PlantToolbarProps {
+	plantFamilies: IPlantFamily[]
 	[k: string]: unknown
 }
 
-const { ...rest }: PlantToolbarProps = $props()
+export interface PlantToolbarPlantVariant {
+	name: string
+	displayName: string
+}
 
-// Define available plant families with their variants and properties
-const plantFamilies = [
-	{
-		name: 'tomatoes',
-		displayName: 'Tomatoes',
-		icon: '🍅',
-		size: 2,
-		variants: [
-			{ name: 'red', displayName: 'Red' },
-			{ name: 'yellow', displayName: 'Yellow' },
-			{ name: 'purple', displayName: 'Purple' },
-		],
-	},
-	{
-		name: 'lettuce',
-		displayName: 'Lettuce',
-		icon: '🥬',
-		size: 1,
-		variants: [
-			{ name: 'green', displayName: 'Green' },
-			{ name: 'red', displayName: 'Red' },
-			{ name: 'purple', displayName: 'Purple' },
-		],
-	},
-	{
-		name: 'carrots',
-		displayName: 'Carrots',
-		icon: '🥕',
-		size: 1,
-		variants: [
-			{ name: 'orange', displayName: 'Orange' },
-			{ name: 'purple', displayName: 'Purple' },
-			{ name: 'white', displayName: 'White' },
-		],
-	},
-	{
-		name: 'peppers',
-		displayName: 'Peppers',
-		icon: '🌶️',
-		size: 1,
-		variants: [
-			{ name: 'red', displayName: 'Red' },
-			{ name: 'green', displayName: 'Green' },
-			{ name: 'yellow', displayName: 'Yellow' },
-		],
-	},
-	{
-		name: 'beans',
-		displayName: 'Beans',
-		icon: '🫘',
-		size: 1,
-		variants: [
-			{ name: 'green', displayName: 'Green' },
-			{ name: 'purple', displayName: 'Purple' },
-			{ name: 'yellow', displayName: 'Yellow' },
-		],
-	},
-	{
-		name: 'onions',
-		displayName: 'Onions',
-		icon: '🧅',
-		size: 1,
-		variants: [
-			{ name: 'white', displayName: 'White' },
-			{ name: 'yellow', displayName: 'Yellow' },
-			{ name: 'red', displayName: 'Red' },
-		],
-	},
-]
+export interface PlantToolbarPlantFamily {
+	name: string
+	displayName: string
+	icon: string
+	size: number
+	variants: PlantToolbarPlantVariant[]
+}
+
+const { plantFamilies, ...rest }: PlantToolbarProps = $props()
 
 // Track selected variants for each plant family
 let selectedVariants: Record<string, string> = $state(

@@ -4,11 +4,11 @@ import Acorn from '~icons/ph/acorn-duotone'
 import Farm from '~icons/ph/farm-duotone'
 import Checklist from '~icons/ph/list-checks-duotone'
 import CalculatorIcon from '~icons/ph/calculator-duotone'
-import Home from './ui/pages/Home.svelte'
-import Garden from './ui/pages/Garden.svelte'
-import Tasks from './ui/pages/Tasks.svelte'
-import Calculators from './ui/pages/Calculators.svelte'
-import SeedCatalog from './ui/pages/SeedCatalog.svelte'
+import HomePage from './private-ui/pages/HomePage.svelte'
+import GardenPage from './private-ui/pages/GardenPage.svelte'
+import TasksPage from './private-ui/pages/TasksPage.svelte'
+import CalculatorsPage from './private-ui/pages/CalculatorsPage.svelte'
+import SeedCatalogPage from './private-ui/pages/SeedCatalogPage.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 
 export interface PeashootRoute {
@@ -31,32 +31,32 @@ export interface PeashootRouteInfo {
 
 export const routeInfos: PeashootRoute[] = [
 	{
-		component: Home,
+		component: HomePage,
 		label: 'Home',
 		path: '/',
 		hideInSidebar: true,
 	},
 	{
-		component: Garden,
+		component: GardenPage,
 		label: 'Garden',
 		path: '/garden',
 		icon: Farm,
 	},
 	{
-		component: SeedCatalog,
+		component: SeedCatalogPage,
 		label: 'Seed Catalog',
 		path: '/seed-catalog',
 		icon: Acorn,
 	},
 	{
-		component: Tasks,
+		component: TasksPage,
 
 		label: 'Tasks',
 		path: '/tasks',
 		icon: Checklist,
 	},
 	{
-		component: Calculators,
+		component: CalculatorsPage,
 
 		label: 'Calculators',
 		path: '/calculators',

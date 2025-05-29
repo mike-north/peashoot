@@ -6,24 +6,24 @@ import {
 	GardenBedLayoutCalculator,
 	calculateEdgeBorders,
 	type Border,
-} from '../../lib/garden-bed-layout-calculator'
-import type { GardenBed } from '../../lib/garden-bed'
-import { DEFAULT_LAYOUT_PARAMS } from '../../lib/layout-constants'
+} from '../../private-lib/garden-bed-layout-calculator'
+import type { GardenBed } from '../../private-lib/garden-bed'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
 
-import GenericDropZone from '../../lib/dnd/components/GenericDropZone.svelte'
-import GenericDraggable from '../../lib/dnd/components/GenericDraggable.svelte'
+import GenericDropZone from '../../private-lib/dnd/components/GenericDropZone.svelte'
+import GenericDraggable from '../../private-lib/dnd/components/GenericDraggable.svelte'
 import {
 	pendingOperations as genericPendingOperations,
 	isDragStatePopulated,
 	dragState as genericDragState,
-} from '../../lib/dnd/state'
-import type { DraggableItem } from '../../lib/dnd/types'
+} from '../../private-lib/dnd/state'
+import type { DraggableItem } from '../../private-lib/dnd/types'
 import {
 	type GardenItem,
 	plantPlacementToExistingGardenItem,
 	type GardenPendingOperation,
 } from '../state/gardenDragState'
-import { disablePointerEventsWhenDragging } from '../../lib/actions/disablePointerEventsWhenDragging'
+import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GardenPendingOperation & {
@@ -302,23 +302,6 @@ function handleDropProp(payload: DropEventPayload) {
 	background: rgba(255, 255, 0, 0.25) !important;
 }
 </style>
-
-<!-- The actual bed, grid, overlays, and frame -->
-<!-- Title and meters OUTSIDE the .raised-bed box -->
-<!-- <div class="">
-  <figure>
-    <img
-      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-      alt="Shoes" />
-  </figure>
-  <div class="card-body">
-    <h2 class="card-title">Card Title</h2>
-    <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-    <div class="card-actions justify-end">
-      <button class="btn btn-primary">Buy Now</button>
-    </div>
-  </div>
-</div> -->
 
 <div class="raised-bed card bg-base-100 shadow-sm {rest.class}">
 	<div class="figure-container">

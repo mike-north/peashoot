@@ -6,14 +6,14 @@ import type {
 	IDragState,
 	ValidationContext,
 	PendingOperation,
-} from '../../lib/dnd/types'
-import type { AsyncValidationFunction } from '../../lib/dnd/validation'
+} from '../../private-lib/dnd/types'
+import type { AsyncValidationFunction } from '../../private-lib/dnd/validation'
 
 // TODO: Verify these paths when Plant and GardenBed types are fully available/refactored
-import type { Plant } from '../../lib/plant'
-import type { PlantPlacement } from '../../lib/plant-placement'
-import type { GardenBed } from '../../lib/garden-bed'
-import type { Garden } from '../../lib/garden' // Ensure Garden type is imported for applicationContext
+import type { Plant } from '../../private-lib/plant'
+import type { PlantPlacement } from '../../private-lib/plant-placement'
+import type { GardenBed } from '../../private-lib/garden-bed'
+import type { Garden } from '../../private-lib/garden' // Ensure Garden type is imported for applicationContext
 // import type { Garden } from '../../lib/garden'; // If a full Garden model is needed for context
 
 // 1. Define the core draggable item for the garden app (Plant data)

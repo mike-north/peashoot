@@ -26,12 +26,11 @@ export class Plant {
 	@ManyToOne(() => PlantableArea, (plantableArea) => plantableArea.plants)
 	plantableArea?: PlantableArea
 
-	@Column()
-	name!: string
-
-	@CreateDateColumn()
-	createdAt!: Date
-
-	@UpdateDateColumn()
-	updatedAt!: Date
+	@Column() name!: string
+	@Column() family!: string
+	@Column() description!: string
+	@Column() variant!: string
+	@Column() plantingDistance!: number
+	@CreateDateColumn() createdAt!: Date
+	@UpdateDateColumn() updatedAt!: Date
 }

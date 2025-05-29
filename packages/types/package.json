@@ -1,0 +1,24 @@
+{
+	"name": "@peashoot/types",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "tsc -P tsconfig.build.json",
+		"dev": "tsc --watch --preserveWatchOutput -P tsconfig.build.json",
+		"lint": "eslint ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {},
+	"dependencies": {
+		"chalk": "^5.4.1",
+		"csps": "^2.0.2",
+		"express": "^5.1.0",
+		"rimraf": "^6.0.1",
+		"sqlite3": "^5.1.7",
+		"typeorm": "^0.3.24",
+		"winston": "^3.17.0"
+	}
+}

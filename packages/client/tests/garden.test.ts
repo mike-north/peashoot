@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi } from 'vitest'
-import { movePlantBetweenBeds, type Garden } from '../src/lib/garden.js'
-import type { GardenBed } from '../src/lib/garden-bed.js'
-import type { PlantPlacement } from '../src/lib/plant-placement.js'
-import type { Plant } from '../src/lib/plant.js'
+import { movePlantBetweenBeds, type Garden } from '../src/private-lib/garden.js'
+import type { GardenBed } from '../src/private-lib/garden-bed.js'
+import type { PlantPlacement } from '../src/private-lib/plant-placement.js'
+import type { Plant } from '../src/private-lib/plant.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',
 	name: 'Tomato',
-	icon: 'tomato.png',
+	icon: '🍅',
 	size: 1,
+	plantFamily: {
+		name: 'Tomato',
+		colorVariant: 'red',
+	},
 }
 
 const plantPlacement: PlantPlacement = {

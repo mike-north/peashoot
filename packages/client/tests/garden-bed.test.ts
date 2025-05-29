@@ -1,13 +1,20 @@
 import { describe, it, expect } from 'vitest'
-import { updatePlantPositionInBed, type GardenBed } from '../src/lib/garden-bed.js'
-import type { PlantPlacement } from '../src/lib/plant-placement.js'
-import type { Plant } from '../src/lib/plant.js'
+import {
+	updatePlantPositionInBed,
+	type GardenBed,
+} from '../src/private-lib/garden-bed.js'
+import type { PlantPlacement } from '../src/private-lib/plant-placement.js'
+import type { Plant } from '../src/private-lib/plant.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',
 	name: 'Tomato',
 	icon: 'tomato.png',
 	size: 1,
+	plantFamily: {
+		name: 'Tomato',
+		colorVariant: 'red',
+	},
 }
 
 const mockPlacement: PlantPlacement = {

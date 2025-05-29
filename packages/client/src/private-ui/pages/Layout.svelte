@@ -1,0 +1,16 @@
+<script lang="ts">
+import { Router } from '@mateothegreat/svelte5-router'
+import { routes } from '../../routes'
+
+import LayoutSidebar from '../components/LayoutSidebar.svelte'
+</script>
+
+<div class="size-full">
+	<div class="flex flex-row h-full">
+		<LayoutSidebar class="flex-none" />
+
+		<div class="grow h-full min-w-0 grid-cols-9 overflow-scroll p-4">
+			<Router routes={routes} />
+		</div>
+	</div>
+</div>

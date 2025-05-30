@@ -329,6 +329,10 @@ export class GardenBedLayoutCalculator {
 		skipId?: string,
 	): boolean {
 		if (x < 0 || y < 0 || x + size > this.width || y + size > this.height) return false
+		if (!Array.isArray(plantPlacements)) {
+			console.error('plantPlacements is not an array', plantPlacements)
+			throw new Error('plantPlacements is not an array')
+		}
 		for (const p of plantPlacements) {
 			if (skipId && p.id === skipId) continue
 			const plant = plants.find((pl) => pl.id === p.plantId)

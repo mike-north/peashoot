@@ -7,17 +7,22 @@ import type { Plant } from '../src/private-lib/plant.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',
-	name: 'Tomato',
-	icon: '🍅',
-	size: 1,
-	plantFamily: {
-		name: 'Tomato',
-		colorVariant: 'red',
+	displayName: 'Tomato',
+	family: 'Tomato',
+	variant: 'red',
+	plantingDistanceInFeet: 1,
+	presentation: {
+		accentColor: {
+			r: 1,
+			g: 0,
+			b: 0,
+		},
+		tileIconPath: 'tomato.png',
 	},
 }
 
 const plantPlacement: PlantPlacement = {
-	plantTile: mockPlant,
+	plantId: mockPlant.id,
 	x: 1,
 	y: 2,
 	id: 'placement1',

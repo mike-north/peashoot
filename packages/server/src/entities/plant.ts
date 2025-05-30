@@ -9,7 +9,7 @@ import {
 import { PlantableArea } from './plantable-area'
 import { SeedPacket } from './seed-packet'
 
-export type PlantId = string & { readonly __plant: unique symbol }
+export type PlantId = `plant_${string}`
 
 @Entity({ name: 'plants' })
 export class Plant {

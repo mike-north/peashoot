@@ -7,19 +7,30 @@ import {
 	isValidDrop,
 } from '../src/private-lib/garden-bed-layout-calculator.js'
 import type { GardenBed } from '../src/private-lib/garden-bed.js'
+import type { PlantPlacement } from '../src/private-lib/plant-placement.js'
+import type { Plant } from '../src/private-lib/plant.js'
 
 const layoutParams = { width: 4, height: 4 }
 const layout = new GardenBedLayoutCalculator(layoutParams)
 
-const mockPlant = {
-	id: 'plant1',
-	name: 'Tomato',
-	icon: 'tomato.png',
-	size: 1,
+const mockPlant: Plant = {
+	id: 'plant_1',
+	displayName: 'Tomato',
+	family: 'Tomato',
+	variant: 'red',
+	plantingDistanceInFeet: 1,
+	presentation: {
+		accentColor: {
+			r: 1,
+			g: 0,
+			b: 0,
+		},
+		tileIconPath: 'tomato.png',
+	},
 }
 
-const plantPlacement = {
-	plantTile: mockPlant,
+const plantPlacement: PlantPlacement = {
+	plantId: mockPlant.id,
 	x: 1,
 	y: 2,
 	id: 'placement1',
@@ -74,16 +85,19 @@ describe('GardenBedLayoutCalculator', () => {
 	})
 
 	it('validates placement in bounds and no overlap', () => {
-		const valid = layout.isValidPlacement(0, 0, 1, [plantPlacement])
+		const valid = layout.isValidPlacement([mockPlant], 0, 0, 1, [plantPlacement])
 		expect(valid).toBe(true)
-		const invalid = layout.isValidPlacement(1, 2, 1, [plantPlacement])
+		const invalid = layout.isValidPlacement([mockPlant], 1, 2, 1, [plantPlacement])
 		expect(invalid).toBe(false)
 	})
 })
 
 describe('getPlantCells', () => {
 	it('returns all cells for a 1x1 plant', () => {
-		const cells = getPlantCells(plantPlacement)
+		const cells = getPlantCells({
+			...plantPlacement,
+			plantTile: { ...mockPlant, size: 1 },
+		})
 		expect(cells).toContainEqual({ x: 1, y: 2 })
 	})
 	it('returns all cells for a 2x2 plant', () => {
@@ -98,8 +112,14 @@ describe('getPlantCells', () => {
 describe('getSharedBorders', () => {
 	it('returns borders for adjacent plants', () => {
 		const borders = getSharedBorders(
-			plantPlacement,
-			{ ...plantPlacement, x: 2, id: 'placement2' },
+			{
+				...plantPlacement,
+				plantTile: { ...mockPlant, size: 1 },
+			},
+			{
+				...plantPlacement,
+				plantTile: { ...mockPlant, size: 1 },
+			},
 			'red',
 			'indicator1',
 			layout,
@@ -110,7 +130,12 @@ describe('getSharedBorders', () => {
 
 describe('calculateEdgeBorders', () => {
 	it('returns borders for edge indicators', () => {
-		const bed = { plantPlacements: [plantPlacement, plantPlacement2] }
+		const bed = {
+			plantPlacements: [
+				{ ...plantPlacement, plantTile: { ...mockPlant, size: 1 } },
+				{ ...plantPlacement2, plantTile: { ...mockPlant, size: 1 } },
+			],
+		}
 		const edgeIndicators = [
 			{
 				id: 'e1',
@@ -134,7 +159,7 @@ describe('isValidDrop', () => {
 			sunLevel: 7,
 			plantPlacements: [],
 		}
-		const valid = isValidDrop(bed, plantPlacement, 0, 0)
+		const valid = isValidDrop([mockPlant], bed, plantPlacement, 0, 0)
 		expect(valid).toBe(true)
 	})
 	it('invalidates a drop on an occupied cell', () => {
@@ -146,7 +171,13 @@ describe('isValidDrop', () => {
 			sunLevel: 7,
 			plantPlacements: [plantPlacement],
 		}
-		const valid = isValidDrop(bed, { ...plantPlacement, id: 'placement2' }, 1, 2)
+		const valid = isValidDrop(
+			[mockPlant],
+			bed,
+			{ ...plantPlacement, id: 'placement2' },
+			1,
+			2,
+		)
 		expect(valid).toBe(false)
 	})
 })

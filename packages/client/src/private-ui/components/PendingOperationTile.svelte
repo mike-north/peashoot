@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+import PlantPlacementTile from './DraggableItemPlacementTile.svelte'
 import type { GardenPendingOperation } from '../state/gardenDragState'
 import { getPlantSize } from '../state/gardenDragState'
 import {
@@ -337,7 +337,7 @@ $effect(() => {
 >
 	<div class="pending-tile__content">
 		{#if !showCompletionState && itemForDisplay}
-			<PlantPlacementTile plantPlacement={itemForDisplay} sizePx={sizePx} />
+			<PlantPlacementTile placement={itemForDisplay} sizePx={sizePx} />
 		{/if}
 
 		{#if showCompletionState}

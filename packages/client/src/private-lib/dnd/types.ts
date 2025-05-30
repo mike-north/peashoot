@@ -1,7 +1,11 @@
+import type { Component } from 'svelte'
+import type { Color } from '../../lib/value-objects/color'
+
 // Generic type for the item being dragged. This is the core data.
 export interface DraggableItem {
 	id: string
-	size?: number
+	size: number
+	presentation: DraggableItemPresentation
 } // Must have an ID, size is optional
 
 // Generic type for an item that exists in a zone (e.g., a placed item).
@@ -88,3 +92,24 @@ export interface IDragState<
 	targetZoneId: string | null
 	targetType: DropTargetType | null
 }
+
+export interface DraggableItemPresentation {
+	readonly bgColor: Color
+	readonly fgColor?: Color
+	readonly size: number
+	readonly iconPath: string
+}
+
+export type DraggableItemTooltipDirection = 'above' | 'below'
+export interface DraggableItemTooltipProps<TItem extends DraggableItem> {
+	placement: ExistingDraggableItem<TItem>
+	direction?: DraggableItemTooltipDirection
+	borderWidth?: number
+	pointerOverlap?: number
+	TooltipContentsComponent: DraggableItemTooltipContentsComponent<TItem>
+}
+
+export type DraggableItemTooltipContentsComponent<TItem extends DraggableItem> =
+	Component<{
+		item: TItem
+	}>

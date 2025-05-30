@@ -10,14 +10,11 @@ import type {
 
 import type { Plant } from '../../private-lib/plant'
 import { isPlant } from '../../private-lib/plant'
-import type { PlantPlacement } from '../../private-lib/plant-placement'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import type { Garden } from '../../private-lib/garden'
 
 // Define what an existing/placed item looks like in the garden (PlantPlacement)
-export interface ExistingGardenItem
-	extends ExistingDraggableItem<Plant>,
-		Omit<PlantPlacement, 'plantId' | 'id'> {
+export interface ExistingGardenItem extends ExistingDraggableItem<Plant> {
 	id: string // ID of the PlantPlacement instance
 	itemData: Plant // The Plant being placed
 	x: number // from PlantPlacement
@@ -66,11 +63,6 @@ export function isGardenItemRemovalOperation(
 	return isGardenPendingOperation(op) && op.type === 'removal'
 }
 
-// Helper function to get size from Plant (maps plantingDistanceInFeet to size)
-export function getPlantSize(plant: Plant): number {
-	return plant.plantingDistanceInFeet
-}
-
 // Function to adapt PlantPlacement to ExistingGardenItem
 export function plantPlacementToExistingGardenItem(
 	pp: PlantPlacement,
@@ -81,22 +73,22 @@ export function plantPlacementToExistingGardenItem(
 		x: pp.x,
 		y: pp.y,
 		itemData: plant,
-		size: getPlantSize(plant),
+		size: plant.size,
 	}
 }
 
 // Helper to create a mock ExistingGardenItem from just a Plant (for drag previews)
-export function plantToExistingGardenItem(
-	plant: Plant,
+export function itemDataToExistingDraggableItem<ItemType extends DraggableItem>(
+	item: ItemType,
 	x = 0,
 	y = 0,
-): ExistingGardenItem {
+): ExistingDraggableItem<ItemType> {
 	return {
-		id: `temp-${plant.id}`,
+		id: `temp-${item.id}`,
 		x,
 		y,
-		itemData: plant,
-		size: getPlantSize(plant),
+		itemData: item,
+		size: item.size,
 	}
 }
 

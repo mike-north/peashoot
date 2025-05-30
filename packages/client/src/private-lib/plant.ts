@@ -1,20 +1,12 @@
-export interface PlantVisualPresentation {
-	readonly accentColor: {
-		r: number
-		g: number
-		b: number
-		a?: number
-	}
-	readonly tileIconPath: string
-}
+import type { DraggableItemPresentation } from './dnd/types'
 
 export interface Plant {
 	readonly id: string
+	readonly size: number
 	readonly displayName: string
 	readonly family: string
 	readonly variant: string
-	readonly plantingDistanceInFeet: number
-	readonly presentation: PlantVisualPresentation
+	readonly presentation: DraggableItemPresentation
 }
 
 export function isPlant(item: unknown): item is Plant {

@@ -1,29 +1,17 @@
-<script lang="ts">
+<script lang="ts" generics="TItem extends DraggableItem">
+import { type DraggableItem, type DraggableItemTooltipProps } from '../state/dragState'
 import TooltipArrow from './TooltipArrow.svelte'
-
-interface Props {
-	displayName: string
-	family: string
-	variant: string
-	plantingDistanceInFeet: number
-	tileIconPath: string
-	direction?: 'above' | 'below'
-	color?: string
-	borderWidth?: number
-	pointerOverlap?: number
-}
+import { colorHashToCss } from '../../lib/value-objects/color'
 
 let {
-	displayName,
-	family,
-	variant,
-	plantingDistanceInFeet,
-	tileIconPath,
+	placement,
 	direction = 'above',
-	color = '#e5e7eb',
 	borderWidth = 4,
 	pointerOverlap = -4,
-}: Props = $props()
+	TooltipContentsComponent,
+}: DraggableItemTooltipProps<TItem> = $props()
+
+const color = $derived(colorHashToCss(placement.itemData.presentation.bgColor))
 </script>
 
 <div class="relative tooltip-content" style="transition: opacity 100ms;">
@@ -34,23 +22,7 @@ let {
 			? '20px 20px 8px 8px'
 			: '8px 8px 20px 20px'}; background: white;"
 	>
-		<img
-			src={`plant-icons/${tileIconPath}`}
-			alt={displayName}
-			class="w-20 h-20 object-contain mb-2"
-		/>
-		<div class="font-bold text-lg">{displayName}</div>
-		<div class="text-sm text-gray-500">
-			Family: <span class="font-medium text-gray-700">{family}</span>
-		</div>
-		<div class="text-sm text-gray-500">
-			Variant: <span class="font-medium text-gray-700">{variant}</span>
-		</div>
-		<div class="text-sm text-gray-500">
-			Planting Distance: <span class="font-medium text-gray-700"
-				>{plantingDistanceInFeet} ft</span
-			>
-		</div>
+		<TooltipContentsComponent item={placement.itemData} />
 	</div>
 	<TooltipArrow
 		direction={direction}

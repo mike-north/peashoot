@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+import PlantPlacementTile from './DraggableItemPlacementTile.svelte'
 import { dragState as genericDragState } from '../state/dragState'
 import {
 	isDragStatePopulated,
@@ -126,7 +126,7 @@ let previewPosition = $derived.by(() => {
 	>
 		{#if isDraggingExistingItem(currentDragState)}
 			<PlantPlacementTile
-				plantPlacement={currentDragState.draggedExistingItem}
+				placement={currentDragState.draggedExistingItem}
 				sizePx={previewPosition.size}
 			/>
 			{#if currentDragState.isCloneMode}
@@ -134,7 +134,7 @@ let previewPosition = $derived.by(() => {
 			{/if}
 		{:else if isDraggingNewItem(currentDragState)}
 			<PlantPlacementTile
-				plantPlacement={{
+				placement={{
 					id: 'preview',
 					x: 0,
 					y: 0,

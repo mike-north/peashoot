@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+import PlantPlacementTile from './DraggableItemPlacementTile.svelte'
 import PendingOperationTile from './PendingOperationTile.svelte'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import {
@@ -552,7 +552,7 @@ function handleDropProp(payload: DropEventPayload) {
 										style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
 									>
 										<PlantPlacementTile
-											plantPlacement={existingGardenItem}
+											placement={existingGardenItem}
 											sizePx={tileLayout.width}
 											isSourceOfPendingMoveOrClone={isPendingSource}
 										/>

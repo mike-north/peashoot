@@ -1,41 +1,46 @@
-<script lang="ts">
+<script
+	lang="ts"
+	generics="TItem extends DraggableItem, ItemTooltipContentsComponent extends DraggableItemTooltipContentsComponent<TItem>"
+>
 import { TOOLTIP_FADEOUT_DELAY_MS } from '../../private-lib/dnd/constants'
-import type { ExistingGardenItem } from '../state/gardenDragState'
 import { onDestroy, tick, mount, unmount } from 'svelte'
+import {
+	type DraggableItem,
+	type DraggableItemTooltipContentsComponent,
+	type ExistingDraggableItem,
+} from '../state/dragState'
+import { colorHashToCss } from '../../lib/value-objects/color'
 import TooltipCard from './TooltipCard.svelte'
 
 // import type { PlantPlacement } from '../../lib/plant-placement' // Old type
 
 interface Props {
-	plantPlacement: ExistingGardenItem // Changed to ExistingGardenItem
+	placement: ExistingDraggableItem<TItem> // Changed to ExistingGardenItem
 	xPos?: number // SVG x position (renamed from x to avoid conflict with ExistingGardenItem.x)
 	yPos?: number // SVG y position (renamed from y to avoid conflict with ExistingGardenItem.y)
 	sizePx?: number // SVG width (cellWidth * size)
 	isSourceOfPendingMoveOrClone?: boolean // New prop
 	showSizeBadge?: boolean // Only show size badge if true
+	TooltipContentsComponent: ItemTooltipContentsComponent
 }
 // Use destructured props, providing defaults
 let {
-	plantPlacement,
+	placement,
 	xPos = 0,
 	yPos = 0,
 	sizePx = 40,
 	isSourceOfPendingMoveOrClone = false,
 	showSizeBadge = false,
+	TooltipContentsComponent,
 }: Props = $props()
 
-// Access the core plant data via itemData
-const corePlantData = $derived(plantPlacement.itemData)
+const { itemData } = placement
 
 // Use size from the core itemData using plantingDistanceInFeet
-const itemSize = $derived(plantPlacement.size ?? corePlantData.plantingDistanceInFeet)
+const itemSize = $derived(placement.size ?? itemData.size)
 const iconDisplaySize = $derived(sizePx * 0.9)
 const iconX = $derived(xPos + sizePx / 2)
 const iconY = $derived(yPos + sizePx / 2)
-
-function colorHashToCss(color: { r: number; g: number; b: number; a?: number }): string {
-	return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a ?? 0.4})`
-}
 
 // Tooltip state
 let showTooltip = $state(false)
@@ -92,18 +97,16 @@ async function showTooltipPortal() {
 
 	const pointerOverlap = -borderWidth
 
+	// const tooltipComponentProps = foo()
 	const mountResult: ReturnType<typeof mount> = mount(TooltipCard, {
 		target: tooltipPortalEl,
 		props: {
-			displayName: corePlantData.displayName,
-			family: corePlantData.family,
-			variant: corePlantData.variant,
-			plantingDistanceInFeet: corePlantData.plantingDistanceInFeet,
-			tileIconPath: corePlantData.presentation.tileIconPath,
+			placement,
 			direction: tooltipDirection,
-			color: colorHashToCss(corePlantData.presentation.accentColor),
-			borderWidth: borderWidth,
-			pointerOverlap: pointerOverlap,
+			borderWidth,
+			pointerOverlap,
+			TooltipContentsComponent:
+				TooltipContentsComponent as unknown as DraggableItemTooltipContentsComponent<DraggableItem>,
 		},
 	})
 
@@ -281,7 +284,7 @@ onDestroy(() => {
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	bind:this={tileEl}
-	aria-label={`${corePlantData.displayName} (${corePlantData.family})`}
+	aria-label={itemData.id}
 	style="position: relative; width: 100%; height: 100%;"
 	onmouseenter={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
@@ -292,8 +295,7 @@ onDestroy(() => {
 		height="100%"
 		viewBox={`0 0 ${sizePx} ${sizePx}`}
 		class="plant-tile"
-		data-plant-family={corePlantData.family}
-		data-plant-color-variant={corePlantData.variant}
+		data-item-id={itemData.id}
 		class:is-pending-source={isSourceOfPendingMoveOrClone}
 	>
 		<!-- Tile background -->
@@ -303,12 +305,12 @@ onDestroy(() => {
 			width={sizePx}
 			height={sizePx}
 			class="plant-tile__background"
-			style={`fill: ${colorHashToCss(corePlantData.presentation.accentColor)}`}
+			style={`fill: ${colorHashToCss(itemData.presentation.bgColor)}`}
 		/>
 		<!-- Plant icon -->
-		{#if corePlantData}
+		{#if itemData}
 			<image
-				href={`plant-icons/${corePlantData.presentation.tileIconPath}`}
+				href={`plant-icons/${itemData.presentation.iconPath}`}
 				x={iconX - iconDisplaySize / 2}
 				y={iconY - iconDisplaySize / 2}
 				width={iconDisplaySize}
@@ -329,15 +331,11 @@ onDestroy(() => {
 			style="min-width: 220px; max-width: 320px;"
 		>
 			<TooltipCard
-				displayName={corePlantData.displayName}
-				family={corePlantData.family}
-				variant={corePlantData.variant}
-				plantingDistanceInFeet={corePlantData.plantingDistanceInFeet}
-				tileIconPath={corePlantData.presentation.tileIconPath}
+				placement={placement}
 				direction={tooltipDirection}
-				color={colorHashToCss(corePlantData.presentation.accentColor)}
 				borderWidth={4}
 				pointerOverlap={-4}
+				TooltipContentsComponent={TooltipContentsComponent}
 			/>
 		</div>
 	{/if}

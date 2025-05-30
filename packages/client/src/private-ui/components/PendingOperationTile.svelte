@@ -1,7 +1,10 @@
-<script lang="ts">
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+<script
+	lang="ts"
+	generics="T extends { id: string; displayName: string; presentation: { iconPath: string; accentColor: { r: number; g: number; b: number; a?: number }; size: number }; size: number }"
+>
+import PlantGridTile from './PlantGridTile.svelte'
+import type { GridPlacement } from '../../private-lib/grid-placement'
 import type { GardenPendingOperation } from '../state/gardenDragState'
-import { getPlantSize } from '../state/gardenDragState'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
@@ -10,20 +13,32 @@ import CheckIcon from '~icons/ph/check-bold'
 import XIcon from '~icons/ph/x-bold'
 import TrashIcon from '~icons/ph/trash-duotone'
 
-interface Props {
-	operation: GardenPendingOperation
+interface Props<
+	T extends {
+		id: string
+		displayName: string
+		presentation: {
+			iconPath: string
+			accentColor: { r: number; g: number; b: number; a?: number }
+			size: number
+		}
+		size: number
+	},
+> {
+	operation: GardenPendingOperation<T>
 	sizePx: number
+	sizeAdapter?: (item: T) => number
 }
 
-let { operation, sizePx }: Props = $props()
+let { operation, sizePx, sizeAdapter = (item: T) => item.size }: Props<T> = $props()
 
-// Create a temporary ExistingGardenItem for display
-const itemForDisplay = $derived({
+// Create a GridPlacement for display
+const placementForDisplay = $derived<GridPlacement<T>>({
 	id: `pending-${operation.id}`,
 	x: operation.x || 0,
 	y: operation.y || 0,
-	itemData: operation.item,
-	size: getPlantSize(operation.item),
+	size: sizeAdapter(operation.item),
+	data: { ...operation.item, size: sizeAdapter(operation.item) },
 })
 
 // Check if this is a removal operation
@@ -336,8 +351,8 @@ $effect(() => {
 	style="width: {sizePx}px; height: {sizePx}px;"
 >
 	<div class="pending-tile__content">
-		{#if !showCompletionState && itemForDisplay}
-			<PlantPlacementTile plantPlacement={itemForDisplay} sizePx={sizePx} />
+		{#if !showCompletionState && placementForDisplay}
+			<PlantGridTile placement={placementForDisplay} sizePx={sizePx} />
 		{/if}
 
 		{#if showCompletionState}

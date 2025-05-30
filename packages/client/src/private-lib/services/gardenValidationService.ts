@@ -9,6 +9,9 @@ import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import type { Plant } from '../plant'
 
+// Define PlantWithSize type
+type PlantWithSize = Plant & { size: number }
+
 interface PlacementValidityResult {
 	isValid: boolean
 	reason?: string
@@ -60,8 +63,10 @@ export class GardenValidationService {
 		return { isValid: true }
 	}
 
-	createAsyncValidator(): GardenAsyncValidationFunction {
-		return async (context: GardenValidationContext): Promise<ValidationResult> => {
+	createAsyncValidator(): GardenAsyncValidationFunction<PlantWithSize> {
+		return async (
+			context: GardenValidationContext<PlantWithSize>,
+		): Promise<ValidationResult> => {
 			await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
 
 			if (!context.applicationContext) {
@@ -156,7 +161,7 @@ export class GardenValidationService {
 
 							case 'item-remove-from-zone': {
 								const hasEdgeIndicators = currentGarden.edgeIndicators.some(
-									(edge) =>
+									(edge: { plantAId: string; plantBId: string }) =>
 										edge.plantAId === context.itemInstanceId ||
 										edge.plantBId === context.itemInstanceId,
 								)

@@ -1,14 +1,11 @@
 <script lang="ts">
-import type { Plant, PlantVisualPresentation } from '../../private-lib/plant'
+import type { Plant } from '../../private-lib/plant'
+import type { TileVisualPresentation } from '../../private-lib/plant'
 import { dragManager } from '../../private-lib/dnd/drag-manager'
 import { dragState } from '../state/dragState'
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+import PlantGridTile from './PlantGridTile.svelte'
 import type { PlantPlacement } from '../../private-lib/plant-placement'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
-import {
-	plantPlacementToExistingGardenItem,
-	plantToExistingGardenItem,
-} from '../state/gardenDragState'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
 import { clickOrHold } from '../../private-lib/actions/clickOrHold'
 
 interface PlantToolbarProps {
@@ -19,14 +16,14 @@ interface PlantToolbarProps {
 interface PlantToolbarPlantVariant {
 	plantDisplayName: string
 	iconPath: string
-	presentation: PlantVisualPresentation
+	presentation: TileVisualPresentation
 	plantingDistanceInFeet: number
 }
 
 interface PlantToolbarPlantFamily {
 	familyDisplayName: string
 	iconPath: string
-	presentation: PlantVisualPresentation
+	presentation: TileVisualPresentation
 	variants: PlantToolbarPlantVariant[]
 }
 
@@ -42,13 +39,13 @@ const plantListToToolbarPlantFamilies = (plants: Plant[]): PlantToolbarPlantFami
 			// Create a new family and add the current plant as the first variant
 			plantFamilies.set(plant.family, {
 				familyDisplayName: plant.family,
-				iconPath: plant.presentation.tileIconPath,
+				iconPath: plant.presentation.iconPath,
 				presentation: plant.presentation,
 				variants: [
 					{
 						plantingDistanceInFeet: plant.plantingDistanceInFeet,
 						plantDisplayName: plant.displayName,
-						iconPath: plant.presentation.tileIconPath,
+						iconPath: plant.presentation.iconPath,
 						presentation: plant.presentation,
 					},
 				],
@@ -57,7 +54,7 @@ const plantListToToolbarPlantFamilies = (plants: Plant[]): PlantToolbarPlantFami
 			family.variants.push({
 				plantingDistanceInFeet: plant.plantingDistanceInFeet,
 				plantDisplayName: plant.displayName,
-				iconPath: plant.presentation.tileIconPath,
+				iconPath: plant.presentation.iconPath,
 				presentation: plant.presentation,
 			})
 		}
@@ -97,8 +94,7 @@ function selectVariant(familyName: string, variantName: string) {
 function handleToolbarDrag(familyName: string, event: MouseEvent) {
 	const variant = selectedVariants[familyName]
 	const plant = createPlant(familyName, variant)
-	const gardenItem = plantToExistingGardenItem(plant)
-	dragManager.startDraggingNewItem(gardenItem.itemData, event)
+	dragManager.startDraggingNewItem(plant, event)
 }
 
 // Close dropdown when clicking outside
@@ -244,8 +240,12 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 						}
 					}}
 				>
-					<PlantPlacementTile
-						plantPlacement={plantPlacementToExistingGardenItem(toolbarPlacement, plant)}
+					<PlantGridTile
+						placement={{
+							...toolbarPlacement,
+							data: plant,
+							size: plant.plantingDistanceInFeet,
+						}}
 						sizePx={toolbarTileSize}
 						showSizeBadge={true}
 					/>
@@ -296,11 +296,12 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 									}
 								}}
 							>
-								<PlantPlacementTile
-									plantPlacement={plantPlacementToExistingGardenItem(
-										variantPlacement,
-										variantPlant,
-									)}
+								<PlantGridTile
+									placement={{
+										...variantPlacement,
+										data: variantPlant,
+										size: variantPlant.plantingDistanceInFeet,
+									}}
 									sizePx={46}
 									showSizeBadge={true}
 								/>

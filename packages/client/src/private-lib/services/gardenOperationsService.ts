@@ -5,7 +5,9 @@ import type { PlantPlacement } from '../plant-placement'
 import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
 import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../garden'
 import { updatePlantPositionInBed } from '../garden-bed'
-import { existingGardenItemToPlantPlacement } from '../../private-ui/state/gardenDragState'
+
+// Define PlantWithSize type
+type PlantWithSize = Plant & { size: number }
 
 export class GardenOperationsService {
 	movePlantInBed(
@@ -33,11 +35,17 @@ export class GardenOperationsService {
 		garden: Garden,
 		sourceBedId: string,
 		targetBedId: string,
-		existingItem: ExistingGardenItem,
+		existingItem: ExistingGardenItem<PlantWithSize>,
 		newX: number,
 		newY: number,
 	): Garden {
-		const plantPlacementArg = existingGardenItemToPlantPlacement(existingItem)
+		// Convert ExistingGardenItem to PlantPlacement
+		const plantPlacementArg: PlantPlacement = {
+			id: existingItem.id,
+			x: existingItem.x,
+			y: existingItem.y,
+			plantId: existingItem.itemData.id,
+		}
 		return movePlantBetweenBeds(
 			garden,
 			sourceBedId,

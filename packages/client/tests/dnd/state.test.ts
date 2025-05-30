@@ -42,7 +42,6 @@ interface TestItem extends DraggableItem {
 
 interface TestExistingItem extends ExistingDraggableItem<TestItem> {
 	instanceId: string
-	size?: number // Can override itemData.size
 }
 
 describe('DnD Svelte Stores and Utility Functions', () => {
@@ -93,6 +92,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 					id: 'ext-1',
 					itemData: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
+					sourceZoneId: 'zoneA',
 				},
 				dragPosition: { x: 10, y: 10 },
 			})
@@ -133,6 +133,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 					id: 'ext-1',
 					itemData: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
+					sourceZoneId: 'zoneA',
 				},
 				dragPosition: { x: 0, y: 10 },
 			})
@@ -148,6 +149,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 					id: 'ext-1',
 					itemData: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
+					sourceZoneId: 'zoneA',
 				},
 				sourceZoneId: 'zoneA',
 			})
@@ -181,6 +183,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 					id: 'ext-1',
 					itemData: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
+					sourceZoneId: 'zoneA',
 				},
 				sourceZoneId: null,
 			})
@@ -222,8 +225,8 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 			id: 'ext-1',
 			itemData: existingItemData,
 			instanceId: 'i-1',
-			size: 3,
-		} // size overrides itemData.size
+			sourceZoneId: 'zoneA',
+		}
 		const newItemData: TestItem = { id: 'new-1', name: 'New Data', size: 4 }
 
 		it('should return itemData and effectiveSize for an existing item (uses existingItem.size)', () => {
@@ -233,13 +236,13 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 				sourceZoneId: 'zoneA',
 			})
 			const info = getDraggedItemInfo(state)
-			expect(info).toEqual({ item: existingItemData, effectiveSize: 3 })
+			expect(info).toEqual({ item: existingItemData, effectiveSize: 2 })
 		})
 
 		it('should return itemData and effectiveSize for an existing item (uses itemData.size)', () => {
 			const state = createMockState<TestItem, TestExistingItem>({
 				dragSourceType: 'existing-item',
-				draggedExistingItem: { ...existingItem, size: undefined }, // No override size
+				draggedExistingItem: existingItem,
 				sourceZoneId: 'zoneA',
 			})
 			const info = getDraggedItemInfo(state)
@@ -252,6 +255,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 				id: 'ext-no',
 				itemData: noSizeItemData,
 				instanceId: 'i-ns',
+				sourceZoneId: 'zoneA',
 			}
 			const state = createMockState<TestItem, TestExistingItem>({
 				dragSourceType: 'existing-item',

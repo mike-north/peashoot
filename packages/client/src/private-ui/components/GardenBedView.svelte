@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlantPlacementTile from './PlantPlacementTile.svelte'
+import PlantGridTile from './PlantGridTile.svelte'
 import PendingOperationTile from './PendingOperationTile.svelte'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import {
@@ -8,7 +8,7 @@ import {
 	type Border,
 } from '../../private-lib/garden-bed-layout-calculator'
 import type { GardenBed } from '../../private-lib/garden-bed'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
 
 import GenericDropZone from '../../private-lib/dnd/components/GenericDropZone.svelte'
 import GenericDraggable from '../../private-lib/dnd/components/GenericDraggable.svelte'
@@ -19,15 +19,16 @@ import {
 } from '../../private-lib/dnd/state'
 import type { DraggableItem } from '../../private-lib/dnd/types'
 import {
-	plantPlacementToExistingGardenItem,
+	gridPlacementToExistingGridItem,
 	type GardenPendingOperation,
-	getPlantSize,
 } from '../state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
 import type { Plant } from '../../private-lib/plant'
 
+type PlantWithSize = Plant & { size: number }
+
 // Define a type for the operation that should cause pulsing
-type PulsingSourceOperation = GardenPendingOperation & {
+type PulsingSourceOperation = GardenPendingOperation<PlantWithSize> & {
 	type: 'placement' | 'removal'
 	originalSourceZoneId: string
 	originalInstanceId: string
@@ -35,7 +36,7 @@ type PulsingSourceOperation = GardenPendingOperation & {
 
 // Type guard function
 function isPulsingSourceOperation(
-	op: GardenPendingOperation,
+	op: GardenPendingOperation<PlantWithSize>,
 	currentBedId: string,
 ): op is PulsingSourceOperation {
 	return (
@@ -88,11 +89,28 @@ const colSpanClass = $derived(
 	})(),
 )
 
+// Convert legacy PlantPlacements to GridPlacements with proper types
+const gridPlacements = $derived(
+	bed.plantPlacements
+		.map((placement) => {
+			const plant = plants.find((p) => p.id === placement.plantId)
+			if (!plant) return null
+			return {
+				id: placement.id,
+				x: placement.x,
+				y: placement.y,
+				size: plant.presentation.size,
+				data: { ...plant, size: plant.presentation.size } as PlantWithSize,
+			}
+		})
+		.filter((p) => p !== null),
+)
+
 // Identify plant placements in this bed that are the source of a pending move or clone
 let pendingSourcePlantIds = $derived(
-	($genericPendingOperations as GardenPendingOperation[])
+	($genericPendingOperations as GardenPendingOperation<PlantWithSize>[])
 		.filter((op): op is PulsingSourceOperation => isPulsingSourceOperation(op, bed.id))
-		.map((op) => op.originalInstanceId), // No need for '!' due to type guard
+		.map((op) => op.originalInstanceId),
 )
 
 // Instantiate the layout calculator
@@ -129,25 +147,23 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 	// For existing plants, exclude the dragged plant from collision detection
 	const skipId = $genericDragState.draggedExistingItem?.id
 
-	return layout.isValidPlacement(plants, x, y, size, bed.plantPlacements, skipId)
+	// Use gridPlacements instead of bed.plantPlacements
+	return layout.isValidPlacement(plants, x, y, size, gridPlacements, skipId)
 }
 
 let edgeBorders = $state<Border[]>([])
 $effect(() => {
-	// Convert GardenBed to expected format for calculateEdgeBorders
+	// Convert gridPlacements to expected format for calculateEdgeBorders
 	const bedWithSizes = {
 		...bed,
-		plantPlacements: bed.plantPlacements.map((placement) => {
-			const plant = plants.find((p) => p.id === placement.plantId)
-			return {
-				x: placement.x,
-				y: placement.y,
-				id: placement.id,
-				plantTile: {
-					size: plant ? getPlantSize(plant) : 1,
-				},
-			}
-		}),
+		plantPlacements: gridPlacements.map((placement) => ({
+			x: placement.x,
+			y: placement.y,
+			id: placement.id,
+			plantTile: {
+				size: placement.size,
+			},
+		})),
 	}
 	const newBorders = calculateEdgeBorders(bedWithSizes, edgeIndicators, layout)
 	if (
@@ -218,7 +234,7 @@ function handleDropProp(payload: DropEventPayload) {
 		return
 	}
 	const { item, x, y } = payload
-	const itemSize = getPlantSize(item as Plant)
+	const itemSize = item.size ?? 1
 
 	// Perform local placement validation (e.g., collision, bounds).
 	// This is a preliminary check. The full async validation will be done by GardenView.
@@ -480,9 +496,8 @@ function handleDropProp(payload: DropEventPayload) {
 							{@const draggedItemData =
 								$genericDragState.draggedNewItem ??
 								$genericDragState.draggedExistingItem?.itemData}
-							{@const itemSize = draggedItemData
-								? getPlantSize(draggedItemData as Plant)
-								: 1}
+							{@const itemSize =
+								draggedItemData && 'size' in draggedItemData ? draggedItemData.size : 1}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: $genericDragState.highlightedCell.x,
 								y: $genericDragState.highlightedCell.y,
@@ -507,83 +522,57 @@ function handleDropProp(payload: DropEventPayload) {
 					"
 							></div>
 						{/if}
-						{#each bed.plantPlacements as placement (placement.id)}
-							{@const plant = plants.find((p) => p.id === placement.plantId)}
-							{#if plant}
-								{@const existingGardenItem = plantPlacementToExistingGardenItem(
-									placement,
-									plant,
-								)}
-								{@const itemDataSize = getPlantSize(existingGardenItem.itemData)}
-								{@const tileLayout = layout.getTileLayoutInfo({
-									x: placement.x,
-									y: placement.y,
-									size: itemDataSize,
-								})}
-								{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-									x: placement.x,
-									y: placement.y,
-									size: itemDataSize,
-									strokeWidth: 2,
-								})}
+						{#each gridPlacements as placement (placement.id)}
+							{@const existingGardenItem = gridPlacementToExistingGridItem(
+								placement,
+								bed.id,
+							)}
+							{@const itemDataSize = placement.size}
+							{@const tileLayout = layout.getTileLayoutInfo({
+								x: placement.x,
+								y: placement.y,
+								size: itemDataSize,
+							})}
+							{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+								x: placement.x,
+								y: placement.y,
+								size: itemDataSize,
+								strokeWidth: 2,
+							})}
 
-								{@const corners = layout.getTileFrameCornerPositions({
-									x: placement.x,
-									y: placement.y,
-									size: itemDataSize,
-									bedWidth: bed.width,
-									bedHeight: bed.height,
-								})}
-								{@const borderRadiusStyle = corners
-									.map((corner) => `border-${corner}-radius: 8px;`)
-									.join(' ')}
-								{@const computedStyles = getTileComputedStyles(
-									placement.id,
-									overlayLayout,
-								)}
-								{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
-								<GenericDraggable
-									itemData={existingGardenItem.itemData}
-									existingItemInstance={existingGardenItem}
-									sourceZoneId={bed.id}
-								>
-									<div
-										class="tile-overlay__tile"
-										style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
-									>
-										<PlantPlacementTile
-											plantPlacement={existingGardenItem}
-											sizePx={tileLayout.width}
-											isSourceOfPendingMoveOrClone={isPendingSource}
-										/>
-									</div>
-								</GenericDraggable>
-							{:else}
-								{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-									x: placement.x,
-									y: placement.y,
-									size: 1,
-									strokeWidth: 2,
-								})}
+							{@const corners = layout.getTileFrameCornerPositions({
+								x: placement.x,
+								y: placement.y,
+								size: itemDataSize,
+								bedWidth: bed.width,
+								bedHeight: bed.height,
+							})}
+							{@const borderRadiusStyle = corners
+								.map((corner) => `border-${corner}-radius: 8px;`)
+								.join(' ')}
+							{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
+							{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
+							<GenericDraggable
+								itemData={existingGardenItem.itemData}
+								existingItemInstance={existingGardenItem}
+								sourceZoneId={bed.id}
+							>
 								<div
 									class="tile-overlay__tile"
-									style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 2; background: #ff0000; opacity: 0.5; border: 2px solid #000;"
-									title="Missing plant data for ID: {placement.plantId}"
+									style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
 								>
-									<div
-										style="color: white; text-align: center; font-size: 8px; padding: 2px;"
-									>
-										Missing Plant
-										<br />
-										ID: {placement.plantId}
-									</div>
+									<PlantGridTile
+										placement={placement}
+										sizePx={tileLayout.width}
+										isPulsingSource={isPendingSource}
+									/>
 								</div>
-							{/if}
+							</GenericDraggable>
 						{/each}
 
 						<!-- Pending Operations -->
 						{#each $genericPendingOperations.filter((op) => op.zoneId === bed.id) as operation (operation.id)}
-							{@const itemOpSize = getPlantSize(operation.item as Plant)}
+							{@const itemOpSize = operation.item.size ?? 1}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
 								y: operation.y || 0,
@@ -610,7 +599,7 @@ function handleDropProp(payload: DropEventPayload) {
 								style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
 							>
 								<PendingOperationTile
-									operation={operation as GardenPendingOperation}
+									operation={operation as GardenPendingOperation<PlantWithSize>}
 									sizePx={tileLayout.width}
 								/>
 							</div>

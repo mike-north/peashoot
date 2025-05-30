@@ -1,17 +1,25 @@
-// Generic type for the item being dragged. This is the core data.
+/**
+ * Represents an item that can be dragged from place to place
+ */
 export interface DraggableItem {
 	id: string
 	size?: number
-} // Must have an ID, size is optional
+}
 
-// Generic type for an item that exists in a zone (e.g., a placed item).
-// It must contain the core DraggableItem data.
+/**
+ * Represents an existing instance of a draggable item that is already placed
+ * somewhere and can be dragged to a new location.
+ *
+ * This interface focuses solely on drag-and-drop concerns - the actual
+ * placement data (coordinates, etc.) should be managed elsewhere.
+ */
 export interface ExistingDraggableItem<TItem extends DraggableItem> {
-	id: string // ID of the placed instance
-	itemData: TItem // The actual draggable item data
-	x?: number // Optional coordinates if relevant to the zone
-	y?: number
-	size?: number // Often same as itemData.size but could differ
+	/** Unique identifier for this specific placed instance */
+	id: string
+	/** The underlying draggable item data */
+	itemData: TItem
+	/** The zone/container this item currently belongs to */
+	sourceZoneId: string
 }
 
 // Generic type for data associated with a drop zone

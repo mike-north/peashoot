@@ -1,11 +1,14 @@
-export interface PlantVisualPresentation {
+export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
+
+export interface TileVisualPresentation {
 	readonly accentColor: {
 		r: number
 		g: number
 		b: number
 		a?: number
 	}
-	readonly tileIconPath: string
+	readonly size: number
+	readonly iconPath: string
 }
 
 export interface Plant {
@@ -14,7 +17,19 @@ export interface Plant {
 	readonly family: string
 	readonly variant: string
 	readonly plantingDistanceInFeet: number
-	readonly presentation: PlantVisualPresentation
+	readonly presentation: TileVisualPresentation
+}
+
+/**
+ * Adapter to make TileVisualPresentation compatible with GridItemPresentation
+ */
+export function tileVisualPresentationToGridPresentation(
+	presentation: TileVisualPresentation,
+) {
+	return {
+		iconPath: `plant-icons/${presentation.iconPath}`,
+		accentColor: presentation.accentColor,
+	}
 }
 
 export function isPlant(item: unknown): item is Plant {

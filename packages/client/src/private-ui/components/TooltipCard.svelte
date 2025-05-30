@@ -3,26 +3,26 @@ import TooltipArrow from './TooltipArrow.svelte'
 
 interface Props {
 	displayName: string
-	family: string
-	variant: string
-	plantingDistanceInFeet: number
-	tileIconPath: string
-	direction?: 'above' | 'below'
-	color?: string
-	borderWidth?: number
-	pointerOverlap?: number
+	iconPath: string
+	direction: 'above' | 'below'
+	color: string
+	borderWidth: number
+	pointerOverlap: number
+	family?: string
+	variant?: string
+	plantingDistanceInFeet?: number
 }
 
 let {
 	displayName,
-	family,
-	variant,
-	plantingDistanceInFeet,
-	tileIconPath,
-	direction = 'above',
-	color = '#e5e7eb',
-	borderWidth = 4,
-	pointerOverlap = -4,
+	iconPath,
+	direction,
+	color,
+	borderWidth,
+	pointerOverlap,
+	family = '',
+	variant = '',
+	plantingDistanceInFeet = 0,
 }: Props = $props()
 </script>
 
@@ -35,7 +35,7 @@ let {
 			: '8px 8px 20px 20px'}; background: white;"
 	>
 		<img
-			src={`plant-icons/${tileIconPath}`}
+			src={`plant-icons/${iconPath}`}
 			alt={displayName}
 			class="w-20 h-20 object-contain mb-2"
 		/>

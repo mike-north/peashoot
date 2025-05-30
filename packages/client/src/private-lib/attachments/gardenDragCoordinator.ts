@@ -6,7 +6,7 @@ import {
 	GardenBedLayoutCalculator,
 	screenToGridCoordinates,
 } from '../garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { GardenBed } from '../garden-bed'
 
 interface GardenDragCoordinatorOptions {

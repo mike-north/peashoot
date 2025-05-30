@@ -3,6 +3,7 @@ import GardenView from '../components/GardenView.svelte'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { updatePlantPositionInBed } from '../../private-lib/garden-bed'
 import type { PlantPlacement } from '../../private-lib/plant-placement'
+import { plantPlacementToGridPlacement } from '../../private-lib/plant-placement'
 import type { Plant } from '../../private-lib/plant'
 import type { Garden } from '../../private-lib/garden'
 import {
@@ -13,8 +14,6 @@ import {
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 import {
-	existingGardenItemToPlantPlacement,
-	plantPlacementToExistingGardenItem,
 	type ExistingGardenItem,
 	type GardenValidationContext,
 	type GardenAsyncValidationFunction,
@@ -23,7 +22,6 @@ import {
 	type CloningRequestDetails,
 	type GardenZoneContext,
 	type ValidationResult,
-	getPlantSize,
 } from '../state/gardenDragState'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../private-lib/dnd/constants'
@@ -89,11 +87,17 @@ function handleMovePlantInBed(
 function handleMovePlantToDifferentBed(
 	sourceBedId: string,
 	targetBedId: string,
-	existingItem: ExistingGardenItem,
+	existingItem: ExistingGardenItem<PlantWithSize>,
 	newX: number,
 	newY: number,
 ) {
-	const plantPlacementArg = existingGardenItemToPlantPlacement(existingItem)
+	// Inline conversion from ExistingGardenItem<PlantWithSize> to PlantPlacement
+	const plantPlacementArg = {
+		id: existingItem.id,
+		x: existingItem.x,
+		y: existingItem.y,
+		plantId: existingItem.itemData.id,
+	}
 	if (!gardenInstance) return
 	gardenInstance = movePlantBetweenBeds(
 		gardenInstance,
@@ -146,23 +150,31 @@ function handleDeletePlant(plantId: string, bedId: string) {
 	}
 }
 
+type PlantWithSize = Plant & { size: number }
+
 function buildGardenZoneContext(
 	bed: GardenBed | undefined,
-): GardenZoneContext | undefined {
+): GardenZoneContext<PlantWithSize> | undefined {
 	if (!bed) return undefined
 	return {
 		...bed,
-		plantPlacements: bed.plantPlacements.map((pp) => {
+		placements: bed.plantPlacements.map((pp) => {
 			const plant = $plants.find((p) => p.id === pp.plantId)
 			if (!plant) {
 				throw new Error(`Plant not found for placement: ${pp.plantId}`)
 			}
-			return plantPlacementToExistingGardenItem(pp, plant)
+			const gridPlacement = plantPlacementToGridPlacement(pp, plant)
+			return {
+				...gridPlacement,
+				data: { ...plant, size: plant.presentation.size } as PlantWithSize,
+			}
 		}),
-	} as GardenZoneContext
+	} as GardenZoneContext<PlantWithSize>
 }
 
-async function handleRequestPlacement(details: PlacementRequestDetails): Promise<void> {
+async function handleRequestPlacement(
+	details: PlacementRequestDetails<PlantWithSize>,
+): Promise<void> {
 	if (!gardenInstance) return
 	handleAsyncValidationStart()
 
@@ -171,7 +183,7 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 		? findBed(gardenInstance, details.sourceZoneId)
 		: undefined
 
-	const baseValidationContext: Partial<GardenValidationContext> = {
+	const baseValidationContext: Partial<GardenValidationContext<PlantWithSize>> = {
 		item: details.itemData,
 		targetZoneId: details.targetZoneId,
 		targetX: details.x,
@@ -199,7 +211,8 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 		}
 	}
 
-	const validationContext = baseValidationContext as GardenValidationContext
+	const validationContext =
+		baseValidationContext as GardenValidationContext<PlantWithSize>
 
 	try {
 		const result = await customAsyncValidation(validationContext)
@@ -232,7 +245,9 @@ async function handleRequestPlacement(details: PlacementRequestDetails): Promise
 	}
 }
 
-async function handleRequestRemoval(details: RemovalRequestDetails): Promise<void> {
+async function handleRequestRemoval(
+	details: RemovalRequestDetails<PlantWithSize>,
+): Promise<void> {
 	if (!gardenInstance) return
 	handleAsyncValidationStart()
 
@@ -241,7 +256,7 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 		? findPlantPlacement(sourceBed, details.instanceId)
 		: undefined
 
-	const baseValidationContext: Partial<GardenValidationContext> = {
+	const baseValidationContext: Partial<GardenValidationContext<PlantWithSize>> = {
 		operationType: 'item-remove-from-zone',
 		item: details.itemData,
 		itemInstanceId: details.instanceId,
@@ -255,7 +270,8 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 		baseValidationContext.sourceY = plantToRemove.y
 	}
 
-	const validationContext = baseValidationContext as GardenValidationContext
+	const validationContext =
+		baseValidationContext as GardenValidationContext<PlantWithSize>
 
 	try {
 		const result = await customAsyncValidation(validationContext)
@@ -288,14 +304,16 @@ async function handleRequestRemoval(details: RemovalRequestDetails): Promise<voi
 	}
 }
 
-async function handleRequestCloning(details: CloningRequestDetails): Promise<void> {
+async function handleRequestCloning(
+	details: CloningRequestDetails<PlantWithSize>,
+): Promise<void> {
 	if (!gardenInstance) return
 	handleAsyncValidationStart()
 
 	const sourceBed = findBed(gardenInstance, details.sourceOriginalZoneId)
 	const targetBed = findBed(gardenInstance, details.targetCloneZoneId)
 
-	const baseValidationContext: Partial<GardenValidationContext> = {
+	const baseValidationContext: Partial<GardenValidationContext<PlantWithSize>> = {
 		operationType: 'item-clone-in-zone',
 		item: details.itemDataToClone,
 		sourceZoneId: details.sourceOriginalZoneId,
@@ -311,7 +329,8 @@ async function handleRequestCloning(details: CloningRequestDetails): Promise<voi
 	const cloneTargetCtx = buildGardenZoneContext(targetBed)
 	if (cloneTargetCtx) baseValidationContext.targetZoneContext = cloneTargetCtx
 
-	const validationContext = baseValidationContext as GardenValidationContext
+	const validationContext =
+		baseValidationContext as GardenValidationContext<PlantWithSize>
 
 	try {
 		const result = await customAsyncValidation(validationContext)
@@ -344,8 +363,8 @@ async function handleRequestCloning(details: CloningRequestDetails): Promise<voi
 	}
 }
 
-const customAsyncValidation: GardenAsyncValidationFunction = async (
-	context: GardenValidationContext,
+const customAsyncValidation: GardenAsyncValidationFunction<PlantWithSize> = async (
+	context: GardenValidationContext<PlantWithSize>,
 ): Promise<ValidationResult> => {
 	await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
 	if (!context.applicationContext) {
@@ -438,7 +457,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 						)
 						return
 					}
-					const itemSize = getPlantSize(context.item)
+					const itemSize = context.item.size
 					const placementCheck = checkPlacementValidity(
 						targetBed,
 						context.targetX,
@@ -534,7 +553,7 @@ const customAsyncValidation: GardenAsyncValidationFunction = async (
 						reject(new Error('Missing target coordinates for clone collision check.'))
 						return
 					}
-					const cloneItemSize = getPlantSize(context.item)
+					const cloneItemSize = context.item.size
 					const clonePlacementCheck = checkPlacementValidity(
 						cloneTargetBed,
 						context.targetX,

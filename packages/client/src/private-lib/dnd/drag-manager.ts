@@ -1,15 +1,27 @@
 import type { Writable } from 'svelte/store'
 import { dragState } from './state'
 import type { DraggableItem, ExistingDraggableItem, IDragState } from './types'
-import { isPlant } from '../plant'
-import { getPlantSize } from '../../private-ui/state/gardenDragState'
 
 // Type alias for what the global dragState store holds for its "existing item" part.
 type GlobalStoreExistingItem = ExistingDraggableItem<DraggableItem>
 
 export class DragManager<TItem extends DraggableItem> {
-	// The maps for registeredDraggableAreas and registeredDropZones are removed.
-	// This functionality will be handled by the Svelte component structure and event bubbling/dispatching.
+	private getItemSize: (item: TItem) => number
+
+	constructor(getItemSize?: (item: TItem) => number) {
+		// Provide a default getItemSize if none is supplied
+		this.getItemSize =
+			getItemSize ||
+			((item: TItem) => {
+				if (typeof item === 'object' && 'size' in item) {
+					const sizeValue = (item as { size?: unknown }).size
+					if (typeof sizeValue === 'number') {
+						return sizeValue
+					}
+				}
+				return 1
+			})
+	}
 
 	// Start dragging an existing item from a zone
 	startDraggingExistingItem(
@@ -21,13 +33,7 @@ export class DragManager<TItem extends DraggableItem> {
 
 		// Calculate the effective size based on the item type
 		let effectiveSize = 1 // Default fallback
-		if (isPlant(existingItem.itemData)) {
-			effectiveSize = getPlantSize(existingItem.itemData)
-		} else if (existingItem.size !== undefined) {
-			effectiveSize = existingItem.size
-		} else if (existingItem.itemData.size !== undefined) {
-			effectiveSize = existingItem.itemData.size
-		}
+		effectiveSize = this.getItemSize(existingItem.itemData)
 
 		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,
@@ -49,11 +55,7 @@ export class DragManager<TItem extends DraggableItem> {
 	startDraggingNewItem(newItemData: TItem, event: MouseEvent) {
 		// Calculate the effective size based on the item type
 		let effectiveSize = 1 // Default fallback
-		if (isPlant(newItemData)) {
-			effectiveSize = getPlantSize(newItemData)
-		} else if (newItemData.size !== undefined) {
-			effectiveSize = newItemData.size
-		}
+		effectiveSize = this.getItemSize(newItemData)
 
 		dragState.update((s) => ({
 			...s,
@@ -97,5 +99,17 @@ export class DragManager<TItem extends DraggableItem> {
 	}
 }
 
-// Global instance - TItem will be DraggableItem.
-export const dragManager = new DragManager<DraggableItem>()
+// Global instance - TItem will be DraggableItem. Consumer must provide getItemSize.
+// Example for Plant: (item) => item.plantingDistanceInFeet
+export const dragManager = new DragManager<DraggableItem>((item) => {
+	if (
+		'plantingDistanceInFeet' in item &&
+		typeof item.plantingDistanceInFeet === 'number'
+	) {
+		return item.plantingDistanceInFeet
+	}
+	if ('size' in item && typeof item.size === 'number') {
+		return item.size
+	}
+	return 1
+})

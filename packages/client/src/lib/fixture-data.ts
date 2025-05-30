@@ -154,7 +154,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
-			tileIconPath: 'tomatoes-burpee-big-boy-tomato.png',
+			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+			size: 2,
 		},
 	},
 	{
@@ -165,7 +166,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 128, g: 0, b: 128 }, // --color-tomatoes-purple
-			tileIconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
+			iconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
+			size: 2,
 		},
 	},
 	{
@@ -176,7 +178,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
-			tileIconPath: 'tomatoes-sweet-100-tomato.png',
+			iconPath: 'tomatoes-sweet-100-tomato.png',
+			size: 2,
 		},
 	},
 	{
@@ -187,7 +190,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 255, g: 212, b: 0 }, // --color-tomatoes-yellow
-			tileIconPath: 'tomatoes-napa-chardonnay-tomato.png',
+			iconPath: 'tomatoes-napa-chardonnay-tomato.png',
+			size: 2,
 		},
 	},
 	{
@@ -198,7 +202,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 128, g: 0, b: 128 }, // --color-tomatoes-purple
-			tileIconPath: 'tomatoes-black-from-tula-tomato.png',
+			iconPath: 'tomatoes-black-from-tula-tomato.png',
+			size: 2,
 		},
 	},
 
@@ -211,7 +216,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
-			tileIconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+			iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+			size: 1,
 		},
 	},
 	{
@@ -222,7 +228,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
-			tileIconPath: 'arugula-arugula.png',
+			iconPath: 'arugula-arugula.png',
+			size: 1,
 		},
 	},
 	{
@@ -233,7 +240,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 56, g: 142, b: 60 }, // --color-spinach-green
-			tileIconPath: 'spinach-spinach.png',
+			iconPath: 'spinach-spinach.png',
+			size: 1,
 		},
 	},
 	{
@@ -244,7 +252,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 56, g: 142, b: 60 }, // --color-spinach-green
-			tileIconPath: 'spinach-japanese-perpetual-spinach.png',
+			iconPath: 'spinach-japanese-perpetual-spinach.png',
+			size: 1,
 		},
 	},
 
@@ -257,7 +266,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 167, b: 38 }, // --color-carrots-orange
-			tileIconPath: 'carrots-burpee-chantenay-carrot.png',
+			iconPath: 'carrots-burpee-chantenay-carrot.png',
+			size: 1,
 		},
 	},
 	{
@@ -268,7 +278,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 167, b: 38 }, // --color-carrots-orange
-			tileIconPath: 'carrots-parisienne-carrots.png',
+			iconPath: 'carrots-parisienne-carrots.png',
+			size: 1,
 		},
 	},
 	{
@@ -279,7 +290,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 128, g: 0, b: 128 }, // --color-carrots-purple
-			tileIconPath: 'carrots-lila-lu-sang-carrots.png',
+			iconPath: 'carrots-lila-lu-sang-carrots.png',
+			size: 1,
 		},
 	},
 
@@ -292,7 +304,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 58, g: 145, b: 63 }, // --color-peppers-green
-			tileIconPath: 'peppers-burpee-california-wonder-pepper.png',
+			iconPath: 'peppers-burpee-california-wonder-pepper.png',
+			size: 1,
 		},
 	},
 	{
@@ -303,7 +316,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 58, g: 145, b: 63 }, // --color-peppers-green
-			tileIconPath: 'peppers-jalapeno-hot-pepper.png',
+			iconPath: 'peppers-jalapeno-hot-pepper.png',
+			size: 1,
 		},
 	},
 	{
@@ -314,7 +328,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 247, g: 92, b: 3 }, // --color-peppers-orange
-			tileIconPath: 'peppers-habanero-hot-pepper.png',
+			iconPath: 'peppers-habanero-hot-pepper.png',
+			size: 1,
 		},
 	},
 	{
@@ -325,7 +340,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 212, b: 0 }, // --color-peppers-yellow
-			tileIconPath: 'peppers-lemon-drop-hot-pepper.png',
+			iconPath: 'peppers-lemon-drop-hot-pepper.png',
+			size: 1,
 		},
 	},
 	{
@@ -336,7 +352,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 128, g: 0, b: 128 }, // --color-peppers-purple
-			tileIconPath: 'peppers-buena-mulata-hot-pepper.png',
+			iconPath: 'peppers-buena-mulata-hot-pepper.png',
+			size: 1,
 		},
 	},
 
@@ -349,7 +366,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 86, g: 130, b: 3 }, // --color-beans-green
-			tileIconPath: 'beans-burpee-provider-bush-bean.png',
+			iconPath: 'beans-burpee-provider-bush-bean.png',
+			size: 1,
 		},
 	},
 	{
@@ -360,7 +378,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 86, g: 130, b: 3 }, // --color-beans-green
-			tileIconPath: 'beans-fava-beans.png',
+			iconPath: 'beans-fava-beans.png',
+			size: 1,
 		},
 	},
 	{
@@ -371,7 +390,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 212, b: 0 }, // --color-beans-yellow
-			tileIconPath: 'beans-dragons-tongue-beans.png',
+			iconPath: 'beans-dragons-tongue-beans.png',
+			size: 1,
 		},
 	},
 	{
@@ -382,7 +402,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 128, g: 0, b: 128 }, // --color-beans-purple
-			tileIconPath: 'beans-cherokee-trail-of-tears-beans.png',
+			iconPath: 'beans-cherokee-trail-of-tears-beans.png',
+			size: 1,
 		},
 	},
 	{
@@ -393,7 +414,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 86, g: 130, b: 3 }, // --color-beans-green
-			tileIconPath: 'beans-scarlet-runner-beans.png',
+			iconPath: 'beans-scarlet-runner-beans.png',
+			size: 1,
 		},
 	},
 
@@ -406,7 +428,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 212, b: 0 }, // --color-onions-yellow
-			tileIconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
+			iconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
+			size: 1,
 		},
 	},
 	{
@@ -417,7 +440,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 245, g: 245, b: 245 }, // --color-onions-white
-			tileIconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
+			iconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
+			size: 1,
 		},
 	},
 	{
@@ -428,7 +452,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 86, g: 130, b: 3 }, // --color-mint-green
-			tileIconPath: 'onions-chives.png',
+			iconPath: 'onions-chives.png',
+			size: 1,
 		},
 	},
 	{
@@ -439,7 +464,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 245, g: 245, b: 245 }, // --color-onions-white
-			tileIconPath: 'onions-garlic.png',
+			iconPath: 'onions-garlic.png',
+			size: 1,
 		},
 	},
 	{
@@ -454,7 +480,8 @@ export const plants: Plant[] = [
 				g: 245,
 				b: 245,
 			},
-			tileIconPath: 'onions-bunching-onion.png',
+			iconPath: 'onions-bunching-onion.png',
+			size: 1,
 		},
 	},
 
@@ -467,7 +494,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 3,
 		presentation: {
 			accentColor: { r: 255, g: 192, b: 203 }, // --color-cherries-pink
-			tileIconPath: 'cherries-rainier-cherry.png',
+			iconPath: 'cherries-rainier-cherry.png',
+			size: 3,
 		},
 	},
 	{
@@ -478,7 +506,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 220, g: 20, b: 60 }, // --color-strawberries-red
-			tileIconPath: 'strawberries-alexandria-strawberry.png',
+			iconPath: 'strawberries-alexandria-strawberry.png',
+			size: 1,
 		},
 	},
 
@@ -491,7 +520,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 105, b: 180 },
-			tileIconPath: 'daisies-zinnia.png',
+			iconPath: 'daisies-zinnia.png',
+			size: 1,
 		},
 	},
 	// --- ADDED FROM seeds.yml ---
@@ -503,7 +533,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 85, g: 107, b: 47 },
-			tileIconPath: 'basil-basil.png',
+			iconPath: 'basil-basil.png',
+			size: 1,
 		},
 	},
 	{
@@ -514,7 +545,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 186, g: 85, b: 211 },
-			tileIconPath: 'snapdragons-foxglove.png',
+			iconPath: 'snapdragons-foxglove.png',
+			size: 2,
 		},
 	},
 	{
@@ -525,7 +557,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 105, b: 180 },
-			tileIconPath: 'daisies-zinnia.png',
+			iconPath: 'daisies-zinnia.png',
+			size: 1,
 		},
 	},
 	{
@@ -536,7 +569,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 4,
 		presentation: {
 			accentColor: { r: 50, g: 205, b: 50 },
-			tileIconPath: 'watermelons-watermelon.png',
+			iconPath: 'watermelons-watermelon.png',
+			size: 4,
 		},
 	},
 	{
@@ -547,7 +581,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 222, g: 184, b: 135 },
-			tileIconPath: 'grains-wheat.png',
+			iconPath: 'grains-wheat.png',
+			size: 1,
 		},
 	},
 	{
@@ -558,7 +593,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 85, g: 107, b: 47 },
-			tileIconPath: 'broccoli-broccoli.png',
+			iconPath: 'broccoli-broccoli.png',
+			size: 2,
 		},
 	},
 	{
@@ -569,7 +605,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 255, g: 215, b: 0 },
-			tileIconPath: 'sunflowers-sunflower.png',
+			iconPath: 'sunflowers-sunflower.png',
+			size: 2,
 		},
 	},
 	{
@@ -580,7 +617,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 2,
 		presentation: {
 			accentColor: { r: 123, g: 104, b: 238 },
-			tileIconPath: 'legumes-lupine.png',
+			iconPath: 'legumes-lupine.png',
+			size: 2,
 		},
 	},
 	{
@@ -591,7 +629,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 238, g: 232, b: 170 },
-			tileIconPath: 'rutabagas-rutabaga.png',
+			iconPath: 'rutabagas-rutabaga.png',
+			size: 1,
 		},
 	},
 	{
@@ -602,7 +641,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 144, g: 238, b: 144 },
-			tileIconPath: 'celery-celery.png',
+			iconPath: 'celery-celery.png',
+			size: 1,
 		},
 	},
 	{
@@ -613,7 +653,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 255, g: 140, b: 0 },
-			tileIconPath: 'marigolds-marigold.png',
+			iconPath: 'marigolds-marigold.png',
+			size: 1,
 		},
 	},
 	{
@@ -624,7 +665,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 34, g: 139, b: 34 },
-			tileIconPath: 'cilantro-cilantro.png',
+			iconPath: 'cilantro-cilantro.png',
+			size: 1,
 		},
 	},
 	{
@@ -635,7 +677,8 @@ export const plants: Plant[] = [
 		plantingDistanceInFeet: 1,
 		presentation: {
 			accentColor: { r: 152, g: 251, b: 152 },
-			tileIconPath: 'brassicas-bok-choy.png',
+			iconPath: 'brassicas-bok-choy.png',
+			size: 1,
 		},
 	},
 ]

@@ -1,16 +1,20 @@
 <script lang="ts">
-import PlantPlacementTile from './PlantPlacementTile.svelte'
-import { dragState as genericDragState } from '../state/dragState'
+import PlantGridTile from './PlantGridTile.svelte'
+import type { GridPlacement } from '../../private-lib/grid-placement'
+import type { Plant } from '../../private-lib/plant'
+import { dragState as genericDragState } from '../../private-lib/dnd/state'
 import {
 	isDragStatePopulated,
 	getDraggedItemInfo,
 	isDraggingExistingItem,
 	isDraggingNewItem,
-} from '../state/dragState'
+} from '../../private-lib/dnd/state'
 import type { GardenDragState } from '../state/gardenDragState'
+import { existingGridItemToGridPlacement } from '../state/gardenDragState'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
+import { isPlant } from '../../private-lib/plant'
 
 interface Props {
 	beds: GardenBed[]
@@ -18,7 +22,9 @@ interface Props {
 
 const { beds }: Props = $props()
 
-let currentDragState = $derived($genericDragState as GardenDragState)
+type PlantWithSize = Plant & { size: number }
+
+let currentDragState = $derived($genericDragState as GardenDragState<PlantWithSize>)
 let draggedInfo = $derived(
 	isDragStatePopulated(currentDragState) ? getDraggedItemInfo(currentDragState) : null,
 )
@@ -124,24 +130,29 @@ let previewPosition = $derived.by(() => {
 			height: {previewPosition.size}px;
 		"
 	>
-		{#if isDraggingExistingItem(currentDragState)}
-			<PlantPlacementTile
-				plantPlacement={currentDragState.draggedExistingItem}
+		{#if isDraggingExistingItem(currentDragState) && isPlant(currentDragState.draggedExistingItem.itemData)}
+			{@const placement = existingGridItemToGridPlacement(
+				currentDragState.draggedExistingItem,
+			)}
+			<PlantGridTile
+				placement={{
+					...placement,
+					data: { ...placement.data, size: placement.size },
+				}}
 				sizePx={previewPosition.size}
 			/>
 			{#if currentDragState.isCloneMode}
 				<div class="clone-indicator">+</div>
 			{/if}
-		{:else if isDraggingNewItem(currentDragState)}
-			<PlantPlacementTile
-				plantPlacement={{
-					id: 'preview',
-					x: 0,
-					y: 0,
-					itemData: currentDragState.draggedNewItem,
-				}}
-				sizePx={previewPosition.size}
-			/>
+		{:else if isDraggingNewItem(currentDragState) && isPlant(currentDragState.draggedNewItem)}
+			{@const placement: GridPlacement<PlantWithSize> = {
+				id: 'preview',
+				x: 0,
+				y: 0,
+				size: currentDragState.draggedNewItem.presentation.size,
+				data: { ...currentDragState.draggedNewItem, size: currentDragState.draggedNewItem.presentation.size } as PlantWithSize,
+			}}
+			<PlantGridTile placement={placement} sizePx={previewPosition.size} />
 		{/if}
 	</div>
 {/if}

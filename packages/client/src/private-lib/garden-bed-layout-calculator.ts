@@ -2,11 +2,11 @@
 
 import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
-import { DEFAULT_LAYOUT_PARAMS } from './layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
 import type { GardenBed } from './garden-bed'
 import type { PlantPlacement } from './plant-placement'
 import type { Garden } from './garden'
-import { assertPlantExists, type Plant } from './plant'
+import type { Plant } from './plant'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -325,19 +325,17 @@ export class GardenBedLayoutCalculator {
 		x: number,
 		y: number,
 		size: number,
-		plantPlacements: PlantPlacement[],
+		placements: { x: number; y: number; size: number; id: string }[],
 		skipId?: string,
 	): boolean {
 		if (x < 0 || y < 0 || x + size > this.width || y + size > this.height) return false
-		if (!Array.isArray(plantPlacements)) {
-			console.error('plantPlacements is not an array', plantPlacements)
-			throw new Error('plantPlacements is not an array')
+		if (!Array.isArray(placements)) {
+			console.error('placements is not an array', placements)
+			throw new Error('placements is not an array')
 		}
-		for (const p of plantPlacements) {
+		for (const p of placements) {
 			if (skipId && p.id === skipId) continue
-			const plant = plants.find((pl) => pl.id === p.plantId)
-			assertPlantExists(plant)
-			const pSize = plant.plantingDistanceInFeet
+			const pSize = p.size
 			for (let dx = 0; dx < size; dx++) {
 				for (let dy = 0; dy < size; dy++) {
 					const cellX = x + dx
@@ -547,12 +545,25 @@ export function isValidDrop(
 		throw new Error('Plant not found for isValidDrop')
 	}
 	const size = plant.plantingDistanceInFeet
+
+	// Convert PlantPlacements to include size information
+	const placementsWithSize = targetBed.plantPlacements.map((p) => {
+		const plantForPlacement = plants.find((pl) => pl.id === p.plantId)
+		if (!plantForPlacement) {
+			throw new Error(`Plant not found for placement ${p.id}`)
+		}
+		return {
+			...p,
+			size: plantForPlacement.plantingDistanceInFeet,
+		}
+	})
+
 	return layout.isValidPlacement(
 		plants,
 		x,
 		y,
 		size,
-		targetBed.plantPlacements,
+		placementsWithSize,
 		draggedPlantPlacement.id,
 	)
 }

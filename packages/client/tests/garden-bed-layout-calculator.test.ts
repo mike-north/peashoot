@@ -18,14 +18,15 @@ const mockPlant: Plant = {
 	displayName: 'Tomato',
 	family: 'Tomato',
 	variant: 'red',
-	plantingDistanceInFeet: 1,
+	plantingDistanceInFeet: 2,
 	presentation: {
+		size: 2,
 		accentColor: {
 			r: 1,
 			g: 0,
 			b: 0,
 		},
-		tileIconPath: 'tomato.png',
+		iconPath: 'tomato.png',
 	},
 }
 
@@ -85,9 +86,10 @@ describe('GardenBedLayoutCalculator', () => {
 	})
 
 	it('validates placement in bounds and no overlap', () => {
-		const valid = layout.isValidPlacement([mockPlant], 0, 0, 1, [plantPlacement])
+		const placementWithSize = { ...plantPlacement, size: 1 }
+		const valid = layout.isValidPlacement([mockPlant], 0, 0, 1, [placementWithSize])
 		expect(valid).toBe(true)
-		const invalid = layout.isValidPlacement([mockPlant], 1, 2, 1, [plantPlacement])
+		const invalid = layout.isValidPlacement([mockPlant], 1, 2, 1, [placementWithSize])
 		expect(invalid).toBe(false)
 	})
 })

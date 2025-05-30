@@ -1,5 +1,5 @@
 <script lang="ts">
-import { dragState } from '../state/dragState'
+import { dragState } from '../../private-lib/dnd/state'
 import PlantToolbar from './PlantToolbar.svelte'
 import DeleteZone from './DeleteZone.svelte'
 import DragPreview from './DragPreview.svelte'
@@ -27,7 +27,7 @@ interface GardenProps {
 	onMovePlantToDifferentBed: (
 		sourceBedId: string,
 		targetBedId: string,
-		existingItem: ExistingGardenItem,
+		existingItem: ExistingGardenItem<PlantWithSize>,
 		newX: number,
 		newY: number,
 	) => void
@@ -39,9 +39,9 @@ interface GardenProps {
 		plantBId: string
 		color: string
 	}[]
-	onRequestPlacement: (details: PlacementRequestDetails) => Promise<void>
-	onRequestRemoval: (details: RemovalRequestDetails) => Promise<void>
-	onRequestCloning: (details: CloningRequestDetails) => Promise<void>
+	onRequestPlacement: (details: PlacementRequestDetails<PlantWithSize>) => Promise<void>
+	onRequestRemoval: (details: RemovalRequestDetails<PlantWithSize>) => Promise<void>
+	onRequestCloning: (details: CloningRequestDetails<PlantWithSize>) => Promise<void>
 }
 
 let {
@@ -57,6 +57,8 @@ let {
 }: GardenProps = $props()
 
 let { beds } = $derived(garden)
+
+type PlantWithSize = Plant & { size: number }
 
 // Handle drop events from the drag coordinator
 async function handleDrop(dropInfo: {
@@ -84,20 +86,28 @@ async function handleDrop(dropInfo: {
 	const { sourceZoneId, draggedExistingItem } = currentDragState
 	// Handle different drop scenarios
 	if (sourceZoneId && dropInfo.targetType === 'delete-zone' && draggedExistingItem) {
+		// Cast to ExistingGardenItem to access x and y coordinates
+		const existingGardenItem = draggedExistingItem as ExistingGardenItem<PlantWithSize>
+
 		// Create pending operation for removal
 		const pendingOpId = addPendingOperation({
 			type: 'removal',
 			state: 'pending',
 			zoneId: sourceZoneId,
-			item: draggedExistingItem.itemData,
-			size: (draggedExistingItem.itemData as Plant).plantingDistanceInFeet,
+			item: existingGardenItem.itemData,
+			size: (existingGardenItem.itemData as Plant).plantingDistanceInFeet,
+			x: existingGardenItem.x,
+			y: existingGardenItem.y,
 			originalSourceZoneId: sourceZoneId,
 			originalInstanceId: draggedExistingItem.id,
 		})
 
 		try {
 			await onRequestRemoval({
-				itemData: draggedExistingItem.itemData as Plant,
+				itemData: {
+					...existingGardenItem.itemData,
+					size: (existingGardenItem.itemData as Plant).presentation.size,
+				} as PlantWithSize,
 				instanceId: draggedExistingItem.id,
 				sourceZoneId: sourceZoneId,
 				operationType: 'item-remove-from-zone',
@@ -143,11 +153,14 @@ async function handleDrop(dropInfo: {
 
 				try {
 					await onRequestCloning({
-						itemDataToClone: existingItem.itemData as Plant,
+						itemDataToClone: {
+							...existingItem.itemData,
+							size: (existingItem.itemData as Plant).presentation.size,
+						} as PlantWithSize,
 						sourceOriginalZoneId: sourceBedId,
 						targetCloneZoneId: dropInfo.targetZoneId,
-						sourceOriginalX: existingItem.x ?? 0,
-						sourceOriginalY: existingItem.y ?? 0,
+						sourceOriginalX: (existingItem as ExistingGardenItem<PlantWithSize>).x,
+						sourceOriginalY: (existingItem as ExistingGardenItem<PlantWithSize>).y,
 						targetCloneX: x,
 						targetCloneY: y,
 						operationType: 'item-clone-in-zone',
@@ -188,7 +201,10 @@ async function handleDrop(dropInfo: {
 
 				try {
 					await onRequestPlacement({
-						itemData: existingItem.itemData as Plant,
+						itemData: {
+							...existingItem.itemData,
+							size: (existingItem.itemData as Plant).presentation.size,
+						} as PlantWithSize,
 						targetZoneId: dropInfo.targetZoneId,
 						x,
 						y,
@@ -204,7 +220,7 @@ async function handleDrop(dropInfo: {
 						onMovePlantToDifferentBed(
 							sourceBedId,
 							dropInfo.targetZoneId,
-							existingItem as ExistingGardenItem,
+							existingItem as ExistingGardenItem<PlantWithSize>,
 							x,
 							y,
 						)
@@ -227,7 +243,10 @@ async function handleDrop(dropInfo: {
 				type: 'placement',
 				state: 'pending',
 				zoneId: dropInfo.targetZoneId,
-				item: currentDragState.draggedNewItem,
+				item: {
+					...(currentDragState.draggedNewItem as Plant),
+					size: (currentDragState.draggedNewItem as Plant).presentation.size,
+				} as PlantWithSize,
 				size: (currentDragState.draggedNewItem as Plant).plantingDistanceInFeet,
 				x,
 				y,
@@ -235,7 +254,10 @@ async function handleDrop(dropInfo: {
 
 			try {
 				await onRequestPlacement({
-					itemData: currentDragState.draggedNewItem as Plant,
+					itemData: {
+						...(currentDragState.draggedNewItem as Plant),
+						size: (currentDragState.draggedNewItem as Plant).presentation.size,
+					} as PlantWithSize,
 					targetZoneId: dropInfo.targetZoneId,
 					x,
 					y,

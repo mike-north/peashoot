@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
 import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
 import { dragState } from '../state/dragState'
 

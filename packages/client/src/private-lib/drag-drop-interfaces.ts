@@ -1,4 +1,5 @@
-import type { PlantPlacement } from './plant-placement'
+import type { PlantWithSize } from './garden-bed'
+import type { GridPlacement } from './grid-placement'
 import type { Plant } from './plant'
 
 // Interface for areas that contain draggable items
@@ -7,7 +8,7 @@ export interface DraggableArea {
 	type: 'garden-bed' | 'toolbar'
 
 	// Called when a drag starts from this area
-	onDragStart?: (item: PlantPlacement | Plant, event: MouseEvent) => void
+	onDragStart?: (item: GridPlacement<PlantWithSize>, event: MouseEvent) => void
 }
 
 // Interface for areas that can accept drops
@@ -16,13 +17,17 @@ export interface DropZone {
 	type: 'garden-bed' | 'delete-zone'
 
 	// Check if a drop is valid at the given coordinates
-	isValidDrop?: (draggedItem: PlantPlacement | Plant, x?: number, y?: number) => boolean
+	isValidDrop?: (
+		draggedItem: GridPlacement<PlantWithSize>,
+		x?: number,
+		y?: number,
+	) => boolean
 
 	// Called when an item is dropped in this zone
-	onDrop?: (draggedItem: PlantPlacement | Plant, x?: number, y?: number) => void
+	onDrop?: (draggedItem: GridPlacement<PlantWithSize>, x?: number, y?: number) => void
 
 	// Called when mouse enters this drop zone during drag
-	onDragEnter?: (draggedItem: PlantPlacement | Plant) => void
+	onDragEnter?: (draggedItem: GridPlacement<PlantWithSize> | Plant) => void
 
 	// Called when mouse leaves this drop zone during drag
 	onDragLeave?: () => void
@@ -37,7 +42,7 @@ export interface GridCoordinates {
 // Information about a drag operation
 export interface DragInfo {
 	sourceArea: DraggableArea
-	draggedItem: PlantPlacement | Plant
+	draggedItem: GridPlacement<PlantWithSize> | Plant
 	currentPosition: { x: number; y: number }
 	gridCoordinates?: GridCoordinates
 }

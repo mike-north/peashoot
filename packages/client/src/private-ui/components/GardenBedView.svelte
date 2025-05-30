@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlantGridTile from './PlantGridTile.svelte'
+import GridPlacementTile from './GridPlacementTile.svelte'
 import PendingOperationTile from './PendingOperationTile.svelte'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import {
@@ -24,8 +24,7 @@ import {
 } from '../state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
 import type { Plant } from '../../private-lib/plant'
-
-type PlantWithSize = Plant & { size: number }
+import type { PlantWithSize } from '../../private-lib/garden-bed'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GardenPendingOperation<PlantWithSize> & {
@@ -89,22 +88,8 @@ const colSpanClass = $derived(
 	})(),
 )
 
-// Convert legacy PlantPlacements to GridPlacements with proper types
-const gridPlacements = $derived(
-	bed.plantPlacements
-		.map((placement) => {
-			const plant = plants.find((p) => p.id === placement.plantId)
-			if (!plant) return null
-			return {
-				id: placement.id,
-				x: placement.x,
-				y: placement.y,
-				size: plant.presentation.size,
-				data: { ...plant, size: plant.presentation.size } as PlantWithSize,
-			}
-		})
-		.filter((p) => p !== null),
-)
+// plantPlacements is already GridPlacement<PlantWithSize>[]
+const gridPlacements = $derived(bed.plantPlacements)
 
 // Identify plant placements in this bed that are the source of a pending move or clone
 let pendingSourcePlantIds = $derived(
@@ -493,20 +478,16 @@ function handleDropProp(payload: DropEventPayload) {
 						use:disablePointerEventsWhenDragging={$genericDragState}
 					>
 						{#if $genericDragState.targetZoneId === bed.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
-							{@const draggedItemData =
-								$genericDragState.draggedNewItem ??
-								$genericDragState.draggedExistingItem?.itemData}
-							{@const itemSize =
-								draggedItemData && 'size' in draggedItemData ? draggedItemData.size : 1}
+							{@const effectiveItemSize = $genericDragState.draggedItemEffectiveSize}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: $genericDragState.highlightedCell.x,
 								y: $genericDragState.highlightedCell.y,
-								size: itemSize,
+								size: effectiveItemSize,
 							})}
 							{@const valid = isValidPlacement(
 								$genericDragState.highlightedCell.x,
 								$genericDragState.highlightedCell.y,
-								itemSize,
+								effectiveItemSize,
 							)}
 							{@const isSource = $genericDragState.sourceZoneId === bed.id}
 							<div
@@ -561,7 +542,7 @@ function handleDropProp(payload: DropEventPayload) {
 									class="tile-overlay__tile"
 									style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
 								>
-									<PlantGridTile
+									<GridPlacementTile
 										placement={placement}
 										sizePx={tileLayout.width}
 										isPulsingSource={isPendingSource}

@@ -1,5 +1,4 @@
 import type { GardenBed } from '../garden-bed'
-import type { PlantPlacement } from '../plant-placement'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
@@ -8,6 +7,7 @@ import type {
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import type { Plant } from '../plant'
+import type { GridPlacement } from '../grid-placement'
 
 // Define PlantWithSize type
 type PlantWithSize = Plant & { size: number }
@@ -206,8 +206,8 @@ export class GardenValidationService {
 								}
 
 								const occupiedCells = cloneTargetBed.plantPlacements.reduce(
-									(total: number, placement: PlantPlacement) => {
-										const plant = this.plants.find((p) => p.id === placement.plantId)
+									(total: number, placement: GridPlacement<PlantWithSize>) => {
+										const plant = this.plants.find((p) => p.id === placement.data.id)
 										if (!plant) {
 											throw new Error('Plant not found for validation')
 										}

@@ -1,5 +1,5 @@
 <script lang="ts">
-import PlantGridTile from './PlantGridTile.svelte'
+import GridPlacementTile from './GridPlacementTile.svelte'
 import type { GridPlacement } from '../../private-lib/grid-placement'
 import type { Plant } from '../../private-lib/plant'
 import { dragState as genericDragState } from '../../private-lib/dnd/state'
@@ -134,13 +134,7 @@ let previewPosition = $derived.by(() => {
 			{@const placement = existingGridItemToGridPlacement(
 				currentDragState.draggedExistingItem,
 			)}
-			<PlantGridTile
-				placement={{
-					...placement,
-					data: { ...placement.data, size: placement.size },
-				}}
-				sizePx={previewPosition.size}
-			/>
+			<GridPlacementTile placement={placement} sizePx={previewPosition.size} />
 			{#if currentDragState.isCloneMode}
 				<div class="clone-indicator">+</div>
 			{/if}
@@ -149,10 +143,13 @@ let previewPosition = $derived.by(() => {
 				id: 'preview',
 				x: 0,
 				y: 0,
-				size: currentDragState.draggedNewItem.presentation.size,
-				data: { ...currentDragState.draggedNewItem, size: currentDragState.draggedNewItem.presentation.size } as PlantWithSize,
+				size: draggedInfo.effectiveSize,
+				data: {
+					...currentDragState.draggedNewItem,
+					size: draggedInfo.effectiveSize,
+				} as PlantWithSize,
 			}}
-			<PlantGridTile placement={placement} sizePx={previewPosition.size} />
+			<GridPlacementTile placement={placement} sizePx={previewPosition.size} />
 		{/if}
 	</div>
 {/if}

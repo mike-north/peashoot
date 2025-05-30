@@ -1,5 +1,5 @@
-import type { GardenBed } from './garden-bed'
-import type { PlantPlacement } from './plant-placement'
+import type { GardenBed, PlantWithSize } from './garden-bed'
+import type { GridPlacement } from './grid-placement'
 
 export interface EdgeIndicator {
 	id: string
@@ -17,7 +17,7 @@ export function movePlantBetweenBeds(
 	garden: Garden,
 	sourceBedId: string,
 	targetBedId: string,
-	plant: PlantPlacement,
+	plant: GridPlacement<PlantWithSize>,
 	newX: number,
 	newY: number,
 ): Garden {
@@ -34,7 +34,7 @@ export function movePlantBetweenBeds(
 	const updatedSourceBed = {
 		...sourceBed,
 		plantPlacements: sourceBed.plantPlacements.filter(
-			(p: PlantPlacement) => p.id !== plant.id,
+			(p: GridPlacement<PlantWithSize>) => p.id !== plant.id,
 		),
 	}
 
@@ -60,6 +60,6 @@ export function findBed(garden: Garden, bedId: string): GardenBed | undefined {
 export function findPlantPlacement(
 	bed: GardenBed,
 	plantPlacementId: string,
-): PlantPlacement | undefined {
+): GridPlacement<PlantWithSize> | undefined {
 	return bed.plantPlacements.find((pp) => pp.id === plantPlacementId)
 }

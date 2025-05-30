@@ -6,6 +6,7 @@ import { DEFAULT_LAYOUT_PARAMS } from './layout-constants'
 import type { GardenBed } from './garden-bed'
 import type { PlantPlacement } from './plant-placement'
 import type { Garden } from './garden'
+import { assertPlantExists, type Plant } from './plant'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -320,21 +321,19 @@ export class GardenBedLayoutCalculator {
 	 * Skips a plant with skipId (for drag/move scenarios).
 	 */
 	isValidPlacement(
+		plants: Plant[],
 		x: number,
 		y: number,
 		size: number,
-		plantPlacements: {
-			x: number
-			y: number
-			id: string
-			plantTile: { size?: number }
-		}[],
+		plantPlacements: PlantPlacement[],
 		skipId?: string,
 	): boolean {
 		if (x < 0 || y < 0 || x + size > this.width || y + size > this.height) return false
 		for (const p of plantPlacements) {
 			if (skipId && p.id === skipId) continue
-			const pSize = p.plantTile.size || 1
+			const plant = plants.find((pl) => pl.id === p.plantId)
+			assertPlantExists(plant)
+			const pSize = plant.plantingDistanceInFeet
 			for (let dx = 0; dx < size; dx++) {
 				for (let dy = 0; dy < size; dy++) {
 					const cellX = x + dx
@@ -526,8 +525,9 @@ export function screenToGridCoordinates(
  * This is a higher-level function often used during drag-and-drop operations.
  */
 export function isValidDrop(
+	plants: Plant[],
 	targetBed: GardenBed,
-	draggedPlant: PlantPlacement,
+	draggedPlantPlacement: PlantPlacement,
 	x: number, // Target grid x-coordinate
 	y: number, // Target grid y-coordinate
 	layoutParamsOverrides?: Partial<LayoutParams>, // Optional overrides for layout calculation
@@ -538,8 +538,19 @@ export function isValidDrop(
 		...DEFAULT_LAYOUT_PARAMS, // Start with defaults
 		...(layoutParamsOverrides || {}), // Apply any specific overrides
 	})
-	const size = draggedPlant.plantTile.size || 1
-	return layout.isValidPlacement(x, y, size, targetBed.plantPlacements, draggedPlant.id)
+	const plant = plants.find((p) => p.id === draggedPlantPlacement.plantId)
+	if (!plant) {
+		throw new Error('Plant not found for isValidDrop')
+	}
+	const size = plant.plantingDistanceInFeet
+	return layout.isValidPlacement(
+		plants,
+		x,
+		y,
+		size,
+		targetBed.plantPlacements,
+		draggedPlantPlacement.id,
+	)
 }
 
 export interface GardenBedViewCardSize {

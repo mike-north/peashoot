@@ -155,12 +155,7 @@ async function handleDrop(dropInfo: {
 					// Validation succeeded - now perform the actual clone
 					updatePendingOperation(pendingOpId, 'success')
 					if (!dropInfo.targetZoneId) return
-					onAddNewPlant(
-						dropInfo.targetZoneId,
-						existingItem.itemData as Plant,
-						x,
-						y,
-					)
+					onAddNewPlant(dropInfo.targetZoneId, existingItem.itemData as Plant, x, y)
 					setTimeout(() => {
 						removePendingOperation(pendingOpId)
 					}, 1000) // Show success for 1 second
@@ -248,7 +243,7 @@ async function handleDrop(dropInfo: {
 				})
 				// Validation succeeded - now perform the actual placement
 				updatePendingOperation(pendingOpId, 'success')
-				if (!dropInfo.targetZoneId || !currentDragState.draggedNewItem) return
+				if (!dropInfo.targetZoneId) return
 				onAddNewPlant(
 					dropInfo.targetZoneId,
 					currentDragState.draggedNewItem as Plant,

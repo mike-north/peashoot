@@ -29,3 +29,9 @@ export function isPlant(item: unknown): item is Plant {
 		'presentation' in item
 	)
 }
+
+export function assertPlantExists(plant: Plant | undefined): asserts plant is Plant {
+	if (!plant) {
+		throw new Error('Plant not found for isValidPlacement')
+	}
+}

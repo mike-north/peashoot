@@ -2,7 +2,6 @@
 import PlantPlacementTile from './PlantPlacementTile.svelte'
 import type { GardenPendingOperation } from '../state/gardenDragState'
 import { getPlantSize } from '../state/gardenDragState'
-import type { Plant } from '../../private-lib/plant'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
@@ -54,12 +53,10 @@ $effect(() => {
 		showProgressAnimation = false
 
 		// Show completion state
-		if (operation.state === 'success' || operation.state === 'error') {
-			showCompletionState = true
-			completionTimer = window.setTimeout(() => {
-				showCompletionState = false
-			}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
-		}
+		showCompletionState = true
+		completionTimer = window.setTimeout(() => {
+			showCompletionState = false
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
 	}
 
 	// Cleanup on unmount or state change

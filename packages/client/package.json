@@ -13,8 +13,6 @@
 	"devDependencies": {
 		"@iconify-json/ph": "^1.2.2",
 		"@iconify-json/wi": "^1.2.1",
-		"@peashoot/types": "^1.0.0",
-		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.8",
@@ -38,13 +36,12 @@
 		"typescript": "^5.8.3",
 		"unplugin-icons": "^22.1.0",
 		"vite": "^6.3.5",
-		"vitest": "^3.1.4"
+		"vitest": "^3.1.4",
+		"sass": "^1.89.0",
+		"@tailwindcss/postcss": "^4.1.7"
 	},
 	"dependencies": {
 		"@mateothegreat/svelte5-router": "^2.15.2",
-		"@tailwindcss/postcss": "^4.1.7",
-		"sass": "^1.89.0",
-		"svelte-dnd-action": "^0.9.61",
 		"uuid": "^11.1.0"
 	}
 }

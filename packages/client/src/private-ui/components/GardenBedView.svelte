@@ -128,19 +128,8 @@ const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
 function isValidPlacement(x: number, y: number, size: number): boolean {
 	// For existing plants, exclude the dragged plant from collision detection
 	const skipId = $genericDragState.draggedExistingItem?.id
-	// Convert PlantPlacement array to expected format for the layout calculator
-	const placementsWithSize = bed.plantPlacements.map((placement) => {
-		const plant = plants.find((p) => p.id === placement.plantId)
-		return {
-			x: placement.x,
-			y: placement.y,
-			id: placement.id,
-			plantTile: {
-				size: plant ? getPlantSize(plant) : 1,
-			},
-		}
-	})
-	return layout.isValidPlacement(x, y, size, placementsWithSize, skipId)
+
+	return layout.isValidPlacement(plants, x, y, size, bed.plantPlacements, skipId)
 }
 
 let edgeBorders = $state<Border[]>([])
@@ -218,8 +207,6 @@ interface DropEventPayload {
 }
 
 function handleDropProp(payload: DropEventPayload) {
-	console.log('[GardenBedView] Drop event received via prop:', payload)
-
 	if (
 		payload.targetZoneId !== bed.id ||
 		payload.x === undefined ||
@@ -539,26 +526,7 @@ function handleDropProp(payload: DropEventPayload) {
 									size: itemDataSize,
 									strokeWidth: 2,
 								})}
-								{@const _ = console.log('[GardenBedView] Rendering plant tile:', {
-									placementId: placement.id,
-									plantId: plant.id,
-									displayName: plant.displayName,
-									plantingDistanceInFeet: plant.plantingDistanceInFeet,
-									calculatedSize: itemDataSize,
-									position: { x: placement.x, y: placement.y },
-									tileLayoutPixels: {
-										svgX: tileLayout.svgX,
-										svgY: tileLayout.svgY,
-										width: tileLayout.width,
-										height: tileLayout.height
-									},
-									overlayLayoutPixels: {
-										svgX: overlayLayout.svgX,
-										svgY: overlayLayout.svgY,
-										width: overlayLayout.width,
-										height: overlayLayout.height
-									}
-								})}
+
 								{@const corners = layout.getTileFrameCornerPositions({
 									x: placement.x,
 									y: placement.y,
@@ -591,16 +559,6 @@ function handleDropProp(payload: DropEventPayload) {
 									</div>
 								</GenericDraggable>
 							{:else}
-								<!-- Render placeholder for missing plant data -->
-								{@const _ = console.warn(
-									`[GardenBedView] Plant not found for placement ID ${placement.id} with plantId ${placement.plantId}. Available plant IDs:`,
-									plants.map((p) => p.id),
-								)}
-								{@const tileLayout = layout.getTileLayoutInfo({
-									x: placement.x,
-									y: placement.y,
-									size: 1, // Default size for missing plants
-								})}
 								{@const overlayLayout = layout.getTileOverlayLayoutInfo({
 									x: placement.x,
 									y: placement.y,

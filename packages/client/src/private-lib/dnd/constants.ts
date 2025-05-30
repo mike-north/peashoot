@@ -20,3 +20,5 @@ export const OPERATION_PROGRESS_ANIMATION_DELAY_MS = 200
  * How long to show the success/failure state after an operation completes.
  */
 export const OPERATION_COMPLETION_DISPLAY_DURATION_MS = 800
+
+export const TOOLTIP_FADEOUT_DELAY_MS = 100

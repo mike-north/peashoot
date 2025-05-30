@@ -1,7 +1,6 @@
 import type { Garden } from '../private-lib/garden'
 import { timeout } from '../utils/promise'
 
-
 export async function fetchGardens(): Promise<Garden[]> {
 	await timeout(300) // Fake delay to simulate network call
 

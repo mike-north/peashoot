@@ -7,18 +7,12 @@ import type {
 	ValidationContext,
 	PendingOperation,
 } from '../../private-lib/dnd/types'
-import type { AsyncValidationFunction } from '../../private-lib/dnd/validation'
 
-// TODO: Verify these paths when Plant and GardenBed types are fully available/refactored
 import type { Plant } from '../../private-lib/plant'
 import { isPlant } from '../../private-lib/plant'
 import type { PlantPlacement } from '../../private-lib/plant-placement'
 import type { GardenBed } from '../../private-lib/garden-bed'
-import type { Garden } from '../../private-lib/garden' // Ensure Garden type is imported for applicationContext
-// import type { Garden } from '../../lib/garden'; // If a full Garden model is needed for context
-
-// Plant already implements DraggableItem (has id, and plantingDistanceInFeet serves as size)
-// So we can use Plant directly as our draggable item type
+import type { Garden } from '../../private-lib/garden'
 
 // Define what an existing/placed item looks like in the garden (PlantPlacement)
 export interface ExistingGardenItem

@@ -21,12 +21,15 @@ const plantsState = writable<PlantsState>(initialState)
 export const plants = derived(plantsState, ($state) => $state.plants)
 export const plantsLoading = derived(plantsState, ($state) => $state.loading)
 export const plantsError = derived(plantsState, ($state) => $state.error)
-export const plantsReady = derived(plantsState, ($state) => !$state.loading && $state.error === null)
+export const plantsReady = derived(
+	plantsState,
+	($state) => !$state.loading && $state.error === null,
+)
 
 // Function to load plants
 export async function loadPlants(): Promise<void> {
 	plantsState.update((state) => ({ ...state, loading: true, error: null }))
-	
+
 	try {
 		const plantsData = await fetchPlants()
 		plantsState.update((state) => ({
@@ -61,6 +64,8 @@ export const getPlantsByFamily = derived(plants, ($plants) => {
 })
 
 // Auto-load plants when the store is created
-loadPlants()
+loadPlants().catch((error: unknown) => {
+	console.error('Error loading plants:', error)
+})
 
-export default plantsState 
+export default plantsState

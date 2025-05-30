@@ -3,9 +3,11 @@ import type { PlantPlacement } from '../plant-placement'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
+	ValidationResult,
 } from '../../private-ui/state/gardenDragState'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../errors/unreachabe'
+import type { Plant } from '../plant'
 
 interface PlacementValidityResult {
 	isValid: boolean
@@ -13,6 +15,8 @@ interface PlacementValidityResult {
 }
 
 export class GardenValidationService {
+	constructor(private readonly plants: Plant[]) {}
+
 	private checkPlacementValidity(
 		targetBed: GardenBed,
 		itemX: number,
@@ -20,6 +24,11 @@ export class GardenValidationService {
 		itemSize: number,
 		excludeItemId?: string,
 	): PlacementValidityResult {
+		const plant = this.plants.find((p) => p.id === excludeItemId)
+		if (!plant) {
+			return { isValid: false, reason: 'Plant not found.' }
+		}
+
 		// Check bounds
 		if (
 			itemX < 0 ||
@@ -35,7 +44,7 @@ export class GardenValidationService {
 			if (excludeItemId && existingPlant.id === excludeItemId) {
 				continue
 			}
-			const existingSize = existingPlant.plantTile.size || 1
+			const existingSize = plant.plantingDistanceInFeet
 			if (
 				itemX < existingPlant.x + existingSize &&
 				itemX + itemSize > existingPlant.x &&
@@ -44,7 +53,7 @@ export class GardenValidationService {
 			) {
 				return {
 					isValid: false,
-					reason: `Overlaps with existing plant '${existingPlant.plantTile.name}' (ID: ${existingPlant.id}).`,
+					reason: `Overlaps with existing plant '${plant.displayName}' (ID: ${existingPlant.id}).`,
 				}
 			}
 		}
@@ -52,7 +61,7 @@ export class GardenValidationService {
 	}
 
 	createAsyncValidator(): GardenAsyncValidationFunction {
-		return async (context: GardenValidationContext) => {
+		return async (context: GardenValidationContext): Promise<ValidationResult> => {
 			await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
 
 			if (!context.applicationContext) {
@@ -61,15 +70,21 @@ export class GardenValidationService {
 
 			const currentGarden = context.applicationContext.garden
 
-			return new Promise<void>((resolve, reject) => {
+			return new Promise<ValidationResult>((resolve, reject) => {
 				setTimeout(() => {
 					try {
+						const plant = context.item
 						switch (context.operationType) {
 							case 'item-move-within-zone':
-								if (Math.random() > 0.02) resolve()
-								else reject(new Error('Plant is too established to move within bed'))
+								resolve(
+									Math.random() > 0.02
+										? { isValid: true }
+										: {
+												isValid: false,
+												error: 'Plant is too established to move within bed',
+											},
+								)
 								break
-
 							case 'item-move-across-zones': {
 								const targetBed = currentGarden.beds.find(
 									(b: GardenBed) => b.id === context.targetZoneId,
@@ -84,7 +99,7 @@ export class GardenValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									context.item.size === undefined
+									plant.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -97,24 +112,22 @@ export class GardenValidationService {
 									targetBed,
 									context.targetX,
 									context.targetY,
-									context.item.size,
+									plant.plantingDistanceInFeet,
 									context.itemInstanceId,
 								)
 								if (!placementCheck.isValid) {
 									reject(new Error(`Cannot move plant: ${placementCheck.reason}`))
 									return
 								}
-								if (
-									context.item.plantFamily.name === 'tomatoes' &&
-									targetBed.sunLevel < 3
-								) {
+								if (plant.family === 'tomatoes' && targetBed.sunLevel < 3) {
 									reject(new Error('Target bed has insufficient sunlight for tomatoes'))
-								} else if (Math.random() > 0.1) resolve()
+								} else if (Math.random() > 0.1) resolve({ isValid: true })
 								else reject(new Error('Soil compatibility issue between beds'))
 								break
 							}
 
 							case 'item-add-to-zone': {
+								const plant = context.item
 								const addTargetBed = currentGarden.beds.find(
 									(b: GardenBed) => b.id === context.targetZoneId,
 								)
@@ -123,17 +136,21 @@ export class GardenValidationService {
 									return
 								}
 								const occupiedCells = addTargetBed.plantPlacements.reduce(
-									(total: number, plant: PlantPlacement) => {
-										return total + (plant.plantTile.size || 1) ** 2
+									(total: number) => {
+										return total + plant.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
 								const totalCells = addTargetBed.width * addTargetBed.height
 								const occupancyRate = occupiedCells / totalCells
 								if (occupancyRate > 0.8)
-									reject(new Error('Bed is too crowded for new plants'))
-								else if (Math.random() > 0.05) resolve()
-								else reject(new Error('Current season not suitable for this plant'))
+									resolve({ isValid: false, error: 'Bed is too crowded for new plants' })
+								else if (Math.random() > 0.05) resolve({ isValid: true })
+								else
+									resolve({
+										isValid: false,
+										error: 'Current season not suitable for this plant',
+									})
 								break
 							}
 
@@ -144,8 +161,11 @@ export class GardenValidationService {
 										edge.plantBId === context.itemInstanceId,
 								)
 								if (hasEdgeIndicators && Math.random() > 0.7)
-									reject(new Error('Plant has beneficial relationships with neighbors'))
-								else resolve()
+									resolve({
+										isValid: false,
+										error: 'Plant has beneficial relationships with neighbors',
+									})
+								else resolve({ isValid: true })
 								break
 							}
 
@@ -160,7 +180,7 @@ export class GardenValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									context.item.size === undefined
+									context.item.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -173,7 +193,7 @@ export class GardenValidationService {
 									cloneTargetBed,
 									context.targetX,
 									context.targetY,
-									context.item.size,
+									plant.plantingDistanceInFeet,
 								)
 								if (!clonePlacementCheck.isValid) {
 									reject(new Error(`Cannot clone plant: ${clonePlacementCheck.reason}`))
@@ -181,8 +201,12 @@ export class GardenValidationService {
 								}
 
 								const occupiedCells = cloneTargetBed.plantPlacements.reduce(
-									(total: number, plant: PlantPlacement) => {
-										return total + (plant.plantTile.size || 1) ** 2
+									(total: number, placement: PlantPlacement) => {
+										const plant = this.plants.find((p) => p.id === placement.plantId)
+										if (!plant) {
+											throw new Error('Plant not found for validation')
+										}
+										return total + plant.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
@@ -192,12 +216,15 @@ export class GardenValidationService {
 									reject(
 										new Error('Target bed is too crowded for cloning (capacity check)'),
 									)
-								else if (Math.random() > 0.12) resolve()
 								else
-									reject(
-										new Error(
-											'Plant genetics not stable enough for cloning (random check)',
-										),
+									resolve(
+										Math.random() > 0.12
+											? { isValid: true }
+											: {
+													isValid: false,
+													error:
+														'Plant genetics not stable enough for cloning (random check)',
+												},
 									)
 								break
 							}

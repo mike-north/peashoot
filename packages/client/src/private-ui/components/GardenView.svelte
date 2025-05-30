@@ -1,26 +1,25 @@
 <script lang="ts">
 import { dragState } from '../state/dragState'
-import PlantToolbar, { type PlantToolbarPlantFamily } from './PlantToolbar.svelte'
+import PlantToolbar from './PlantToolbar.svelte'
 import DeleteZone from './DeleteZone.svelte'
 import DragPreview from './DragPreview.svelte'
-import { onMount } from 'svelte'
 import type { Garden } from '../../private-lib/garden'
 import GardenBedView from './GardenBedView.svelte'
 import { calculateGardenBedViewColSpans } from '../../private-lib/garden-bed-layout-calculator'
 import type {
-	GardenItem,
 	ExistingGardenItem,
 	PlacementRequestDetails,
 	RemovalRequestDetails,
 	CloningRequestDetails,
 } from '../state/gardenDragState'
 import { gardenDragCoordinator } from '../../private-lib/attachments/gardenDragCoordinator'
-import { fetchPlantFamilies } from '../../lib/plant-data'
+import type { Plant } from '../../private-lib/plant'
 import {
 	addPendingOperation,
 	updatePendingOperation,
 	removePendingOperation,
 } from '../../private-lib/dnd/validation'
+import { plants, plantsLoading, plantsError, plantsReady } from '../state/plantsStore'
 
 interface GardenProps {
 	garden: Garden
@@ -32,7 +31,7 @@ interface GardenProps {
 		newX: number,
 		newY: number,
 	) => void
-	onAddNewPlant: (bedId: string, item: GardenItem, x: number, y: number) => void
+	onAddNewPlant: (bedId: string, item: Plant, x: number, y: number) => void
 	onDeletePlant: (plantId: string, bedId: string) => void
 	edgeIndicators: {
 		id: string
@@ -56,18 +55,6 @@ let {
 	onRequestRemoval,
 	onRequestCloning,
 }: GardenProps = $props()
-
-let plantFamilies = $state<PlantToolbarPlantFamily[]>([])
-
-onMount(() => {
-	fetchPlantFamilies()
-		.then((pf) => {
-			plantFamilies = pf
-		})
-		.catch((err: unknown) => {
-			console.error('Error fetching plant families', { cause: err })
-		})
-})
 
 let { beds } = $derived(garden)
 
@@ -103,28 +90,27 @@ async function handleDrop(dropInfo: {
 			state: 'pending',
 			zoneId: sourceZoneId,
 			item: draggedExistingItem.itemData,
-			size: (draggedExistingItem.itemData as GardenItem).size ?? 1,
+			size: (draggedExistingItem.itemData as Plant).plantingDistanceInFeet,
 			originalSourceZoneId: sourceZoneId,
 			originalInstanceId: draggedExistingItem.id,
 		})
 
 		try {
 			await onRequestRemoval({
-				itemData: draggedExistingItem.itemData as GardenItem,
+				itemData: draggedExistingItem.itemData as Plant,
 				instanceId: draggedExistingItem.id,
 				sourceZoneId: sourceZoneId,
 				operationType: 'item-remove-from-zone',
 			})
-			// Update to success state
+			// Validation succeeded - now perform the actual deletion
 			updatePendingOperation(pendingOpId, 'success')
-			// Perform the actual deletion after successful validation
+			onDeletePlant(draggedExistingItem.id, sourceZoneId)
 			setTimeout(() => {
-				onDeletePlant(draggedExistingItem.id, sourceZoneId)
 				removePendingOperation(pendingOpId)
 			}, 1000) // Show success for 1 second
 		} catch (error) {
 			console.error('Removal validation failed:', error)
-			// Update to error state
+			// Validation failed - do not perform deletion
 			updatePendingOperation(pendingOpId, 'error')
 			setTimeout(() => {
 				removePendingOperation(pendingOpId)
@@ -148,7 +134,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.itemData,
-					size: (existingItem.itemData as GardenItem).size ?? 1,
+					size: (existingItem.itemData as Plant).plantingDistanceInFeet,
 					x,
 					y,
 					originalSourceZoneId: sourceBedId,
@@ -157,7 +143,7 @@ async function handleDrop(dropInfo: {
 
 				try {
 					await onRequestCloning({
-						itemDataToClone: existingItem.itemData as GardenItem,
+						itemDataToClone: existingItem.itemData as Plant,
 						sourceOriginalZoneId: sourceBedId,
 						targetCloneZoneId: dropInfo.targetZoneId,
 						sourceOriginalX: existingItem.x ?? 0,
@@ -166,22 +152,16 @@ async function handleDrop(dropInfo: {
 						targetCloneY: y,
 						operationType: 'item-clone-in-zone',
 					})
-					// Update to success state
+					// Validation succeeded - now perform the actual clone
 					updatePendingOperation(pendingOpId, 'success')
-					// Perform the actual clone after successful validation
+					if (!dropInfo.targetZoneId) return
+					onAddNewPlant(dropInfo.targetZoneId, existingItem.itemData as Plant, x, y)
 					setTimeout(() => {
-						if (!dropInfo.targetZoneId) return
-						onAddNewPlant(
-							dropInfo.targetZoneId,
-							existingItem.itemData as GardenItem,
-							x,
-							y,
-						)
 						removePendingOperation(pendingOpId)
 					}, 1000) // Show success for 1 second
 				} catch (error) {
 					console.error('Cloning validation failed:', error)
-					// Update to error state
+					// Validation failed - do not perform clone
 					updatePendingOperation(pendingOpId, 'error')
 					setTimeout(() => {
 						removePendingOperation(pendingOpId)
@@ -199,7 +179,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.itemData,
-					size: (existingItem.itemData as GardenItem).size ?? 1,
+					size: (existingItem.itemData as Plant).plantingDistanceInFeet,
 					x,
 					y,
 					originalSourceZoneId: sourceBedId,
@@ -208,7 +188,7 @@ async function handleDrop(dropInfo: {
 
 				try {
 					await onRequestPlacement({
-						itemData: existingItem.itemData as GardenItem,
+						itemData: existingItem.itemData as Plant,
 						targetZoneId: dropInfo.targetZoneId,
 						x,
 						y,
@@ -216,9 +196,8 @@ async function handleDrop(dropInfo: {
 						originalInstanceId: existingItem.id,
 						sourceZoneId: sourceBedId,
 					})
-					// Update to success state
+					// Validation succeeded - now perform the actual operation
 					updatePendingOperation(pendingOpId, 'success')
-					// Perform the actual move after successful validation
 					if (operationType === 'item-move-within-zone') {
 						onMovePlantInBed(dropInfo.targetZoneId, existingItem.id, x, y)
 					} else {
@@ -235,7 +214,7 @@ async function handleDrop(dropInfo: {
 					}, 1000) // Show success for 1 second
 				} catch (error) {
 					console.error('Placement validation failed:', error)
-					// Update to error state
+					// Validation failed - do not perform operation
 					updatePendingOperation(pendingOpId, 'error')
 					setTimeout(() => {
 						removePendingOperation(pendingOpId)
@@ -249,35 +228,34 @@ async function handleDrop(dropInfo: {
 				state: 'pending',
 				zoneId: dropInfo.targetZoneId,
 				item: currentDragState.draggedNewItem,
-				size: (currentDragState.draggedNewItem as GardenItem).size ?? 1,
+				size: (currentDragState.draggedNewItem as Plant).plantingDistanceInFeet,
 				x,
 				y,
 			})
 
 			try {
 				await onRequestPlacement({
-					itemData: currentDragState.draggedNewItem as GardenItem,
+					itemData: currentDragState.draggedNewItem as Plant,
 					targetZoneId: dropInfo.targetZoneId,
 					x,
 					y,
 					operationType: 'item-add-to-zone',
 				})
-				// Update to success state
+				// Validation succeeded - now perform the actual placement
 				updatePendingOperation(pendingOpId, 'success')
-				// Perform the actual add after successful validation
+				if (!dropInfo.targetZoneId) return
+				onAddNewPlant(
+					dropInfo.targetZoneId,
+					currentDragState.draggedNewItem as Plant,
+					x,
+					y,
+				)
 				setTimeout(() => {
-					if (!dropInfo.targetZoneId) return
-					onAddNewPlant(
-						dropInfo.targetZoneId,
-						currentDragState.draggedNewItem as GardenItem,
-						x,
-						y,
-					)
 					removePendingOperation(pendingOpId)
 				}, 1000) // Show success for 1 second
 			} catch (error) {
 				console.error('Placement validation failed:', error)
-				// Update to error state
+				// Validation failed - do not perform placement
 				updatePendingOperation(pendingOpId, 'error')
 				setTimeout(() => {
 					removePendingOperation(pendingOpId)
@@ -306,47 +284,52 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 </style>
 
 <div class="garden-container">
-	{#if plantFamilies.length > 0}
-		<PlantToolbar plantFamilies={plantFamilies} />
-	{:else}
+	{#if $plantsError}
+		<div class="flex justify-center items-center h-full p-8">
+			<div class="text-error text-lg font-bold">Error loading plants: {$plantsError}</div>
+		</div>
+	{:else if $plantsLoading}
 		<div class="flex justify-center items-center h-full p-8">
 			<span class="loading loading-ring loading-xl"></span>
-			<div class="text-md font-bold">Loading plant families...</div>
+			<div class="text-md font-bold">Loading plants...</div>
 		</div>
-	{/if}
+	{:else if $plantsReady}
+		<PlantToolbar plants={$plants} />
 
-	<div
-		class="garden"
-		{@attach gardenDragCoordinator({
-			dragState,
-			beds,
-			onDrop: (dropInfo) => {
-				handleDrop(dropInfo).catch((error: unknown) => {
-					console.error('Drop failed:', error)
-				})
-			},
-		})}
-	>
 		<div
-			class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+			class="garden"
+			{@attach gardenDragCoordinator({
+				dragState,
+				beds,
+				onDrop: (dropInfo) => {
+					handleDrop(dropInfo).catch((error: unknown) => {
+						console.error('Drop failed:', error)
+					})
+				},
+			})}
 		>
-			{#each beds as bed (bed.id)}
-				<GardenBedView
-					bed={bed}
-					edgeIndicators={edgeIndicators.filter(
-						(edge) =>
-							beds
-								.find((b) => b.id === bed.id)
-								?.plantPlacements.some(
-									(p) => p.id === edge.plantAId || p.id === edge.plantBId,
-								) ?? false,
-					)}
-					colSpan={gardenBedCardColSpans[bed.id] ?? 1}
-				/>
-			{/each}
+			<div
+				class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+			>
+				{#each beds as bed (bed.id)}
+					<GardenBedView
+						bed={bed}
+						plants={$plants}
+						edgeIndicators={edgeIndicators.filter(
+							(edge) =>
+								beds
+									.find((b) => b.id === bed.id)
+									?.plantPlacements.some(
+										(p) => p.id === edge.plantAId || p.id === edge.plantBId,
+									) ?? false,
+						)}
+						colSpan={gardenBedCardColSpans[bed.id] ?? 1}
+					/>
+				{/each}
+			</div>
 		</div>
-	</div>
 
-	<DeleteZone />
-	<DragPreview beds={beds} />
+		<DeleteZone />
+		<DragPreview beds={beds} />
+	{/if}
 </div>

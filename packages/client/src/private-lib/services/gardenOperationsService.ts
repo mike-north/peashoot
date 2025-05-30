@@ -2,10 +2,7 @@ import type { Garden } from '../garden'
 import type { GardenBed } from '../garden-bed'
 import type { Plant } from '../plant'
 import type { PlantPlacement } from '../plant-placement'
-import type {
-	GardenItem,
-	ExistingGardenItem,
-} from '../../private-ui/state/gardenDragState'
+import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
 import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../garden'
 import { updatePlantPositionInBed } from '../garden-bed'
 import { existingGardenItemToPlantPlacement } from '../../private-ui/state/gardenDragState'
@@ -51,13 +48,7 @@ export class GardenOperationsService {
 		)
 	}
 
-	addNewPlant(
-		garden: Garden,
-		bedId: string,
-		item: GardenItem,
-		x: number,
-		y: number,
-	): Garden {
+	addNewPlant(garden: Garden, bedId: string, item: Plant, x: number, y: number): Garden {
 		const bed = garden.beds.find((b: GardenBed) => b.id === bedId)
 		if (!bed) {
 			console.error('[GardenOperationsService] Bed not found for addNewPlant:', bedId)
@@ -65,19 +56,15 @@ export class GardenOperationsService {
 		}
 
 		const plantForPlacement: Plant = {
-			id: item.id,
-			name: item.name,
-			icon: item.icon,
-			size: item.size ?? 1,
-			plantFamily: item.plantFamily,
+			...item,
 		}
-		const newPlantId = `${plantForPlacement.plantFamily.name}_${Date.now()}`
+		const newPlantId = `${plantForPlacement.family}_${Date.now()}`
 
 		const newPlacement: PlantPlacement = {
 			id: newPlantId,
 			x,
 			y,
-			plantTile: plantForPlacement,
+			plantId: plantForPlacement.id,
 		}
 
 		return {

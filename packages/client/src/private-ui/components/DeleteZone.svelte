@@ -100,18 +100,7 @@ function setIsHovered(hovered: boolean) {
 	position: absolute;
 	width: 60px;
 	height: 60px;
-	border-radius: 50%;
-	border: 2px solid rgba(0, 0, 0, 0.4);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	z-index: 999;
-
-	&__container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-		overflow: hidden;
-	}
 }
 
 @keyframes spin {
@@ -142,16 +131,14 @@ function setIsHovered(hovered: boolean) {
 </div>
 
 <!-- Pending Removal Indicators -->
-{#each pendingRemovals as removal, _index (removal.id)}
+{#each pendingRemovals as removal, index (removal.id)}
 	<div
 		class="pending-removal"
 		style="
-			right: 50px;
-			bottom: 50px;
+			right: {20 + (index % 3) * 70}px;
+			bottom: {160 + Math.floor(index / 3) * 70}px;
 		"
 	>
-		<div class="pending-removal__container">
-			<PendingOperationTile operation={removal} sizePx={56} circular={true} />
-		</div>
+		<PendingOperationTile operation={removal} sizePx={60} />
 	</div>
 {/each}

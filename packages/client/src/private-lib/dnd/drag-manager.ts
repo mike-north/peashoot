@@ -1,6 +1,8 @@
 import type { Writable } from 'svelte/store'
 import { dragState } from './state'
 import type { DraggableItem, ExistingDraggableItem, IDragState } from './types'
+import { isPlant } from '../plant'
+import { getPlantSize } from '../../private-ui/state/gardenDragState'
 
 // Type alias for what the global dragState store holds for its "existing item" part.
 type GlobalStoreExistingItem = ExistingDraggableItem<DraggableItem>
@@ -17,11 +19,21 @@ export class DragManager<TItem extends DraggableItem> {
 	) {
 		const isCloneMode = event.metaKey || event.altKey
 
+		// Calculate the effective size based on the item type
+		let effectiveSize = 1 // Default fallback
+		if (isPlant(existingItem.itemData)) {
+			effectiveSize = getPlantSize(existingItem.itemData)
+		} else if (existingItem.size !== undefined) {
+			effectiveSize = existingItem.size
+		} else if (existingItem.itemData.size !== undefined) {
+			effectiveSize = existingItem.itemData.size
+		}
+
 		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,
 			draggedExistingItem: existingItem,
 			draggedNewItem: null,
-			draggedItemEffectiveSize: existingItem.size ?? existingItem.itemData.size ?? 1,
+			draggedItemEffectiveSize: effectiveSize,
 			dragSourceType: 'existing-item',
 			dragOffset: { x: event.clientX, y: event.clientY },
 			dragPosition: { x: event.clientX, y: event.clientY },
@@ -35,11 +47,19 @@ export class DragManager<TItem extends DraggableItem> {
 
 	// Start dragging a new item from a source (e.g., toolbar)
 	startDraggingNewItem(newItemData: TItem, event: MouseEvent) {
+		// Calculate the effective size based on the item type
+		let effectiveSize = 1 // Default fallback
+		if (isPlant(newItemData)) {
+			effectiveSize = getPlantSize(newItemData)
+		} else if (newItemData.size !== undefined) {
+			effectiveSize = newItemData.size
+		}
+
 		dragState.update((s) => ({
 			...s,
 			draggedExistingItem: null,
 			draggedNewItem: newItemData,
-			draggedItemEffectiveSize: newItemData.size ?? 1,
+			draggedItemEffectiveSize: effectiveSize,
 			dragSourceType: 'new-item',
 			dragOffset: { x: event.clientX, y: event.clientY },
 			dragPosition: { x: event.clientX, y: event.clientY },

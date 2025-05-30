@@ -7,98 +7,96 @@ import type {
 	ValidationContext,
 	PendingOperation,
 } from '../../private-lib/dnd/types'
-import type { AsyncValidationFunction } from '../../private-lib/dnd/validation'
 
-// TODO: Verify these paths when Plant and GardenBed types are fully available/refactored
 import type { Plant } from '../../private-lib/plant'
+import { isPlant } from '../../private-lib/plant'
 import type { PlantPlacement } from '../../private-lib/plant-placement'
 import type { GardenBed } from '../../private-lib/garden-bed'
-import type { Garden } from '../../private-lib/garden' // Ensure Garden type is imported for applicationContext
-// import type { Garden } from '../../lib/garden'; // If a full Garden model is needed for context
+import type { Garden } from '../../private-lib/garden'
 
-// 1. Define the core draggable item for the garden app (Plant data)
-export interface GardenItem extends DraggableItem {
-	name: string
-	icon: string
-	plantFamily: { name: string; colorVariant: string }
-	// other plant-specific properties...
-}
-
-export function isGardenItem(item: DraggableItem): item is GardenItem {
-	return 'name' in item && 'icon' in item && 'plantFamily' in item
-}
-
-// 2. Define what an existing/placed item looks like in the garden (PlantPlacement)
-// It includes the original PlantPlacement props plus itemData (which is GardenItem)
+// Define what an existing/placed item looks like in the garden (PlantPlacement)
 export interface ExistingGardenItem
-	extends ExistingDraggableItem<GardenItem>,
-		Omit<PlantPlacement, 'plantTile' | 'id'> {
+	extends ExistingDraggableItem<Plant>,
+		Omit<PlantPlacement, 'plantId' | 'id'> {
 	id: string // ID of the PlantPlacement instance
-	itemData: GardenItem // This is the Plant, adapted to GardenItem
+	itemData: Plant // The Plant being placed
 	x: number // from PlantPlacement
 	y: number // from PlantPlacement
-	// size is on itemData (GardenItem) or can be overridden here if instance size differs
 }
 
-// 3. Define the context for a garden drop zone (GardenBed)
+// Define the context for a garden drop zone (GardenBed)
 export interface GardenZoneContext
 	extends DropZoneContext,
 		Omit<GardenBed, 'plantPlacements' | 'id'> {
 	id: string // ID of the GardenBed
 	plantPlacements: ExistingGardenItem[] // Use the specialized ExistingGardenItem
-	// other bed-specific properties from GardenBed...
 }
 
-// 4. Specialize the main drag state for the garden app
-export type GardenDragState = IDragState<GardenItem, ExistingGardenItem>
+// Specialize the main drag state for the garden app
+export type GardenDragState = IDragState<Plant, ExistingGardenItem>
 
-// 5. Specialize the validation context for the garden app
-export type GardenValidationContext = ValidationContext<GardenItem, GardenZoneContext> & {
-	applicationContext?: { garden: Garden } // Uncommented and defined
+// Specialize the validation context for the garden app
+export type GardenValidationContext = ValidationContext<Plant, GardenZoneContext> & {
+	applicationContext?: { garden: Garden }
 }
 
-// Define GardenAsyncValidationFunction as a specialization of the generic one
-export type GardenAsyncValidationFunction = AsyncValidationFunction<
-	GardenItem,
-	GardenZoneContext
->
+// Define a validation result type for garden-specific validation
+export interface ValidationResult {
+	isValid: boolean
+	error?: string
+}
 
-// 6. Specialize the pending operation for the garden app
-export type GardenPendingOperation = PendingOperation<GardenItem>
+// Define GardenAsyncValidationFunction as returning ValidationResult instead of void
+export type GardenAsyncValidationFunction = (
+	context: GardenValidationContext,
+) => Promise<ValidationResult>
+
+// Specialize the pending operation for the garden app
+export type GardenPendingOperation = PendingOperation<Plant>
 
 export function isGardenPendingOperation(
 	operation: PendingOperation<DraggableItem>,
 ): operation is GardenPendingOperation {
-	return isGardenItem(operation.item)
+	return isPlant(operation.item)
 }
+
 export function isGardenItemRemovalOperation(
 	op: PendingOperation<DraggableItem>,
 ): op is GardenPendingOperation {
 	return isGardenPendingOperation(op) && op.type === 'removal'
 }
 
-// Function to adapt Plant to GardenItem
-export function plantToGardenItem(plant: Plant): GardenItem {
-	// Ensure all properties of GardenItem are mapped. Add id if not directly on plant.
-	// If Plant already mostly conforms to DraggableItem & GardenItem specific fields, this is simpler.
-	return {
-		...plant,
-		id: plant.id, // Assuming Plant has an id
-		size: plant.size,
-		// Ensure plantFamily is correctly structured if different on Plant type
-		plantFamily: plant.plantFamily,
-	}
+// Helper function to get size from Plant (maps plantingDistanceInFeet to size)
+export function getPlantSize(plant: Plant): number {
+	return plant.plantingDistanceInFeet
 }
 
 // Function to adapt PlantPlacement to ExistingGardenItem
 export function plantPlacementToExistingGardenItem(
 	pp: PlantPlacement,
+	plant: Plant, // Plant data must be provided separately since PlantPlacement only has plantId
 ): ExistingGardenItem {
-	const { plantTile, ...restOfPp } = pp
 	return {
-		...restOfPp, // Includes id, x, y from PlantPlacement
-		itemData: plantToGardenItem(plantTile),
-		size: plantTile.size, // Or pp.size if it can differ from plantTile.size
+		id: pp.id,
+		x: pp.x,
+		y: pp.y,
+		itemData: plant,
+		size: getPlantSize(plant),
+	}
+}
+
+// Helper to create a mock ExistingGardenItem from just a Plant (for drag previews)
+export function plantToExistingGardenItem(
+	plant: Plant,
+	x = 0,
+	y = 0,
+): ExistingGardenItem {
+	return {
+		id: `temp-${plant.id}`,
+		x,
+		y,
+		itemData: plant,
+		size: getPlantSize(plant),
 	}
 }
 
@@ -117,54 +115,44 @@ export const gardenAppDragState = writable<GardenDragState>({
 	isCloneMode: false,
 })
 
-// Function that might have been in gardenDragStateTypes.ts
-// If this was used, ensure it's correctly defined or remove if not needed.
+// Function to convert ExistingGardenItem back to PlantPlacement
 export function existingGardenItemToPlantPlacement(
 	egi: ExistingGardenItem,
 ): PlantPlacement {
-	const plantTile: Plant = {
-		id: egi.itemData.id,
-		name: egi.itemData.name,
-		icon: egi.itemData.icon,
-		size: egi.itemData.size ?? 1,
-		plantFamily: egi.itemData.plantFamily,
-	}
-
 	return {
 		id: egi.id,
 		x: egi.x,
 		y: egi.y,
-		plantTile: plantTile,
+		plantId: egi.itemData.id,
 	}
 }
 
-// New Request Detail Types for Garden <-> GardenView communication
+// Request Detail Types for Garden <-> GardenView communication
 
 export interface PlacementRequestDetails {
-	itemData: GardenItem
+	itemData: Plant
 	targetZoneId: string
 	x: number
 	y: number
 	originalInstanceId?: string // For moves
 	sourceZoneId?: string // For moves
-	// OperationType helps Garden.svelte decide how to construct validation context & which handler to call
 	operationType: 'item-add-to-zone' | 'item-move-within-zone' | 'item-move-across-zones'
 }
 
 export interface RemovalRequestDetails {
-	itemData: GardenItem // Useful for context like item size, though primarily for instanceId
+	itemData: Plant
 	instanceId: string
 	sourceZoneId: string
-	operationType: 'item-remove-from-zone' // Explicit for clarity
+	operationType: 'item-remove-from-zone'
 }
 
 export interface CloningRequestDetails {
-	itemDataToClone: GardenItem
+	itemDataToClone: Plant
 	sourceOriginalZoneId: string // Zone of the item being cloned
 	targetCloneZoneId: string // Zone where the clone will be placed
 	sourceOriginalX: number // Original item's X
 	sourceOriginalY: number // Original item's Y
 	targetCloneX: number // Target X for the clone
 	targetCloneY: number // Target Y for the clone
-	operationType: 'item-clone-in-zone' // Explicit for clarity
+	operationType: 'item-clone-in-zone'
 }

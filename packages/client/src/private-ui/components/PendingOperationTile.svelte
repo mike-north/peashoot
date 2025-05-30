@@ -1,136 +1,362 @@
 <script lang="ts">
-import type { ExistingGardenItem, GardenPendingOperation } from '../state/gardenDragState'
 import PlantPlacementTile from './PlantPlacementTile.svelte'
+import type { GardenPendingOperation } from '../state/gardenDragState'
+import { getPlantSize } from '../state/gardenDragState'
+import {
+	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
+	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
+} from '../../private-lib/dnd/constants'
+import CheckIcon from '~icons/ph/check-bold'
+import XIcon from '~icons/ph/x-bold'
+import TrashIcon from '~icons/ph/trash-duotone'
 
-interface PendingOperationTileProps {
+interface Props {
 	operation: GardenPendingOperation
 	sizePx: number
-	circular?: boolean
 }
 
-let { operation, sizePx, circular = false }: PendingOperationTileProps = $props()
+let { operation, sizePx }: Props = $props()
 
-// Create a temporary ExistingGardenItem for rendering with PlantPlacementTile
-const tempExistingItem: ExistingGardenItem = $derived({
-	id: operation.id,
-	x: operation.x ?? 0,
-	y: operation.y ?? 0,
+// Create a temporary ExistingGardenItem for display
+const itemForDisplay = $derived({
+	id: `pending-${operation.id}`,
+	x: operation.x || 0,
+	y: operation.y || 0,
 	itemData: operation.item,
-	size: operation.item.size ?? 1,
+	size: getPlantSize(operation.item),
 })
 
-const itemForDisplay = $derived(operation.item)
+// Check if this is a removal operation
+const isRemoval = $derived(operation.type === 'removal')
+
+// Track if we should show the progress animation
+let showProgressAnimation = $state(false)
+let progressAnimationTimer: number | undefined = $state()
+
+// Track if we should show completion state
+let showCompletionState = $state(false)
+let completionTimer: number | undefined = $state()
+
+// Watch for state changes
+$effect(() => {
+	if (operation.state === 'pending') {
+		// Start timer to show progress animation
+		progressAnimationTimer = window.setTimeout(() => {
+			showProgressAnimation = true
+		}, OPERATION_PROGRESS_ANIMATION_DELAY_MS)
+	} else {
+		// Clear progress timer and hide progress animation
+		if (progressAnimationTimer) {
+			clearTimeout(progressAnimationTimer)
+			progressAnimationTimer = undefined
+		}
+		showProgressAnimation = false
+
+		// Show completion state
+		showCompletionState = true
+		completionTimer = window.setTimeout(() => {
+			showCompletionState = false
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+	}
+
+	// Cleanup on unmount or state change
+	return () => {
+		if (progressAnimationTimer) {
+			clearTimeout(progressAnimationTimer)
+		}
+		if (completionTimer) {
+			clearTimeout(completionTimer)
+		}
+	}
+})
 </script>
 
 <style lang="scss">
 .pending-tile {
-	position: relative;
-	width: 100%;
-	height: 100%;
 	border-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	box-sizing: border-box;
+	transition: all 0.3s ease;
 	overflow: hidden;
 
-	&--circular {
-		border-radius: 50%;
+	&--pending {
+		border: 2px dashed rgba(0, 0, 0, 0.4);
+
+		&.show-progress {
+			border: none;
+
+			&:not(.is-removal)::before {
+				content: '';
+				position: absolute;
+				top: -2px;
+				left: -2px;
+				right: -2px;
+				bottom: -2px;
+				border-radius: 8px;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					transparent 25%,
+					#ff6b00 30%,
+					#ffaa00 40%,
+					#ffdd00 50%,
+					#ffaa00 60%,
+					#ff6b00 70%,
+					transparent 75%,
+					transparent 100%
+				);
+				background-size: 300% 100%;
+				animation: chasingBorder 2s linear infinite;
+				z-index: 1;
+				filter: blur(1px);
+			}
+
+			&.is-removal::before {
+				content: '';
+				position: absolute;
+				top: -2px;
+				left: -2px;
+				right: -2px;
+				bottom: -2px;
+				border-radius: 8px;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					transparent 25%,
+					#8b0000 30%,
+					#dc143c 40%,
+					#ff1744 50%,
+					#dc143c 60%,
+					#8b0000 70%,
+					transparent 75%,
+					transparent 100%
+				);
+				background-size: 300% 100%;
+				animation: chasingBorder 2s linear infinite;
+				z-index: 1;
+				filter: blur(1px);
+			}
+
+			&::after {
+				content: '';
+				position: absolute;
+				top: 3px;
+				left: 3px;
+				right: 3px;
+				bottom: 3px;
+				border-radius: 4px;
+				background: rgba(255, 255, 255, 0.95);
+				z-index: 2;
+			}
+
+			// Add an additional glow layer for non-removal
+			&:not(.is-removal) .pending-tile__content::before {
+				content: '';
+				position: absolute;
+				top: -4px;
+				left: -4px;
+				right: -4px;
+				bottom: -4px;
+				border-radius: 10px;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					transparent 25%,
+					rgba(255, 140, 0, 0.6) 30%,
+					rgba(255, 200, 0, 0.8) 50%,
+					rgba(255, 140, 0, 0.6) 70%,
+					transparent 75%,
+					transparent 100%
+				);
+				background-size: 300% 100%;
+				animation: chasingBorder 2s linear infinite;
+				z-index: 0;
+				filter: blur(8px);
+			}
+
+			// Add glow layer for removal
+			&.is-removal .pending-tile__content::before {
+				content: '';
+				position: absolute;
+				top: -4px;
+				left: -4px;
+				right: -4px;
+				bottom: -4px;
+				border-radius: 10px;
+				background: linear-gradient(
+					90deg,
+					transparent 0%,
+					transparent 25%,
+					rgba(139, 0, 0, 0.6) 30%,
+					rgba(255, 23, 68, 0.8) 50%,
+					rgba(139, 0, 0, 0.6) 70%,
+					transparent 75%,
+					transparent 100%
+				);
+				background-size: 300% 100%;
+				animation: chasingBorder 2s linear infinite;
+				z-index: 0;
+				filter: blur(8px);
+			}
+		}
 	}
 
-	&__circular-plant {
+	&--success {
+		&.show-completion:not(.is-removal) {
+			background: #4caf50;
+			border: 2px solid #45a049;
+			animation: successPulse 0.3s ease-out;
+		}
+
+		&.show-completion.is-removal {
+			background: #9c27b0;
+			border: 2px solid #7b1fa2;
+			animation: removalPulse 0.3s ease-out;
+		}
+	}
+
+	&--error {
+		&.show-completion {
+			background: #f44336;
+			border: 2px solid #da190b;
+			animation: errorShake 0.3s ease-out;
+		}
+	}
+
+	&__content {
+		position: relative;
+		z-index: 3;
 		width: 100%;
 		height: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 1.8rem;
-		border-radius: 50%;
 	}
 
-	&__overlay {
+	&__completion-icon {
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 6px;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		z-index: 10;
-		font-size: 1.5rem;
-		font-weight: bold;
-		transition: all 0.3s ease;
-	}
-
-	&--circular &__overlay {
-		border-radius: 50%;
-	}
-
-	&__overlay--pending {
-		background: rgba(255, 255, 255, 0.9);
-		color: #6c757d;
-	}
-
-	&__overlay--success {
-		background: rgba(40, 167, 69, 0.9);
 		color: white;
-	}
+		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+		animation: iconPop 0.3s ease-out;
 
-	&__overlay--error {
-		background: rgba(220, 53, 69, 0.9);
-		color: white;
-	}
-
-	&__spinner {
-		width: 20px;
-		height: 20px;
-		border: 2px solid #f3f3f3;
-		border-top: 2px solid #6c757d;
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
+		&--large {
+			font-size: 48px;
+		}
 	}
 }
 
-@keyframes spin {
+@keyframes chasingBorder {
 	0% {
-		transform: rotate(0deg);
+		background-position: -150% 0;
 	}
 	100% {
-		transform: rotate(360deg);
+		background-position: 150% 0;
 	}
 }
 
-.fade-out {
-	opacity: 0;
-	transform: scale(0.9);
+@keyframes successPulse {
+	0% {
+		transform: scale(1);
+		opacity: 0.7;
+	}
+	50% {
+		transform: scale(1.05);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes errorShake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	10%,
+	30%,
+	50%,
+	70%,
+	90% {
+		transform: translateX(-2px);
+	}
+	20%,
+	40%,
+	60%,
+	80% {
+		transform: translateX(2px);
+	}
+}
+
+@keyframes iconPop {
+	0% {
+		transform: translate(-50%, -50%) scale(0);
+		opacity: 0;
+	}
+	50% {
+		transform: translate(-50%, -50%) scale(1.2);
+		opacity: 1;
+	}
+	100% {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes removalPulse {
+	0% {
+		transform: scale(1);
+		opacity: 0.7;
+	}
+	50% {
+		transform: scale(0.95);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(0.9);
+		opacity: 0;
+	}
 }
 </style>
 
-<div class="pending-tile" class:pending-tile--circular={circular}>
-	<!-- Base plant tile (dimmed) -->
-	<div style="opacity: 0.3;">
-		{#if circular && itemForDisplay}
-			<!-- For circular mode, show just the plant icon -->
-			{@const plantFamilyName = itemForDisplay.plantFamily.name || 'lettuce'}
-			{@const colorVariantName = itemForDisplay.plantFamily.colorVariant || 'green'}
-			{@const colorVar = `--color-${plantFamilyName}-${colorVariantName}`}
-			<div
-				class="pending-tile__circular-plant"
-				style="background-color: var({colorVar});"
-			>
-				{itemForDisplay.icon}
-			</div>
-		{:else if itemForDisplay}
-			<PlantPlacementTile plantPlacement={tempExistingItem} sizePx={sizePx} />
+<div
+	class="pending-tile pending-tile--{operation.state}"
+	class:show-progress={showProgressAnimation && operation.state === 'pending'}
+	class:show-completion={showCompletionState &&
+		(operation.state === 'success' || operation.state === 'error')}
+	class:is-removal={isRemoval}
+	style="width: {sizePx}px; height: {sizePx}px;"
+>
+	<div class="pending-tile__content">
+		{#if !showCompletionState && itemForDisplay}
+			<PlantPlacementTile plantPlacement={itemForDisplay} sizePx={sizePx} />
 		{/if}
-	</div>
 
-	<!-- Status overlay -->
-	<div class="pending-tile__overlay pending-tile__overlay--{operation.state}">
-		{#if operation.state === 'pending'}
-			<div class="pending-tile__spinner"></div>
-		{:else if operation.state === 'success'}
-			✓
-		{:else if operation.state === 'error'}
-			✗
+		{#if showCompletionState}
+			{#if operation.state === 'success'}
+				{#if isRemoval}
+					<TrashIcon
+						style="color: white"
+						class="pending-tile__completion-icon pending-tile__completion-icon--large"
+					/>
+				{:else}
+					<CheckIcon
+						class="pending-tile__completion-icon pending-tile__completion-icon--large"
+					/>
+				{/if}
+			{:else if operation.state === 'error'}
+				<XIcon
+					class="pending-tile__completion-icon pending-tile__completion-icon--large"
+				/>
+			{/if}
 		{/if}
 	</div>
 </div>

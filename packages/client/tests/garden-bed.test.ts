@@ -1,32 +1,35 @@
 import { describe, it, expect } from 'vitest'
 import {
+	PlantWithSize,
 	updatePlantPositionInBed,
 	type GardenBed,
 } from '../src/private-lib/garden-bed.js'
-import type { PlantPlacement } from '../src/private-lib/plant-placement.js'
 import type { Plant } from '../src/private-lib/plant.js'
+import { GridPlacement } from '../src/private-lib/grid-placement.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',
 	displayName: 'Tomato',
 	presentation: {
-		tileIconPath: 'tomato.png',
+		iconPath: 'tomato.png',
 		accentColor: {
 			r: 1,
 			g: 0,
 			b: 0,
 		},
+		size: 1,
 	},
 	family: 'Tomato',
 	variant: 'red',
 	plantingDistanceInFeet: 1,
 }
 
-const mockPlacement: PlantPlacement = {
-	plantId: mockPlant.id,
+const mockPlacement: GridPlacement<PlantWithSize> = {
+	data: mockPlant,
 	x: 1,
 	y: 2,
 	id: 'placement1',
+	size: 1,
 }
 
 const mockBed: GardenBed = {
@@ -40,8 +43,8 @@ const mockBed: GardenBed = {
 
 describe('updatePlantPositionInBed', () => {
 	it('updates the position of the specified plant', () => {
-		const updated: GardenBed = updatePlantPositionInBed(mockBed, 'placement1', 3, 4)
-		const [plant1] = updated.plantPlacements as PlantPlacement[]
+		const updated = updatePlantPositionInBed(mockBed, 'placement1', 3, 4)
+		const [plant1] = updated.plantPlacements as GridPlacement<PlantWithSize>[]
 		expect(plant1.x).toBe(3)
 		expect(plant1.y).toBe(4)
 		// Should not mutate the original
@@ -53,7 +56,7 @@ describe('updatePlantPositionInBed', () => {
 
 	it('does not update if plantId does not match', () => {
 		const updated: GardenBed = updatePlantPositionInBed(mockBed, 'nonexistent', 5, 6)
-		const [plant1] = updated.plantPlacements as PlantPlacement[]
+		const [plant1] = updated.plantPlacements as GridPlacement<PlantWithSize>[]
 		expect(plant1.x).toBe(1)
 		expect(plant1.y).toBe(2)
 		// Should not mutate the original

@@ -295,7 +295,7 @@ onDestroy(() => {
 		<!-- Item icon -->
 		{#if itemData.presentation.iconPath}
 			<image
-				href={itemData.presentation.iconPath}
+				href={'/plant-icons/' + itemData.presentation.iconPath}
 				x={(sizePx - iconDisplaySize) / 2}
 				y={(sizePx - iconDisplaySize) / 2}
 				width={iconDisplaySize}

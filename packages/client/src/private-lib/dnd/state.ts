@@ -67,12 +67,12 @@ export function getDraggedItemInfo<
 		// TExisting is guaranteed to have itemData of type TItem
 		return {
 			item: state.draggedExistingItem.itemData,
-			effectiveSize: state.draggedExistingItem.itemData.size ?? 1,
+			effectiveSize: state.draggedItemEffectiveSize,
 		}
 	} else if (isDraggingNewItem(state)) {
 		return {
 			item: state.draggedNewItem,
-			effectiveSize: state.draggedNewItem.size ?? 1,
+			effectiveSize: state.draggedItemEffectiveSize,
 		}
 	}
 	return null

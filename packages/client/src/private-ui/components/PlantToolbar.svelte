@@ -3,8 +3,8 @@ import type { Plant } from '../../private-lib/plant'
 import type { TileVisualPresentation } from '../../private-lib/plant'
 import { dragManager } from '../../private-lib/dnd/drag-manager'
 import { dragState } from '../state/dragState'
-import PlantGridTile from './PlantGridTile.svelte'
-import type { PlantPlacement } from '../../private-lib/plant-placement'
+import GridPlacementTile from './GridPlacementTile.svelte'
+import type { GridPlacement } from '../../private-lib/grid-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
 import { clickOrHold } from '../../private-lib/actions/clickOrHold'
 
@@ -114,11 +114,11 @@ function createPlant(familyName: string, variant: string): Plant {
 	return plant
 }
 
-// Create a PlantPlacement for toolbar display
-function createToolbarPlantPlacement(
+// Create a GridPlacement for toolbar display
+function createToolbarGridPlacement(
 	familyName: string,
 	variant: string,
-): PlantPlacement {
+): GridPlacement<Plant> {
 	const plant = plants.find((p) => p.family === familyName && p.displayName === variant)
 	if (!plant) {
 		throw new Error(`Plant not found: ${familyName} ${variant}`)
@@ -127,7 +127,8 @@ function createToolbarPlantPlacement(
 		id: `toolbar-${familyName}-${variant}`,
 		x: 0,
 		y: 0,
-		plantId: plant.id,
+		size: plant.plantingDistanceInFeet,
+		data: plant,
 	}
 }
 
@@ -196,11 +197,10 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 	>
 		{#each plantFamilies as family (family.familyDisplayName)}
 			{@const selectedVariant = selectedVariants[family.familyDisplayName]}
-			{@const toolbarPlacement = createToolbarPlantPlacement(
+			{@const toolbarPlacement = createToolbarGridPlacement(
 				family.familyDisplayName,
 				selectedVariant,
 			)}
-			{@const plant = createPlant(family.familyDisplayName, selectedVariant)}
 
 			<div
 				class="plant-toolbar__item flex flex-col items-center gap-1 relative overflow-visible"
@@ -240,12 +240,8 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 						}
 					}}
 				>
-					<PlantGridTile
-						placement={{
-							...toolbarPlacement,
-							data: plant,
-							size: plant.plantingDistanceInFeet,
-						}}
+					<GridPlacementTile
+						placement={toolbarPlacement}
 						sizePx={toolbarTileSize}
 						showSizeBadge={true}
 					/>
@@ -266,11 +262,7 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 						class="plant-toolbar__dropdown absolute top-full left-1/2 -translate-x-1/2 bg-white border-2 border-gray-200 rounded-lg p-2 shadow-lg z-[1000] flex flex-col items-center gap-1 min-w-[70px]"
 					>
 						{#each family.variants as variant (variant.plantDisplayName)}
-							{@const variantPlacement = createToolbarPlantPlacement(
-								family.familyDisplayName,
-								variant.plantDisplayName,
-							)}
-							{@const variantPlant = createPlant(
+							{@const variantPlacement = createToolbarGridPlacement(
 								family.familyDisplayName,
 								variant.plantDisplayName,
 							)}
@@ -296,12 +288,8 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 									}
 								}}
 							>
-								<PlantGridTile
-									placement={{
-										...variantPlacement,
-										data: variantPlant,
-										size: variantPlant.plantingDistanceInFeet,
-									}}
+								<GridPlacementTile
+									placement={variantPlacement}
 									sizePx={46}
 									showSizeBadge={true}
 								/>

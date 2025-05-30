@@ -38,7 +38,20 @@ export const gardens: Garden[] = [
 						id: 'plant_placement_c806fc0b-b50d-489c-9aa4-30e9448769ae',
 						x: 0,
 						y: 0,
-						plantId: 'tomatoes-burpee-big-boy-tomato',
+						size: 2,
+						data: {
+							id: 'tomatoes-burpee-big-boy-tomato',
+							displayName: 'Big Boy Tomato',
+							family: 'tomatoes',
+							variant: 'burpee-big-boy-tomato',
+							plantingDistanceInFeet: 2,
+							size: 2,
+							presentation: {
+								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+								size: 2,
+							},
+						},
 					},
 				],
 			},
@@ -53,7 +66,20 @@ export const gardens: Garden[] = [
 						id: 'plant_placement_16cee04a-c890-478e-9ac6-3ee02b3e0db6',
 						x: 0,
 						y: 0,
-						plantId: 'lettuce-burpee-buttercrunch-lettuce',
+						size: 1,
+						data: {
+							id: 'lettuce-burpee-buttercrunch-lettuce',
+							displayName: 'Buttercrunch Lettuce',
+							family: 'lettuce',
+							variant: 'burpee-buttercrunch-lettuce',
+							plantingDistanceInFeet: 1,
+							size: 1,
+							presentation: {
+								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+								size: 1,
+							},
+						},
 					},
 				],
 			},
@@ -68,13 +94,39 @@ export const gardens: Garden[] = [
 						id: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
 						x: 0,
 						y: 0,
-						plantId: 'tomatoes-burpee-big-boy-tomato',
+						size: 2,
+						data: {
+							size: 2,
+							plantingDistanceInFeet: 2,
+							id: 'tomatoes-burpee-big-boy-tomato',
+							displayName: 'Big Boy Tomato',
+							family: 'tomatoes',
+							variant: 'burpee-big-boy-tomato',
+							presentation: {
+								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+								size: 2,
+							},
+						},
 					},
 					{
 						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
 						x: 2,
 						y: 0,
-						plantId: 'lettuce-burpee-buttercrunch-lettuce',
+						size: 1,
+						data: {
+							id: 'lettuce-burpee-buttercrunch-lettuce',
+							displayName: 'Buttercrunch Lettuce',
+							family: 'lettuce',
+							variant: 'burpee-buttercrunch-lettuce',
+							size: 1,
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+								size: 1,
+							},
+						},
 					},
 				],
 			},
@@ -89,13 +141,39 @@ export const gardens: Garden[] = [
 						id: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
 						x: 0,
 						y: 0,
-						plantId: 'arugula-arugula',
+						size: 1,
+						data: {
+							id: 'arugula-arugula',
+							displayName: 'Arugula',
+							family: 'arugula',
+							variant: 'arugula',
+							size: 1,
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								iconPath: 'arugula-arugula.png',
+								size: 1,
+							},
+						},
 					},
 					{
 						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
 						x: 2,
 						y: 0,
-						plantId: 'spinach-japanese-perpetual-spinach',
+						size: 1,
+						data: {
+							id: 'spinach-japanese-perpetual-spinach',
+							displayName: 'Japanese Perpetual Spinach',
+							family: 'spinach',
+							variant: 'japanese-perpetual-spinach',
+							plantingDistanceInFeet: 1,
+							size: 1,
+							presentation: {
+								accentColor: { r: 56, g: 142, b: 60 }, // --color-spinach-green
+								iconPath: 'spinach-japanese-perpetual-spinach.png',
+								size: 1,
+							},
+						},
 					},
 				],
 			},
@@ -110,33 +188,98 @@ export const gardens: Garden[] = [
 						id: 'plant_placement_f2321084-5ff0-4328-b90a-776de35d8f81',
 						x: 2,
 						y: 1,
-						plantId: 'cherries-rainier-cherry',
+						size: 1,
+						data: {
+							id: 'cherries-rainier-cherry',
+							displayName: 'Rainier Cherry',
+							family: 'cherries',
+							variant: 'rainier-cherry',
+							size: 1,
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								iconPath: 'cherries-rainier-cherry.png',
+								size: 1,
+							},
+						},
 					},
 					{
 						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
 						x: 0,
 						y: 0,
-						plantId: 'tomatoes-burpee-big-boy-tomato',
+						size: 2,
+						data: {
+							id: 'tomatoes-burpee-big-boy-tomato',
+							displayName: 'Big Boy Tomato',
+							family: 'tomatoes',
+							variant: 'burpee-big-boy-tomato',
+							size: 2,
+							plantingDistanceInFeet: 2,
+							presentation: {
+								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+								size: 2,
+							},
+						},
 					},
 					{
 						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
 						x: 2,
 						y: 0,
-						plantId: 'lettuce-burpee-buttercrunch-lettuce',
+						size: 1,
+						data: {
+							id: 'lettuce-burpee-buttercrunch-lettuce',
+							displayName: 'Buttercrunch Lettuce',
+							family: 'lettuce',
+							variant: 'burpee-buttercrunch-lettuce',
+							size: 1,
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+								size: 1,
+							},
+						},
 					},
 
 					{
 						id: 'plant_placement_3ca27ca0-6438-47d8-8b90-7af77b24f430',
 						x: 6,
 						y: 0,
-						plantId: 'strawberries-alexandria-strawberry',
+						size: 1,
+						data: {
+							id: 'strawberries-alexandria-strawberry',
+							displayName: 'Alexandria Strawberry',
+							family: 'strawberries',
+							variant: 'alexandria-strawberry',
+							size: 1,
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								iconPath: 'strawberries-alexandria-strawberry.png',
+								size: 1,
+							},
+						},
 					},
 
 					{
 						id: 'plant_placement_224254bb-e30b-44ab-8b6c-f9988bb49f2a',
 						x: 6,
 						y: 3,
-						plantId: 'daisies-zinnia',
+						size: 1,
+						data: {
+							id: 'daisies-zinnia',
+							displayName: 'Zinnia',
+							family: 'daisies',
+							variant: 'zinnia',
+							size: 1,
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								iconPath: 'daisies-zinnia.png',
+								size: 1,
+							},
+						},
 					},
 				],
 			},

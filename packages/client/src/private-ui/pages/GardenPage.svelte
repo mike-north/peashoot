@@ -25,9 +25,9 @@ import {
 	type ValidationResult,
 	getPlantSize,
 } from '../state/gardenDragState'
-import { UnreachableError } from '../../errors/unreachabe'
+import { UnreachableError } from '../../lib/errors/unreachabe'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../private-lib/dnd/constants'
-import { fetchGardens } from '../../lib/garden-data'
+import { GardenAdapter } from '../../lib/adapters/garden-adapter'
 import { onMount } from 'svelte'
 import { plants } from '../state/plantsStore'
 
@@ -38,8 +38,11 @@ let gardenInstance: Garden | undefined = $state<Garden | undefined>(undefined)
 let isAsyncValidating = $state<boolean>(false)
 let validationError = $state<string | null>(null)
 
+const gardenAdapter = new GardenAdapter()
+
 onMount(() => {
-	fetchGardens()
+	gardenAdapter
+		.fetchGardens()
 		.then((gardens) => {
 			gardenInstance = gardens[0]
 		})

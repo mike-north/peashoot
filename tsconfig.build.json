@@ -6,6 +6,8 @@
 		"strict": true,
 		"outDir": "./dist",
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"noImplicitOverride": false,
+		"noImplicitReturns": false
 	}
 }

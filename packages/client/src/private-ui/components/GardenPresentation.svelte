@@ -1,8 +1,8 @@
 <script lang="ts">
-import { dragState } from '../../private-lib/dnd/state'
+import { dragState } from '../../dnd/state'
 import GridViewToolbar from './GridViewToolbar.svelte'
-import DeleteZone from './DeleteZone.svelte'
-import DragPreview from './DragPreview.svelte'
+import DeleteZone from '../../grid/ui/DeleteZone.svelte'
+import DragPreview from '../../grid/ui/DragPreview.svelte'
 import type { Garden } from '../../private-lib/garden'
 import GardenBedView from './GardenBedView.svelte'
 import { calculateGardenBedViewColSpans } from '../../private-lib/garden-bed-layout-calculator'
@@ -12,13 +12,13 @@ import type {
 	RemovalRequestDetails,
 	CloningRequestDetails,
 } from '../state/gardenDragState'
-import { gardenDragCoordinator } from '../../private-lib/attachments/gardenDragCoordinator'
+import { gardenDragCoordinator } from '../../grid/attachments/gardenDragCoordinator'
 import type { Plant } from '../../private-lib/plant'
 import {
 	addPendingOperation,
 	updatePendingOperation,
 	removePendingOperation,
-} from '../../private-lib/dnd/validation'
+} from '../../dnd/validation'
 import { plants, plantsLoading, plantsError, plantsReady } from '../state/plantsStore'
 import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
 

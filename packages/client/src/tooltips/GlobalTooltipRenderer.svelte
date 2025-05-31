@@ -1,8 +1,8 @@
 <script lang="ts">
-import { tooltip } from '../state/tooltipStore'
+import { tooltip } from '../private-ui/state/tooltipStore'
 import { mount, unmount } from 'svelte'
 import TooltipWrapper from './TooltipWrapper.svelte'
-import type { GridPlaceable } from '../../private-lib/grid-placement'
+import type { GridPlaceable } from '../grid/grid-placement'
 import { onMount } from 'svelte'
 import type { Component } from 'svelte'
 

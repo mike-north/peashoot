@@ -6,7 +6,7 @@ import type {
 	ValidationContext,
 	PendingOperation,
 } from './types'
-import type { GridPlacement, GridPlaceable } from '../grid-placement'
+import type { GridPlacement, GridPlaceable } from '../grid/grid-placement'
 
 /**
  * Represents an item that has been placed on a grid and can be dragged.

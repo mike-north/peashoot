@@ -2,7 +2,7 @@
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
-import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
+import { disablePointerEventsWhenDragging } from '../../grid/actions/disablePointerEventsWhenDragging'
 import { dragState } from '../state/dragState'
 
 interface Props {

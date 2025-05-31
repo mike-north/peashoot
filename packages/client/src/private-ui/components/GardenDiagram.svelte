@@ -27,13 +27,10 @@ import {
 	showInfo,
 	removeNotificationByMessage,
 } from '../state/notificationsStore'
-import type { GridPlacement } from '../../private-lib/grid-placement'
+import type { GridPlacement } from '../../grid/grid-placement'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
-import {
-	updatePendingOperation,
-	removePendingOperation,
-} from '../../private-lib/dnd/validation'
-import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../private-lib/dnd/constants'
+import { updatePendingOperation, removePendingOperation } from '../../dnd/validation'
+import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../dnd/constants'
 
 let gardenInstance: Garden | undefined = $state<Garden | undefined>(undefined)
 

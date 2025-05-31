@@ -1,17 +1,9 @@
-import type { WithVisualPresentation } from '../private-ui/state/gardenDragState'
+import type {
+	TileVisualPresentation,
+	WithVisualPresentation,
+} from '../grid/tile-visual-presentation'
 
 export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
-
-export interface TileVisualPresentation {
-	readonly accentColor: {
-		r: number
-		g: number
-		b: number
-		a?: number
-	}
-	readonly size: number
-	readonly iconPath: string
-}
 
 export interface Plant extends WithVisualPresentation {
 	readonly id: string

@@ -1,6 +1,4 @@
 import { writable } from 'svelte/store'
-import type { TileVisualPresentation } from '../../private-lib/plant'
-import type { GridPlaceable } from '../../private-lib/grid-placement'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import type { Garden } from '../../private-lib/garden'
 import type {
@@ -13,18 +11,14 @@ import type {
 	GridPlacementRequestDetails,
 	GridRemovalRequestDetails,
 	GridCloningRequestDetails,
-} from '../../private-lib/dnd/grid-drag-state'
+} from '../../dnd/grid-drag-state'
 import {
 	isGridPendingOperation,
 	isGridItemRemovalOperation,
 	gridPlacementToExistingGridItem,
 	existingGridItemToGridPlacement,
-} from '../../private-lib/dnd/grid-drag-state'
-
-// Generic constraint: must be placeable and have a presentation
-export interface WithVisualPresentation extends GridPlaceable {
-	presentation: TileVisualPresentation
-}
+} from '../../dnd/grid-drag-state'
+import type { WithVisualPresentation } from '../../grid/tile-visual-presentation'
 
 // Generic type aliases
 export type ExistingGardenItem<T extends WithVisualPresentation> = ExistingGridItem<T>
@@ -48,7 +42,7 @@ export type GardenValidationContext<T extends WithVisualPresentation> =
 		applicationContext?: { garden: Garden }
 	}
 
-export type { ValidationResult } from '../../private-lib/dnd/grid-drag-state'
+export type { ValidationResult } from '../../dnd/grid-drag-state'
 
 export type GardenAsyncValidationFunction<T extends WithVisualPresentation> =
 	BaseGridAsyncValidationFunction<T, GardenZoneContext<T>>

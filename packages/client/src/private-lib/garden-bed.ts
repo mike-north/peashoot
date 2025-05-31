@@ -1,4 +1,4 @@
-import type { GridPlacement } from './grid-placement'
+import type { GridPlacement } from '../grid/grid-placement'
 import type { Plant } from './plant'
 
 // Canonical type for plant grid operations

@@ -4,10 +4,10 @@ import type {
 	GardenValidationContext,
 	ValidationResult,
 } from '../../private-ui/state/gardenDragState'
-import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import type { Plant } from '../plant'
-import type { GridPlacement } from '../grid-placement'
+import type { GridPlacement } from '../../grid/grid-placement'
 
 // Define PlantWithSize type
 type PlantWithSize = Plant & { size: number }

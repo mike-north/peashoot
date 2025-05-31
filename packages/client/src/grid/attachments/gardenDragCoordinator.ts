@@ -1,13 +1,13 @@
 import type { Attachment } from 'svelte/attachments'
 import { get } from 'svelte/store'
 import type { Writable } from 'svelte/store'
-import type { IDragState, DraggableItem, ExistingDraggableItem } from '../dnd/types'
+import type { IDragState, DraggableItem, ExistingDraggableItem } from '../../dnd/types'
 import {
 	GardenBedLayoutCalculator,
 	screenToGridCoordinates,
-} from '../garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
-import type { GardenBed } from '../garden-bed'
+} from '../../private-lib/garden-bed-layout-calculator'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
+import type { GardenBed } from '../../private-lib/garden-bed'
 
 interface GardenDragCoordinatorOptions {
 	dragState: Writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>

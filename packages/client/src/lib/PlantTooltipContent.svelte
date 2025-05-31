@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { GridPlaceable } from '../private-lib/grid-placement'
+import type { GridPlaceable } from '../grid/grid-placement'
 
 interface Props {
 	item: GridPlaceable

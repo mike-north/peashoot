@@ -1,16 +1,16 @@
 <script lang="ts">
 import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement } from '../../private-lib/grid-placement'
+import type { GridPlacement } from '../grid-placement'
 import type { Plant } from '../../private-lib/plant'
-import { dragState as genericDragState } from '../../private-lib/dnd/state'
+import { dragState as genericDragState } from '../../dnd/state'
 import {
 	isDragStatePopulated,
 	getDraggedItemInfo,
 	isDraggingExistingItem,
 	isDraggingNewItem,
-} from '../../private-lib/dnd/state'
-import type { GardenDragState } from '../state/gardenDragState'
-import { existingGridItemToGridPlacement } from '../state/gardenDragState'
+} from '../../dnd/state'
+import type { GardenDragState } from '../../private-ui/state/gardenDragState'
+import { existingGridItemToGridPlacement } from '../../private-ui/state/gardenDragState'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'

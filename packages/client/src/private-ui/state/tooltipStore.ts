@@ -54,7 +54,7 @@ export function showTooltip<T extends GridPlaceable>(params: {
 		if (currentState.isVisible && currentState.id === params.id) {
 			return currentState
 		}
-		
+
 		return {
 			id: params.id,
 			isVisible: true,
@@ -73,12 +73,12 @@ export function hideTooltip(id?: string): void {
 		if (!state.isVisible) {
 			return state
 		}
-		
+
 		// If an id is provided, only hide if it matches the current tooltip
 		if (id && state.id !== id) {
 			return state
 		}
-		
+
 		return {
 			...initialState,
 		}

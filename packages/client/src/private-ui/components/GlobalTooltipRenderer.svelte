@@ -14,7 +14,7 @@ let currentTooltipId: string | null = null // Track current tooltip ID
 // Create portal container on mount
 function createPortalContainer() {
 	if (portalContainer) return
-	
+
 	portalContainer = document.createElement('div')
 	portalContainer.id = 'global-tooltip-portal'
 	portalContainer.style.position = 'fixed'
@@ -39,10 +39,10 @@ function cleanupPortalContainer() {
 async function cleanupTooltip() {
 	// Prevent double cleanup
 	if (!mountedTooltip || isCleaningUp) return
-	
+
 	isCleaningUp = true
 	currentTooltipId = null
-	
+
 	try {
 		await unmount(mountedTooltip)
 	} catch (error: unknown) {
@@ -64,9 +64,9 @@ function mountTooltip(state: {
 }) {
 	// Ensure portal container exists
 	createPortalContainer()
-	
+
 	if (!portalContainer || isCleaningUp) return
-	
+
 	try {
 		// Mount the new tooltip immediately
 		mountedTooltip = mount(TooltipWrapper<GridPlaceable>, {
@@ -102,12 +102,12 @@ function handleTooltipStateChange(state: {
 	if (state.isVisible && state.TooltipComponent && state.item && state.id) {
 		// If it's the same tooltip, don't remount
 		if (currentTooltipId === state.id) return
-		
+
 		// Clean up existing tooltip in background if needed
 		if (mountedTooltip && currentTooltipId !== state.id) {
 			void cleanupTooltip()
 		}
-		
+
 		// Mount new tooltip immediately
 		mountTooltip({
 			id: state.id,
@@ -127,12 +127,12 @@ function handleTooltipStateChange(state: {
 
 onMount(() => {
 	createPortalContainer()
-	
+
 	const unsubscribe = tooltip.subscribe((state) => {
 		// Handle state changes immediately
 		handleTooltipStateChange(state)
 	})
-	
+
 	// Cleanup on component destroy
 	return () => {
 		unsubscribe()

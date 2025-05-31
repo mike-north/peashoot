@@ -18,7 +18,7 @@ import GlobalTooltipRenderer from '../components/GlobalTooltipRenderer.svelte'
 
 	<!-- Global notification toast -->
 	<NotificationToast />
-	
+
 	<!-- Global tooltip renderer -->
 	<GlobalTooltipRenderer />
 </div>

@@ -172,7 +172,7 @@ function calculateTooltipPosition() {
 
 function handleMouseEnter() {
 	if (disableTooltip || !TooltipComponent) return
-	
+
 	const tooltipData = calculateTooltipPosition()
 	if (tooltipData) {
 		showTooltip({

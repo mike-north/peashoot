@@ -188,18 +188,18 @@ export const gardens: Garden[] = [
 						id: 'plant_placement_f2321084-5ff0-4328-b90a-776de35d8f81',
 						x: 2,
 						y: 1,
-						size: 1,
+						size: 3,
 						data: {
 							id: 'cherries-rainier-cherry',
 							displayName: 'Rainier Cherry',
 							family: 'cherries',
 							variant: 'rainier-cherry',
-							size: 1,
-							plantingDistanceInFeet: 1,
+							size: 3,
+							plantingDistanceInFeet: 3,
 							presentation: {
-								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								accentColor: { r: 255, g: 192, b: 203 }, // --color-cherries-pink
 								iconPath: 'cherries-rainier-cherry.png',
-								size: 1,
+								size: 3,
 							},
 						},
 					},
@@ -268,7 +268,7 @@ export const gardens: Garden[] = [
 						y: 3,
 						size: 1,
 						data: {
-							id: 'daisies-zinnia',
+							id: 'daisies-zinnia-2',
 							displayName: 'Zinnia',
 							family: 'daisies',
 							variant: 'zinnia',

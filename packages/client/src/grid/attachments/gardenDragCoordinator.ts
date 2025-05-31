@@ -12,6 +12,7 @@ import type { GardenBed } from '../../private-lib/garden-bed'
 interface GardenDragCoordinatorOptions {
 	dragState: Writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
 	beds: GardenBed[]
+	tileSizeForItem: (item: DraggableItem) => number
 	onDrop: (dropInfo: {
 		targetZoneId: string | null
 		targetType: 'drop-zone' | 'delete-zone' | null
@@ -21,6 +22,7 @@ interface GardenDragCoordinatorOptions {
 }
 
 export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): Attachment {
+	const { tileSizeForItem } = options
 	return (element) => {
 		const htmlElement = element as HTMLElement
 		const currentOptions = options
@@ -65,6 +67,7 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 							const layout = new GardenBedLayoutCalculator({
 								width: bed.width,
 								height: bed.height,
+								tileSizeForItem,
 								...DEFAULT_LAYOUT_PARAMS,
 							})
 							const gridCoords = screenToGridCoordinates(

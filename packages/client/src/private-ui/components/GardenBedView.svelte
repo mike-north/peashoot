@@ -16,13 +16,18 @@ import {
 	pendingOperations as genericPendingOperations,
 	isDragStatePopulated,
 	dragState as genericDragState,
+	isDraggingNewItem,
+	isDraggingExistingItem,
 } from '../../dnd/state'
 import type { DraggableItem } from '../../dnd/types'
-import { type GardenPendingOperation } from '../state/gardenDragState'
+import type { GardenPendingOperation } from '../state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../grid/actions/disablePointerEventsWhenDragging'
 import type { Plant } from '../../private-lib/plant'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
 import type { Component } from 'svelte'
+
+import type { GridPlaceable } from '../../grid/grid-placement'
+import { isGridPlaceable } from '../../grid/grid-placement'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GardenPendingOperation<PlantWithSize> & {
@@ -56,6 +61,7 @@ interface GardenBedViewProps {
 		color: string
 	}[]
 	colSpan?: number
+	tileSizeForItem: (item: GridPlaceable) => number
 	[k: string]: unknown
 }
 
@@ -65,6 +71,7 @@ const {
 	plants,
 	edgeIndicators = [],
 	colSpan = 1,
+	tileSizeForItem,
 	...rest
 }: GardenBedViewProps = $props()
 
@@ -102,6 +109,7 @@ let pendingSourcePlantIds = $derived(
 const layout = new GardenBedLayoutCalculator({
 	width: bed.width,
 	height: bed.height,
+	tileSizeForItem,
 	...DEFAULT_LAYOUT_PARAMS, // Use shared constants
 })
 
@@ -219,7 +227,7 @@ function handleDropProp(payload: DropEventPayload) {
 		return
 	}
 	const { item, x, y } = payload
-	const itemSize = item.size ?? 1
+	const itemSize = (item as GridPlaceable).presentation.size
 
 	// Perform local placement validation (e.g., collision, bounds).
 	// This is a preliminary check. The full async validation will be done by GardenView.
@@ -232,6 +240,23 @@ function handleDropProp(payload: DropEventPayload) {
 		return
 	}
 }
+
+// Derive the actual size of the item being dragged for grid purposes
+const draggedGridItemEffectiveSize = $derived(
+	(() => {
+		const currentDragState = $genericDragState
+		if (isDraggingNewItem(currentDragState)) {
+			if (isGridPlaceable(currentDragState.draggedNewItem)) {
+				return currentDragState.draggedNewItem.presentation.size
+			}
+		} else if (isDraggingExistingItem(currentDragState)) {
+			if (isGridPlaceable(currentDragState.draggedExistingItem.item)) {
+				return currentDragState.draggedExistingItem.item.presentation.size
+			}
+		}
+		return 1 // Default if not GridPlaceable or not determinable
+	})(),
+)
 </script>
 
 <style lang="scss">
@@ -478,7 +503,7 @@ function handleDropProp(payload: DropEventPayload) {
 						use:disablePointerEventsWhenDragging={$genericDragState}
 					>
 						{#if $genericDragState.targetZoneId === bed.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
-							{@const effectiveItemSize = $genericDragState.draggedItemEffectiveSize}
+							{@const effectiveItemSize = draggedGridItemEffectiveSize}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: $genericDragState.highlightedCell.x,
 								y: $genericDragState.highlightedCell.y,
@@ -550,7 +575,7 @@ function handleDropProp(payload: DropEventPayload) {
 
 						<!-- Pending Operations -->
 						{#each $genericPendingOperations.filter((op) => op.zoneId === bed.id) as operation (operation.id)}
-							{@const itemOpSize = operation.item.size ?? 1}
+							{@const itemOpSize = (operation.item as GridPlaceable).presentation.size}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
 								y: operation.y || 0,

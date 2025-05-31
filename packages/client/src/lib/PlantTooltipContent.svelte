@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { GridPlaceable } from '../grid/grid-placement'
+import { isPlant } from '../private-lib/plant'
 
 interface Props {
 	item: GridPlaceable
@@ -27,7 +28,14 @@ let { item }: Props = $props()
 		{/if}
 		<div>
 			<h3 class="text-lg font-semibold text-gray-800">{item.displayName}</h3>
-			<p class="text-sm text-gray-600">Size: {item.size}×{item.size} grid spaces</p>
+			<p class="text-sm text-gray-600">
+				Size: {item.presentation.size}×{item.presentation.size} grid spaces
+			</p>
+			{#if isPlant(item)}
+				{#if item.family}
+					<p class="text-xs text-gray-500 italic">Family: {item.family}</p>
+				{/if}
+			{/if}
 		</div>
 	</div>
 

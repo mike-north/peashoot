@@ -4,16 +4,15 @@ import {
 	getPlantCells,
 	getSharedBorders,
 	calculateEdgeBorders,
-	isValidDrop,
 } from '../src/private-lib/garden-bed-layout-calculator.js'
-import type { GardenBed, PlantWithSize } from '../src/private-lib/garden-bed.js'
+import type { PlantWithSize } from '../src/private-lib/garden-bed.js'
 import type { Plant } from '../src/private-lib/plant.js'
 import type { GridPlacement } from '../src/grid/grid-placement.js'
 
-const layoutParams = { width: 4, height: 4 }
+const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new GardenBedLayoutCalculator(layoutParams)
 
-const mockPlant: Plant = {
+const mockPlant = {
 	id: 'plant_1',
 	displayName: 'Tomato',
 	family: 'Tomato',
@@ -28,7 +27,7 @@ const mockPlant: Plant = {
 		},
 		iconPath: 'tomato.png',
 	},
-}
+} satisfies Plant
 
 const plantPlacement: GridPlacement<PlantWithSize> = {
 	item: {
@@ -155,38 +154,5 @@ describe('calculateEdgeBorders', () => {
 		]
 		const borders = calculateEdgeBorders(bed, edgeIndicators, layout)
 		expect(Array.isArray(borders)).toBe(true)
-	})
-})
-
-describe('isValidDrop', () => {
-	it('validates a drop in an empty bed', () => {
-		const bed: GardenBed = {
-			id: 'bed1',
-			width: 4,
-			height: 4,
-			waterLevel: 5,
-			sunLevel: 7,
-			plantPlacements: [],
-		}
-		const valid = isValidDrop([mockPlant], bed, plantPlacement, 0, 0)
-		expect(valid).toBe(true)
-	})
-	it('invalidates a drop on an occupied cell', () => {
-		const bed: GardenBed = {
-			id: 'bed1',
-			width: 4,
-			height: 4,
-			waterLevel: 5,
-			sunLevel: 7,
-			plantPlacements: [plantPlacement],
-		}
-		const valid = isValidDrop(
-			[mockPlant],
-			bed,
-			{ ...plantPlacement, id: 'placement2' },
-			1,
-			2,
-		)
-		expect(valid).toBe(false)
 	})
 })

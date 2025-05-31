@@ -1,13 +1,10 @@
 import type { Garden } from '../garden'
-import type { GardenBed } from '../garden-bed'
+import type { GardenBed, PlantWithSize } from '../garden-bed'
 import type { Plant } from '../plant'
 import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
 import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../garden'
 import { updatePlantPositionInBed } from '../garden-bed'
 import type { GridPlacement } from '../../grid/grid-placement'
-
-// Define PlantWithSize type
-type PlantWithSize = Plant & { size: number }
 
 export class GardenOperationsService {
 	movePlantInBed(

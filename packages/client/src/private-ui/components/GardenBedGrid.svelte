@@ -4,6 +4,7 @@ import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-c
 import { DEFAULT_LAYOUT_PARAMS } from '../../grid/grid-layout-constants'
 import { disablePointerEventsWhenDragging } from '../../grid/actions/disablePointerEventsWhenDragging'
 import { dragState } from '../state/dragState'
+import type { GridPlaceable } from '../../grid/grid-placement'
 
 interface Props {
 	bed: GardenBed
@@ -12,14 +13,16 @@ interface Props {
 		points: { x: number; y: number }[]
 		color: string
 	}[]
+	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const { bed, edgeBorders }: Props = $props()
+const { bed, edgeBorders, tileSizeForItem }: Props = $props()
 
 // Instantiate the layout calculator
 const layout = new GardenBedLayoutCalculator({
 	width: bed.width,
 	height: bed.height,
+	tileSizeForItem,
 	...DEFAULT_LAYOUT_PARAMS,
 })
 

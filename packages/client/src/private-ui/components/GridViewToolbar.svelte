@@ -11,7 +11,7 @@ import type { Component } from 'svelte'
 
 interface GridToolbarProps {
 	items: TItem[]
-	categorizeItem: (item: TItem) => string
+	categoryNameForItem: (item: TItem) => string
 	TooltipComponent: Component<{ item: TItem }>
 	[k: string]: unknown
 }
@@ -29,7 +29,7 @@ interface ToolbarGridItemCategory {
 
 const {
 	items = [],
-	categorizeItem,
+	categoryNameForItem,
 	TooltipComponent,
 	...rest
 }: GridToolbarProps = $props()
@@ -37,7 +37,7 @@ const {
 const itemListToToolbarCategories = (itemList: TItem[]): ToolbarGridItemCategory[] => {
 	const categories = new Map<string, ToolbarGridItemCategory>()
 	for (const item of itemList) {
-		const itemCategory = categorizeItem(item)
+		const itemCategory = categoryNameForItem(item)
 		const category = categories.get(itemCategory)
 		if (!category) {
 			// Create a new family and add the current plant as the first variant
@@ -107,7 +107,8 @@ function handleClickOutside(event: MouseEvent) {
 // Create a plant object from family and variant
 function createItem(categoryName: string, categoryItemName: string): TItem {
 	const item = items.find(
-		(itm) => categorizeItem(itm) === categoryName && itm.displayName === categoryItemName,
+		(itm) =>
+			categoryNameForItem(itm) === categoryName && itm.displayName === categoryItemName,
 	)
 	if (!item) {
 		throw new Error(`Item not found: ${categoryName} ${categoryItemName}`)
@@ -121,7 +122,8 @@ function createToolbarGridPlacement(
 	categoryItemName: string,
 ): GridPlacement<TItem> {
 	const item = items.find(
-		(itm) => categorizeItem(itm) === categoryName && itm.displayName === categoryItemName,
+		(itm) =>
+			categoryNameForItem(itm) === categoryName && itm.displayName === categoryItemName,
 	)
 	if (!item) {
 		throw new Error(`Item not found: ${categoryName} ${categoryItemName}`)
@@ -130,7 +132,7 @@ function createToolbarGridPlacement(
 		id: `gridplacement_${categoryName}_${categoryItemName}`,
 		x: 0,
 		y: 0,
-		size: item.size,
+		size: item.presentation.size,
 		item: item,
 		sourceZoneId: 'toolbar', // Required by ExistingDraggableItem
 	}

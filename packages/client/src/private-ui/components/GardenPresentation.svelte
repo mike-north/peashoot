@@ -13,7 +13,6 @@ import type {
 	CloningRequestDetails,
 } from '../state/gardenDragState'
 import { gardenDragCoordinator } from '../../grid/attachments/gardenDragCoordinator'
-import type { Plant } from '../../private-lib/plant'
 import {
 	addPendingOperation,
 	updatePendingOperation,
@@ -21,6 +20,9 @@ import {
 } from '../../dnd/validation'
 import { plants, plantsLoading, plantsError, plantsReady } from '../state/plantsStore'
 import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
+import type { PlantWithSize } from '../../private-lib/garden-bed'
+import { isGridPlaceable, isGridPlacement } from '../../grid/grid-placement'
+import type { DraggableItem } from '../state/dragState'
 
 interface GardenProps {
 	garden: Garden
@@ -31,17 +33,19 @@ interface GardenProps {
 		color: string
 	}[]
 	onRequestPlacement: (
-		details: PlacementRequestDetails<PlantWithSize>,
+		details: PlacementRequestDetails<DraggableItem>,
 		pendingOpId?: string,
 	) => Promise<void>
 	onRequestRemoval: (
-		details: RemovalRequestDetails<PlantWithSize>,
+		details: RemovalRequestDetails<DraggableItem>,
 		pendingOpId?: string,
 	) => Promise<void>
 	onRequestCloning: (
-		details: CloningRequestDetails<PlantWithSize>,
+		details: CloningRequestDetails<DraggableItem>,
 		pendingOpId?: string,
 	) => Promise<void>
+	tileSizeForItem: (item: DraggableItem) => number
+	categoryNameForItem: (item: DraggableItem) => string
 }
 
 let {
@@ -50,11 +54,11 @@ let {
 	onRequestPlacement,
 	onRequestRemoval,
 	onRequestCloning,
+	tileSizeForItem,
+	categoryNameForItem,
 }: GardenProps = $props()
 
 let { beds } = $derived(garden)
-
-type PlantWithSize = Plant & { size: number }
 
 // Handle drop events from the drag coordinator
 async function handleDrop(dropInfo: {
@@ -83,17 +87,19 @@ async function handleDrop(dropInfo: {
 	// Handle different drop scenarios
 	if (sourceZoneId && dropInfo.targetType === 'delete-zone' && draggedExistingItem) {
 		// Cast to ExistingGardenItem to access x and y coordinates
-		const existingGardenItem = draggedExistingItem as ExistingGardenItem<PlantWithSize>
+
+		if (!isGridPlacement(draggedExistingItem, isGridPlaceable))
+			throw new Error('Dragged item is not a grid placeable')
 
 		// Create pending operation for removal
 		const pendingOpId = addPendingOperation({
 			type: 'removal',
 			state: 'pending',
 			zoneId: sourceZoneId,
-			item: existingGardenItem.item,
-			size: (existingGardenItem.item as Plant).plantingDistanceInFeet,
-			x: existingGardenItem.x,
-			y: existingGardenItem.y,
+			item: draggedExistingItem.item,
+			size: tileSizeForItem(draggedExistingItem.item),
+			x: draggedExistingItem.x,
+			y: draggedExistingItem.y,
 			originalSourceZoneId: sourceZoneId,
 			originalInstanceId: draggedExistingItem.id,
 		})
@@ -101,10 +107,7 @@ async function handleDrop(dropInfo: {
 		try {
 			await onRequestRemoval(
 				{
-					itemData: {
-						...existingGardenItem.item,
-						size: (existingGardenItem.item as Plant).presentation.size,
-					} as PlantWithSize,
+					itemData: draggedExistingItem.item,
 					instanceId: draggedExistingItem.id,
 					sourceZoneId: sourceZoneId,
 					operationType: 'item-remove-from-zone',
@@ -130,6 +133,8 @@ async function handleDrop(dropInfo: {
 		if (sourceZoneId && draggedExistingItem) {
 			const existingItem = draggedExistingItem
 			const sourceBedId = sourceZoneId
+			if (!isGridPlacement(existingItem, isGridPlaceable))
+				throw new Error('Dragged item is not a grid placeable')
 
 			if (dropInfo.isCloneMode) {
 				// Create pending operation for cloning
@@ -138,7 +143,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.item,
-					size: (existingItem.item as Plant).plantingDistanceInFeet,
+					size: tileSizeForItem(existingItem.item),
 					x,
 					y,
 					originalSourceZoneId: sourceBedId,
@@ -148,10 +153,7 @@ async function handleDrop(dropInfo: {
 				try {
 					await onRequestCloning(
 						{
-							itemDataToClone: {
-								...existingItem.item,
-								size: (existingItem.item as Plant).presentation.size,
-							} as PlantWithSize,
+							itemDataToClone: existingItem.item,
 							sourceOriginalZoneId: sourceBedId,
 							targetCloneZoneId: dropInfo.targetZoneId,
 							sourceOriginalX: (existingItem as ExistingGardenItem<PlantWithSize>).x,
@@ -183,7 +185,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.item,
-					size: (existingItem.item as Plant).plantingDistanceInFeet,
+					size: tileSizeForItem(existingItem.item),
 					x,
 					y,
 					originalSourceZoneId: sourceBedId,
@@ -193,10 +195,7 @@ async function handleDrop(dropInfo: {
 				try {
 					await onRequestPlacement(
 						{
-							itemData: {
-								...existingItem.item,
-								size: (existingItem.item as Plant).presentation.size,
-							} as PlantWithSize,
+							itemData: existingItem.item,
 							targetZoneId: dropInfo.targetZoneId,
 							x,
 							y,
@@ -222,22 +221,19 @@ async function handleDrop(dropInfo: {
 				type: 'placement',
 				state: 'pending',
 				zoneId: dropInfo.targetZoneId,
-				item: {
-					...(currentDragState.draggedNewItem as Plant),
-					size: (currentDragState.draggedNewItem as Plant).presentation.size,
-				} as PlantWithSize,
-				size: (currentDragState.draggedNewItem as Plant).plantingDistanceInFeet,
+				item: currentDragState.draggedNewItem,
+				size: tileSizeForItem(currentDragState.draggedNewItem),
 				x,
 				y,
 			})
 
 			try {
+				if (!isGridPlaceable(currentDragState.draggedNewItem))
+					throw new Error('Dragged item is not a grid placeable')
+
 				await onRequestPlacement(
 					{
-						itemData: {
-							...(currentDragState.draggedNewItem as Plant),
-							size: (currentDragState.draggedNewItem as Plant).presentation.size,
-						} as PlantWithSize,
+						itemData: currentDragState.draggedNewItem,
 						targetZoneId: dropInfo.targetZoneId,
 						x,
 						y,
@@ -290,7 +286,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 		<GridViewToolbar
 			TooltipComponent={PlantTooltipContent}
 			items={$plants}
-			categorizeItem={(plant: Plant) => plant.family}
+			categoryNameForItem={categoryNameForItem}
 		/>
 
 		<div
@@ -298,6 +294,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			{@attach gardenDragCoordinator({
 				dragState,
 				beds,
+				tileSizeForItem,
 				onDrop: (dropInfo) => {
 					handleDrop(dropInfo).catch((error: unknown) => {
 						console.error('Drop failed:', error)
@@ -322,12 +319,13 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 									) ?? false,
 						)}
 						colSpan={gardenBedCardColSpans[bed.id] ?? 1}
+						tileSizeForItem={tileSizeForItem}
 					/>
 				{/each}
 			</div>
 		</div>
 
 		<DeleteZone />
-		<DragPreview beds={beds} />
+		<DragPreview beds={beds} tileSizeForItem={tileSizeForItem} />
 	{/if}
 </div>

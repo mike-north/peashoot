@@ -4,6 +4,7 @@ import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid/grid-layout-constants'
 import type { Garden } from './garden'
+import type { GridPlaceable, GridPlacement } from '../grid/grid-placement'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -47,7 +48,7 @@ export type GridLine = Line & Keyed
  * Provides methods to convert between garden grid coordinates and SVG coordinates,
  * and to retrieve all relevant layout parameters for rendering.
  */
-export class GardenBedLayoutCalculator<T> {
+export class GardenBedLayoutCalculator<T extends GridPlaceable> {
 	public readonly width: number
 	public readonly height: number
 	public readonly cellSize: number
@@ -325,7 +326,7 @@ export class GardenBedLayoutCalculator<T> {
 		x: number,
 		y: number,
 		size: number,
-		placements: { x: number; y: number; size: number; id: string }[],
+		placements: GridPlacement<T>[],
 		skipId?: string,
 	): boolean {
 		if (x < 0 || y < 0 || x + size > this.width || y + size > this.height) return false
@@ -387,7 +388,7 @@ export function getPlantCells(placement: {
 /**
  * Returns all shared borders between two plant placements in a bed, for edge indicators.
  */
-export function getSharedBorders<T>(
+export function getSharedBorders<T extends GridPlaceable>(
 	plantA: { x: number; y: number; id: string; plantTile: { size?: number } },
 	plantB: { x: number; y: number; id: string; plantTile: { size?: number } },
 	color: string,
@@ -460,7 +461,7 @@ export function getSharedBorders<T>(
 /**
  * Calculates all edge indicator borders for a bed.
  */
-export function calculateEdgeBorders<T>(
+export function calculateEdgeBorders<T extends GridPlaceable>(
 	bed: {
 		plantPlacements: {
 			x: number
@@ -493,7 +494,7 @@ export function calculateEdgeBorders<T>(
 /**
  * Converts screen (client) coordinates to grid coordinates for a given SVG element and layout.
  */
-export function screenToGridCoordinates<T>(
+export function screenToGridCoordinates<T extends GridPlaceable>(
 	svgElement: SVGSVGElement,
 	layout: GardenBedLayoutCalculator<T>,
 	clientX: number,
@@ -521,52 +522,6 @@ export function screenToGridCoordinates<T>(
 	)
 	return { x, y }
 }
-
-/**
- * Checks if a proposed plant placement (drop) is valid within a target bed.
- * This is a higher-level function often used during drag-and-drop operations.
- */
-// export function isValidDrop<T>(
-// 	plants: Plant[],
-// 	targetBed: GardenBed,
-// 	draggedPlantPlacement: GridPlacement<PlantWithSize>,
-// 	x: number, // Target grid x-coordinate
-// 	y: number, // Target grid y-coordinate
-// 	layoutParamsOverrides?: Partial<LayoutParams<T>>, // Optional overrides for layout calculation
-// ): boolean {
-// 	const layout = new GardenBedLayoutCalculator<T>({
-// 		width: targetBed.width,
-// 		height: targetBed.height,
-// 		...DEFAULT_LAYOUT_PARAMS, // Start with defaults
-// 		...(layoutParamsOverrides || {}), // Apply any specific overrides
-// 	})
-// 	const plant = plants.find((p) => p.id === draggedPlantPlacement.item.id)
-// 	if (!plant) {
-// 		throw new Error('Plant not found for isValidDrop')
-// 	}
-// 	const size = layout.tileSizeForItem(plant).plantingDistanceInFeet
-
-// 	// Convert PlantPlacements to include size information
-// 	const placementsWithSize = targetBed.plantPlacements.map((p) => {
-// 		const plantForPlacement = plants.find((pl) => pl.id === p.item.id)
-// 		if (!plantForPlacement) {
-// 			throw new Error(`Plant not found for placement ${p.id}`)
-// 		}
-// 		return {
-// 			...p,
-// 			size: plantForPlacement.plantingDistanceInFeet,
-// 		}
-// 	})
-
-// 	return layout.isValidPlacement(
-// 		plants,
-// 		x,
-// 		y,
-// 		size,
-// 		placementsWithSize,
-// 		draggedPlantPlacement.id,
-// 	)
-// }
 
 export interface GardenBedViewCardSize {
 	maxCols: number

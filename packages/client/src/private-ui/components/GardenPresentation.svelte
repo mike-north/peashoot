@@ -4,7 +4,6 @@ import GridViewToolbar from './GridViewToolbar.svelte'
 import DeleteZone from '../../grid/ui/DeleteZone.svelte'
 import DragPreview from '../../grid/ui/DragPreview.svelte'
 import type { Garden } from '../../private-lib/garden'
-import GardenBedView from './GardenBedView.svelte'
 import { calculateGardenBedViewColSpans } from '../../private-lib/garden-bed-layout-calculator'
 import type {
 	ExistingGardenItem,
@@ -23,6 +22,7 @@ import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
 import { isGridPlaceable, isGridPlacement } from '../../grid/grid-placement'
 import type { DraggableItem } from '../state/dragState'
+import GardenBedGrid from './GardenBedGrid.svelte'
 
 interface GardenProps {
 	garden: Garden
@@ -306,7 +306,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 				class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
 			>
 				{#each beds as bed (bed.id)}
-					<GardenBedView
+					<GardenBedGrid
 						TooltipComponent={PlantTooltipContent}
 						bed={bed}
 						plants={$plants}

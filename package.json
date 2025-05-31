@@ -8,6 +8,7 @@
 		"build": "lerna run build",
 		"dev": "lerna run dev --parallel",
 		"test": "lerna run test",
+		"test:watch": "lerna run test:watch",
 		"lint": "lerna run lint --parallel"
 	},
 	"devDependencies": {

@@ -28,7 +28,7 @@ export type CloningRequestDetails<T> = GridCloningRequestDetails<T>
 
 export interface GardenZoneContext<T extends WithVisualPresentation>
 	extends GridZoneContext<T>,
-		Omit<GardenBed, 'plantPlacements' | 'id' | 'width' | 'height'> {
+		Omit<GardenBed, 'placements' | 'id' | 'width' | 'height'> {
 	id: string // ID of the GardenBed
 	waterLevel: number
 	sunLevel: number

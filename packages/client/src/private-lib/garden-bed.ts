@@ -11,7 +11,7 @@ export interface GardenBed extends GridArea<PlantWithSize> {
 	height: number
 	waterLevel: number
 	sunLevel: number
-	placements: GridPlacement<PlantWithSize>[]
+	plantPlacements: GridPlacement<PlantWithSize>[]
 }
 
 export function updatePlantPositionInBed(
@@ -22,7 +22,7 @@ export function updatePlantPositionInBed(
 ): GardenBed {
 	return {
 		...bed,
-		placements: bed.placements.map((p: GridPlacement<PlantWithSize>) =>
+		plantPlacements: bed.plantPlacements.map((p: GridPlacement<PlantWithSize>) =>
 			p.id === plantId ? { ...p, x: newX, y: newY } : p,
 		),
 	}

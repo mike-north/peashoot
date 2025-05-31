@@ -1,8 +1,9 @@
 import type { Attachment } from 'svelte/attachments'
 import { get } from 'svelte/store'
 import type { Writable } from 'svelte/store'
-import type { DraggableItem, ExistingDraggableItem, IDragState } from '../dnd/types'
-import { isDraggingExistingItem } from '../../private-ui/state/dragState'
+import type { ExistingDraggableItem, IDragState } from '../../dnd/types'
+import { isDraggingExistingItem } from '../../dnd/state'
+import type { DraggableItem } from '../../dnd/types'
 
 interface DeleteZoneAttachmentOptions {
 	dragStateStore: Writable<

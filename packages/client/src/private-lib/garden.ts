@@ -1,5 +1,5 @@
 import type { GardenBed, PlantWithSize } from './garden-bed'
-import type { GridPlacement } from './grid-placement'
+import type { GridPlacement } from '../grid/grid-placement'
 
 export interface EdgeIndicator {
 	id: string

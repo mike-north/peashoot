@@ -1,3 +1,5 @@
+import type { RGB } from '../lib/color'
+
 /**
  * Represents the placement of an item on a grid with integer coordinates.
  * This is a generic type that can be used for any item that needs to be
@@ -23,14 +25,8 @@ export interface GridItemPresentation {
 	/** Path to the icon to display */
 	readonly iconPath: string
 	/** Accent color for the tile background */
-	readonly accentColor: {
-		r: number
-		g: number
-		b: number
-		a?: number
-	}
-	/** Optional custom CSS class */
-	readonly cssClass?: string
+	readonly accentColor: RGB
+	readonly size: number
 }
 
 /**
@@ -45,4 +41,8 @@ export interface GridPlaceable {
 	readonly size: number
 	/** Visual presentation data */
 	readonly presentation: GridItemPresentation
+}
+
+export interface WithVisualPresentation extends GridPlaceable {
+	presentation: GridItemPresentation
 }

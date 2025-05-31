@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends GridPlaceable">
-import type { GridPlaceable, GridPlacement } from '../../private-lib/grid-placement'
+import type { GridPlaceable, GridPlacement } from '../grid-placement'
 import type { Component } from 'svelte'
-import { showTooltip, hideTooltip } from '../state/tooltipStore'
+import { showTooltip, hideTooltip } from '../../private-ui/state/tooltipStore'
 
 interface Props {
 	placement: GridPlacement<T>

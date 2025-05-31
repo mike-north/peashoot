@@ -5,18 +5,18 @@ import {
 	updatePendingOperation,
 	removePendingOperation,
 	defaultAsyncValidation,
-} from '../../src/private-lib/dnd/validation.js'
-import { pendingOperations as actualPendingOperationsStore } from '../../src/private-lib/dnd/state.js'
+} from '../../src/dnd/validation.js'
+import { pendingOperations as actualPendingOperationsStore } from '../../src/dnd/state.js'
 import type {
 	DraggableItem,
 	PendingOperation,
 	ValidationContext,
 	DropZoneContext,
-} from '../../src/private-lib/dnd/types.js'
-import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../src/private-lib/dnd/constants.js'
+} from '../../src/dnd/types.js'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../src/dnd/constants.js'
 
 // Mock the Svelte store module that exports pendingOperations
-vi.mock('../../src/lib/dnd/state.js', async (importOriginal) => {
+vi.mock('../../src/dnd/state.js', async (importOriginal) => {
 	const actual = await importOriginal()
 	const mockStore = writable<PendingOperation<DraggableItem>[]>([])
 	return {

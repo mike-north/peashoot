@@ -1,12 +1,12 @@
 <script lang="ts" generics="TItem extends WithVisualPresentation">
-import type { TileVisualPresentation } from '../../private-lib/plant'
-import { dragManager } from '../../private-lib/dnd/drag-manager'
-import { dragState } from '../state/dragState'
-import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement } from '../../private-lib/grid-placement'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
-import { clickOrHold } from '../../private-lib/actions/clickOrHold'
-import type { WithVisualPresentation } from '../state/gardenDragState'
+import type { GridItemPresentation } from '../../grid/grid-placement'
+import { dragManager } from '../../dnd/drag-manager'
+import { dragState } from '../../dnd/state'
+import GridPlacementTile from '../../grid/ui/GridPlacementTile.svelte'
+import type { GridPlacement } from '../../grid/grid-placement'
+import { DEFAULT_LAYOUT_PARAMS } from '../../grid/grid-layout-constants'
+import { clickOrHold } from '../../grid/actions/clickOrHold'
+import type { WithVisualPresentation } from '../../grid/grid-placement'
 import type { Component } from 'svelte'
 
 interface GridToolbarProps {
@@ -18,12 +18,12 @@ interface GridToolbarProps {
 
 interface ToolbarGridItem {
 	displayName: string
-	presentation: TileVisualPresentation
+	presentation: GridItemPresentation
 }
 
 interface ToolbarGridItemCategory {
 	displayName: string
-	presentation: TileVisualPresentation
+	presentation: GridItemPresentation
 	items: ToolbarGridItem[]
 }
 

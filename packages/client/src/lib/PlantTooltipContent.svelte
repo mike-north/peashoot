@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { GridPlaceable } from '../private-lib/grid-placement'
+import type { GridPlaceable } from '../grid/grid-placement'
 
 interface Props {
 	item: GridPlaceable
@@ -43,12 +43,6 @@ let { item }: Props = $props()
 		<div class="text-sm text-gray-600">
 			<p><strong>ID:</strong> {item.id}</p>
 		</div>
-
-		{#if item.presentation.cssClass}
-			<div class="text-sm text-gray-600">
-				<p><strong>CSS Class:</strong> {item.presentation.cssClass}</p>
-			</div>
-		{/if}
 	</div>
 
 	<!-- Example of larger content area -->

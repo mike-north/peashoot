@@ -1,8 +1,12 @@
 <script lang="ts">
-import { dragState, isDraggingExistingItem, pendingOperations } from '../state/dragState'
+import {
+	dragState,
+	isDraggingExistingItem,
+	pendingOperations,
+} from '../../private-ui/state/dragState'
 import PendingOperationTile from './PendingOperationTile.svelte'
-import { isGardenItemRemovalOperation } from '../state/gardenDragState'
-import { deleteZoneDragEvents } from '../../private-lib/actions/deleteZoneDragEvents'
+import { isGardenItemRemovalOperation } from '../../private-ui/state/gardenDragState'
+import { deleteZoneDragEvents } from '../actions/deleteZoneDragEvents'
 import TrashIcon from '~icons/ph/trash-duotone'
 
 // Show delete zone only when dragging an existing plant

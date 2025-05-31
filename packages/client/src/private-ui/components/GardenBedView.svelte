@@ -1,6 +1,6 @@
 <script lang="ts">
-import GridPlacementTile from './GridPlacementTile.svelte'
-import PendingOperationTile from './PendingOperationTile.svelte'
+import GridPlacementTile from '../../grid/ui/GridPlacementTile.svelte'
+import PendingOperationTile from '../../grid/ui/PendingOperationTile.svelte'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import {
 	GardenBedLayoutCalculator,
@@ -8,21 +8,21 @@ import {
 	type Border,
 } from '../../private-lib/garden-bed-layout-calculator'
 import type { GardenBed } from '../../private-lib/garden-bed'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../../grid/grid-layout-constants'
 
-import GenericDropZone from '../../private-lib/dnd/components/GenericDropZone.svelte'
-import GenericDraggable from '../../private-lib/dnd/components/GenericDraggable.svelte'
+import GenericDropZone from '../../dnd/components/GenericDropZone.svelte'
+import GenericDraggable from '../../dnd/components/GenericDraggable.svelte'
 import {
 	pendingOperations as genericPendingOperations,
 	isDragStatePopulated,
 	dragState as genericDragState,
-} from '../../private-lib/dnd/state'
-import type { DraggableItem } from '../../private-lib/dnd/types'
+} from '../../dnd/state'
+import type { DraggableItem } from '../../dnd/types'
 import {
 	gridPlacementToExistingGridItem,
 	type GardenPendingOperation,
 } from '../state/gardenDragState'
-import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
+import { disablePointerEventsWhenDragging } from '../../grid/actions/disablePointerEventsWhenDragging'
 import type { Plant } from '../../private-lib/plant'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
 import type { Component } from 'svelte'

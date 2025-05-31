@@ -3,12 +3,12 @@
 	generics="T extends { id: string; displayName: string; presentation: { iconPath: string; accentColor: { r: number; g: number; b: number; a?: number }; size: number }; size: number }"
 >
 import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement } from '../../private-lib/grid-placement'
-import type { GardenPendingOperation } from '../state/gardenDragState'
+import type { GridPlacement } from '../grid-placement'
+import type { GardenPendingOperation } from '../../private-ui/state/gardenDragState'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
-} from '../../private-lib/dnd/constants'
+} from '../../dnd/constants'
 import CheckIcon from '~icons/ph/check-bold'
 import XIcon from '~icons/ph/x-bold'
 import TrashIcon from '~icons/ph/trash-duotone'

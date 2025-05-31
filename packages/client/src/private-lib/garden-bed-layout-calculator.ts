@@ -3,10 +3,10 @@
 import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
 import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
-import type { GardenBed } from './garden-bed'
-import type { PlantPlacement } from './plant-placement'
+import type { GardenBed, PlantWithSize } from './garden-bed'
 import type { Garden } from './garden'
 import type { Plant } from './plant'
+import type { GridPlacement } from './grid-placement'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -529,7 +529,7 @@ export function screenToGridCoordinates(
 export function isValidDrop(
 	plants: Plant[],
 	targetBed: GardenBed,
-	draggedPlantPlacement: PlantPlacement,
+	draggedPlantPlacement: GridPlacement<PlantWithSize>,
 	x: number, // Target grid x-coordinate
 	y: number, // Target grid y-coordinate
 	layoutParamsOverrides?: Partial<LayoutParams>, // Optional overrides for layout calculation
@@ -540,7 +540,7 @@ export function isValidDrop(
 		...DEFAULT_LAYOUT_PARAMS, // Start with defaults
 		...(layoutParamsOverrides || {}), // Apply any specific overrides
 	})
-	const plant = plants.find((p) => p.id === draggedPlantPlacement.plantId)
+	const plant = plants.find((p) => p.id === draggedPlantPlacement.data.id)
 	if (!plant) {
 		throw new Error('Plant not found for isValidDrop')
 	}
@@ -548,7 +548,7 @@ export function isValidDrop(
 
 	// Convert PlantPlacements to include size information
 	const placementsWithSize = targetBed.plantPlacements.map((p) => {
-		const plantForPlacement = plants.find((pl) => pl.id === p.plantId)
+		const plantForPlacement = plants.find((pl) => pl.id === p.data.id)
 		if (!plantForPlacement) {
 			throw new Error(`Plant not found for placement ${p.id}`)
 		}

@@ -6,9 +6,9 @@ import {
 	calculateEdgeBorders,
 	isValidDrop,
 } from '../src/private-lib/garden-bed-layout-calculator.js'
-import type { GardenBed } from '../src/private-lib/garden-bed.js'
-import type { PlantPlacement } from '../src/private-lib/plant-placement.js'
+import type { GardenBed, PlantWithSize } from '../src/private-lib/garden-bed.js'
 import type { Plant } from '../src/private-lib/plant.js'
+import { GridPlacement } from '../src/private-lib/grid-placement.js'
 
 const layoutParams = { width: 4, height: 4 }
 const layout = new GardenBedLayoutCalculator(layoutParams)
@@ -30,11 +30,12 @@ const mockPlant: Plant = {
 	},
 }
 
-const plantPlacement: PlantPlacement = {
-	plantId: mockPlant.id,
+const plantPlacement: GridPlacement<PlantWithSize> = {
+	data: mockPlant,
 	x: 1,
 	y: 2,
 	id: 'placement1',
+	size: 1,
 }
 
 const plantPlacement2 = {

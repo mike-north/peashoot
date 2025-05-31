@@ -1,5 +1,4 @@
 import type { GardenBed } from '../garden-bed'
-import type { PlantPlacement } from '../plant-placement'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
@@ -8,6 +7,7 @@ import type {
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import type { Plant } from '../plant'
+import type { GridPlacement } from '../grid-placement'
 
 // Define PlantWithSize type
 type PlantWithSize = Plant & { size: number }
@@ -27,11 +27,6 @@ export class GardenValidationService {
 		itemSize: number,
 		excludeItemId?: string,
 	): PlacementValidityResult {
-		const plant = this.plants.find((p) => p.id === excludeItemId)
-		if (!plant) {
-			return { isValid: false, reason: 'Plant not found.' }
-		}
-
 		// Check bounds
 		if (
 			itemX < 0 ||
@@ -42,21 +37,30 @@ export class GardenValidationService {
 			return { isValid: false, reason: 'Placement is out of bounds.' }
 		}
 
-		// Check collisions
+		// Check collisions with existing plants
 		for (const existingPlant of targetBed.plantPlacements) {
 			if (excludeItemId && existingPlant.id === excludeItemId) {
 				continue
 			}
-			const existingSize = plant.plantingDistanceInFeet
+
+			// Get the plant data to find its size
+			const existingPlantData = this.plants.find((p) => p.id === existingPlant.data.id)
+			const existingSize = existingPlantData
+				? existingPlantData.plantingDistanceInFeet
+				: 1
+
 			if (
 				itemX < existingPlant.x + existingSize &&
 				itemX + itemSize > existingPlant.x &&
 				itemY < existingPlant.y + existingSize &&
 				itemY + itemSize > existingPlant.y
 			) {
+				const plantName = existingPlantData
+					? existingPlantData.displayName
+					: 'Unknown plant'
 				return {
 					isValid: false,
-					reason: `Overlaps with existing plant '${plant.displayName}' (ID: ${existingPlant.id}).`,
+					reason: `Overlaps with existing plant '${plantName}' (ID: ${existingPlant.id}).`,
 				}
 			}
 		}
@@ -82,7 +86,7 @@ export class GardenValidationService {
 						switch (context.operationType) {
 							case 'item-move-within-zone':
 								resolve(
-									Math.random() > 0.02
+									Math.random() > 0.3
 										? { isValid: true }
 										: {
 												isValid: false,
@@ -125,9 +129,16 @@ export class GardenValidationService {
 									return
 								}
 								if (plant.family === 'tomatoes' && targetBed.sunLevel < 3) {
-									reject(new Error('Target bed has insufficient sunlight for tomatoes'))
+									resolve({
+										isValid: false,
+										error: 'Target bed has insufficient sunlight for tomatoes',
+									})
 								} else if (Math.random() > 0.1) resolve({ isValid: true })
-								else reject(new Error('Soil compatibility issue between beds'))
+								else
+									resolve({
+										isValid: false,
+										error: 'Soil compatibility issue between beds',
+									})
 								break
 							}
 
@@ -140,15 +151,32 @@ export class GardenValidationService {
 									reject(new Error('Target bed not found for add operation'))
 									return
 								}
-								const occupiedCells = addTargetBed.plantPlacements.reduce(
-									(total: number) => {
-										return total + plant.plantingDistanceInFeet ** 2
+
+								// Calculate current occupancy correctly
+								const currentOccupiedCells = addTargetBed.plantPlacements.reduce(
+									(total: number, placement: GridPlacement<PlantWithSize>) => {
+										const existingPlant = this.plants.find(
+											(p) => p.id === placement.data.id,
+										)
+										if (!existingPlant) {
+											throw new Error(
+												`Plant not found for validation: ${placement.data.id}`,
+											)
+										}
+										// Use the existing plant's size, not the new plant's size
+										return total + existingPlant.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
+
+								// Add the footprint of the plant being added
+								const newPlantFootprint = plant.plantingDistanceInFeet ** 2
+								const totalOccupiedAfterAdd = currentOccupiedCells + newPlantFootprint
+
 								const totalCells = addTargetBed.width * addTargetBed.height
-								const occupancyRate = occupiedCells / totalCells
-								if (occupancyRate > 0.8)
+								const occupancyRateAfterAdd = totalOccupiedAfterAdd / totalCells
+
+								if (occupancyRateAfterAdd > 0.8)
 									resolve({ isValid: false, error: 'Bed is too crowded for new plants' })
 								else if (Math.random() > 0.05) resolve({ isValid: true })
 								else
@@ -201,26 +229,42 @@ export class GardenValidationService {
 									plant.plantingDistanceInFeet,
 								)
 								if (!clonePlacementCheck.isValid) {
-									reject(new Error(`Cannot clone plant: ${clonePlacementCheck.reason}`))
+									resolve({
+										isValid: false,
+										error: `Cannot clone plant: ${clonePlacementCheck.reason}`,
+									})
 									return
 								}
 
-								const occupiedCells = cloneTargetBed.plantPlacements.reduce(
-									(total: number, placement: PlantPlacement) => {
-										const plant = this.plants.find((p) => p.id === placement.plantId)
-										if (!plant) {
-											throw new Error('Plant not found for validation')
+								// Calculate current occupancy AND include the plant being cloned
+								const currentOccupiedCells = cloneTargetBed.plantPlacements.reduce(
+									(total: number, placement: GridPlacement<PlantWithSize>) => {
+										const existingPlant = this.plants.find(
+											(p) => p.id === placement.data.id,
+										)
+										if (!existingPlant) {
+											throw new Error(
+												`Plant not found for validation: ${placement.data.id}`,
+											)
 										}
-										return total + plant.plantingDistanceInFeet ** 2
+										// Use plantingDistanceInFeet consistently with collision detection
+										return total + existingPlant.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
+
+								// Add the footprint of the plant being cloned
+								const newPlantFootprint = plant.plantingDistanceInFeet ** 2
+								const totalOccupiedAfterClone = currentOccupiedCells + newPlantFootprint
+
 								const totalCells = cloneTargetBed.width * cloneTargetBed.height
-								const occupancyRate = occupiedCells / totalCells
-								if (occupancyRate > 0.75)
-									reject(
-										new Error('Target bed is too crowded for cloning (capacity check)'),
-									)
+								const occupancyRateAfterClone = totalOccupiedAfterClone / totalCells
+
+								if (occupancyRateAfterClone > 0.75)
+									resolve({
+										isValid: false,
+										error: 'Target bed is too crowded for cloning (capacity check)',
+									})
 								else
 									resolve(
 										Math.random() > 0.12

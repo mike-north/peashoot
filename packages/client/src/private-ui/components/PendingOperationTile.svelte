@@ -2,7 +2,7 @@
 	lang="ts"
 	generics="T extends { id: string; displayName: string; presentation: { iconPath: string; accentColor: { r: number; g: number; b: number; a?: number }; size: number }; size: number }"
 >
-import PlantGridTile from './PlantGridTile.svelte'
+import GridPlacementTile from './GridPlacementTile.svelte'
 import type { GridPlacement } from '../../private-lib/grid-placement'
 import type { GardenPendingOperation } from '../state/gardenDragState'
 import {
@@ -352,7 +352,7 @@ $effect(() => {
 >
 	<div class="pending-tile__content">
 		{#if !showCompletionState && placementForDisplay}
-			<PlantGridTile placement={placementForDisplay} sizePx={sizePx} />
+			<GridPlacementTile placement={placementForDisplay} sizePx={sizePx} />
 		{/if}
 
 		{#if showCompletionState}

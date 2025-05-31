@@ -234,6 +234,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 				dragSourceType: 'existing-item',
 				draggedExistingItem: existingItem,
 				sourceZoneId: 'zoneA',
+				draggedItemEffectiveSize: 2,
 			})
 			const info = getDraggedItemInfo(state)
 			expect(info).toEqual({ item: existingItemData, effectiveSize: 2 })
@@ -244,6 +245,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 				dragSourceType: 'existing-item',
 				draggedExistingItem: existingItem,
 				sourceZoneId: 'zoneA',
+				draggedItemEffectiveSize: 2,
 			})
 			const info = getDraggedItemInfo(state)
 			expect(info).toEqual({ item: existingItemData, effectiveSize: 2 })
@@ -270,6 +272,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 			const state = createMockState<TestItem, TestExistingItem>({
 				dragSourceType: 'new-item',
 				draggedNewItem: newItemData,
+				draggedItemEffectiveSize: 4,
 			})
 			const info = getDraggedItemInfo(state)
 			expect(info).toEqual({ item: newItemData, effectiveSize: 4 })

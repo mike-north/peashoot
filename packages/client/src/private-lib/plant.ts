@@ -1,3 +1,5 @@
+import type { WithVisualPresentation } from '../private-ui/state/gardenDragState'
+
 export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
 
 export interface TileVisualPresentation {
@@ -11,7 +13,7 @@ export interface TileVisualPresentation {
 	readonly iconPath: string
 }
 
-export interface Plant {
+export interface Plant extends WithVisualPresentation {
 	readonly id: string
 	readonly displayName: string
 	readonly family: string

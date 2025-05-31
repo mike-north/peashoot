@@ -1,10 +1,10 @@
 import type { Garden } from '../garden'
 import type { GardenBed } from '../garden-bed'
 import type { Plant } from '../plant'
-import type { PlantPlacement } from '../plant-placement'
 import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
 import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../garden'
 import { updatePlantPositionInBed } from '../garden-bed'
+import type { GridPlacement } from '../grid-placement'
 
 // Define PlantWithSize type
 type PlantWithSize = Plant & { size: number }
@@ -40,11 +40,12 @@ export class GardenOperationsService {
 		newY: number,
 	): Garden {
 		// Convert ExistingGardenItem to PlantPlacement
-		const plantPlacementArg: PlantPlacement = {
+		const plantPlacementArg: GridPlacement<PlantWithSize> = {
 			id: existingItem.id,
 			x: existingItem.x,
 			y: existingItem.y,
-			plantId: existingItem.itemData.id,
+			size: existingItem.itemData.plantingDistanceInFeet,
+			data: existingItem.itemData,
 		}
 		return movePlantBetweenBeds(
 			garden,
@@ -68,11 +69,12 @@ export class GardenOperationsService {
 		}
 		const newPlantId = `${plantForPlacement.family}_${Date.now()}`
 
-		const newPlacement: PlantPlacement = {
+		const newPlacement: GridPlacement<PlantWithSize> = {
 			id: newPlantId,
 			x,
 			y,
-			plantId: plantForPlacement.id,
+			size: plantForPlacement.plantingDistanceInFeet,
+			data: { ...plantForPlacement, size: plantForPlacement.plantingDistanceInFeet },
 		}
 
 		return {
@@ -106,7 +108,10 @@ export class GardenOperationsService {
 		return findBed(garden, bedId)
 	}
 
-	findPlantPlacement(bed: GardenBed, plantId: string): PlantPlacement | undefined {
+	findPlantPlacement(
+		bed: GardenBed,
+		plantId: string,
+	): GridPlacement<PlantWithSize> | undefined {
 		return findPlantPlacement(bed, plantId)
 	}
 }

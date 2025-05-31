@@ -2,8 +2,6 @@
 import GardenView from '../components/GardenView.svelte'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { updatePlantPositionInBed } from '../../private-lib/garden-bed'
-import type { PlantPlacement } from '../../private-lib/plant-placement'
-import { plantPlacementToGridPlacement } from '../../private-lib/plant-placement'
 import type { Plant } from '../../private-lib/plant'
 import type { Garden } from '../../private-lib/garden'
 import {
@@ -28,6 +26,8 @@ import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../private-lib/dnd/constants'
 import { GardenAdapter } from '../../lib/adapters/garden-adapter'
 import { onMount } from 'svelte'
 import { plants } from '../state/plantsStore'
+import type { GridPlacement } from '../../private-lib/grid-placement'
+import type { PlantWithSize } from '../../private-lib/garden-bed'
 
 const { route }: { route: RouteResult } = $props()
 
@@ -91,19 +91,20 @@ function handleMovePlantToDifferentBed(
 	newX: number,
 	newY: number,
 ) {
-	// Inline conversion from ExistingGardenItem<PlantWithSize> to PlantPlacement
-	const plantPlacementArg = {
+	// Inline conversion from ExistingGardenItem<PlantWithSize> to GridPlacement<PlantWithSize>
+	const gridPlacementArg: GridPlacement<PlantWithSize> = {
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
-		plantId: existingItem.itemData.id,
+		size: existingItem.itemData.size,
+		data: existingItem.itemData,
 	}
 	if (!gardenInstance) return
 	gardenInstance = movePlantBetweenBeds(
 		gardenInstance,
 		sourceBedId,
 		targetBedId,
-		plantPlacementArg,
+		gridPlacementArg,
 		newX,
 		newY,
 	)
@@ -115,11 +116,12 @@ function handleAddNewPlant(bedId: string, item: Plant, x: number, y: number) {
 	if (bed) {
 		const newPlantId = `${item.family}_${Date.now()}`
 
-		const newPlacement: PlantPlacement = {
+		const newPlacement: GridPlacement<PlantWithSize> = {
 			id: newPlantId,
 			x,
 			y,
-			plantId: item.id,
+			size: item.presentation.size,
+			data: { ...item, size: item.presentation.size },
 		}
 
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
@@ -150,24 +152,15 @@ function handleDeletePlant(plantId: string, bedId: string) {
 	}
 }
 
-type PlantWithSize = Plant & { size: number }
-
 function buildGardenZoneContext(
 	bed: GardenBed | undefined,
 ): GardenZoneContext<PlantWithSize> | undefined {
 	if (!bed) return undefined
 	return {
 		...bed,
-		placements: bed.plantPlacements.map((pp) => {
-			const plant = $plants.find((p) => p.id === pp.plantId)
-			if (!plant) {
-				throw new Error(`Plant not found for placement: ${pp.plantId}`)
-			}
-			const gridPlacement = plantPlacementToGridPlacement(pp, plant)
-			return {
-				...gridPlacement,
-				data: { ...plant, size: plant.presentation.size } as PlantWithSize,
-			}
+		placements: bed.plantPlacements.map((placement) => {
+			// placement is already GridPlacement<PlantWithSize>
+			return placement
 		}),
 	} as GardenZoneContext<PlantWithSize>
 }
@@ -398,7 +391,7 @@ const customAsyncValidation: GardenAsyncValidationFunction<PlantWithSize> = asyn
 				continue
 			}
 			// Get the plant data to find its size
-			const plantData = plantsData.find((p) => p.id === existingPlant.plantId)
+			const plantData = plantsData.find((p) => p.id === existingPlant.data.id)
 			const existingSize = plantData ? plantData.plantingDistanceInFeet : 1
 			if (
 				itemX < existingPlant.x + existingSize &&
@@ -498,8 +491,8 @@ const customAsyncValidation: GardenAsyncValidationFunction<PlantWithSize> = asyn
 					}
 					// Planned validation: check bed capacity
 					const occupiedCells = addTargetBed.plantPlacements.reduce(
-						(total: number, placement: PlantPlacement) => {
-							const plantData = plantsData.find((p) => p.id === placement.plantId)
+						(total: number, placement: GridPlacement<PlantWithSize>) => {
+							const plantData = plantsData.find((p) => p.id === placement.data.id)
 							const plantSize = plantData ? plantData.plantingDistanceInFeet : 1
 							return total + plantSize ** 2
 						},
@@ -571,8 +564,8 @@ const customAsyncValidation: GardenAsyncValidationFunction<PlantWithSize> = asyn
 
 					// Planned validation: check bed capacity for cloning
 					const occupiedCells = cloneTargetBed.plantPlacements.reduce(
-						(total: number, placement: PlantPlacement) => {
-							const plantData = plantsData.find((p) => p.id === placement.plantId)
+						(total: number, placement: GridPlacement<PlantWithSize>) => {
+							const plantData = plantsData.find((p) => p.id === placement.data.id)
 							const plantSize = plantData ? plantData.plantingDistanceInFeet : 1
 							return total + plantSize ** 2
 						},

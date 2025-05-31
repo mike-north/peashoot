@@ -17,15 +17,16 @@ const mockPlant: Plant = {
 			g: 0,
 			b: 0,
 		},
-		tileIconPath: 'tomato.png',
+		iconPath: 'tomato.png',
 	},
 }
 
 const plantPlacement: GridPlacement<Plant> = {
+	id: 'placement1',
+	item: mockPlant,
+	sourceZoneId: 'bed1',
 	x: 1,
 	y: 2,
-	id: 'placement1',
-	data: mockPlant,
 	size: 1,
 }
 

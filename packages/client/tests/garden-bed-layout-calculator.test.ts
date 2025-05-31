@@ -30,10 +30,7 @@ const mockPlant = {
 } satisfies Plant
 
 const plantPlacement: GridPlacement<PlantWithSize> = {
-	item: {
-		...mockPlant,
-		size: mockPlant.plantingDistanceInFeet,
-	},
+	item: mockPlant,
 	x: 1,
 	y: 2,
 	id: 'placement1',

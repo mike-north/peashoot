@@ -90,8 +90,8 @@ async function handleDrop(dropInfo: {
 			type: 'removal',
 			state: 'pending',
 			zoneId: sourceZoneId,
-			item: existingGardenItem.itemData,
-			size: (existingGardenItem.itemData as Plant).plantingDistanceInFeet,
+			item: existingGardenItem.item,
+			size: (existingGardenItem.item as Plant).plantingDistanceInFeet,
 			x: existingGardenItem.x,
 			y: existingGardenItem.y,
 			originalSourceZoneId: sourceZoneId,
@@ -102,8 +102,8 @@ async function handleDrop(dropInfo: {
 			await onRequestRemoval(
 				{
 					itemData: {
-						...existingGardenItem.itemData,
-						size: (existingGardenItem.itemData as Plant).presentation.size,
+						...existingGardenItem.item,
+						size: (existingGardenItem.item as Plant).presentation.size,
 					} as PlantWithSize,
 					instanceId: draggedExistingItem.id,
 					sourceZoneId: sourceZoneId,
@@ -137,8 +137,8 @@ async function handleDrop(dropInfo: {
 					type: 'placement',
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
-					item: existingItem.itemData,
-					size: (existingItem.itemData as Plant).plantingDistanceInFeet,
+					item: existingItem.item,
+					size: (existingItem.item as Plant).plantingDistanceInFeet,
 					x,
 					y,
 					originalSourceZoneId: sourceBedId,
@@ -149,8 +149,8 @@ async function handleDrop(dropInfo: {
 					await onRequestCloning(
 						{
 							itemDataToClone: {
-								...existingItem.itemData,
-								size: (existingItem.itemData as Plant).presentation.size,
+								...existingItem.item,
+								size: (existingItem.item as Plant).presentation.size,
 							} as PlantWithSize,
 							sourceOriginalZoneId: sourceBedId,
 							targetCloneZoneId: dropInfo.targetZoneId,
@@ -182,8 +182,8 @@ async function handleDrop(dropInfo: {
 					type: 'placement',
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
-					item: existingItem.itemData,
-					size: (existingItem.itemData as Plant).plantingDistanceInFeet,
+					item: existingItem.item,
+					size: (existingItem.item as Plant).plantingDistanceInFeet,
 					x,
 					y,
 					originalSourceZoneId: sourceBedId,
@@ -194,8 +194,8 @@ async function handleDrop(dropInfo: {
 					await onRequestPlacement(
 						{
 							itemData: {
-								...existingItem.itemData,
-								size: (existingItem.itemData as Plant).presentation.size,
+								...existingItem.item,
+								size: (existingItem.item as Plant).presentation.size,
 							} as PlantWithSize,
 							targetZoneId: dropInfo.targetZoneId,
 							x,

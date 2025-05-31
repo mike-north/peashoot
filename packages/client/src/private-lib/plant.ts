@@ -10,6 +10,7 @@ export interface Plant extends GridPlaceable {
 	readonly variant: string
 	readonly plantingDistanceInFeet: number
 	readonly presentation: GridItemPresentation
+	readonly size: number
 }
 
 export function isPlant(item: unknown): item is Plant {

@@ -33,7 +33,7 @@ export class DragManager<TItem extends DraggableItem> {
 
 		// Calculate the effective size based on the item type
 		let effectiveSize = 1 // Default fallback
-		effectiveSize = this.getItemSize(existingItem.itemData)
+		effectiveSize = this.getItemSize(existingItem.item)
 
 		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,

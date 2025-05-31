@@ -31,18 +31,36 @@ const mockPlant: Plant = {
 }
 
 const plantPlacement: GridPlacement<PlantWithSize> = {
-	data: mockPlant,
+	item: {
+		...mockPlant,
+		size: mockPlant.plantingDistanceInFeet,
+	},
 	x: 1,
 	y: 2,
 	id: 'placement1',
 	size: 1,
+	sourceZoneId: 'bed1',
 }
 
-const plantPlacement2 = {
-	plantTile: { ...mockPlant, id: 'plant2' },
+// Separate objects for tests that need different structures
+const plantTileObject = {
+	x: 1,
+	y: 2,
+	plantTile: { ...mockPlant, size: 1 },
+}
+
+const plantTileObjectWithId = {
+	x: 1,
+	y: 2,
+	id: 'placement1',
+	plantTile: { ...mockPlant, size: 1 },
+}
+
+const plantTileObject2WithId = {
 	x: 2,
 	y: 2,
 	id: 'placement2',
+	plantTile: { ...mockPlant, size: 1 },
 }
 
 describe('GardenBedLayoutCalculator', () => {
@@ -87,7 +105,7 @@ describe('GardenBedLayoutCalculator', () => {
 	})
 
 	it('validates placement in bounds and no overlap', () => {
-		const placementWithSize = { ...plantPlacement, size: 1 }
+		const placementWithSize = { ...plantPlacement, size: 1, id: 'placement1' }
 		const valid = layout.isValidPlacement([mockPlant], 0, 0, 1, [placementWithSize])
 		expect(valid).toBe(true)
 		const invalid = layout.isValidPlacement([mockPlant], 1, 2, 1, [placementWithSize])
@@ -97,15 +115,12 @@ describe('GardenBedLayoutCalculator', () => {
 
 describe('getPlantCells', () => {
 	it('returns all cells for a 1x1 plant', () => {
-		const cells = getPlantCells({
-			...plantPlacement,
-			plantTile: { ...mockPlant, size: 1 },
-		})
+		const cells = getPlantCells(plantTileObject)
 		expect(cells).toContainEqual({ x: 1, y: 2 })
 	})
 	it('returns all cells for a 2x2 plant', () => {
 		const cells = getPlantCells({
-			...plantPlacement,
+			...plantTileObject,
 			plantTile: { ...mockPlant, size: 2 },
 		})
 		expect(cells.length).toBe(4)
@@ -115,14 +130,8 @@ describe('getPlantCells', () => {
 describe('getSharedBorders', () => {
 	it('returns borders for adjacent plants', () => {
 		const borders = getSharedBorders(
-			{
-				...plantPlacement,
-				plantTile: { ...mockPlant, size: 1 },
-			},
-			{
-				...plantPlacement,
-				plantTile: { ...mockPlant, size: 1 },
-			},
+			plantTileObjectWithId,
+			plantTileObject2WithId,
 			'red',
 			'indicator1',
 			layout,
@@ -134,10 +143,7 @@ describe('getSharedBorders', () => {
 describe('calculateEdgeBorders', () => {
 	it('returns borders for edge indicators', () => {
 		const bed = {
-			plantPlacements: [
-				{ ...plantPlacement, plantTile: { ...mockPlant, size: 1 } },
-				{ ...plantPlacement2, plantTile: { ...mockPlant, size: 1 } },
-			],
+			plantPlacements: [plantTileObjectWithId, plantTileObject2WithId],
 		}
 		const edgeIndicators = [
 			{

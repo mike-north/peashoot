@@ -540,7 +540,7 @@ export function isValidDrop(
 		...DEFAULT_LAYOUT_PARAMS, // Start with defaults
 		...(layoutParamsOverrides || {}), // Apply any specific overrides
 	})
-	const plant = plants.find((p) => p.id === draggedPlantPlacement.data.id)
+	const plant = plants.find((p) => p.id === draggedPlantPlacement.item.id)
 	if (!plant) {
 		throw new Error('Plant not found for isValidDrop')
 	}
@@ -548,7 +548,7 @@ export function isValidDrop(
 
 	// Convert PlantPlacements to include size information
 	const placementsWithSize = targetBed.plantPlacements.map((p) => {
-		const plantForPlacement = plants.find((pl) => pl.id === p.data.id)
+		const plantForPlacement = plants.find((pl) => pl.id === p.item.id)
 		if (!plantForPlacement) {
 			throw new Error(`Plant not found for placement ${p.id}`)
 		}

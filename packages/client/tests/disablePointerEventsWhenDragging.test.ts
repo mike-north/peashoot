@@ -96,8 +96,8 @@ describe('disablePointerEventsWhenDragging', () => {
 		> = {
 			...createMockDragState(false),
 			draggedExistingItem: {
-				id: 'existing',
-				itemData: { id: 'item-data' } as DraggableItem,
+				id: 'existing-1',
+				item: { id: 'item-data' } as DraggableItem,
 			} as ExistingDraggableItem<DraggableItem>,
 		}
 		if (action && action.update) {

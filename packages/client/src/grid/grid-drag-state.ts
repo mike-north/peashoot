@@ -1,23 +1,12 @@
 import type {
 	DraggableItem,
-	ExistingDraggableItem,
 	DropZoneContext,
-	IDragState,
 	ValidationContext,
 	PendingOperation,
-} from './types'
-import type { GridPlacement, GridPlaceable } from '../grid/grid-placement'
-
-/**
- * Represents an item that has been placed on a grid and can be dragged.
- * This bridges GridPlacement with the drag-and-drop system.
- */
-export interface ExistingGridItem<T extends GridPlaceable>
-	extends ExistingDraggableItem<T> {
-	x: number
-	y: number
-	size: number
-}
+	DragSourceType,
+	DropTargetType,
+} from '../dnd/types'
+import type { GridPlacement, GridPlaceable } from './grid-placement'
 
 /**
  * Context for a grid-based drop zone
@@ -29,9 +18,21 @@ export interface GridZoneContext<T extends GridPlaceable> extends DropZoneContex
 }
 
 /**
- * Grid-specific drag state
+ * Grid-specific drag state - specialized for GridPlacement
  */
-export type GridDragState<T extends GridPlaceable> = IDragState<T, ExistingGridItem<T>>
+export interface GridDragState<T extends GridPlaceable> {
+	draggedExistingItem: GridPlacement<T> | null
+	draggedNewItem: T | null // This is the core item data for a new item
+	draggedItemEffectiveSize: number // Actual size being used for drag visuals/collision
+	dragSourceType: DragSourceType
+	dragOffset: { x: number; y: number }
+	dragPosition: { x: number; y: number }
+	isCloneMode: boolean
+	highlightedCell: { x: number; y: number } | null
+	sourceZoneId: string | null
+	targetZoneId: string | null
+	targetType: DropTargetType | null
+}
 
 /**
  * Grid-specific validation context
@@ -61,38 +62,6 @@ export type GridAsyncValidationFunction<
  * Grid-specific pending operation
  */
 export type GridPendingOperation<T extends GridPlaceable> = PendingOperation<T>
-
-/**
- * Convert a GridPlacement to ExistingGridItem for drag operations
- */
-export function gridPlacementToExistingGridItem<T extends GridPlaceable>(
-	placement: GridPlacement<T>,
-	sourceZoneId: string,
-): ExistingGridItem<T> {
-	return {
-		id: placement.id,
-		x: placement.x,
-		y: placement.y,
-		size: placement.size,
-		itemData: placement.data,
-		sourceZoneId,
-	}
-}
-
-/**
- * Convert ExistingGridItem to GridPlacement
- */
-export function existingGridItemToGridPlacement<T extends GridPlaceable>(
-	item: ExistingGridItem<T>,
-): GridPlacement<T> {
-	return {
-		id: item.id,
-		x: item.x,
-		y: item.y,
-		size: item.size,
-		data: item.itemData,
-	}
-}
 
 /**
  * Check if a pending operation is for a specific item type
@@ -142,4 +111,51 @@ export interface GridCloningRequestDetails<T> {
 	targetCloneX: number // Target X for the clone
 	targetCloneY: number // Target Y for the clone
 	operationType: 'item-clone-in-zone'
+}
+
+// Grid-specific drag state utility functions
+
+export function isGridDragStatePopulated<T extends GridPlaceable>(
+	state: GridDragState<T>,
+): boolean {
+	return (
+		(state.draggedExistingItem !== null || state.draggedNewItem !== null) &&
+		(state.dragPosition.x !== 0 || state.dragPosition.y !== 0)
+	)
+}
+
+export function isGridDraggingExistingItem<T extends GridPlaceable>(
+	state: GridDragState<T>,
+): state is GridDragState<T> & {
+	draggedExistingItem: GridPlacement<T>
+	sourceZoneId: string
+} {
+	return (
+		state.dragSourceType === 'existing-item' &&
+		state.draggedExistingItem !== null &&
+		state.sourceZoneId !== null
+	)
+}
+
+export function isGridDraggingNewItem<T extends GridPlaceable>(
+	state: GridDragState<T>,
+): state is GridDragState<T> & { draggedNewItem: T } {
+	return state.dragSourceType === 'new-item' && state.draggedNewItem !== null
+}
+
+export function getGridDraggedItemInfo<T extends GridPlaceable>(
+	state: GridDragState<T>,
+): { item: T; effectiveSize: number } | null {
+	if (isGridDraggingExistingItem(state)) {
+		return {
+			item: state.draggedExistingItem.item,
+			effectiveSize: state.draggedItemEffectiveSize,
+		}
+	} else if (isGridDraggingNewItem(state)) {
+		return {
+			item: state.draggedNewItem,
+			effectiveSize: state.draggedItemEffectiveSize,
+		}
+	}
+	return null
 }

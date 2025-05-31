@@ -18,10 +18,7 @@ import {
 	dragState as genericDragState,
 } from '../../dnd/state'
 import type { DraggableItem } from '../../dnd/types'
-import {
-	gridPlacementToExistingGridItem,
-	type GardenPendingOperation,
-} from '../state/gardenDragState'
+import { type GardenPendingOperation } from '../state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../grid/actions/disablePointerEventsWhenDragging'
 import type { Plant } from '../../private-lib/plant'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
@@ -507,10 +504,6 @@ function handleDropProp(payload: DropEventPayload) {
 							></div>
 						{/if}
 						{#each gridPlacements as placement (placement.id)}
-							{@const existingGardenItem = gridPlacementToExistingGridItem(
-								placement,
-								bed.id,
-							)}
 							{@const itemDataSize = placement.size}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: placement.x,
@@ -537,8 +530,8 @@ function handleDropProp(payload: DropEventPayload) {
 							{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
 							{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
 							<GenericDraggable
-								itemData={existingGardenItem.itemData}
-								existingItemInstance={existingGardenItem}
+								item={placement.item}
+								existingItemInstance={placement}
 								sourceZoneId={bed.id}
 							>
 								<div

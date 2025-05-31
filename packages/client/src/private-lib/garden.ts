@@ -40,7 +40,15 @@ export function movePlantBetweenBeds(
 
 	const updatedTargetBed = {
 		...targetBed,
-		plantPlacements: [...targetBed.plantPlacements, { ...plant, x: newX, y: newY }],
+		plantPlacements: [
+			...targetBed.plantPlacements,
+			{
+				...plant,
+				x: newX,
+				y: newY,
+				sourceZoneId: targetBedId,
+			},
+		],
 	}
 
 	return {

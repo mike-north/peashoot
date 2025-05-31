@@ -39,19 +39,12 @@ export class GardenOperationsService {
 		newX: number,
 		newY: number,
 	): Garden {
-		// Convert ExistingGardenItem to PlantPlacement
-		const plantPlacementArg: GridPlacement<PlantWithSize> = {
-			id: existingItem.id,
-			x: existingItem.x,
-			y: existingItem.y,
-			size: existingItem.itemData.plantingDistanceInFeet,
-			data: existingItem.itemData,
-		}
+		// Use the existing item directly since ExistingGardenItem is now GridPlacement
 		return movePlantBetweenBeds(
 			garden,
 			sourceBedId,
 			targetBedId,
-			plantPlacementArg,
+			existingItem,
 			newX,
 			newY,
 		)
@@ -68,13 +61,18 @@ export class GardenOperationsService {
 			...item,
 		}
 		const newPlantId = `${plantForPlacement.family}_${Date.now()}`
+		const plantWithSize = {
+			...plantForPlacement,
+			size: plantForPlacement.plantingDistanceInFeet,
+		}
 
 		const newPlacement: GridPlacement<PlantWithSize> = {
 			id: newPlantId,
 			x,
 			y,
 			size: plantForPlacement.plantingDistanceInFeet,
-			data: { ...plantForPlacement, size: plantForPlacement.plantingDistanceInFeet },
+			item: plantWithSize,
+			sourceZoneId: bedId,
 		}
 
 		return {

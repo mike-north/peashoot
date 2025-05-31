@@ -44,7 +44,7 @@ export class GardenValidationService {
 			}
 
 			// Get the plant data to find its size
-			const existingPlantData = this.plants.find((p) => p.id === existingPlant.data.id)
+			const existingPlantData = this.plants.find((p) => p.id === existingPlant.item.id)
 			const existingSize = existingPlantData
 				? existingPlantData.plantingDistanceInFeet
 				: 1
@@ -156,11 +156,11 @@ export class GardenValidationService {
 								const currentOccupiedCells = addTargetBed.plantPlacements.reduce(
 									(total: number, placement: GridPlacement<PlantWithSize>) => {
 										const existingPlant = this.plants.find(
-											(p) => p.id === placement.data.id,
+											(p) => p.id === placement.item.id,
 										)
 										if (!existingPlant) {
 											throw new Error(
-												`Plant not found for validation: ${placement.data.id}`,
+												`Plant not found for validation: ${placement.item.id}`,
 											)
 										}
 										// Use the existing plant's size, not the new plant's size
@@ -240,14 +240,14 @@ export class GardenValidationService {
 								const currentOccupiedCells = cloneTargetBed.plantPlacements.reduce(
 									(total: number, placement: GridPlacement<PlantWithSize>) => {
 										const existingPlant = this.plants.find(
-											(p) => p.id === placement.data.id,
+											(p) => p.id === placement.item.id,
 										)
 										if (!existingPlant) {
 											throw new Error(
-												`Plant not found for validation: ${placement.data.id}`,
+												`Plant not found for validation: ${placement.item.id}`,
 											)
 										}
-										// Use plantingDistanceInFeet consistently with collision detection
+										// Use the existing plant's size, not the new plant's size
 										return total + existingPlant.plantingDistanceInFeet ** 2
 									},
 									0,

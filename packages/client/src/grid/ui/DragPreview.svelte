@@ -4,13 +4,12 @@ import type { GridPlacement } from '../grid-placement'
 import type { Plant } from '../../private-lib/plant'
 import { dragState as genericDragState } from '../../dnd/state'
 import {
-	isDragStatePopulated,
-	getDraggedItemInfo,
-	isDraggingExistingItem,
-	isDraggingNewItem,
-} from '../../dnd/state'
+	isGridDragStatePopulated,
+	getGridDraggedItemInfo,
+	isGridDraggingExistingItem,
+	isGridDraggingNewItem,
+} from '../grid-drag-state'
 import type { GardenDragState } from '../../private-ui/state/gardenDragState'
-import { existingGridItemToGridPlacement } from '../../private-ui/state/gardenDragState'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
@@ -26,7 +25,9 @@ type PlantWithSize = Plant & { size: number }
 
 let currentDragState = $derived($genericDragState as GardenDragState<PlantWithSize>)
 let draggedInfo = $derived(
-	isDragStatePopulated(currentDragState) ? getDraggedItemInfo(currentDragState) : null,
+	isGridDragStatePopulated(currentDragState)
+		? getGridDraggedItemInfo(currentDragState)
+		: null,
 )
 
 let previewPosition = $derived.by(() => {
@@ -130,24 +131,23 @@ let previewPosition = $derived.by(() => {
 			height: {previewPosition.size}px;
 		"
 	>
-		{#if isDraggingExistingItem(currentDragState) && isPlant(currentDragState.draggedExistingItem.itemData)}
-			{@const placement = existingGridItemToGridPlacement(
-				currentDragState.draggedExistingItem,
-			)}
+		{#if isGridDraggingExistingItem(currentDragState) && isPlant(currentDragState.draggedExistingItem.item)}
+			{@const placement = currentDragState.draggedExistingItem}
 			<GridPlacementTile placement={placement} sizePx={previewPosition.size} />
 			{#if currentDragState.isCloneMode}
 				<div class="clone-indicator">+</div>
 			{/if}
-		{:else if isDraggingNewItem(currentDragState) && isPlant(currentDragState.draggedNewItem)}
+		{:else if isGridDraggingNewItem(currentDragState) && isPlant(currentDragState.draggedNewItem)}
 			{@const placement: GridPlacement<PlantWithSize> = {
 				id: 'preview',
 				x: 0,
 				y: 0,
 				size: draggedInfo.effectiveSize,
-				data: {
+				item: {
 					...currentDragState.draggedNewItem,
 					size: draggedInfo.effectiveSize,
 				} as PlantWithSize,
+				sourceZoneId: '', // Empty for preview items
 			}}
 			<GridPlacementTile placement={placement} sizePx={previewPosition.size} />
 		{/if}

@@ -12,7 +12,6 @@ export interface Plant extends GridPlaceable {
 	readonly presentation: GridItemPresentation
 }
 
-
 export function isPlant(item: unknown): item is Plant {
 	return (
 		typeof item === 'object' &&

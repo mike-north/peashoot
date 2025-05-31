@@ -34,6 +34,7 @@ The grid placement system provides a generic, type-safe way to place items on in
   - Size badges for multi-cell items
 
 - **`PlantGridTile`**: Plant-specific wrapper around `GridPlacementTile`
+
   - Adapts plant data to the generic grid system
   - Provides plant-specific tooltip content
 

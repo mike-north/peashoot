@@ -1,4 +1,4 @@
-import type { RGB } from "../lib/color"
+import type { RGB } from '../lib/color'
 
 /**
  * Represents the placement of an item on a grid with integer coordinates.

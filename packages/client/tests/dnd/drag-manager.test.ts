@@ -9,7 +9,7 @@ import type {
 	ExistingDraggableItem,
 	IDragState,
 } from '../../src/dnd/types.js'
-import { get, writable } from 'svelte/store'
+import { get } from 'svelte/store'
 
 // Mock the Svelte store
 vi.mock('../../src/dnd/state.js', async () => {

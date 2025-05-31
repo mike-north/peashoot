@@ -1,8 +1,7 @@
 <script lang="ts" generics="T extends GridPlaceable">
 import type { GridPlaceable, GridPlacement } from '../../private-lib/grid-placement'
 import type { Component } from 'svelte'
-import { onMount, mount, unmount } from 'svelte'
-import TooltipWrapper from './TooltipWrapper.svelte'
+import { showTooltip, hideTooltip } from '../state/tooltipStore'
 
 interface Props {
 	placement: GridPlacement<T>
@@ -28,51 +27,18 @@ const itemData = $derived(placement.data)
 const itemSize = $derived(placement.size)
 const iconDisplaySize = $derived(sizePx * 0.9)
 
-// Tooltip state
-let showTooltip = $state(false)
+// Tile element reference
 let tileElement: HTMLDivElement | null = $state(null)
-let mountedTooltip:
-	| (ReturnType<typeof mount> & { fadeOut?: () => Promise<void> })
-	| null = null
-let tooltipPosition = $state<{
-	x: number
-	y: number
-	orientation: 'top' | 'bottom' | 'left' | 'right'
-}>({
-	x: 0,
-	y: 0,
-	orientation: 'top',
-})
 
-// Portal container
-let portalContainer: HTMLElement | null = null
-
-onMount(() => {
-	// Create portal container in document.body
-	portalContainer = document.createElement('div')
-	portalContainer.id = 'tooltip-portal-' + placement.id
-	portalContainer.style.position = 'fixed'
-	portalContainer.style.top = '0'
-	portalContainer.style.left = '0'
-	portalContainer.style.width = '100%'
-	portalContainer.style.height = '100%'
-	portalContainer.style.pointerEvents = 'none'
-	portalContainer.style.zIndex = '10000'
-	document.body.appendChild(portalContainer)
-
-	return () => {
-		if (portalContainer && document.body.contains(portalContainer)) {
-			document.body.removeChild(portalContainer)
-		}
-	}
-})
+// Generate unique tooltip ID for this tile
+const tooltipId = `tooltip-${placement.id}`
 
 function colorHashToCss(color: { r: number; g: number; b: number; a?: number }): string {
 	return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a ?? 0.4})`
 }
 
 function calculateTooltipPosition() {
-	if (!tileElement) return
+	if (!tileElement) return null
 
 	const tileRect = tileElement.getBoundingClientRect()
 	const viewportWidth = window.innerWidth
@@ -170,136 +136,65 @@ function calculateTooltipPosition() {
 	// Final viewport constraints (more conservative for vertical positions)
 	y = Math.max(8, Math.min(y, viewportHeight - TOOLTIP_HEIGHT - 8))
 
-	tooltipPosition = { x, y, orientation }
+	// Calculate the center of the appropriate edge based on orientation
+	let edgeCenterX: number
+	let edgeCenterY: number
+
+	switch (orientation) {
+		case 'top':
+			// Point to center of top edge
+			edgeCenterX = tileCenterX
+			edgeCenterY = tileRect.top
+			break
+		case 'bottom':
+			// Point to center of bottom edge
+			edgeCenterX = tileCenterX
+			edgeCenterY = tileRect.bottom
+			break
+		case 'left':
+			// Point to center of left edge
+			edgeCenterX = tileRect.left
+			edgeCenterY = tileCenterY
+			break
+		case 'right':
+			// Point to center of right edge
+			edgeCenterX = tileRect.right
+			edgeCenterY = tileCenterY
+			break
+	}
+
+	return {
+		position: { x, y, orientation },
+		tileCenterX: edgeCenterX,
+		tileCenterY: edgeCenterY,
+	}
 }
 
 function handleMouseEnter() {
 	if (disableTooltip || !TooltipComponent) return
-	// Calculate position first, then show tooltip
-	calculateTooltipPosition()
-	showTooltip = true
+
+	const tooltipData = calculateTooltipPosition()
+	if (tooltipData) {
+		showTooltip({
+			id: tooltipId,
+			position: tooltipData.position,
+			item: itemData,
+			TooltipComponent,
+			tileCenterX: tooltipData.tileCenterX,
+			tileCenterY: tooltipData.tileCenterY,
+		})
+	}
 }
 
 function handleMouseLeave() {
-	showTooltip = false
+	hideTooltip(tooltipId)
 }
 
 // Recalculate position on window resize
 function handleWindowResize() {
-	if (showTooltip) {
-		calculateTooltipPosition()
-	}
+	// The global tooltip renderer will handle position updates
+	// We could add logic here to update position if needed
 }
-
-// Render tooltip using proper Svelte component mounting
-$effect(() => {
-	if (portalContainer && TooltipComponent && showTooltip && !disableTooltip) {
-		// Clean up any existing tooltip before mounting new one
-		if (mountedTooltip) {
-			try {
-				// Trigger fade out and wait for animation
-				mountedTooltip
-					.fadeOut?.()
-					.then(() => {
-						if (mountedTooltip) {
-							void unmount(mountedTooltip)
-							mountedTooltip = null
-						}
-					})
-					.catch(() => {
-						// Fallback if fadeOut fails
-						if (mountedTooltip)
-							unmount(mountedTooltip)
-								.catch((err: unknown) => {
-									console.error('Error unmounting tooltip:', err)
-								})
-								.finally(() => {
-									mountedTooltip = null
-								})
-					})
-			} catch {
-				// Ignore unmount errors - component may have already been unmounted
-				mountedTooltip = null
-			}
-		}
-
-		// Mount the TooltipWrapper component with current position
-		try {
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!tileElement) return
-
-			const tileRect = (tileElement as HTMLDivElement).getBoundingClientRect()
-
-			// Calculate the center of the appropriate edge based on orientation
-			let edgeCenterX: number
-			let edgeCenterY: number
-
-			const tileCenterX = tileRect.left + tileRect.width / 2
-			const tileCenterY = tileRect.top + tileRect.height / 2
-
-			switch (tooltipPosition.orientation) {
-				case 'top':
-					// Point to center of top edge
-					edgeCenterX = tileCenterX
-					edgeCenterY = tileRect.top
-					break
-				case 'bottom':
-					// Point to center of bottom edge
-					edgeCenterX = tileCenterX
-					edgeCenterY = tileRect.bottom
-					break
-				case 'left':
-					// Point to center of left edge
-					edgeCenterX = tileRect.left
-					edgeCenterY = tileCenterY
-					break
-				case 'right':
-					// Point to center of right edge
-					edgeCenterX = tileRect.right
-					edgeCenterY = tileCenterY
-					break
-			}
-
-			mountedTooltip = mount(TooltipWrapper, {
-				target: portalContainer,
-				props: {
-					x: tooltipPosition.x,
-					y: tooltipPosition.y,
-					orientation: tooltipPosition.orientation,
-					TooltipComponent: TooltipComponent as Component<{ item: unknown }>,
-					item: itemData,
-					tileCenterX: edgeCenterX,
-					tileCenterY: edgeCenterY,
-				},
-			})
-		} catch (error) {
-			console.error('Error mounting tooltip:', error)
-			mountedTooltip = null
-		}
-	} else if (mountedTooltip) {
-		// Clean up mounted tooltip with fade out
-		try {
-			mountedTooltip
-				.fadeOut?.()
-				.then(() => {
-					if (mountedTooltip) {
-						void unmount(mountedTooltip)
-						mountedTooltip = null
-					}
-				})
-				.catch(() => {
-					// Fallback if fadeOut fails
-					if (mountedTooltip) {
-						void unmount(mountedTooltip)
-						mountedTooltip = null
-					}
-				})
-		} catch {
-			// Ignore unmount errors - component may have already been unmounted
-			mountedTooltip = null
-		}
-	}
-})
 </script>
 
 <style lang="scss">
@@ -345,6 +240,8 @@ $effect(() => {
 	bind:this={tileElement}
 	aria-label={itemData.displayName}
 	style="position: relative; width: 100%; height: 100%;"
+	data-placement-id={placement.id}
+	data-tooltip-id={tooltipId}
 	onmouseenter={handleMouseEnter}
 	onmouseleave={handleMouseLeave}
 >

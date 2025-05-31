@@ -3,6 +3,8 @@ import { Router } from '@mateothegreat/svelte5-router'
 import { routes } from '../../routes'
 
 import LayoutSidebar from '../components/LayoutSidebar.svelte'
+import NotificationToast from '../components/NotificationToast.svelte'
+import GlobalTooltipRenderer from '../components/GlobalTooltipRenderer.svelte'
 </script>
 
 <div class="size-full">
@@ -13,4 +15,10 @@ import LayoutSidebar from '../components/LayoutSidebar.svelte'
 			<Router routes={routes} />
 		</div>
 	</div>
+
+	<!-- Global notification toast -->
+	<NotificationToast />
+
+	<!-- Global tooltip renderer -->
+	<GlobalTooltipRenderer />
 </div>

@@ -82,13 +82,6 @@ export function isGardenItemRemovalOperation<T extends WithVisualPresentation>(
 	)
 }
 
-// The following helpers must be provided by the consumer (e.g., a Plant adapter):
-// - getItemSize<T>(item: T): number
-// - toWithVisualPresentation<T>(item: T): WithVisualPresentation
-// - gridPlacementToWithVisualPresentation<T>(placement: GridPlacement<T>): GridPlacement<WithVisualPresentation>
-// - etc.
-
-// Example: default store factory (consumer should provide initial value)
 export function createGardenAppDragState<T extends WithVisualPresentation>() {
 	return writable<GardenDragState<T>>({
 		draggedExistingItem: null,
@@ -105,10 +98,4 @@ export function createGardenAppDragState<T extends WithVisualPresentation>() {
 	})
 }
 
-// For compatibility: export the Plant version as default (to be replaced by adapter pattern)
-// import type { Plant } from '../../private-lib/plant'
-// export type PlantGardenDragState = GardenDragState<Plant>
-// export const gardenAppDragState = createGardenAppDragState<Plant>()
-
-// Re-export grid placement helpers for consumers
 export { gridPlacementToExistingGridItem, existingGridItemToGridPlacement }

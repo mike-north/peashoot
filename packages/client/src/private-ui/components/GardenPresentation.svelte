@@ -24,33 +24,28 @@ import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
 
 interface GardenProps {
 	garden: Garden
-	onMovePlantInBed: (bedId: string, plantId: string, newX: number, newY: number) => void
-	onMovePlantToDifferentBed: (
-		sourceBedId: string,
-		targetBedId: string,
-		existingItem: ExistingGardenItem<PlantWithSize>,
-		newX: number,
-		newY: number,
-	) => void
-	onAddNewPlant: (bedId: string, item: Plant, x: number, y: number) => void
-	onDeletePlant: (plantId: string, bedId: string) => void
 	edgeIndicators: {
 		id: string
 		plantAId: string
 		plantBId: string
 		color: string
 	}[]
-	onRequestPlacement: (details: PlacementRequestDetails<PlantWithSize>) => Promise<void>
-	onRequestRemoval: (details: RemovalRequestDetails<PlantWithSize>) => Promise<void>
-	onRequestCloning: (details: CloningRequestDetails<PlantWithSize>) => Promise<void>
+	onRequestPlacement: (
+		details: PlacementRequestDetails<PlantWithSize>,
+		pendingOpId?: string,
+	) => Promise<void>
+	onRequestRemoval: (
+		details: RemovalRequestDetails<PlantWithSize>,
+		pendingOpId?: string,
+	) => Promise<void>
+	onRequestCloning: (
+		details: CloningRequestDetails<PlantWithSize>,
+		pendingOpId?: string,
+	) => Promise<void>
 }
 
 let {
 	garden,
-	onMovePlantInBed,
-	onMovePlantToDifferentBed,
-	onAddNewPlant,
-	onDeletePlant,
 	edgeIndicators,
 	onRequestPlacement,
 	onRequestRemoval,
@@ -104,24 +99,22 @@ async function handleDrop(dropInfo: {
 		})
 
 		try {
-			await onRequestRemoval({
-				itemData: {
-					...existingGardenItem.itemData,
-					size: (existingGardenItem.itemData as Plant).presentation.size,
-				} as PlantWithSize,
-				instanceId: draggedExistingItem.id,
-				sourceZoneId: sourceZoneId,
-				operationType: 'item-remove-from-zone',
-			})
-			// Validation succeeded - now perform the actual deletion
-			updatePendingOperation(pendingOpId, 'success')
-			onDeletePlant(draggedExistingItem.id, sourceZoneId)
-			setTimeout(() => {
-				removePendingOperation(pendingOpId)
-			}, 1000) // Show success for 1 second
+			await onRequestRemoval(
+				{
+					itemData: {
+						...existingGardenItem.itemData,
+						size: (existingGardenItem.itemData as Plant).presentation.size,
+					} as PlantWithSize,
+					instanceId: draggedExistingItem.id,
+					sourceZoneId: sourceZoneId,
+					operationType: 'item-remove-from-zone',
+				},
+				pendingOpId,
+			)
+			// Request handled - pending operation management is now done by the handler
 		} catch (error) {
-			console.error('Removal validation failed:', error)
-			// Validation failed - do not perform deletion
+			console.error('Removal request failed:', error)
+			// Request failed due to system error - handler didn't manage pending operation
 			updatePendingOperation(pendingOpId, 'error')
 			setTimeout(() => {
 				removePendingOperation(pendingOpId)
@@ -153,29 +146,26 @@ async function handleDrop(dropInfo: {
 				})
 
 				try {
-					await onRequestCloning({
-						itemDataToClone: {
-							...existingItem.itemData,
-							size: (existingItem.itemData as Plant).presentation.size,
-						} as PlantWithSize,
-						sourceOriginalZoneId: sourceBedId,
-						targetCloneZoneId: dropInfo.targetZoneId,
-						sourceOriginalX: (existingItem as ExistingGardenItem<PlantWithSize>).x,
-						sourceOriginalY: (existingItem as ExistingGardenItem<PlantWithSize>).y,
-						targetCloneX: x,
-						targetCloneY: y,
-						operationType: 'item-clone-in-zone',
-					})
-					// Validation succeeded - now perform the actual clone
-					updatePendingOperation(pendingOpId, 'success')
-					if (!dropInfo.targetZoneId) return
-					onAddNewPlant(dropInfo.targetZoneId, existingItem.itemData as Plant, x, y)
-					setTimeout(() => {
-						removePendingOperation(pendingOpId)
-					}, 1000) // Show success for 1 second
+					await onRequestCloning(
+						{
+							itemDataToClone: {
+								...existingItem.itemData,
+								size: (existingItem.itemData as Plant).presentation.size,
+							} as PlantWithSize,
+							sourceOriginalZoneId: sourceBedId,
+							targetCloneZoneId: dropInfo.targetZoneId,
+							sourceOriginalX: (existingItem as ExistingGardenItem<PlantWithSize>).x,
+							sourceOriginalY: (existingItem as ExistingGardenItem<PlantWithSize>).y,
+							targetCloneX: x,
+							targetCloneY: y,
+							operationType: 'item-clone-in-zone',
+						},
+						pendingOpId,
+					)
+					// Request handled - pending operation management is now done by the handler
 				} catch (error) {
-					console.error('Cloning validation failed:', error)
-					// Validation failed - do not perform clone
+					console.error('Cloning request failed:', error)
+					// Request failed due to system error - handler didn't manage pending operation
 					updatePendingOperation(pendingOpId, 'error')
 					setTimeout(() => {
 						removePendingOperation(pendingOpId)
@@ -201,37 +191,25 @@ async function handleDrop(dropInfo: {
 				})
 
 				try {
-					await onRequestPlacement({
-						itemData: {
-							...existingItem.itemData,
-							size: (existingItem.itemData as Plant).presentation.size,
-						} as PlantWithSize,
-						targetZoneId: dropInfo.targetZoneId,
-						x,
-						y,
-						operationType,
-						originalInstanceId: existingItem.id,
-						sourceZoneId: sourceBedId,
-					})
-					// Validation succeeded - now perform the actual operation
-					updatePendingOperation(pendingOpId, 'success')
-					if (operationType === 'item-move-within-zone') {
-						onMovePlantInBed(dropInfo.targetZoneId, existingItem.id, x, y)
-					} else {
-						onMovePlantToDifferentBed(
-							sourceBedId,
-							dropInfo.targetZoneId,
-							existingItem as ExistingGardenItem<PlantWithSize>,
+					await onRequestPlacement(
+						{
+							itemData: {
+								...existingItem.itemData,
+								size: (existingItem.itemData as Plant).presentation.size,
+							} as PlantWithSize,
+							targetZoneId: dropInfo.targetZoneId,
 							x,
 							y,
-						)
-					}
-					setTimeout(() => {
-						removePendingOperation(pendingOpId)
-					}, 1000) // Show success for 1 second
+							operationType,
+							originalInstanceId: existingItem.id,
+							sourceZoneId: sourceBedId,
+						},
+						pendingOpId,
+					)
+					// Request handled - pending operation management is now done by the handler
 				} catch (error) {
-					console.error('Placement validation failed:', error)
-					// Validation failed - do not perform operation
+					console.error('Placement request failed:', error)
+					// Request failed due to system error - handler didn't manage pending operation
 					updatePendingOperation(pendingOpId, 'error')
 					setTimeout(() => {
 						removePendingOperation(pendingOpId)
@@ -254,31 +232,23 @@ async function handleDrop(dropInfo: {
 			})
 
 			try {
-				await onRequestPlacement({
-					itemData: {
-						...(currentDragState.draggedNewItem as Plant),
-						size: (currentDragState.draggedNewItem as Plant).presentation.size,
-					} as PlantWithSize,
-					targetZoneId: dropInfo.targetZoneId,
-					x,
-					y,
-					operationType: 'item-add-to-zone',
-				})
-				// Validation succeeded - now perform the actual placement
-				updatePendingOperation(pendingOpId, 'success')
-				if (!dropInfo.targetZoneId) return
-				onAddNewPlant(
-					dropInfo.targetZoneId,
-					currentDragState.draggedNewItem as Plant,
-					x,
-					y,
+				await onRequestPlacement(
+					{
+						itemData: {
+							...(currentDragState.draggedNewItem as Plant),
+							size: (currentDragState.draggedNewItem as Plant).presentation.size,
+						} as PlantWithSize,
+						targetZoneId: dropInfo.targetZoneId,
+						x,
+						y,
+						operationType: 'item-add-to-zone',
+					},
+					pendingOpId,
 				)
-				setTimeout(() => {
-					removePendingOperation(pendingOpId)
-				}, 1000) // Show success for 1 second
+				// Request handled - pending operation management is now done by the handler
 			} catch (error) {
-				console.error('Placement validation failed:', error)
-				// Validation failed - do not perform placement
+				console.error('Placement request failed:', error)
+				// Request failed due to system error - handler didn't manage pending operation
 				updatePendingOperation(pendingOpId, 'error')
 				setTimeout(() => {
 					removePendingOperation(pendingOpId)

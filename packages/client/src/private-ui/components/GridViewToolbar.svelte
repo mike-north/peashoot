@@ -131,7 +131,8 @@ function createToolbarGridPlacement(
 		x: 0,
 		y: 0,
 		size: item.size,
-		data: item,
+		item: item,
+		sourceZoneId: 'toolbar', // Required by ExistingDraggableItem
 	}
 }
 

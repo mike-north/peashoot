@@ -1,21 +1,37 @@
 import type { RGB } from '../lib/color'
+import type { ExistingDraggableItem, DraggableItem } from '../dnd/types'
 
 /**
  * Represents the placement of an item on a grid with integer coordinates.
- * This is a generic type that can be used for any item that needs to be
- * positioned on a grid (plants, buildings, etc.)
+ * This extends ExistingDraggableItem to be compatible with the drag system.
  */
-export interface GridPlacement<T> {
-	/** Unique identifier for this placement instance */
-	readonly id: string
+export interface GridPlacement<T extends DraggableItem> extends ExistingDraggableItem<T> {
 	/** The x coordinate on the grid (0-based) */
 	readonly x: number
 	/** The y coordinate on the grid (0-based) */
 	readonly y: number
 	/** The size of the item on the grid (e.g., 2 means 2x2) */
 	readonly size: number
-	/** The actual data for the item being placed */
-	readonly data: T
+}
+
+/**
+ * Type guard to check if a grid item is placed in a zone
+ * Note: All GridPlacements now have sourceZoneId since they extend ExistingDraggableItem
+ */
+export function isPlacedGridItem<T extends GridPlaceable>(
+	item: GridPlacement<T>,
+): item is GridPlacement<T> {
+	return item.sourceZoneId !== ''
+}
+
+/**
+ * Type guard to check if a grid item is new/unplaced
+ * Note: This is now less relevant since GridPlacement extends ExistingDraggableItem
+ */
+export function isNewGridItem<T extends GridPlaceable>(
+	item: GridPlacement<T>,
+): item is GridPlacement<T> {
+	return item.sourceZoneId === ''
 }
 
 /**
@@ -32,17 +48,14 @@ export interface GridItemPresentation {
 /**
  * Interface for items that can be placed on a grid
  */
-export interface GridPlaceable {
-	/** Unique identifier for the item type */
-	readonly id: string
+export interface GridPlaceable extends DraggableItem {
 	/** Display name for the item */
 	readonly displayName: string
-	/** Size on the grid (e.g., 2 means 2x2) */
-	readonly size: number
 	/** Visual presentation data */
 	readonly presentation: GridItemPresentation
 }
 
 export interface WithVisualPresentation extends GridPlaceable {
 	presentation: GridItemPresentation
+	size: number
 }

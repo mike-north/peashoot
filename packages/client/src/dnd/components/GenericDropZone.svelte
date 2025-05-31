@@ -72,8 +72,7 @@ function handleMouseUp(_event: MouseEvent) {
 		// console.log(`[GenericDropZone] MouseUp on zone ${zoneId}.`);
 
 		const itemToDrop =
-			currentDragStateVal.draggedNewItem ||
-			currentDragStateVal.draggedExistingItem?.itemData
+			currentDragStateVal.draggedNewItem || currentDragStateVal.draggedExistingItem?.item
 
 		if (itemToDrop && onDrop) {
 			const payloadBase: DropEventPayload = {

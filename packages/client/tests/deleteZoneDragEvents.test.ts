@@ -159,9 +159,9 @@ describe('deleteZoneDragEvents', () => {
 			IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
 		>({
 			draggedExistingItem: {
-				id: 'existingItemId',
-				itemData: { id: 'test', size: 1 },
-				sourceZoneId: 'source',
+				id: 'item-1',
+				item: { id: 'test', size: 1 },
+				sourceZoneId: 'zone-a',
 			},
 			draggedNewItem: null,
 			draggedItemEffectiveSize: 1,

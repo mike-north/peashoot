@@ -73,7 +73,7 @@ describe('DragManager', () => {
 	describe('startDraggingExistingItem', () => {
 		const mockExistingItem: TestExistingItem = {
 			id: 'existing-123',
-			itemData: {
+			item: {
 				id: 'item-abc',
 				name: 'My Test Item',
 				category: 'Test Category',
@@ -96,7 +96,7 @@ describe('DragManager', () => {
 			const currentState = get(dragState) as IDragState<TestItem, TestExistingItem>
 			expect(currentState.draggedExistingItem).toEqual(mockExistingItem)
 			expect(currentState.draggedNewItem).toBeNull()
-			expect(currentState.draggedItemEffectiveSize).toBe(2) // Uses itemData.size
+			expect(currentState.draggedItemEffectiveSize).toBe(2) // Uses item.size
 			expect(currentState.dragSourceType).toBe('existing-item')
 			expect(currentState.dragOffset).toEqual({ x: 100, y: 200 })
 			expect(currentState.dragPosition).toEqual({ x: 100, y: 200 })
@@ -106,20 +106,20 @@ describe('DragManager', () => {
 			expect(currentState.targetType).toBeNull()
 		})
 
-		it('should use itemData.size if existingItem.size is not present', () => {
+		it('should use item.size if existingItem.size is not present', () => {
 			const itemWithoutExplicitSize: TestExistingItem = {
 				...mockExistingItem,
 			}
 			const mockEvent = new MouseEvent('mousedown', { clientX: 10, clientY: 20 })
 			manager.startDraggingExistingItem(itemWithoutExplicitSize, sourceZoneId, mockEvent)
 			const currentState = get(dragState) as IDragState<TestItem, TestExistingItem>
-			expect(currentState.draggedItemEffectiveSize).toBe(2) // Uses itemData.size
+			expect(currentState.draggedItemEffectiveSize).toBe(2) // Uses item.size
 		})
 
 		it('should default to size 1 if no size is specified anywhere', () => {
 			const itemWithNoSize: TestExistingItem = {
 				id: 'no-size-item',
-				itemData: { id: 'item-no-size', name: 'No Size Item', category: 'Test' }, // No size property
+				item: { id: 'item-no-size', name: 'No Size Item', category: 'Test' }, // No size property
 				placementId: 'p-002',
 				sourceZoneId: 'zone-B',
 			}

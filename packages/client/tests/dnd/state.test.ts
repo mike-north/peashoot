@@ -90,7 +90,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 			const state = createMockState<TestItem, TestExistingItem>({
 				draggedExistingItem: {
 					id: 'ext-1',
-					itemData: { id: 'item-1', name: 'Test' },
+					item: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
 					sourceZoneId: 'zoneA',
 				},
@@ -131,7 +131,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 			const state2 = createMockState<TestItem, TestExistingItem>({
 				draggedExistingItem: {
 					id: 'ext-1',
-					itemData: { id: 'item-1', name: 'Test' },
+					item: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
 					sourceZoneId: 'zoneA',
 				},
@@ -147,7 +147,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 				dragSourceType: 'existing-item',
 				draggedExistingItem: {
 					id: 'ext-1',
-					itemData: { id: 'item-1', name: 'Test' },
+					item: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
 					sourceZoneId: 'zoneA',
 				},
@@ -181,7 +181,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 				dragSourceType: 'existing-item',
 				draggedExistingItem: {
 					id: 'ext-1',
-					itemData: { id: 'item-1', name: 'Test' },
+					item: { id: 'item-1', name: 'Test' },
 					instanceId: 'i-1',
 					sourceZoneId: 'zoneA',
 				},
@@ -223,7 +223,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 		const existingItemData: TestItem = { id: 'item-1', name: 'Existing Data', size: 2 }
 		const existingItem: TestExistingItem = {
 			id: 'ext-1',
-			itemData: existingItemData,
+			item: existingItemData,
 			instanceId: 'i-1',
 			sourceZoneId: 'zoneA',
 		}
@@ -255,7 +255,7 @@ describe('DnD Svelte Stores and Utility Functions', () => {
 			const noSizeItemData: TestItem = { id: 'no-size-data', name: 'No Size' }
 			const noSizeExistingItem: TestExistingItem = {
 				id: 'ext-no',
-				itemData: noSizeItemData,
+				item: noSizeItemData,
 				instanceId: 'i-ns',
 				sourceZoneId: 'zoneA',
 			}

@@ -107,8 +107,9 @@ function handleMovePlantToDifferentBed(
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
-		size: existingItem.itemData.size,
-		data: existingItem.itemData,
+		size: existingItem.item.size,
+		item: existingItem.item,
+		sourceZoneId: existingItem.sourceZoneId,
 	}
 	if (!gardenInstance) return
 	gardenInstance = movePlantBetweenBeds(
@@ -132,7 +133,8 @@ function handleAddNewPlant(bedId: string, item: Plant, x: number, y: number) {
 			x,
 			y,
 			size: item.presentation.size,
-			data: { ...item, size: item.presentation.size },
+			item: { ...item, size: item.presentation.size },
+			sourceZoneId: bedId,
 		}
 
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
@@ -244,12 +246,14 @@ async function handleRequestPlacement(
 				baseValidationContext.sourceX !== undefined &&
 				baseValidationContext.sourceY !== undefined
 			) {
-				const existingItem = {
+				const existingItem: ExistingGardenItem<PlantWithSize> = {
 					id: details.originalInstanceId,
 					x: baseValidationContext.sourceX,
 					y: baseValidationContext.sourceY,
-					itemData: details.itemData,
-				} as ExistingGardenItem<PlantWithSize>
+					item: details.itemData,
+					size: details.itemData.size,
+					sourceZoneId: details.sourceZoneId,
+				}
 				handleMovePlantToDifferentBed(
 					details.sourceZoneId,
 					details.targetZoneId,

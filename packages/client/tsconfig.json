@@ -1,6 +1,7 @@
 {
 	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
+		"noEmit": true,
 		"module": "ESNext",
 		"target": "ES2024",
 		"moduleResolution": "node",

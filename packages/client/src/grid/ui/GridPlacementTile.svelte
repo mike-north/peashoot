@@ -23,7 +23,7 @@ let {
 	disableTooltip = false,
 }: Props = $props()
 
-const itemData = $derived(placement.data)
+const item = $derived(placement.item)
 const itemSize = $derived(placement.size)
 const iconDisplaySize = $derived(sizePx * 0.9)
 
@@ -178,7 +178,7 @@ function handleMouseEnter() {
 		showTooltip({
 			id: tooltipId,
 			position: tooltipData.position,
-			item: itemData,
+			item: item,
 			TooltipComponent,
 			tileCenterX: tooltipData.tileCenterX,
 			tileCenterY: tooltipData.tileCenterY,
@@ -238,7 +238,7 @@ function handleWindowResize() {
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	bind:this={tileElement}
-	aria-label={itemData.displayName}
+	aria-label={item.displayName}
 	style="position: relative; width: 100%; height: 100%;"
 	data-placement-id={placement.id}
 	data-tooltip-id={tooltipId}
@@ -251,7 +251,7 @@ function handleWindowResize() {
 		viewBox={`0 0 ${sizePx} ${sizePx}`}
 		class="grid-placement-tile"
 		class:is-pulsing={isPulsingSource}
-		data-item-id={itemData.id}
+		data-item-id={item.id}
 		data-placement-id={placement.id}
 	>
 		<rect
@@ -260,11 +260,12 @@ function handleWindowResize() {
 			width={sizePx}
 			height={sizePx}
 			class="grid-placement-tile__background"
-			style={`fill: ${colorHashToCss(itemData.presentation.accentColor)}`}
+			style={`fill: ${colorHashToCss(item.presentation.accentColor)}`}
 		/>
-		{#if itemData.presentation.iconPath}
+
+		{#if item.presentation.iconPath}
 			<image
-				href={'/plant-icons/' + itemData.presentation.iconPath}
+				href={'/plant-icons/' + item.presentation.iconPath}
 				x={(sizePx - iconDisplaySize) / 2}
 				y={(sizePx - iconDisplaySize) / 2}
 				width={iconDisplaySize}

@@ -33,13 +33,21 @@ interface Props<
 let { operation, sizePx, sizeAdapter = (item: T) => item.size }: Props<T> = $props()
 
 // Create a GridPlacement for display
-const placementForDisplay = $derived<GridPlacement<T>>({
-	id: `pending-${operation.id}`,
-	x: operation.x || 0,
-	y: operation.y || 0,
-	size: sizeAdapter(operation.item),
-	data: { ...operation.item, size: sizeAdapter(operation.item) },
-})
+const placementForDisplay = $derived(
+	(() => {
+		if (!operation.zoneId) {
+			throw new Error(`PendingOperation ${operation.id} is missing required zoneId`)
+		}
+		return {
+			id: `pending-${operation.id}`,
+			x: operation.x || 0,
+			y: operation.y || 0,
+			size: sizeAdapter(operation.item),
+			item: { ...operation.item, size: sizeAdapter(operation.item) },
+			sourceZoneId: operation.zoneId,
+		} satisfies GridPlacement<T>
+	})(),
+)
 
 // Check if this is a removal operation
 const isRemoval = $derived(operation.type === 'removal')

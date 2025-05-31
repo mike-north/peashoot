@@ -7,13 +7,13 @@ import type { DraggableItem, ExistingDraggableItem } from '../types' // Updated 
 import type { Snippet } from 'svelte'
 
 interface Props {
-	itemData: TItem // Core data for a new item, or itemData within an existing one
+	item: TItem // Core data for a new item, or itemData within an existing one
 	existingItemInstance?: TExisting // If this is an existing item being dragged
 	sourceZoneId?: string // Required if existingItemInstance is provided
 	children: Snippet
 }
 
-const { itemData, existingItemInstance, sourceZoneId, children }: Props = $props()
+const { item: itemData, existingItemInstance, sourceZoneId, children }: Props = $props()
 
 function handleMouseDown(event: MouseEvent) {
 	if (existingItemInstance && sourceZoneId) {

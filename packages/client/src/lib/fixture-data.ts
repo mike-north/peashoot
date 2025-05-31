@@ -39,7 +39,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						data: {
+						item: {
 							id: 'tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
@@ -52,6 +52,7 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
+						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 					},
 				],
 			},
@@ -67,7 +68,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 1,
-						data: {
+						item: {
 							id: 'lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
@@ -80,6 +81,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 					},
 				],
 			},
@@ -95,7 +97,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						data: {
+						item: {
 							size: 2,
 							plantingDistanceInFeet: 2,
 							id: 'tomatoes-burpee-big-boy-tomato',
@@ -108,13 +110,14 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
 						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
 						x: 2,
 						y: 0,
 						size: 1,
-						data: {
+						item: {
 							id: 'lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
@@ -127,6 +130,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 				],
 			},
@@ -142,7 +146,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 1,
-						data: {
+						item: {
 							id: 'arugula-arugula',
 							displayName: 'Arugula',
 							family: 'arugula',
@@ -155,13 +159,14 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 					{
 						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
 						x: 2,
 						y: 0,
 						size: 1,
-						data: {
+						item: {
 							id: 'spinach-japanese-perpetual-spinach',
 							displayName: 'Japanese Perpetual Spinach',
 							family: 'spinach',
@@ -174,6 +179,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 				],
 			},
@@ -189,7 +195,7 @@ export const gardens: Garden[] = [
 						x: 2,
 						y: 1,
 						size: 3,
-						data: {
+						item: {
 							id: 'cherries-rainier-cherry',
 							displayName: 'Rainier Cherry',
 							family: 'cherries',
@@ -202,13 +208,14 @@ export const gardens: Garden[] = [
 								size: 3,
 							},
 						},
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
 						x: 0,
 						y: 0,
 						size: 2,
-						data: {
+						item: {
 							id: 'tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
@@ -221,13 +228,14 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
 						x: 2,
 						y: 0,
 						size: 1,
-						data: {
+						item: {
 							id: 'lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
@@ -240,6 +248,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
@@ -247,7 +256,7 @@ export const gardens: Garden[] = [
 						x: 6,
 						y: 0,
 						size: 1,
-						data: {
+						item: {
 							id: 'strawberries-alexandria-strawberry',
 							displayName: 'Alexandria Strawberry',
 							family: 'strawberries',
@@ -260,6 +269,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
@@ -267,7 +277,7 @@ export const gardens: Garden[] = [
 						x: 6,
 						y: 3,
 						size: 1,
-						data: {
+						item: {
 							id: 'daisies-zinnia-2',
 							displayName: 'Zinnia',
 							family: 'daisies',
@@ -280,6 +290,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 				],
 			},

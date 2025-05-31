@@ -2,7 +2,6 @@ import { writable } from 'svelte/store'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import type { Garden } from '../../private-lib/garden'
 import type {
-	ExistingGridItem,
 	GridZoneContext,
 	GridDragState as BaseGridDragState,
 	GridValidationContext as BaseGridValidationContext,
@@ -11,17 +10,15 @@ import type {
 	GridPlacementRequestDetails,
 	GridRemovalRequestDetails,
 	GridCloningRequestDetails,
-} from '../../dnd/grid-drag-state'
+} from '../../grid/grid-drag-state'
 import {
 	isGridPendingOperation,
 	isGridItemRemovalOperation,
-	gridPlacementToExistingGridItem,
-	existingGridItemToGridPlacement,
-} from '../../dnd/grid-drag-state'
-import type { WithVisualPresentation } from '../../grid/grid-placement'
+} from '../../grid/grid-drag-state'
+import type { WithVisualPresentation, GridPlacement } from '../../grid/grid-placement'
 
 // Generic type aliases
-export type ExistingGardenItem<T extends WithVisualPresentation> = ExistingGridItem<T>
+export type ExistingGardenItem<T extends WithVisualPresentation> = GridPlacement<T>
 export type GardenDragState<T extends WithVisualPresentation> = BaseGridDragState<T>
 export type GardenPendingOperation<T extends WithVisualPresentation> =
 	BaseGridPendingOperation<T>
@@ -42,7 +39,7 @@ export type GardenValidationContext<T extends WithVisualPresentation> =
 		applicationContext?: { garden: Garden }
 	}
 
-export type { ValidationResult } from '../../dnd/grid-drag-state'
+export type { ValidationResult } from '../../grid/grid-drag-state'
 
 export type GardenAsyncValidationFunction<T extends WithVisualPresentation> =
 	BaseGridAsyncValidationFunction<T, GardenZoneContext<T>>
@@ -92,4 +89,10 @@ export function createGardenAppDragState<T extends WithVisualPresentation>() {
 	})
 }
 
-export { gridPlacementToExistingGridItem, existingGridItemToGridPlacement }
+// Export grid-specific utility functions
+export {
+	isGridDragStatePopulated,
+	getGridDraggedItemInfo,
+	isGridDraggingExistingItem,
+	isGridDraggingNewItem,
+} from '../../grid/grid-drag-state'

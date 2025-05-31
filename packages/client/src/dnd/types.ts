@@ -17,7 +17,7 @@ export interface ExistingDraggableItem<TItem extends DraggableItem> {
 	/** Unique identifier for this specific placed instance */
 	id: string
 	/** The underlying draggable item data */
-	itemData: TItem
+	item: TItem
 	/** The zone/container this item currently belongs to */
 	sourceZoneId: string
 }

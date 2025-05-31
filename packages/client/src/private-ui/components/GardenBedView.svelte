@@ -8,7 +8,7 @@ import {
 	type Border,
 } from '../../private-lib/garden-bed-layout-calculator'
 import type { GardenBed } from '../../private-lib/garden-bed'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../../grid/grid-layout-constants'
 
 import GenericDropZone from '../../dnd/components/GenericDropZone.svelte'
 import GenericDraggable from '../../dnd/components/GenericDraggable.svelte'

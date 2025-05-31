@@ -2,7 +2,7 @@
 
 import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
-import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../grid/grid-layout-constants'
 import type { GardenBed, PlantWithSize } from './garden-bed'
 import type { Garden } from './garden'
 import type { Plant } from './plant'

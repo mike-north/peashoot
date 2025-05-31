@@ -1,30 +1,17 @@
-import type {
-	TileVisualPresentation,
-	WithVisualPresentation,
-} from '../grid/tile-visual-presentation'
+import type { GridPlaceable } from '../grid/grid-placement'
+import type { GridItemPresentation } from '../grid/grid-placement'
 
 export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
 
-export interface Plant extends WithVisualPresentation {
+export interface Plant extends GridPlaceable {
 	readonly id: string
 	readonly displayName: string
 	readonly family: string
 	readonly variant: string
 	readonly plantingDistanceInFeet: number
-	readonly presentation: TileVisualPresentation
+	readonly presentation: GridItemPresentation
 }
 
-/**
- * Adapter to make TileVisualPresentation compatible with GridItemPresentation
- */
-export function tileVisualPresentationToGridPresentation(
-	presentation: TileVisualPresentation,
-) {
-	return {
-		iconPath: `plant-icons/${presentation.iconPath}`,
-		accentColor: presentation.accentColor,
-	}
-}
 
 export function isPlant(item: unknown): item is Plant {
 	return (

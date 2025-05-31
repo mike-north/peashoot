@@ -13,7 +13,7 @@ import type { GardenDragState } from '../../private-ui/state/gardenDragState'
 import { existingGridItemToGridPlacement } from '../../private-ui/state/gardenDragState'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private-lib/grid-layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import { isPlant } from '../../private-lib/plant'
 
 interface Props {

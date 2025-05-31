@@ -18,7 +18,7 @@ import {
 	gridPlacementToExistingGridItem,
 	existingGridItemToGridPlacement,
 } from '../../dnd/grid-drag-state'
-import type { WithVisualPresentation } from '../../grid/tile-visual-presentation'
+import type { WithVisualPresentation } from '../../grid/grid-placement'
 
 // Generic type aliases
 export type ExistingGardenItem<T extends WithVisualPresentation> = ExistingGridItem<T>

@@ -1,13 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { writable, get } from 'svelte/store'
-import { deleteZoneDragEvents } from '../src/private-lib/actions/deleteZoneDragEvents.js'
+import { deleteZoneDragEvents } from '../src/grid/actions/deleteZoneDragEvents.js'
 import type { ActionReturn } from 'svelte/action'
-import type {
-	DraggableItem,
-	ExistingDraggableItem,
-	IDragState,
-} from '../src/private-lib/dnd/types.js'
-import { isDraggingExistingItem } from '../src/private-lib/dnd/state.js'
+import { DraggableItem, ExistingDraggableItem, IDragState } from '../src/dnd/types.js'
+import { isDraggingExistingItem } from '../src/dnd/state.js'
 
 // Mock the isDraggingExistingItem function from the correct module
 vi.mock('../src/private-lib/dnd/state.js', async (importOriginal) => {
@@ -164,9 +160,8 @@ describe('deleteZoneDragEvents', () => {
 		>({
 			draggedExistingItem: {
 				id: 'existingItemId',
-				itemData: { id: 'test', name: 'Test Item', type: 'plant' },
-				originalZoneId: 'source',
-				originalIndex: 0,
+				itemData: { id: 'test', size: 1 },
+				sourceZoneId: 'source',
 			},
 			draggedNewItem: null,
 			draggedItemEffectiveSize: 1,

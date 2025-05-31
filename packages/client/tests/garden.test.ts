@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { movePlantBetweenBeds, type Garden } from '../src/private-lib/garden.js'
 import type { GardenBed } from '../src/private-lib/garden-bed.js'
-import type { PlantPlacement } from '../src/private-lib/plant-placement.js'
+import type { GridPlacement } from '../src/grid/grid-placement.js'
 import type { Plant } from '../src/private-lib/plant.js'
 
 const mockPlant: Plant = {
@@ -21,11 +21,12 @@ const mockPlant: Plant = {
 	},
 }
 
-const plantPlacement: PlantPlacement = {
-	plantId: mockPlant.id,
+const plantPlacement: GridPlacement<Plant> = {
 	x: 1,
 	y: 2,
 	id: 'placement1',
+	data: mockPlant,
+	size: 1,
 }
 
 const sourceBed: GardenBed = {

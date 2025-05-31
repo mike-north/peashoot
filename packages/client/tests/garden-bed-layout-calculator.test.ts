@@ -8,7 +8,7 @@ import {
 } from '../src/private-lib/garden-bed-layout-calculator.js'
 import type { GardenBed, PlantWithSize } from '../src/private-lib/garden-bed.js'
 import type { Plant } from '../src/private-lib/plant.js'
-import { GridPlacement } from '../src/private-lib/grid-placement.js'
+import type { GridPlacement } from '../src/grid/grid-placement.js'
 
 const layoutParams = { width: 4, height: 4 }
 const layout = new GardenBedLayoutCalculator(layoutParams)

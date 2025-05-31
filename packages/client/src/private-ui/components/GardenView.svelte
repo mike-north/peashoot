@@ -1,6 +1,6 @@
 <script lang="ts">
 import { dragState } from '../../private-lib/dnd/state'
-import PlantToolbar from './PlantToolbar.svelte'
+import GridViewToolbar from './GridViewToolbar.svelte'
 import DeleteZone from './DeleteZone.svelte'
 import DragPreview from './DragPreview.svelte'
 import type { Garden } from '../../private-lib/garden'
@@ -316,7 +316,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			<div class="text-md font-bold">Loading plants...</div>
 		</div>
 	{:else if $plantsReady}
-		<PlantToolbar plants={$plants} />
+		<GridViewToolbar items={$plants} categorizeItem={(plant: Plant) => plant.family} />
 
 		<div
 			class="garden"

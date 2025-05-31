@@ -7,12 +7,12 @@ import {
 	isDraggingExistingItem,
 	isDraggingNewItem,
 	getDraggedItemInfo,
-} from '../../src/private-lib/dnd/state.js'
+} from '../../src/dnd/state.js'
 import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,
-} from '../../src/private-lib/dnd/types.js'
+} from '../../src/dnd/types.js'
 
 // Helper to create a minimal IDragState for testing
 const createMockState = <

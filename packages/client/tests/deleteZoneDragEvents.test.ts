@@ -6,7 +6,7 @@ import { DraggableItem, ExistingDraggableItem, IDragState } from '../src/dnd/typ
 import { isDraggingExistingItem } from '../src/dnd/state.js'
 
 // Mock the isDraggingExistingItem function from the correct module
-vi.mock('../src/private-lib/dnd/state.js', async (importOriginal) => {
+vi.mock('../src/dnd/state.js', async (importOriginal) => {
 	const actual = await importOriginal()
 	return {
 		...(actual as object),
@@ -51,7 +51,7 @@ describe('deleteZoneDragEvents', () => {
 			isCloneMode: false,
 		})
 		setIsHovered = vi.fn()
-		mockedIsDraggingExistingItem.mockClear()
+		mockedIsDraggingExistingItem.mockReset()
 	})
 
 	afterEach(() => {

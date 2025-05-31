@@ -2,21 +2,18 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import {
 	DragManager,
 	dragManager as globalDragManagerInstance,
-} from '../../src/private-lib/dnd/drag-manager.js'
-import { dragState } from '../../src/private-lib/dnd/state.js'
+} from '../../src/dnd/drag-manager.js'
+import { dragState } from '../../src/dnd/state.js'
 import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,
-} from '../../src/private-lib/dnd/types.js'
+} from '../../src/dnd/types.js'
 import { get, writable } from 'svelte/store'
 
 // Mock the Svelte store
-vi.mock('../../src/lib/dnd/state.js', () => {
-	const initialDragState: IDragState<
-		DraggableItem,
-		ExistingDraggableItem<DraggableItem>
-	> = {
+vi.mock('../../src/dnd/state.js', async () => {
+	const initialDragState = {
 		draggedExistingItem: null,
 		draggedNewItem: null,
 		draggedItemEffectiveSize: 1,
@@ -29,9 +26,8 @@ vi.mock('../../src/lib/dnd/state.js', () => {
 		targetType: null,
 		isCloneMode: false,
 	}
-	const mockStore = writable(initialDragState)
 	return {
-		dragState: mockStore,
+		dragState: (await import('svelte/store')).writable(initialDragState),
 	}
 })
 

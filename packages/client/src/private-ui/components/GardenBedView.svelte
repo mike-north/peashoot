@@ -25,6 +25,7 @@ import {
 import { disablePointerEventsWhenDragging } from '../../private-lib/actions/disablePointerEventsWhenDragging'
 import type { Plant } from '../../private-lib/plant'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
+import type { Component } from 'svelte'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GardenPendingOperation<PlantWithSize> & {
@@ -50,6 +51,7 @@ function isPulsingSourceOperation(
 interface GardenBedViewProps {
 	bed: GardenBed
 	plants: Plant[]
+	TooltipComponent: Component<{ item: Plant }>
 	edgeIndicators?: {
 		id: string
 		plantAId: string
@@ -62,6 +64,7 @@ interface GardenBedViewProps {
 
 const {
 	bed,
+	TooltipComponent,
 	plants,
 	edgeIndicators = [],
 	colSpan = 1,
@@ -543,6 +546,7 @@ function handleDropProp(payload: DropEventPayload) {
 									style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
 								>
 									<GridPlacementTile
+										TooltipComponent={TooltipComponent}
 										placement={placement}
 										sizePx={tileLayout.width}
 										isPulsingSource={isPendingSource}

@@ -20,6 +20,7 @@ import {
 	removePendingOperation,
 } from '../../private-lib/dnd/validation'
 import { plants, plantsLoading, plantsError, plantsReady } from '../state/plantsStore'
+import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
 
 interface GardenProps {
 	garden: Garden
@@ -316,7 +317,11 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			<div class="text-md font-bold">Loading plants...</div>
 		</div>
 	{:else if $plantsReady}
-		<GridViewToolbar items={$plants} categorizeItem={(plant: Plant) => plant.family} />
+		<GridViewToolbar
+			TooltipComponent={PlantTooltipContent}
+			items={$plants}
+			categorizeItem={(plant: Plant) => plant.family}
+		/>
 
 		<div
 			class="garden"
@@ -335,6 +340,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			>
 				{#each beds as bed (bed.id)}
 					<GardenBedView
+						TooltipComponent={PlantTooltipContent}
 						bed={bed}
 						plants={$plants}
 						edgeIndicators={edgeIndicators.filter(

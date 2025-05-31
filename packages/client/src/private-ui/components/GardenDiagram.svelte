@@ -144,9 +144,7 @@ function handleAddNewPlant(bedId: string, item: Plant, x: number, y: number) {
 		}
 
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
-			b.id === bedId
-				? { ...b, plantPlacements: [...b.plantPlacements, newPlacement] }
-				: b,
+			b.id === bedId ? { ...b, placements: [...b.placements, newPlacement] } : b,
 		)
 
 		console.log(`[Garden] Added new ${item.displayName} to bed ${bedId} at (${x}, ${y})`)
@@ -161,7 +159,7 @@ function handleDeletePlant(plantId: string, bedId: string) {
 	if (bed) {
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
 			b.id === bedId
-				? { ...b, plantPlacements: b.plantPlacements.filter((p) => p.id !== plantId) }
+				? { ...b, placements: b.placements.filter((p) => p.id !== plantId) }
 				: b,
 		)
 
@@ -177,7 +175,7 @@ function buildGardenZoneContext(
 	if (!bed) return undefined
 	return {
 		...bed,
-		placements: bed.plantPlacements.map((placement) => {
+		placements: bed.placements.map((placement) => {
 			// placement is already GridPlacement<PlantWithSize>
 			return placement
 		}),

@@ -75,9 +75,7 @@ export class GardenOperationsService {
 		return {
 			...garden,
 			beds: garden.beds.map((b: GardenBed) =>
-				b.id === bedId
-					? { ...b, plantPlacements: [...b.plantPlacements, newPlacement] }
-					: b,
+				b.id === bedId ? { ...b, placements: [...b.placements, newPlacement] } : b,
 			),
 		}
 	}
@@ -93,7 +91,7 @@ export class GardenOperationsService {
 			...garden,
 			beds: garden.beds.map((b: GardenBed) =>
 				b.id === bedId
-					? { ...b, plantPlacements: b.plantPlacements.filter((p) => p.id !== plantId) }
+					? { ...b, placements: b.placements.filter((p) => p.id !== plantId) }
 					: b,
 			),
 		}

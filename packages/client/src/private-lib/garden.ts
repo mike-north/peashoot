@@ -41,15 +41,15 @@ export function movePlantBetweenBeds(
 
 	const updatedSourceBed = {
 		...sourceBed,
-		plantPlacements: sourceBed.plantPlacements.filter(
+		plantPlacements: sourceBed.placements.filter(
 			(p: GridPlacement<PlantWithSize>) => p.id !== placement.id,
 		),
 	}
 
 	const updatedTargetBed: GardenBed = {
 		...targetBed,
-		plantPlacements: [
-			...targetBed.plantPlacements,
+		placements: [
+			...targetBed.placements,
 			{
 				...placement,
 				x: newX,
@@ -78,5 +78,5 @@ export function findPlantPlacement(
 	bed: GardenBed,
 	plantPlacementId: string,
 ): GridPlacement<PlantWithSize> | undefined {
-	return bed.plantPlacements.find((pp) => pp.id === plantPlacementId)
+	return bed.placements.find((pp) => pp.id === plantPlacementId)
 }

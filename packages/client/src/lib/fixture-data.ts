@@ -25,7 +25,7 @@ export const gardens: Garden[] = [
 				height: 2,
 				waterLevel: 0,
 				sunLevel: 2,
-				plantPlacements: [],
+				placements: [],
 			},
 			{
 				id: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
@@ -33,7 +33,7 @@ export const gardens: Garden[] = [
 				height: 1,
 				waterLevel: 0,
 				sunLevel: 0,
-				plantPlacements: [
+				placements: [
 					{
 						id: 'plant_placement_c806fc0b-b50d-489c-9aa4-30e9448769ae',
 						x: 0,
@@ -61,7 +61,7 @@ export const gardens: Garden[] = [
 				height: 1,
 				waterLevel: 0,
 				sunLevel: 0,
-				plantPlacements: [
+				placements: [
 					{
 						id: 'plant_placement_16cee04a-c890-478e-9ac6-3ee02b3e0db6',
 						x: 0,
@@ -89,7 +89,7 @@ export const gardens: Garden[] = [
 				height: 2,
 				waterLevel: 2,
 				sunLevel: 4,
-				plantPlacements: [
+				placements: [
 					{
 						id: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
 						x: 0,
@@ -136,7 +136,7 @@ export const gardens: Garden[] = [
 				height: 2,
 				waterLevel: 2,
 				sunLevel: 4,
-				plantPlacements: [
+				placements: [
 					{
 						id: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
 						x: 0,
@@ -183,7 +183,7 @@ export const gardens: Garden[] = [
 				height: 4,
 				waterLevel: 3,
 				sunLevel: 3,
-				plantPlacements: [
+				placements: [
 					{
 						id: 'plant_placement_f2321084-5ff0-4328-b90a-776de35d8f81',
 						x: 2,

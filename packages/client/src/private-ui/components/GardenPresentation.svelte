@@ -314,7 +314,7 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 							(edge) =>
 								beds
 									.find((b) => b.id === bed.id)
-									?.plantPlacements.some(
+									?.placements.some(
 										(p) => p.id === edge.plantAId || p.id === edge.plantBId,
 									) ?? false,
 						)}

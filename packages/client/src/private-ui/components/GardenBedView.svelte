@@ -96,7 +96,7 @@ const colSpanClass = $derived(
 )
 
 // plantPlacements is already GridPlacement<PlantWithSize>[]
-const gridPlacements = $derived(bed.plantPlacements)
+const gridPlacements = $derived(bed.placements)
 
 // Identify plant placements in this bed that are the source of a pending move or clone
 let pendingSourcePlantIds = $derived(

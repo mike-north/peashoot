@@ -2,7 +2,7 @@ import type { GridPlacement } from '../grid/grid-placement'
 import type { Plant } from './plant'
 
 // Canonical type for plant grid operations
-export type PlantWithSize = Plant & { size: number }
+export type PlantWithSize = Plant
 
 export interface GardenBed {
 	id: string

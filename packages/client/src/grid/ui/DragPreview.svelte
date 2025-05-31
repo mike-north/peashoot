@@ -1,73 +1,92 @@
 <script lang="ts">
 import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement } from '../grid-placement'
-import type { Plant } from '../../private-lib/plant'
+import type { GridPlacement, GridPlaceable } from '../grid-placement'
 import { dragState as genericDragState } from '../../dnd/state'
 import {
 	isGridDragStatePopulated,
-	getGridDraggedItemInfo,
 	isGridDraggingExistingItem,
 	isGridDraggingNewItem,
 } from '../grid-drag-state'
+import { isGridPlaceable } from '../grid-placement'
 import type { GardenDragState } from '../../private-ui/state/gardenDragState'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
-import { isPlant } from '../../private-lib/plant'
 
 interface Props {
 	beds: GardenBed[]
+	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const { beds }: Props = $props()
+const { beds, tileSizeForItem }: Props = $props()
 
-type PlantWithSize = Plant & { size: number }
+let currentDragState = $derived($genericDragState as GardenDragState<GridPlaceable>)
 
-let currentDragState = $derived($genericDragState as GardenDragState<PlantWithSize>)
-let draggedInfo = $derived(
-	isGridDragStatePopulated(currentDragState)
-		? getGridDraggedItemInfo(currentDragState)
-		: null,
-)
+let draggedItemForPreview: GridPlaceable | null = $derived(null)
+let previewGridFootprintSize = $derived(1)
+
+$effect(() => {
+	if (isGridDragStatePopulated(currentDragState)) {
+		if (
+			isGridDraggingNewItem(currentDragState) &&
+			isGridPlaceable(currentDragState.draggedNewItem)
+		) {
+			draggedItemForPreview = currentDragState.draggedNewItem
+			previewGridFootprintSize = currentDragState.draggedNewItem.presentation.size
+		} else if (
+			isGridDraggingExistingItem(currentDragState) &&
+			isGridPlaceable(currentDragState.draggedExistingItem.item)
+		) {
+			draggedItemForPreview = currentDragState.draggedExistingItem.item
+			previewGridFootprintSize =
+				currentDragState.draggedExistingItem.item.presentation.size
+		} else {
+			draggedItemForPreview = null
+			previewGridFootprintSize = 1
+		}
+	} else {
+		draggedItemForPreview = null
+		previewGridFootprintSize = 1
+	}
+})
 
 let previewPosition = $derived.by(() => {
-	if (!draggedInfo) return null
+	if (!draggedItemForPreview) return null
 
-	const effectiveSize = draggedInfo.effectiveSize
 	const cellSize = DEFAULT_LAYOUT_PARAMS.cellSize
-	const previewSize = cellSize * effectiveSize
+	const actualPreviewSizePx = cellSize * previewGridFootprintSize
 
 	const shouldAlignToGrid =
 		currentDragState.targetZoneId && currentDragState.highlightedCell
 
 	if (!shouldAlignToGrid) {
 		return {
-			x: currentDragState.dragPosition.x - previewSize / 2,
-			y: currentDragState.dragPosition.y - previewSize / 2,
-			size: previewSize,
+			x: currentDragState.dragPosition.x - actualPreviewSizePx / 2,
+			y: currentDragState.dragPosition.y - actualPreviewSizePx / 2,
+			size: actualPreviewSizePx,
 		}
 	}
 
-	// Calculate grid-aligned position
 	const targetBed = beds.find((b) => b.id === currentDragState.targetZoneId)
 	if (!targetBed || !currentDragState.highlightedCell) {
 		return {
-			x: currentDragState.dragPosition.x - previewSize / 2,
-			y: currentDragState.dragPosition.y - previewSize / 2,
-			size: previewSize,
+			x: currentDragState.dragPosition.x - actualPreviewSizePx / 2,
+			y: currentDragState.dragPosition.y - actualPreviewSizePx / 2,
+			size: actualPreviewSizePx,
 		}
 	}
 
 	const layout = new GardenBedLayoutCalculator({
 		width: targetBed.width,
 		height: targetBed.height,
+		tileSizeForItem,
 		...DEFAULT_LAYOUT_PARAMS,
 	})
 
 	const tileLayout = layout.getTileLayoutInfo({
 		x: currentDragState.highlightedCell.x,
 		y: currentDragState.highlightedCell.y,
-		size: effectiveSize,
+		size: previewGridFootprintSize,
 	})
 
 	const svgElement = document.querySelector<SVGSVGElement>(
@@ -76,9 +95,9 @@ let previewPosition = $derived.by(() => {
 
 	if (!svgElement) {
 		return {
-			x: currentDragState.dragPosition.x - previewSize / 2,
-			y: currentDragState.dragPosition.y - previewSize / 2,
-			size: previewSize,
+			x: currentDragState.dragPosition.x - actualPreviewSizePx / 2,
+			y: currentDragState.dragPosition.y - actualPreviewSizePx / 2,
+			size: actualPreviewSizePx,
 		}
 	}
 
@@ -86,7 +105,7 @@ let previewPosition = $derived.by(() => {
 	return {
 		x: svgRect.left + tileLayout.svgX,
 		y: svgRect.top + tileLayout.svgY,
-		size: previewSize,
+		size: actualPreviewSizePx,
 	}
 })
 </script>
@@ -121,7 +140,7 @@ let previewPosition = $derived.by(() => {
 }
 </style>
 
-{#if draggedInfo && previewPosition}
+{#if draggedItemForPreview && previewPosition}
 	<div
 		class="drag-preview"
 		style="
@@ -131,25 +150,31 @@ let previewPosition = $derived.by(() => {
 			height: {previewPosition.size}px;
 		"
 	>
-		{#if isGridDraggingExistingItem(currentDragState) && isPlant(currentDragState.draggedExistingItem.item)}
-			{@const placement = currentDragState.draggedExistingItem}
-			<GridPlacementTile placement={placement} sizePx={previewPosition.size} />
+		{#if isGridDraggingExistingItem(currentDragState) && isGridPlaceable(currentDragState.draggedExistingItem.item)}
+			{@const itemToRender = currentDragState.draggedExistingItem.item}
+			{@const placementForTile: GridPlacement<GridPlaceable> = {
+				id: currentDragState.draggedExistingItem.id,
+				x: currentDragState.draggedExistingItem.x,
+				y: currentDragState.draggedExistingItem.y,
+				size: itemToRender.presentation.size,
+				item: itemToRender,
+				sourceZoneId: currentDragState.draggedExistingItem.sourceZoneId
+			}}
+			<GridPlacementTile placement={placementForTile} sizePx={previewPosition.size} />
 			{#if currentDragState.isCloneMode}
 				<div class="clone-indicator">+</div>
 			{/if}
-		{:else if isGridDraggingNewItem(currentDragState) && isPlant(currentDragState.draggedNewItem)}
-			{@const placement: GridPlacement<PlantWithSize> = {
+		{:else if isGridDraggingNewItem(currentDragState) && isGridPlaceable(currentDragState.draggedNewItem)}
+			{@const itemToRender = currentDragState.draggedNewItem}
+			{@const placementForTile: GridPlacement<GridPlaceable> = {
 				id: 'preview',
 				x: 0,
 				y: 0,
-				size: draggedInfo.effectiveSize,
-				item: {
-					...currentDragState.draggedNewItem,
-					size: draggedInfo.effectiveSize,
-				} as PlantWithSize,
-				sourceZoneId: '', // Empty for preview items
+				size: itemToRender.presentation.size,
+				item: itemToRender,
+				sourceZoneId: '',
 			}}
-			<GridPlacementTile placement={placement} sizePx={previewPosition.size} />
+			<GridPlacementTile placement={placementForTile} sizePx={previewPosition.size} />
 		{/if}
 	</div>
 {/if}

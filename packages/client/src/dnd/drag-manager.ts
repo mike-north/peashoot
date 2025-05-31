@@ -1,27 +1,13 @@
 import type { Writable } from 'svelte/store'
 import { dragState } from './state'
 import type { DraggableItem, ExistingDraggableItem, IDragState } from './types'
+// import type { GridPlaceable } from '../grid/grid-placement'
 
 // Type alias for what the global dragState store holds for its "existing item" part.
 type GlobalStoreExistingItem = ExistingDraggableItem<DraggableItem>
 
 export class DragManager<TItem extends DraggableItem> {
-	private getItemSize: (item: TItem) => number
-
-	constructor(getItemSize?: (item: TItem) => number) {
-		// Provide a default getItemSize if none is supplied
-		this.getItemSize =
-			getItemSize ||
-			((item: TItem) => {
-				if (typeof item === 'object' && 'size' in item) {
-					const sizeValue = (item as { size?: unknown }).size
-					if (typeof sizeValue === 'number') {
-						return sizeValue
-					}
-				}
-				return 1
-			})
-	}
+	constructor(private getItemSize: (item: TItem) => number = () => 1) {}
 
 	// Start dragging an existing item from a zone
 	startDraggingExistingItem(
@@ -30,10 +16,7 @@ export class DragManager<TItem extends DraggableItem> {
 		event: MouseEvent,
 	) {
 		const isCloneMode = event.metaKey || event.altKey
-
-		// Calculate the effective size based on the item type
-		let effectiveSize = 1 // Default fallback
-		effectiveSize = this.getItemSize(existingItem.item)
+		const effectiveSize = this.getItemSize(existingItem.item)
 
 		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
 			...s,
@@ -53,9 +36,7 @@ export class DragManager<TItem extends DraggableItem> {
 
 	// Start dragging a new item from a source (e.g., toolbar)
 	startDraggingNewItem(newItemData: TItem, event: MouseEvent) {
-		// Calculate the effective size based on the item type
-		let effectiveSize = 1 // Default fallback
-		effectiveSize = this.getItemSize(newItemData)
+		const effectiveSize = this.getItemSize(newItemData)
 
 		dragState.update((s) => ({
 			...s,
@@ -69,7 +50,7 @@ export class DragManager<TItem extends DraggableItem> {
 			sourceZoneId: null,
 			targetZoneId: null,
 			targetType: null,
-			isCloneMode: false, // Clone mode doesn't apply to new items from a toolbar
+			isCloneMode: false,
 		}))
 	}
 
@@ -80,7 +61,7 @@ export class DragManager<TItem extends DraggableItem> {
 			draggedExistingItem: null,
 			draggedNewItem: null,
 			draggedItemEffectiveSize: 1,
-			dragSourceType: 'existing-item', // Default back
+			dragSourceType: 'existing-item',
 			dragOffset: { x: 0, y: 0 },
 			dragPosition: { x: 0, y: 0 },
 			highlightedCell: null,
@@ -99,17 +80,8 @@ export class DragManager<TItem extends DraggableItem> {
 	}
 }
 
-// Global instance - TItem will be DraggableItem. Consumer must provide getItemSize.
-// Example for Plant: (item) => item.plantingDistanceInFeet
-export const dragManager = new DragManager<DraggableItem>((item) => {
-	if (
-		'plantingDistanceInFeet' in item &&
-		typeof item.plantingDistanceInFeet === 'number'
-	) {
-		return item.plantingDistanceInFeet
-	}
-	if ('size' in item && typeof item.size === 'number') {
-		return item.size
-	}
-	return 1
-})
+// Global instance - TItem will be DraggableItem.
+// The dnd system itself doesn't care about the "actual" size for its core logic.
+// It provides a default of 1 for any drag visuals or temporary state.
+// The grid or other drop targets will determine actual placement constraints.
+export const dragManager = new DragManager<DraggableItem>()

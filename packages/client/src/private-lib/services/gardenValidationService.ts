@@ -1,4 +1,5 @@
-import type { GardenBed } from '../garden-bed'
+import type { Plant } from '../plant'
+import type { GardenBed, PlantWithSize } from '../garden-bed'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
@@ -6,11 +7,7 @@ import type {
 } from '../../private-ui/state/gardenDragState'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
-import type { Plant } from '../plant'
 import type { GridPlacement } from '../../grid/grid-placement'
-
-// Define PlantWithSize type
-type PlantWithSize = Plant & { size: number }
 
 interface PlacementValidityResult {
 	isValid: boolean

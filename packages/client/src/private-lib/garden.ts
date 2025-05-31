@@ -1,5 +1,10 @@
 import type { GardenBed, PlantWithSize } from './garden-bed'
-import type { GridPlacement } from '../grid/grid-placement'
+import {
+	isGridPlacement,
+	type GridPlaceable,
+	type GridPlacement,
+} from '../grid/grid-placement'
+import { isPlant, type Plant } from './plant'
 
 export interface EdgeIndicator {
 	id: string
@@ -17,10 +22,13 @@ export function movePlantBetweenBeds(
 	garden: Garden,
 	sourceBedId: string,
 	targetBedId: string,
-	plant: GridPlacement<PlantWithSize>,
+	placement: GridPlacement<GridPlaceable>,
 	newX: number,
 	newY: number,
 ): Garden {
+	if (!isGridPlacement(placement, isPlant)) {
+		throw new Error('Can only move grid placements between beds')
+	}
 	const sourceBed = garden.beds.find((b: GardenBed) => b.id === sourceBedId)
 	const targetBed = garden.beds.find((b: GardenBed) => b.id === targetBedId)
 
@@ -34,20 +42,21 @@ export function movePlantBetweenBeds(
 	const updatedSourceBed = {
 		...sourceBed,
 		plantPlacements: sourceBed.plantPlacements.filter(
-			(p: GridPlacement<PlantWithSize>) => p.id !== plant.id,
+			(p: GridPlacement<PlantWithSize>) => p.id !== placement.id,
 		),
 	}
 
-	const updatedTargetBed = {
+	const updatedTargetBed: GardenBed = {
 		...targetBed,
 		plantPlacements: [
 			...targetBed.plantPlacements,
 			{
-				...plant,
+				...placement,
 				x: newX,
 				y: newY,
 				sourceZoneId: targetBedId,
-			},
+				item: placement.item,
+			} satisfies GridPlacement<Plant>,
 		],
 	}
 

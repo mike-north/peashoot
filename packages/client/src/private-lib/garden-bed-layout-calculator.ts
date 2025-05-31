@@ -3,10 +3,7 @@
 import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid/grid-layout-constants'
-import type { GardenBed, PlantWithSize } from './garden-bed'
 import type { Garden } from './garden'
-import type { Plant } from './plant'
-import type { GridPlacement } from '../grid/grid-placement'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.
@@ -31,7 +28,7 @@ export interface PlantTileLayoutInfo {
 /**
  * Parameters for garden bed layout calculations.
  */
-export interface LayoutParams {
+export interface LayoutParams<T> {
 	width: number
 	height: number
 	cellSize?: number
@@ -40,6 +37,7 @@ export interface LayoutParams {
 	paddingBottom?: number
 	paddingRight?: number
 	frameThickness?: number
+	tileSizeForItem: (item: T) => number
 }
 
 export type GridLine = Line & Keyed
@@ -49,7 +47,7 @@ export type GridLine = Line & Keyed
  * Provides methods to convert between garden grid coordinates and SVG coordinates,
  * and to retrieve all relevant layout parameters for rendering.
  */
-export class GardenBedLayoutCalculator {
+export class GardenBedLayoutCalculator<T> {
 	public readonly width: number
 	public readonly height: number
 	public readonly cellSize: number
@@ -58,11 +56,12 @@ export class GardenBedLayoutCalculator {
 	public readonly paddingBottom: number
 	public readonly paddingRight: number
 	public readonly frameThickness: number
+	public readonly tileSizeForItem: (item: T) => number
 
 	/**
 	 * @param params Layout parameters for the garden bed
 	 */
-	constructor(params: LayoutParams) {
+	constructor(params: LayoutParams<T>) {
 		this.width = params.width
 		this.height = params.height
 		this.cellSize = params.cellSize ?? DEFAULT_LAYOUT_PARAMS.cellSize
@@ -71,6 +70,7 @@ export class GardenBedLayoutCalculator {
 		this.paddingBottom = params.paddingBottom ?? DEFAULT_LAYOUT_PARAMS.paddingBottom
 		this.paddingRight = params.paddingRight ?? DEFAULT_LAYOUT_PARAMS.paddingRight
 		this.frameThickness = params.frameThickness ?? DEFAULT_LAYOUT_PARAMS.frameThickness
+		this.tileSizeForItem = params.tileSizeForItem
 	}
 
 	/**
@@ -321,7 +321,7 @@ export class GardenBedLayoutCalculator {
 	 * Skips a plant with skipId (for drag/move scenarios).
 	 */
 	isValidPlacement(
-		plants: Plant[],
+		items: T[],
 		x: number,
 		y: number,
 		size: number,
@@ -387,12 +387,12 @@ export function getPlantCells(placement: {
 /**
  * Returns all shared borders between two plant placements in a bed, for edge indicators.
  */
-export function getSharedBorders(
+export function getSharedBorders<T>(
 	plantA: { x: number; y: number; id: string; plantTile: { size?: number } },
 	plantB: { x: number; y: number; id: string; plantTile: { size?: number } },
 	color: string,
 	indicatorId: string,
-	layout: GardenBedLayoutCalculator,
+	layout: GardenBedLayoutCalculator<T>,
 ): Border[] {
 	const aCells = getPlantCells(plantA)
 	const bCells = getPlantCells(plantB)
@@ -460,7 +460,7 @@ export function getSharedBorders(
 /**
  * Calculates all edge indicator borders for a bed.
  */
-export function calculateEdgeBorders(
+export function calculateEdgeBorders<T>(
 	bed: {
 		plantPlacements: {
 			x: number
@@ -475,7 +475,7 @@ export function calculateEdgeBorders(
 		plantBId: string
 		color: string
 	}[],
-	layout: GardenBedLayoutCalculator,
+	layout: GardenBedLayoutCalculator<T>,
 ): Border[] {
 	let borders: Border[] = []
 	for (const indicator of edgeIndicators) {
@@ -493,9 +493,9 @@ export function calculateEdgeBorders(
 /**
  * Converts screen (client) coordinates to grid coordinates for a given SVG element and layout.
  */
-export function screenToGridCoordinates(
+export function screenToGridCoordinates<T>(
 	svgElement: SVGSVGElement,
-	layout: GardenBedLayoutCalculator,
+	layout: GardenBedLayoutCalculator<T>,
 	clientX: number,
 	clientY: number,
 ): { x: number; y: number } {
@@ -526,47 +526,47 @@ export function screenToGridCoordinates(
  * Checks if a proposed plant placement (drop) is valid within a target bed.
  * This is a higher-level function often used during drag-and-drop operations.
  */
-export function isValidDrop(
-	plants: Plant[],
-	targetBed: GardenBed,
-	draggedPlantPlacement: GridPlacement<PlantWithSize>,
-	x: number, // Target grid x-coordinate
-	y: number, // Target grid y-coordinate
-	layoutParamsOverrides?: Partial<LayoutParams>, // Optional overrides for layout calculation
-): boolean {
-	const layout = new GardenBedLayoutCalculator({
-		width: targetBed.width,
-		height: targetBed.height,
-		...DEFAULT_LAYOUT_PARAMS, // Start with defaults
-		...(layoutParamsOverrides || {}), // Apply any specific overrides
-	})
-	const plant = plants.find((p) => p.id === draggedPlantPlacement.item.id)
-	if (!plant) {
-		throw new Error('Plant not found for isValidDrop')
-	}
-	const size = plant.plantingDistanceInFeet
+// export function isValidDrop<T>(
+// 	plants: Plant[],
+// 	targetBed: GardenBed,
+// 	draggedPlantPlacement: GridPlacement<PlantWithSize>,
+// 	x: number, // Target grid x-coordinate
+// 	y: number, // Target grid y-coordinate
+// 	layoutParamsOverrides?: Partial<LayoutParams<T>>, // Optional overrides for layout calculation
+// ): boolean {
+// 	const layout = new GardenBedLayoutCalculator<T>({
+// 		width: targetBed.width,
+// 		height: targetBed.height,
+// 		...DEFAULT_LAYOUT_PARAMS, // Start with defaults
+// 		...(layoutParamsOverrides || {}), // Apply any specific overrides
+// 	})
+// 	const plant = plants.find((p) => p.id === draggedPlantPlacement.item.id)
+// 	if (!plant) {
+// 		throw new Error('Plant not found for isValidDrop')
+// 	}
+// 	const size = layout.tileSizeForItem(plant).plantingDistanceInFeet
 
-	// Convert PlantPlacements to include size information
-	const placementsWithSize = targetBed.plantPlacements.map((p) => {
-		const plantForPlacement = plants.find((pl) => pl.id === p.item.id)
-		if (!plantForPlacement) {
-			throw new Error(`Plant not found for placement ${p.id}`)
-		}
-		return {
-			...p,
-			size: plantForPlacement.plantingDistanceInFeet,
-		}
-	})
+// 	// Convert PlantPlacements to include size information
+// 	const placementsWithSize = targetBed.plantPlacements.map((p) => {
+// 		const plantForPlacement = plants.find((pl) => pl.id === p.item.id)
+// 		if (!plantForPlacement) {
+// 			throw new Error(`Plant not found for placement ${p.id}`)
+// 		}
+// 		return {
+// 			...p,
+// 			size: plantForPlacement.plantingDistanceInFeet,
+// 		}
+// 	})
 
-	return layout.isValidPlacement(
-		plants,
-		x,
-		y,
-		size,
-		placementsWithSize,
-		draggedPlantPlacement.id,
-	)
-}
+// 	return layout.isValidPlacement(
+// 		plants,
+// 		x,
+// 		y,
+// 		size,
+// 		placementsWithSize,
+// 		draggedPlantPlacement.id,
+// 	)
+// }
 
 export interface GardenBedViewCardSize {
 	maxCols: number

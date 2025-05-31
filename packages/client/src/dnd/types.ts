@@ -3,7 +3,10 @@
  */
 export interface DraggableItem {
 	id: string
-	size?: number
+}
+
+export function isDraggableItem(item: unknown): item is DraggableItem {
+	return typeof item === 'object' && item !== null && 'id' in item
 }
 
 /**
@@ -20,6 +23,29 @@ export interface ExistingDraggableItem<TItem extends DraggableItem> {
 	item: TItem
 	/** The zone/container this item currently belongs to */
 	sourceZoneId: string
+}
+
+export function isExistingDraggableItem(
+	maybeEDI: unknown,
+): maybeEDI is ExistingDraggableItem<DraggableItem>
+export function isExistingDraggableItem<TItem extends DraggableItem>(
+	maybeEDI: unknown,
+	itemGuard: (item: unknown) => item is TItem,
+): maybeEDI is ExistingDraggableItem<TItem>
+export function isExistingDraggableItem<TItem extends DraggableItem>(
+	maybeEDI: unknown,
+	itemGuard?: (item: unknown) => item is TItem,
+): maybeEDI is ExistingDraggableItem<TItem> {
+	const baseCheck =
+		typeof maybeEDI === 'object' &&
+		maybeEDI !== null &&
+		'id' in maybeEDI &&
+		'sourceZoneId' in maybeEDI &&
+		'item' in maybeEDI
+	if (itemGuard) {
+		return baseCheck && itemGuard(maybeEDI.item)
+	}
+	return baseCheck
 }
 
 // Generic type for data associated with a drop zone

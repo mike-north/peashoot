@@ -52,6 +52,7 @@ const resetMockDragState = () => {
 interface TestItem extends DraggableItem {
 	name: string
 	category: string
+	size?: number // Added optional size property
 }
 
 interface TestExistingItem extends ExistingDraggableItem<TestItem> {
@@ -63,7 +64,7 @@ describe('DragManager', () => {
 
 	beforeEach(() => {
 		resetMockDragState()
-		manager = new DragManager<TestItem>()
+		manager = new DragManager<TestItem>((item: TestItem) => item.size || 1)
 	})
 
 	afterEach(() => {

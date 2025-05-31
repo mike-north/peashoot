@@ -2,7 +2,12 @@
 import GardenView from './GardenPresentation.svelte'
 import type { GardenBed } from '../../private-lib/garden-bed'
 import { updatePlantPositionInBed } from '../../private-lib/garden-bed'
-import type { Plant } from '../../private-lib/plant'
+import {
+	categoryNameForPlant,
+	isPlant,
+	tileSizeForPlant,
+	type Plant,
+} from '../../private-lib/plant'
 import type { Garden } from '../../private-lib/garden'
 import {
 	movePlantBetweenBeds,
@@ -27,10 +32,11 @@ import {
 	showInfo,
 	removeNotificationByMessage,
 } from '../state/notificationsStore'
-import type { GridPlacement } from '../../grid/grid-placement'
+import type { GridPlaceable, GridPlacement } from '../../grid/grid-placement'
 import type { PlantWithSize } from '../../private-lib/garden-bed'
 import { updatePendingOperation, removePendingOperation } from '../../dnd/validation'
 import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../dnd/constants'
+import type { DraggableItem } from '../state/dragState'
 
 let gardenInstance: Garden | undefined = $state<Garden | undefined>(undefined)
 
@@ -98,16 +104,16 @@ function handleMovePlantInBed(
 function handleMovePlantToDifferentBed(
 	sourceBedId: string,
 	targetBedId: string,
-	existingItem: ExistingGardenItem<PlantWithSize>,
+	existingItem: ExistingGardenItem<GridPlaceable>,
 	newX: number,
 	newY: number,
 ) {
 	// Inline conversion from ExistingGardenItem<PlantWithSize> to GridPlacement<PlantWithSize>
-	const gridPlacementArg: GridPlacement<PlantWithSize> = {
+	const gridPlacementArg: GridPlacement<GridPlaceable> = {
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
-		size: existingItem.item.size,
+		size: tileSizeForItem(existingItem.item),
 		item: existingItem.item,
 		sourceZoneId: existingItem.sourceZoneId,
 	}
@@ -132,8 +138,8 @@ function handleAddNewPlant(bedId: string, item: Plant, x: number, y: number) {
 			id: newPlantId,
 			x,
 			y,
-			size: item.presentation.size,
-			item: { ...item, size: item.presentation.size },
+			size: tileSizeForPlant(item),
+			item: item,
 			sourceZoneId: bedId,
 		}
 
@@ -179,10 +185,12 @@ function buildGardenZoneContext(
 }
 
 async function handleRequestPlacement(
-	details: PlacementRequestDetails<PlantWithSize>,
+	details: PlacementRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
 	if (!gardenInstance) return
+	if (!isPlant(details.itemData)) throw new Error('Item is not a plant')
+
 	handleAsyncValidationStart()
 
 	const targetBed = findBed(gardenInstance, details.targetZoneId)
@@ -190,7 +198,7 @@ async function handleRequestPlacement(
 		? findBed(gardenInstance, details.sourceZoneId)
 		: undefined
 
-	const baseValidationContext: Partial<GardenValidationContext<PlantWithSize>> = {
+	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
 		item: details.itemData,
 		targetZoneId: details.targetZoneId,
 		targetX: details.x,
@@ -227,6 +235,8 @@ async function handleRequestPlacement(
 		}
 		const result = await customAsyncValidation(validationContext)
 		if (result.isValid) {
+			const item = details.itemData
+			if (!isPlant(item)) throw new Error('Item is not a plant')
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual operation
 			if (
@@ -246,12 +256,12 @@ async function handleRequestPlacement(
 				baseValidationContext.sourceX !== undefined &&
 				baseValidationContext.sourceY !== undefined
 			) {
-				const existingItem: ExistingGardenItem<PlantWithSize> = {
+				const existingItem: ExistingGardenItem<GridPlaceable> = {
 					id: details.originalInstanceId,
 					x: baseValidationContext.sourceX,
 					y: baseValidationContext.sourceY,
 					item: details.itemData,
-					size: details.itemData.size,
+					size: tileSizeForItem(details.itemData),
 					sourceZoneId: details.sourceZoneId,
 				}
 				handleMovePlantToDifferentBed(
@@ -262,12 +272,7 @@ async function handleRequestPlacement(
 					details.y,
 				)
 			} else if (details.operationType === 'item-add-to-zone') {
-				handleAddNewPlant(
-					details.targetZoneId,
-					details.itemData as Plant,
-					details.x,
-					details.y,
-				)
+				handleAddNewPlant(details.targetZoneId, item, details.x, details.y)
 			}
 			// Update pending operation to success
 			if (pendingOpId) {
@@ -308,10 +313,12 @@ async function handleRequestPlacement(
 }
 
 async function handleRequestRemoval(
-	details: RemovalRequestDetails<PlantWithSize>,
+	details: RemovalRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
 	if (!gardenInstance) return
+	if (!isPlant(details.itemData)) throw new Error('Item is not a plant')
+
 	handleAsyncValidationStart()
 
 	const sourceBed = findBed(gardenInstance, details.sourceZoneId)
@@ -319,7 +326,7 @@ async function handleRequestRemoval(
 		? findPlantPlacement(sourceBed, details.instanceId)
 		: undefined
 
-	const baseValidationContext: Partial<GardenValidationContext<PlantWithSize>> = {
+	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
 		operationType: 'item-remove-from-zone',
 		item: details.itemData,
 		itemInstanceId: details.instanceId,
@@ -333,8 +340,7 @@ async function handleRequestRemoval(
 		baseValidationContext.sourceY = plantToRemove.y
 	}
 
-	const validationContext =
-		baseValidationContext as GardenValidationContext<PlantWithSize>
+	const validationContext = baseValidationContext as GardenValidationContext<Plant>
 
 	try {
 		if (!customAsyncValidation) {
@@ -384,16 +390,17 @@ async function handleRequestRemoval(
 }
 
 async function handleRequestCloning(
-	details: CloningRequestDetails<PlantWithSize>,
+	details: CloningRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
 	if (!gardenInstance) return
+	if (!isPlant(details.itemDataToClone)) throw new Error('Item is not a plant')
 	handleAsyncValidationStart()
 
 	const sourceBed = findBed(gardenInstance, details.sourceOriginalZoneId)
 	const targetBed = findBed(gardenInstance, details.targetCloneZoneId)
 
-	const baseValidationContext: Partial<GardenValidationContext<PlantWithSize>> = {
+	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
 		operationType: 'item-clone-in-zone',
 		item: details.itemDataToClone,
 		sourceZoneId: details.sourceOriginalZoneId,
@@ -409,8 +416,7 @@ async function handleRequestCloning(
 	const cloneTargetCtx = buildGardenZoneContext(targetBed)
 	if (cloneTargetCtx) baseValidationContext.targetZoneContext = cloneTargetCtx
 
-	const validationContext =
-		baseValidationContext as GardenValidationContext<PlantWithSize>
+	const validationContext = baseValidationContext as GardenValidationContext<Plant>
 
 	try {
 		if (!customAsyncValidation) {
@@ -422,7 +428,7 @@ async function handleRequestCloning(
 			// Validation passed - perform the actual clone
 			handleAddNewPlant(
 				details.targetCloneZoneId,
-				details.itemDataToClone as Plant,
+				details.itemDataToClone,
 				details.targetCloneX,
 				details.targetCloneY,
 			)
@@ -463,6 +469,16 @@ async function handleRequestCloning(
 		throw error // Re-throw system errors so calling code knows validation system failed
 	}
 }
+
+function tileSizeForItem(item: DraggableItem): number {
+	if (!isPlant(item)) throw new Error('Item is not a plant')
+	return tileSizeForPlant(item)
+}
+
+function categoryNameForItem(item: DraggableItem): string {
+	if (!isPlant(item)) throw new Error('Item is not a plant')
+	return categoryNameForPlant(item)
+}
 </script>
 
 {#if gardenInstance}
@@ -472,6 +488,8 @@ async function handleRequestCloning(
 		onRequestPlacement={handleRequestPlacement}
 		onRequestRemoval={handleRequestRemoval}
 		onRequestCloning={handleRequestCloning}
+		tileSizeForItem={tileSizeForItem}
+		categoryNameForItem={categoryNameForItem}
 	/>
 {:else}
 	<div class="flex justify-center items-center h-full p-8">

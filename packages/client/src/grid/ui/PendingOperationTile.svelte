@@ -1,9 +1,6 @@
-<script
-	lang="ts"
-	generics="T extends { id: string; displayName: string; presentation: { iconPath: string; accentColor: { r: number; g: number; b: number; a?: number }; size: number }; size: number }"
->
+<script lang="ts" generics="T extends WithVisualPresentation">
 import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement } from '../grid-placement'
+import type { GridPlacement, WithVisualPresentation } from '../grid-placement'
 import type { GardenPendingOperation } from '../../private-ui/state/gardenDragState'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
@@ -13,24 +10,12 @@ import CheckIcon from '~icons/ph/check-bold'
 import XIcon from '~icons/ph/x-bold'
 import TrashIcon from '~icons/ph/trash-duotone'
 
-interface Props<
-	T extends {
-		id: string
-		displayName: string
-		presentation: {
-			iconPath: string
-			accentColor: { r: number; g: number; b: number; a?: number }
-			size: number
-		}
-		size: number
-	},
-> {
+interface Props<T extends WithVisualPresentation> {
 	operation: GardenPendingOperation<T>
 	sizePx: number
-	sizeAdapter?: (item: T) => number
 }
 
-let { operation, sizePx, sizeAdapter = (item: T) => item.size }: Props<T> = $props()
+let { operation, sizePx }: Props<T> = $props()
 
 // Create a GridPlacement for display
 const placementForDisplay = $derived(
@@ -38,14 +23,16 @@ const placementForDisplay = $derived(
 		if (!operation.zoneId) {
 			throw new Error(`PendingOperation ${operation.id} is missing required zoneId`)
 		}
+		const displayItem = operation.item
+
 		return {
 			id: `pending-${operation.id}`,
 			x: operation.x || 0,
 			y: operation.y || 0,
-			size: sizeAdapter(operation.item),
-			item: { ...operation.item, size: sizeAdapter(operation.item) },
+			size: operation.item.presentation.size,
+			item: displayItem,
 			sourceZoneId: operation.zoneId,
-		} satisfies GridPlacement<T>
+		} satisfies GridPlacement<WithVisualPresentation>
 	})(),
 )
 

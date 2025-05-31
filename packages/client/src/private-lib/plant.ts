@@ -10,7 +10,6 @@ export interface Plant extends GridPlaceable {
 	readonly variant: string
 	readonly plantingDistanceInFeet: number
 	readonly presentation: GridItemPresentation
-	readonly size: number
 }
 
 export function isPlant(item: unknown): item is Plant {
@@ -26,8 +25,16 @@ export function isPlant(item: unknown): item is Plant {
 	)
 }
 
+export function tileSizeForPlant(plant: Plant): number {
+	return Math.max(1, Math.ceil(plant.plantingDistanceInFeet))
+}
+
 export function assertPlantExists(plant: Plant | undefined): asserts plant is Plant {
 	if (!plant) {
 		throw new Error('Plant not found for isValidPlacement')
 	}
+}
+
+export function categoryNameForPlant(plant: Plant): string {
+	return plant.family
 }

@@ -1,5 +1,9 @@
 import type { RGB } from '../lib/color'
-import type { ExistingDraggableItem, DraggableItem } from '../dnd/types'
+import {
+	type ExistingDraggableItem,
+	type DraggableItem,
+	isExistingDraggableItem,
+} from '../dnd/types'
 
 /**
  * Represents the placement of an item on a grid with integer coordinates.
@@ -12,6 +16,31 @@ export interface GridPlacement<T extends DraggableItem> extends ExistingDraggabl
 	readonly y: number
 	/** The size of the item on the grid (e.g., 2 means 2x2) */
 	readonly size: number
+}
+
+export function isGridPlacement(
+	maybePlacement: unknown,
+): maybePlacement is GridPlacement<DraggableItem>
+export function isGridPlacement<T extends DraggableItem>(
+	maybePlacement: unknown,
+	itemGuard: (item: unknown) => item is T,
+): maybePlacement is GridPlacement<T>
+export function isGridPlacement<T extends DraggableItem>(
+	maybePlacement: unknown,
+	itemGuard?: (item: unknown) => item is T,
+): maybePlacement is GridPlacement<T> {
+	const baseCheck =
+		isExistingDraggableItem(maybePlacement) &&
+		'x' in maybePlacement &&
+		typeof maybePlacement.x === 'number' &&
+		'y' in maybePlacement &&
+		typeof maybePlacement.y === 'number' &&
+		'size' in maybePlacement &&
+		typeof maybePlacement.size === 'number'
+	if (itemGuard) {
+		return baseCheck && itemGuard(maybePlacement.item)
+	}
+	return baseCheck
 }
 
 /**
@@ -55,7 +84,18 @@ export interface GridPlaceable extends DraggableItem {
 	readonly presentation: GridItemPresentation
 }
 
+export function isGridPlaceable(item: unknown): item is GridPlaceable {
+	return (
+		item !== null &&
+		typeof item === 'object' &&
+		'id' in item && // from DraggableItem
+		'displayName' in item &&
+		'presentation' in item &&
+		typeof (item as GridPlaceable).presentation === 'object' &&
+		typeof (item as GridPlaceable).presentation.size === 'number'
+	)
+}
+
 export interface WithVisualPresentation extends GridPlaceable {
 	presentation: GridItemPresentation
-	size: number
 }

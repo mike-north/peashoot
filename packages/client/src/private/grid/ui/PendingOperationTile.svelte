@@ -1,11 +1,11 @@
 <script lang="ts" generics="T extends WithVisualPresentation">
 import GridPlacementTile from './GridPlacementTile.svelte'
 import type { GridPlacement, WithVisualPresentation } from '../grid-placement'
-import type { GardenPendingOperation } from '../../private-ui/state/gardenDragState'
+import type { GardenPendingOperation } from '../../../private-ui/state/gardenDragState'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
-} from '../../dnd/constants'
+} from '../../../private/dnd/constants'
 import CheckIcon from '~icons/ph/check-bold'
 import XIcon from '~icons/ph/x-bold'
 import TrashIcon from '~icons/ph/trash-duotone'

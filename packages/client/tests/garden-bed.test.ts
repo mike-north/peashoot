@@ -5,7 +5,7 @@ import {
 	type GardenBed,
 } from '../src/lib/garden-bed.js'
 import type { Plant } from '../src/lib/plant.js'
-import type { GridPlacement } from '../src/grid/grid-placement.js'
+import type { GridPlacement } from '../src/private/grid/grid-placement.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',
@@ -25,7 +25,7 @@ const mockPlant: Plant = {
 }
 
 const mockPlacement: GridPlacement<PlantWithSize> = {
-	data: mockPlant,
+	item: mockPlant,
 	x: 1,
 	y: 2,
 	id: 'placement1',

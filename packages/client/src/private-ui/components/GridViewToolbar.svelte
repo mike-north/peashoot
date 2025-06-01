@@ -1,12 +1,12 @@
 <script lang="ts" generics="TItem extends WithVisualPresentation">
-import type { GridItemPresentation } from '../../grid/grid-placement'
-import { dragManager } from '../../dnd/drag-manager'
-import { dragState } from '../../dnd/state'
-import GridPlacementTile from '../../grid/ui/GridPlacementTile.svelte'
-import type { GridPlacement } from '../../grid/grid-placement'
-import { DEFAULT_LAYOUT_PARAMS } from '../../grid/grid-layout-constants'
-import { clickOrHold } from '../../grid/actions/clickOrHold'
-import type { WithVisualPresentation } from '../../grid/grid-placement'
+import type { GridItemPresentation } from '../../private/grid/grid-placement'
+import { dragManager } from '../../private/dnd/drag-manager'
+import { dragState } from '../../private/dnd/state'
+import GridPlacementTile from '../../private/grid/ui/GridPlacementTile.svelte'
+import type { GridPlacement } from '../../private/grid/grid-placement'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
+import { clickOrHold } from '../../private/grid/actions/clickOrHold'
+import type { WithVisualPresentation } from '../../private/grid/grid-placement'
 import type { Component } from 'svelte'
 
 interface GridToolbarProps {

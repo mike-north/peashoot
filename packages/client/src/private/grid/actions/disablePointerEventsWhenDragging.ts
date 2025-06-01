@@ -1,5 +1,9 @@
 import type { Action } from 'svelte/action'
-import type { DraggableItem, ExistingDraggableItem, IDragState } from '../../dnd/types'
+import type {
+	DraggableItem,
+	ExistingDraggableItem,
+	IDragState,
+} from '../../../private/dnd/types'
 
 /**
  * A Svelte action that disables pointer events on an element when an item is being dragged,

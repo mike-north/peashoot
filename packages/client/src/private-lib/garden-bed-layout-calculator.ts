@@ -2,9 +2,9 @@
 
 import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
-import { DEFAULT_LAYOUT_PARAMS } from '../grid/grid-layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../private/grid/grid-layout-constants'
 import type { Garden } from '../lib/garden'
-import type { GridPlaceable, GridPlacement } from '../grid/grid-placement'
+import type { GridPlaceable, GridPlacement } from '../private/grid/grid-placement'
 
 /**
  * Layout information for a plant tile, used by PlantPlacementTile.svelte.

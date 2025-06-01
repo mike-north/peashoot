@@ -1,12 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { writable, get } from 'svelte/store'
-import { deleteZoneDragEvents } from '../src/grid/actions/deleteZoneDragEvents.js'
+import { deleteZoneDragEvents } from '../src/private/grid/actions/deleteZoneDragEvents.js'
 import type { ActionReturn } from 'svelte/action'
-import { DraggableItem, ExistingDraggableItem, IDragState } from '../src/dnd/types.js'
-import { isDraggingExistingItem } from '../src/dnd/state.js'
+import {
+	DraggableItem,
+	ExistingDraggableItem,
+	IDragState,
+} from '../src/private/dnd/types.js'
+import { isDraggingExistingItem } from '../src/private/dnd/state.js'
 
 // Mock the isDraggingExistingItem function from the correct module
-vi.mock('../src/dnd/state.js', async (importOriginal) => {
+vi.mock('../src/private/dnd/state.js', async (importOriginal) => {
 	const actual = await importOriginal()
 	return {
 		...(actual as object),

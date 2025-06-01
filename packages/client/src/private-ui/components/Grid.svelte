@@ -1,30 +1,30 @@
 <script lang="ts">
-import GridPlacementTile from '../../grid/ui/GridPlacementTile.svelte'
-import PendingOperationTile from '../../grid/ui/PendingOperationTile.svelte'
+import GridPlacementTile from '../../private/grid/ui/GridPlacementTile.svelte'
+import PendingOperationTile from '../../private/grid/ui/PendingOperationTile.svelte'
 import {
 	GardenBedLayoutCalculator,
 	calculateEdgeBorders,
 	type Border,
 } from '../../private-lib/garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../grid/grid-layout-constants'
+import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
 
-import GenericDropZone from '../../dnd/components/GenericDropZone.svelte'
-import GenericDraggable from '../../dnd/components/GenericDraggable.svelte'
+import GenericDropZone from '../../private/dnd/components/GenericDropZone.svelte'
+import GenericDraggable from '../../private/dnd/components/GenericDraggable.svelte'
 import {
 	pendingOperations as genericPendingOperations,
 	isDragStatePopulated,
 	dragState as genericDragState,
 	isDraggingNewItem,
 	isDraggingExistingItem,
-} from '../../dnd/state'
-import type { DraggableItem } from '../../dnd/types'
+} from '../../private/dnd/state'
+import type { DraggableItem } from '../../private/dnd/types'
 import type { GardenPendingOperation } from '../state/gardenDragState'
-import { disablePointerEventsWhenDragging } from '../../grid/actions/disablePointerEventsWhenDragging'
+import { disablePointerEventsWhenDragging } from '../../private/grid/actions/disablePointerEventsWhenDragging'
 import type { Component } from 'svelte'
 
-import type { GridPlaceable } from '../../grid/grid-placement'
-import { isGridPlaceable } from '../../grid/grid-placement'
-import type { GridArea } from '../../grid/grid-area'
+import type { GridPlaceable } from '../../private/grid/grid-placement'
+import { isGridPlaceable } from '../../private/grid/grid-placement'
+import type { GridArea } from '../../private/grid/grid-area'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GardenPendingOperation<GridPlaceable> & {

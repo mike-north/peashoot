@@ -10,12 +10,15 @@ import type {
 	GridPlacementRequestDetails,
 	GridRemovalRequestDetails,
 	GridCloningRequestDetails,
-} from '../../grid/grid-drag-state'
+} from '../../private/grid/grid-drag-state'
 import {
 	isGridPendingOperation,
 	isGridItemRemovalOperation,
-} from '../../grid/grid-drag-state'
-import type { WithVisualPresentation, GridPlacement } from '../../grid/grid-placement'
+} from '../../private/grid/grid-drag-state'
+import type {
+	WithVisualPresentation,
+	GridPlacement,
+} from '../../private/grid/grid-placement'
 
 // Generic type aliases
 export type ExistingGardenItem<T extends WithVisualPresentation> = GridPlacement<T>
@@ -38,8 +41,6 @@ export type GardenValidationContext<T extends WithVisualPresentation> =
 	BaseGridValidationContext<T, GardenZoneContext<T>> & {
 		applicationContext?: { garden: Garden }
 	}
-
-export type { ValidationResult } from '../../grid/grid-drag-state'
 
 export type GardenAsyncValidationFunction<T extends WithVisualPresentation> =
 	BaseGridAsyncValidationFunction<T, GardenZoneContext<T>>
@@ -88,11 +89,3 @@ export function createGardenAppDragState<T extends WithVisualPresentation>() {
 		isCloneMode: false,
 	})
 }
-
-// Export grid-specific utility functions
-export {
-	isGridDragStatePopulated,
-	getGridDraggedItemInfo,
-	isGridDraggingExistingItem,
-	isGridDraggingNewItem,
-} from '../../grid/grid-drag-state'

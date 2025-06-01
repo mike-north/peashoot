@@ -1,8 +1,8 @@
 <script lang="ts">
-import { dragState } from '../../dnd/state'
+import { dragState } from '../../private/dnd/state'
 import GridViewToolbar from './GridViewToolbar.svelte'
-import DeleteZone from '../../grid/ui/DeleteZone.svelte'
-import DragPreview from '../../grid/ui/DragPreview.svelte'
+import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
+import DragPreview from '../../private/grid/ui/DragPreview.svelte'
 import type { Garden } from '../../lib/garden'
 import { calculateGardenBedViewColSpans } from '../../private-lib/garden-bed-layout-calculator'
 import type {
@@ -11,16 +11,16 @@ import type {
 	RemovalRequestDetails,
 	CloningRequestDetails,
 } from '../state/gardenDragState'
-import { gardenDragCoordinator } from '../../grid/attachments/gardenDragCoordinator'
+import { gardenDragCoordinator } from '../../private/grid/attachments/gardenDragCoordinator'
 import {
 	addPendingOperation,
 	updatePendingOperation,
 	removePendingOperation,
-} from '../../dnd/validation'
+} from '../../private/dnd/validation'
 import { plants, plantsLoading, plantsError, plantsReady } from '../state/plantsStore'
 import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
 import type { PlantWithSize } from '../../lib/garden-bed'
-import { isGridPlaceable, isGridPlacement } from '../../grid/grid-placement'
+import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../state/dragState'
 import GardenBedGrid from './GardenBedGrid.svelte'
 

@@ -1,5 +1,5 @@
-import type { GridArea } from '../grid/grid-area'
-import type { GridPlacement } from '../grid/grid-placement'
+import type { GridArea } from '../private/grid/grid-area'
+import type { GridPlacement } from '../private/grid/grid-placement'
 import type { Plant } from './plant'
 
 // Canonical type for plant grid operations

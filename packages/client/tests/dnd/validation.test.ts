@@ -5,15 +5,15 @@ import {
 	updatePendingOperation,
 	removePendingOperation,
 	defaultAsyncValidation,
-} from '../../src/dnd/validation.js'
-import { pendingOperations as actualPendingOperationsStore } from '../../src/dnd/state.js'
+} from '../../src/private/dnd/validation.js'
+import { pendingOperations as actualPendingOperationsStore } from '../../src/private/dnd/state.js'
 import type {
 	DraggableItem,
 	PendingOperation,
 	ValidationContext,
 	DropZoneContext,
-} from '../../src/dnd/types.js'
-import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../src/dnd/constants.js'
+} from '../../src/private/dnd/types.js'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../src/private/dnd/constants.js'
 
 // Mock the Svelte store module that exports pendingOperations
 vi.mock('../../src/dnd/state.js', async (importOriginal) => {

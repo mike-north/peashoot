@@ -4,7 +4,7 @@ import type { Plant } from '../../lib/plant'
 import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
 import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
 import { updatePlantPositionInBed } from '../../lib/garden-bed'
-import type { GridPlacement } from '../../grid/grid-placement'
+import type { GridPlacement } from '../../private/grid/grid-placement'
 
 export class GardenOperationsService {
 	movePlantInBed(

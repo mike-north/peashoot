@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { GridPlaceable } from '../grid/grid-placement'
+import type { GridPlaceable } from '../private/grid/grid-placement'
 import IdLabel from './components/IdLabel.svelte'
 import { isPlant } from './plant'
 

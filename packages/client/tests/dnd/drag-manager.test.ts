@@ -2,13 +2,13 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import {
 	DragManager,
 	dragManager as globalDragManagerInstance,
-} from '../../src/dnd/drag-manager.js'
-import { dragState } from '../../src/dnd/state.js'
+} from '../../src/private/dnd/drag-manager.js'
+import { dragState } from '../../src/private/dnd/state.js'
 import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,
-} from '../../src/dnd/types.js'
+} from '../../src/private/dnd/types.js'
 import { get } from 'svelte/store'
 
 // Mock the Svelte store

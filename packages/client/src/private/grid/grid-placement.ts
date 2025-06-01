@@ -1,4 +1,4 @@
-import type { RGB } from '../lib/color'
+import type { RGB } from '../../lib/color'
 import {
 	type ExistingDraggableItem,
 	type DraggableItem,

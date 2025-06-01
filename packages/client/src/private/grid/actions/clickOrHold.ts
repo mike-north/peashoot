@@ -1,5 +1,5 @@
 import type { Action } from 'svelte/action'
-import { DEFAULT_HOLD_DURATION_MS } from '../../dnd/constants'
+import { DEFAULT_HOLD_DURATION_MS } from '../../../private/dnd/constants'
 
 interface ClickOrHoldOptions {
 	onClick?: (event: MouseEvent) => void

@@ -3,7 +3,7 @@ import {
 	notifications,
 	removeNotification,
 	type NotificationType,
-} from '../state/notificationsStore'
+} from '../private-ui/state/notificationsStore'
 import { derived } from 'svelte/store'
 import CloseIcon from '~icons/ph/x-bold'
 

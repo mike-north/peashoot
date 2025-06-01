@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
-import PageTitle from '../private-ui/components/PageTitle.svelte'
+import PageTitle from '../components/PageTitle.svelte'
 
 const { route }: { route: RouteResult } = $props()
 </script>

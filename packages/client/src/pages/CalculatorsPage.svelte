@@ -1,5 +1,5 @@
 <script lang="ts">
-import PageTitle from '../private-ui/components/PageTitle.svelte'
+import PageTitle from '../components/PageTitle.svelte'
 
 const { route } = $props()
 </script>

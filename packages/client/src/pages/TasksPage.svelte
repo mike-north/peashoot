@@ -3,7 +3,7 @@ import TaskList from '../private-ui/components/TaskList.svelte'
 import type { TaskList as TaskListType } from '../private-lib/types/tasks'
 import Plus from '~icons/ph/plus-circle-duotone'
 import ListChecks from '~icons/ph/list-checks-bold'
-import PageTitle from '../private-ui/components/PageTitle.svelte'
+import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 
 const { route }: { route: RouteResult } = $props()

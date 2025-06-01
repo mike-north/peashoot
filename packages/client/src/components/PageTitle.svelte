@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
-import type { PeashootRouteInfo } from '../../routes'
+import type { PeashootRouteInfo } from '../routes'
 
 const {
 	route,

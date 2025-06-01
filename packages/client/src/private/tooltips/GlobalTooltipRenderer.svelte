@@ -1,10 +1,10 @@
 <script lang="ts">
-import { tooltip } from '../private-ui/state/tooltipStore'
 import { mount, unmount } from 'svelte'
 import TooltipWrapper from './TooltipWrapper.svelte'
-import type { GridPlaceable } from '../grid/grid-placement'
+import type { GridPlaceable } from '../../grid/grid-placement'
 import { onMount } from 'svelte'
 import type { Component } from 'svelte'
+import { tooltip } from '../../private-ui/state/tooltipStore'
 
 let portalContainer: HTMLElement | null = null
 let mountedTooltip: ReturnType<typeof mount> | null = null

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { dragState } from '../../private/dnd/state'
-import GridViewToolbar from './GridViewToolbar.svelte'
+import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
 import type { Garden } from '../../lib/entities/garden'

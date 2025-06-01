@@ -1,6 +1,15 @@
 <script lang="ts">
 import { Tween } from 'svelte/motion'
 import { cubicOut } from 'svelte/easing'
+import type { SeedPacket } from '../lib/entities/seed-packet'
+import { rgbToCss } from '../lib/color'
+import SeedPacketBack from './SeedPacketBack.svelte'
+
+interface Props {
+	seedPacket: SeedPacket
+}
+
+const { seedPacket }: Props = $props()
 
 let hovered = $state(false)
 let flipped = $state(false)
@@ -171,26 +180,34 @@ svg {
 					text-anchor="middle"
 					fill="#222"
 					class="title"
-					>SEEDS
+					>{seedPacket.displayName}
 				</text>
 				<rect
 					x="60"
 					y="140"
 					width="280"
 					height="220"
-					fill="none"
+					fill={rgbToCss(seedPacket.accentColor)}
 					stroke="#333"
 					stroke-width="2"
 				/>
-				<text x="200" y="250" font-size="18" text-anchor="middle" fill="#999"
-					>(image)</text
+				<image
+					href={`/plant-icons/${seedPacket.iconPath}`}
+					x="60"
+					y="140"
+					width="280"
+					height="220"
+					preserveAspectRatio="xMidYMid slice"
+				/>
+
+				<text x="200" y="385" font-size="20" text-anchor="middle" fill="#333"
+					>Count: {seedPacket.seedCount}</text
 				>
-				<text x="200" y="340" font-size="20" text-anchor="middle" fill="#333"
-					>SEED COUNT</text
+				<text x="30" y="470" font-size="16" fill="#444"
+					>Net Wt. {seedPacket.netWeightGrams}g</text
 				>
-				<text x="30" y="470" font-size="16" fill="#444">Net Wt. 1g</text>
 				<text x="370" y="470" font-size="16" text-anchor="end" fill="#444"
-					>Product of Mexico</text
+					>Product of {seedPacket.originLocation}</text
 				>
 			</svg>
 		</div>
@@ -242,34 +259,9 @@ svg {
 					stroke="#aaa"
 					stroke-width="2"
 				/>
-				<text
-					x="200"
-					y="200"
-					font-size="32"
-					font-weight="bold"
-					text-anchor="middle"
-					fill="#222">INSTRUCTIONS</text
-				>
-
-				<g fill="#222" stroke="#333" stroke-width="1">
-					<text x="40" y="250" font-size="20" font-weight="bold">Sow:</text>
-					<line x1="130" y1="252" x2="360" y2="252" />
-
-					<text x="40" y="290" font-size="20" font-weight="bold">Germination:</text>
-					<line x1="180" y1="292" x2="360" y2="292" />
-
-					<text x="40" y="330" font-size="20" font-weight="bold">Hardiness:</text>
-					<line x1="150" y1="332" x2="360" y2="332" />
-
-					<text x="40" y="370" font-size="20" font-weight="bold">Transplant (°F):</text>
-					<line x1="200" y1="372" x2="360" y2="372" />
-
-					<text x="40" y="410" font-size="20" font-weight="bold">Days to Harvest:</text>
-					<line x1="210" y1="412" x2="360" y2="412" />
-
-					<text x="40" y="450" font-size="20" font-weight="bold">Yield:</text>
-					<line x1="110" y1="452" x2="360" y2="452" />
-				</g>
+				<foreignObject x="20" y="60" width="360" height="480">
+					<SeedPacketBack seedPacket={seedPacket} />
+				</foreignObject>
 			</svg>
 		</div>
 	</div>

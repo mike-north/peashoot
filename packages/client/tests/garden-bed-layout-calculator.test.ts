@@ -4,7 +4,7 @@ import {
 	getPlantCells,
 	getSharedBorders,
 	calculateEdgeBorders,
-} from '../src/private-lib/garden-bed-layout-calculator.js'
+} from '../src/private/garden-bed-layout-calculator.js'
 import type { PlantWithSize } from '../src/lib/entities/garden-bed.js'
 import type { Plant } from '../src/lib/entities/plant.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'

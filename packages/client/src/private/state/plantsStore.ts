@@ -1,12 +1,15 @@
 import { writable, derived } from 'svelte/store'
 import type { Plant } from '../../lib/entities/plant'
-import { fetchPlants } from '../../lib/plant-data'
+import { PlantAdapter } from '../../lib/adapters/plant-adapter'
+// import { fetchPlants } from '../../lib/plant-data'
 
 interface PlantsState {
 	plants: Plant[]
 	loading: boolean
 	error: string | null
 }
+
+const plantAdapter = new PlantAdapter()
 
 const initialState: PlantsState = {
 	plants: [],
@@ -31,7 +34,7 @@ export async function loadPlants(): Promise<void> {
 	plantsState.update((state) => ({ ...state, loading: true, error: null }))
 
 	try {
-		const plantsData = await fetchPlants()
+		const plantsData = await plantAdapter.fetchPlants()
 		plantsState.update((state) => ({
 			...state,
 			plants: plantsData,

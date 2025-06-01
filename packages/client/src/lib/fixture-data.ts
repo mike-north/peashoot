@@ -1,5 +1,65 @@
 import type { Garden } from './entities/garden'
 import type { Plant } from './entities/plant'
+import type { SeedPacket } from './entities/seed-packet'
+
+export const seedPackets: SeedPacket[] = [
+	{
+		id: 'seedp_0',
+		displayName: 'Celery Seeds',
+		seedCount: 10,
+		iconPath: 'celery-celery.png',
+		accentColor: { r: 144, g: 238, b: 144 },
+		netWeightGrams: 10,
+		originLocation: 'Colombia',
+		description: 'Celery seeds are a great way to add some green to your garden.',
+		instructions: {
+			sowInstructions: 'Sow seeds 1/2 inch deep in soil.',
+			germinationInstructions: 'Germinate at 70-80° F.',
+			transplantInstructions: 'Transplant @ 6-8 in. tall',
+			hardinessNotes: 'Hardy to zone 5.',
+		},
+		daysToHarvest: 60,
+		yieldNotes: '10-12 stalks per plant.',
+	},
+	{
+		id: 'seedp_1',
+		displayName: 'Big Boy Tomato',
+		seedCount: 30, // from seedPacketInfo.seedCount
+		iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+		accentColor: { r: 255, g: 99, b: 71 }, // Tomato red
+		netWeightGrams: 1, // Placeholder, not directly in YAML for this item
+		originLocation: 'USA', // Placeholder, not directly in YAML
+		description:
+			'Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches.',
+		instructions: {
+			sowInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
+			germinationInstructions: '7-14 days.', // from planting.daysToGermination
+			transplantInstructions: 'Transplant after 2 weeks of last frost.', // from planting.timing
+			hardinessNotes: 'Not frost hardy.', // from environmental.hardiness.frostHardy
+		},
+		daysToHarvest: 80, // from production.harvestDuration
+		yieldNotes: 'Continuous harvest over 60 days.', // from production.harvestMethod and harvestWindow
+	},
+	{
+		id: 'seedp_2',
+		displayName: 'Basil',
+		seedCount: 100, // from seedPacketInfo.seedCount
+		iconPath: 'basil-basil.png',
+		accentColor: { r: 133, g: 187, b: 101 }, // Basil green
+		netWeightGrams: 0.5, // Placeholder
+		originLocation: 'India', // Placeholder
+		description:
+			'Aromatic annual herb with excellent culinary uses. Natural pest deterrent and pollinator attractor.',
+		instructions: {
+			sowInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
+			germinationInstructions: '5-10 days.', // from planting.daysToGermination
+			transplantInstructions: 'Transplant after 2 weeks of last frost.', // from planting.timing
+			hardinessNotes: 'Not frost hardy.', // from environmental.hardiness.frostHardy
+		},
+		daysToHarvest: 60, // from production.harvestDuration
+		yieldNotes: 'Continuous harvest over 90 days.', // from production.harvestMethod and harvestWindow
+	},
+]
 
 export const gardens: Garden[] = [
 	{

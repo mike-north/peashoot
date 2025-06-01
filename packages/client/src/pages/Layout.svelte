@@ -2,7 +2,7 @@
 import { Router } from '@mateothegreat/svelte5-router'
 import { routes } from '../routes'
 
-import LayoutSidebar from '../private-ui/components/LayoutSidebar.svelte'
+import LayoutSidebar from '../components/LayoutSidebar.svelte'
 import NotificationToast from '../components/NotificationToast.svelte'
 import GlobalTooltipRenderer from '../private/tooltips/GlobalTooltipRenderer.svelte'
 </script>

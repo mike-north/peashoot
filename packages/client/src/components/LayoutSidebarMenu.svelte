@@ -1,6 +1,6 @@
 <script lang="ts">
 import { route } from '@mateothegreat/svelte5-router'
-import { defaultRouteConfig, routeInfos } from '../../routes'
+import { defaultRouteConfig, routeInfos } from '../routes'
 
 const topItems = routeInfos
 	.filter((r) => !r.hideInSidebar)

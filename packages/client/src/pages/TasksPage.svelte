@@ -1,5 +1,5 @@
 <script lang="ts">
-import TaskList from '../private/components/TaskList.svelte'
+import TaskList from '../components/TaskList.svelte'
 import type { TaskList as TaskListType } from '../lib/entities/tasks'
 import Plus from '~icons/ph/plus-circle-duotone'
 import ListChecks from '~icons/ph/list-checks-bold'

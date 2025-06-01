@@ -5,7 +5,7 @@ import {
 	GardenBedLayoutCalculator,
 	calculateEdgeBorders,
 	type Border,
-} from '../../private-lib/garden-bed-layout-calculator'
+} from '../garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
 
 import GenericDropZone from '../../private/dnd/components/GenericDropZone.svelte'

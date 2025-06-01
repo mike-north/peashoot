@@ -1,5 +1,5 @@
 <script lang="ts">
-import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
+import { GardenBedLayoutCalculator } from '../garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
 import { disablePointerEventsWhenDragging } from '../../private/grid/actions/disablePointerEventsWhenDragging'
 import { dragState } from '../dnd/state'

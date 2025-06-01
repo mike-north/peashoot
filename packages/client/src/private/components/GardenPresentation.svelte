@@ -4,7 +4,7 @@ import GridViewToolbar from './GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
 import type { Garden } from '../../lib/entities/garden'
-import { calculateGardenBedViewColSpans } from '../../private-lib/garden-bed-layout-calculator'
+import { calculateGardenBedViewColSpans } from '../garden-bed-layout-calculator'
 import type {
 	ExistingGardenItem,
 	PlacementRequestDetails,

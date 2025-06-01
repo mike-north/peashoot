@@ -2,9 +2,10 @@
 import Grid from './Grid.svelte'
 import type { GridPlaceable } from '../../grid/grid-placement'
 import type { Component } from 'svelte'
-import type { GardenBed } from '../../private-lib/garden-bed'
-import type { Plant } from '../../private-lib/plant'
+import type { GardenBed } from '../../lib/garden-bed'
+import type { Plant } from '../../lib/plant'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
+import IdLabel from '../../lib/components/IdLabel.svelte'
 
 interface GardenBedGridProps {
 	bed: GardenBed
@@ -75,9 +76,11 @@ const colSpanClass = $derived(
 		tileSizeForItem={tileSizeForItem}
 	/>
 	<div class="card-body">
-		<div class="card-title">
+		<div class="card-title flex justify-between items-center">
 			Raised Garden Bed ({bed.width}×{bed.height} feet)
+			<IdLabel id={bed.id} />
 		</div>
+
 		<div class="meters-row">
 			<HorizontalBarMeter
 				id={`${bed.id}-water`}

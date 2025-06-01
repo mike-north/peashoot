@@ -1,9 +1,9 @@
-import type { Garden } from '../garden'
-import type { GardenBed, PlantWithSize } from '../garden-bed'
-import type { Plant } from '../plant'
+import type { Garden } from '../../lib/garden'
+import type { GardenBed, PlantWithSize } from '../../lib/garden-bed'
+import type { Plant } from '../../lib/plant'
 import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
-import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../garden'
-import { updatePlantPositionInBed } from '../garden-bed'
+import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
+import { updatePlantPositionInBed } from '../../lib/garden-bed'
 import type { GridPlacement } from '../../grid/grid-placement'
 
 export class GardenOperationsService {

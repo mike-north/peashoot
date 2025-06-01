@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
-import type { GardenBed } from '../../private-lib/garden-bed'
-import type { Garden } from '../../private-lib/garden'
+import type { GardenBed } from '../../lib/garden-bed'
+import type { Garden } from '../../lib/garden'
 import type {
 	GridZoneContext,
 	GridDragState as BaseGridDragState,

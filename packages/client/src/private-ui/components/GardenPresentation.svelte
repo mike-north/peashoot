@@ -3,7 +3,7 @@ import { dragState } from '../../dnd/state'
 import GridViewToolbar from './GridViewToolbar.svelte'
 import DeleteZone from '../../grid/ui/DeleteZone.svelte'
 import DragPreview from '../../grid/ui/DragPreview.svelte'
-import type { Garden } from '../../private-lib/garden'
+import type { Garden } from '../../lib/garden'
 import { calculateGardenBedViewColSpans } from '../../private-lib/garden-bed-layout-calculator'
 import type {
 	ExistingGardenItem,
@@ -19,7 +19,7 @@ import {
 } from '../../dnd/validation'
 import { plants, plantsLoading, plantsError, plantsReady } from '../state/plantsStore'
 import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
-import type { PlantWithSize } from '../../private-lib/garden-bed'
+import type { PlantWithSize } from '../../lib/garden-bed'
 import { isGridPlaceable, isGridPlacement } from '../../grid/grid-placement'
 import type { DraggableItem } from '../state/dragState'
 import GardenBedGrid from './GardenBedGrid.svelte'
@@ -326,6 +326,6 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 		</div>
 
 		<DeleteZone />
-		<DragPreview beds={beds} tileSizeForItem={tileSizeForItem} />
+		<DragPreview grids={beds} tileSizeForItem={tileSizeForItem} />
 	{/if}
 </div>

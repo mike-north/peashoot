@@ -1,5 +1,5 @@
-import type { Garden } from '../private-lib/garden'
-import type { Plant } from '../private-lib/plant'
+import type { Garden } from './garden'
+import type { Plant } from './plant'
 
 export const gardens: Garden[] = [
 	{

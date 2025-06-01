@@ -1,5 +1,5 @@
-import type { Plant } from '../plant'
-import type { GardenBed, PlantWithSize } from '../garden-bed'
+import type { Plant } from '../../lib/plant'
+import type { GardenBed, PlantWithSize } from '../../lib/garden-bed'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,

@@ -91,8 +91,10 @@ export function isGridPlaceable(item: unknown): item is GridPlaceable {
 		'id' in item && // from DraggableItem
 		'displayName' in item &&
 		'presentation' in item &&
-		typeof (item as GridPlaceable).presentation === 'object' &&
-		typeof (item as GridPlaceable).presentation.size === 'number'
+		item.presentation !== null &&
+		typeof item.presentation === 'object' &&
+		'size' in item.presentation &&
+		typeof item.presentation.size === 'number'
 	)
 }
 

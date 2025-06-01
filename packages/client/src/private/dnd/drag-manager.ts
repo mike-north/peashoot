@@ -35,8 +35,9 @@ export class DragManager<TItem extends DraggableItem> {
 	}
 
 	// Start dragging a new item from a source (e.g., toolbar)
-	startDraggingNewItem(newItemData: TItem, event: MouseEvent) {
+	startDraggingNewItem(newItemData: TItem, event: MouseEvent | TouchEvent) {
 		const effectiveSize = this.getItemSize(newItemData)
+		const { clientX, clientY } = 'touches' in event ? event.touches[0] : event
 
 		dragState.update((s) => ({
 			...s,
@@ -44,8 +45,8 @@ export class DragManager<TItem extends DraggableItem> {
 			draggedNewItem: newItemData,
 			draggedItemEffectiveSize: effectiveSize,
 			dragSourceType: 'new-item',
-			dragOffset: { x: event.clientX, y: event.clientY },
-			dragPosition: { x: event.clientX, y: event.clientY },
+			dragOffset: { x: clientX, y: clientY },
+			dragPosition: { x: clientX, y: clientY },
 			highlightedCell: null,
 			sourceZoneId: null,
 			targetZoneId: null,

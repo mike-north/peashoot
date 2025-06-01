@@ -3,10 +3,10 @@ import type { GardenBed } from '../../lib/entities/garden-bed'
 import type { Garden } from '../../lib/entities/garden'
 import type {
 	GridZoneContext,
-	GridDragState as BaseGridDragState,
-	GridValidationContext as BaseGridValidationContext,
-	GridAsyncValidationFunction as BaseGridAsyncValidationFunction,
-	GridPendingOperation as BaseGridPendingOperation,
+	GridDragState,
+	GridValidationContext,
+	GridAsyncValidationFunction,
+	GridPendingOperation,
 	GridPlacementRequestDetails,
 	GridRemovalRequestDetails,
 	GridCloningRequestDetails,
@@ -19,9 +19,9 @@ import type { WithVisualPresentation, GridPlacement } from '../grid/grid-placeme
 
 // Generic type aliases
 export type ExistingGardenItem<T extends WithVisualPresentation> = GridPlacement<T>
-export type GardenDragState<T extends WithVisualPresentation> = BaseGridDragState<T>
+export type GardenDragState<T extends WithVisualPresentation> = GridDragState<T>
 export type GardenPendingOperation<T extends WithVisualPresentation> =
-	BaseGridPendingOperation<T>
+	GridPendingOperation<T>
 export type PlacementRequestDetails<T> = GridPlacementRequestDetails<T>
 export type RemovalRequestDetails<T> = GridRemovalRequestDetails<T>
 export type CloningRequestDetails<T> = GridCloningRequestDetails<T>
@@ -35,12 +35,12 @@ export interface GardenZoneContext<T extends WithVisualPresentation>
 }
 
 export type GardenValidationContext<T extends WithVisualPresentation> =
-	BaseGridValidationContext<T, GardenZoneContext<T>> & {
+	GridValidationContext<T, GardenZoneContext<T>> & {
 		applicationContext?: { garden: Garden }
 	}
 
 export type GardenAsyncValidationFunction<T extends WithVisualPresentation> =
-	BaseGridAsyncValidationFunction<T, GardenZoneContext<T>>
+	GridAsyncValidationFunction<T, GardenZoneContext<T>>
 
 export function isWithVisualPresentation(item: unknown): item is WithVisualPresentation {
 	return (
@@ -57,7 +57,7 @@ export function isWithVisualPresentation(item: unknown): item is WithVisualPrese
 
 // Generic type guards
 export function isGardenPendingOperation<T extends WithVisualPresentation>(
-	operation: BaseGridPendingOperation<T>,
+	operation: GridPendingOperation<T>,
 ): operation is GardenPendingOperation<T> {
 	return isGridPendingOperation(operation, isWithVisualPresentation)
 }
@@ -66,7 +66,7 @@ export function isGardenItemRemovalOperation<T extends WithVisualPresentation>(
 	op: unknown,
 ): op is GardenPendingOperation<T> {
 	return isGridItemRemovalOperation(
-		op as BaseGridPendingOperation<T>,
+		op as GridPendingOperation<T>,
 		isWithVisualPresentation,
 	)
 }

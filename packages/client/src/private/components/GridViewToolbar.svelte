@@ -90,7 +90,7 @@ function selectCategoryItem(categoryName: string, itemName: string) {
 }
 
 // Handle starting drag from toolbar
-function handleToolbarDrag(categoryName: string, event: MouseEvent) {
+function handleToolbarDrag(categoryName: string, event: MouseEvent | TouchEvent) {
 	const categoryItem = categorySelectedItems[categoryName]
 	const plant = createItem(categoryName, categoryItem)
 	dragManager.startDraggingNewItem(plant, event)

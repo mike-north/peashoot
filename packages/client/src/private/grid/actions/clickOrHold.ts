@@ -2,8 +2,8 @@ import type { Action } from 'svelte/action'
 import { DEFAULT_HOLD_DURATION_MS } from '../../../private/dnd/constants'
 
 interface ClickOrHoldOptions {
-	onClick?: (event: MouseEvent) => void
-	onHold?: (event: MouseEvent) => void
+	onClick?: (event: MouseEvent | TouchEvent) => void
+	onHold?: (event: MouseEvent | TouchEvent) => void
 	holdDuration?: number
 }
 
@@ -61,7 +61,7 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 			if (currentOptions.onHold) {
 				// We need to synthesize a MouseEvent or adapt onHold to accept TouchEvent
 				// For now, let's assume onHold can handle it or we adapt it later
-				currentOptions.onHold(event as unknown as MouseEvent)
+				currentOptions.onHold(event)
 			}
 		}, currentOptions.holdDuration ?? DEFAULT_HOLD_DURATION_MS)
 	}
@@ -74,7 +74,7 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 
 		if (!isDragStarted && !hasMouseLeft && currentOptions.onClick) {
 			// We need to synthesize a MouseEvent or adapt onClick to accept TouchEvent
-			currentOptions.onClick(event as unknown as MouseEvent)
+			currentOptions.onClick(event)
 		}
 		isDragStarted = false
 		hasMouseLeft = false

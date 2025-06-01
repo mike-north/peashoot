@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends GridPlaceable">
 import type { Component } from 'svelte'
 import { mount } from 'svelte'
-import type { GridPlaceable } from '../../private/grid/grid-placement'
+import type { GridPlaceable } from '../../grid/grid-placement'
 
 interface Props {
 	x: number

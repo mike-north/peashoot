@@ -10,8 +10,8 @@ import {
 	findBed,
 	findPlantPlacement,
 } from '../../lib/entities/garden'
-import type { GridPlacement } from '../../private/grid/grid-placement'
-import type { ExistingGardenItem } from '../../private/state/gardenDragState'
+import type { GridPlacement } from '../grid/grid-placement'
+import type { ExistingGardenItem } from '../state/gardenDragState'
 
 export class GardenOperationsService {
 	movePlantInBed(

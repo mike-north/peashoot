@@ -1,6 +1,6 @@
 <script lang="ts">
-import TaskList from '../private-ui/components/TaskList.svelte'
-import type { TaskList as TaskListType } from '../private-lib/types/tasks'
+import TaskList from '../private/components/TaskList.svelte'
+import type { TaskList as TaskListType } from '../lib/entities/tasks'
 import Plus from '~icons/ph/plus-circle-duotone'
 import ListChecks from '~icons/ph/list-checks-bold'
 import PageTitle from '../components/PageTitle.svelte'

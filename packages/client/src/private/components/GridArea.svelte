@@ -2,7 +2,7 @@
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
 import { disablePointerEventsWhenDragging } from '../../private/grid/actions/disablePointerEventsWhenDragging'
-import { dragState } from '../state/dragState'
+import { dragState } from '../dnd/state'
 import type { GridPlaceable } from '../../private/grid/grid-placement'
 import type { GridArea } from '../../private/grid/grid-area'
 

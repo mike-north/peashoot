@@ -1,11 +1,11 @@
 <script lang="ts">
+import { derived } from 'svelte/store'
+import CloseIcon from '~icons/ph/x-bold'
 import {
 	notifications,
 	removeNotification,
 	type NotificationType,
-} from '../private-ui/state/notificationsStore'
-import { derived } from 'svelte/store'
-import CloseIcon from '~icons/ph/x-bold'
+} from '../private/state/notificationsStore'
 
 // Get notifications from store
 const notificationsList = derived(

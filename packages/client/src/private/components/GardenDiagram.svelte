@@ -23,15 +23,11 @@ import {
 	type CloningRequestDetails,
 	type GardenZoneContext,
 } from '../../private/state/gardenDragState'
-import { GardenValidationService } from '../../private-lib/services/gardenValidationService'
+import { GardenValidationService } from '../services/gardenValidationService'
 import { GardenAdapter } from '../../lib/adapters/garden-adapter'
 import { onMount } from 'svelte'
 import { plants, plantsReady } from '../../private/state/plantsStore'
-import {
-	showError,
-	showInfo,
-	removeNotificationByMessage,
-} from '../state/notificationsStore'
+
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 import type { PlantWithSize } from '../../lib/entities/garden-bed'
 import {
@@ -39,7 +35,12 @@ import {
 	removePendingOperation,
 } from '../../private/dnd/validation'
 import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../private/dnd/constants'
-import type { DraggableItem } from '../state/dragState'
+import type { DraggableItem } from '../dnd'
+import {
+	removeNotificationByMessage,
+	showError,
+	showInfo,
+} from '../state/notificationsStore'
 
 let gardenInstance: Garden | undefined = $state<Garden | undefined>(undefined)
 

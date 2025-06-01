@@ -3,11 +3,11 @@ import type { GardenBed, PlantWithSize } from '../../lib/entities/garden-bed'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
-} from '../../private/state/gardenDragState'
-import type { ValidationResult } from '../../private/grid/grid-drag-state'
-import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../private/dnd/constants'
+} from '../state/gardenDragState'
+import type { ValidationResult } from '../grid/grid-drag-state'
+import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
-import type { GridPlacement } from '../../private/grid/grid-placement'
+import type { GridPlacement } from '../grid/grid-placement'
 
 interface PlacementValidityResult {
 	isValid: boolean

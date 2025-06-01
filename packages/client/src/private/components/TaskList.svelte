@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Task, TaskList, UrgencyLevel } from '../../private-lib/types/tasks'
+import type { Task, TaskList, UrgencyLevel } from '../../lib/entities/tasks'
 import CheckCircle from '~icons/ph/check-circle-duotone'
 import Circle from '~icons/ph/circle-duotone'
 import Calendar from '~icons/ph/calendar-duotone'

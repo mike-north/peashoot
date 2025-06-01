@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import type { Component } from 'svelte'
-import type { GridPlaceable } from '../../private/grid/grid-placement'
+import type { GridPlaceable } from '../../grid/grid-placement'
 
 export interface TooltipState {
 	id: string | null

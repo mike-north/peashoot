@@ -1,7 +1,4 @@
-// Layout calculator for garden bed and tiles
-
-import { makePoint, type Line } from './types/geometry'
-import type { Keyed } from './types/ui'
+import { makePoint, type Line } from '../private/types/geometry'
 import { DEFAULT_LAYOUT_PARAMS } from '../private/grid/grid-layout-constants'
 import type { Garden } from '../lib/entities/garden'
 import type { GridPlaceable, GridPlacement } from '../private/grid/grid-placement'
@@ -41,7 +38,7 @@ export interface LayoutParams<T> {
 	tileSizeForItem: (item: T) => number
 }
 
-export type GridLine = Line & Keyed
+export type GridLine = Line & { key: string }
 
 /**
  * Handles all layout calculations for a square foot garden bed and its plant tiles.
@@ -361,8 +358,9 @@ export interface Cell {
 	y: number
 }
 
-export interface Border extends Line, Keyed {
+export interface Border extends Line {
 	color: string
+	key: string
 }
 
 // --- Placement and Edge Indicator Utilities ---

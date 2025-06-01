@@ -4,7 +4,7 @@ import { routes } from '../routes'
 
 import LayoutSidebar from '../components/LayoutSidebar.svelte'
 import NotificationToast from '../components/NotificationToast.svelte'
-import GlobalTooltipRenderer from '../private/tooltips/GlobalTooltipRenderer.svelte'
+import GlobalTooltipRenderer from '../private/tooltips/components/GlobalTooltipRenderer.svelte'
 </script>
 
 <div class="size-full">

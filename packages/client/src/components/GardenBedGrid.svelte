@@ -1,5 +1,5 @@
 <script lang="ts">
-import Grid from '../private-ui/components/Grid.svelte'
+import Grid from '../private/components/Grid.svelte'
 import type { GridPlaceable } from '../private/grid/grid-placement'
 import type { Component } from 'svelte'
 import type { GardenBed } from '../lib/entities/garden-bed'

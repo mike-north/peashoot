@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store'
-import type { Plant } from '../../private-lib/plant'
+import type { Plant } from '../../lib/plant'
 import { fetchPlants } from '../../lib/plant-data'
 
 interface PlantsState {

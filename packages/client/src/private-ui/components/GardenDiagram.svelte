@@ -1,19 +1,15 @@
 <script lang="ts">
 import GardenView from './GardenPresentation.svelte'
-import type { GardenBed } from '../../private-lib/garden-bed'
-import { updatePlantPositionInBed } from '../../private-lib/garden-bed'
+import type { GardenBed } from '../../lib/garden-bed'
+import { updatePlantPositionInBed } from '../../lib/garden-bed'
 import {
 	categoryNameForPlant,
 	isPlant,
 	tileSizeForPlant,
 	type Plant,
-} from '../../private-lib/plant'
-import type { Garden } from '../../private-lib/garden'
-import {
-	movePlantBetweenBeds,
-	findBed,
-	findPlantPlacement,
-} from '../../private-lib/garden'
+} from '../../lib/plant'
+import type { Garden } from '../../lib/garden'
+import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
 import {
 	type ExistingGardenItem,
 	type GardenValidationContext,
@@ -33,7 +29,7 @@ import {
 	removeNotificationByMessage,
 } from '../state/notificationsStore'
 import type { GridPlaceable, GridPlacement } from '../../grid/grid-placement'
-import type { PlantWithSize } from '../../private-lib/garden-bed'
+import type { PlantWithSize } from '../../lib/garden-bed'
 import { updatePendingOperation, removePendingOperation } from '../../dnd/validation'
 import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../dnd/constants'
 import type { DraggableItem } from '../state/dragState'
@@ -144,9 +140,7 @@ function handleAddNewPlant(bedId: string, item: Plant, x: number, y: number) {
 		}
 
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
-			b.id === bedId
-				? { ...b, plantPlacements: [...b.plantPlacements, newPlacement] }
-				: b,
+			b.id === bedId ? { ...b, placements: [...b.placements, newPlacement] } : b,
 		)
 
 		console.log(`[Garden] Added new ${item.displayName} to bed ${bedId} at (${x}, ${y})`)
@@ -161,7 +155,7 @@ function handleDeletePlant(plantId: string, bedId: string) {
 	if (bed) {
 		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
 			b.id === bedId
-				? { ...b, plantPlacements: b.plantPlacements.filter((p) => p.id !== plantId) }
+				? { ...b, placements: b.placements.filter((p) => p.id !== plantId) }
 				: b,
 		)
 
@@ -177,7 +171,7 @@ function buildGardenZoneContext(
 	if (!bed) return undefined
 	return {
 		...bed,
-		placements: bed.plantPlacements.map((placement) => {
+		placements: bed.placements.map((placement) => {
 			// placement is already GridPlacement<PlantWithSize>
 			return placement
 		}),

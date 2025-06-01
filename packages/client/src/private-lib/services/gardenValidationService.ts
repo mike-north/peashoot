@@ -1,5 +1,5 @@
-import type { Plant } from '../plant'
-import type { GardenBed, PlantWithSize } from '../garden-bed'
+import type { Plant } from '../../lib/plant'
+import type { GardenBed, PlantWithSize } from '../../lib/garden-bed'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
@@ -35,7 +35,7 @@ export class GardenValidationService {
 		}
 
 		// Check collisions with existing plants
-		for (const existingPlant of targetBed.plantPlacements) {
+		for (const existingPlant of targetBed.placements) {
 			if (excludeItemId && existingPlant.id === excludeItemId) {
 				continue
 			}
@@ -150,7 +150,7 @@ export class GardenValidationService {
 								}
 
 								// Calculate current occupancy correctly
-								const currentOccupiedCells = addTargetBed.plantPlacements.reduce(
+								const currentOccupiedCells = addTargetBed.placements.reduce(
 									(total: number, placement: GridPlacement<PlantWithSize>) => {
 										const existingPlant = this.plants.find(
 											(p) => p.id === placement.item.id,
@@ -234,7 +234,7 @@ export class GardenValidationService {
 								}
 
 								// Calculate current occupancy AND include the plant being cloned
-								const currentOccupiedCells = cloneTargetBed.plantPlacements.reduce(
+								const currentOccupiedCells = cloneTargetBed.placements.reduce(
 									(total: number, placement: GridPlacement<PlantWithSize>) => {
 										const existingPlant = this.plants.find(
 											(p) => p.id === placement.item.id,

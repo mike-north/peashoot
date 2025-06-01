@@ -1,5 +1,5 @@
 import { timeout } from '../utils/promise'
-import type { Plant } from '../private-lib/plant'
+import type { Plant } from './plant'
 import { plants } from './fixture-data'
 
 export async function fetchPlants(): Promise<Plant[]> {

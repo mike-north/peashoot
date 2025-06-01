@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { GridPlaceable } from '../grid/grid-placement'
-import { isPlant } from '../private-lib/plant'
+import IdLabel from './components/IdLabel.svelte'
+import { isPlant } from './plant'
 
 interface Props {
 	item: GridPlaceable
@@ -28,6 +29,8 @@ let { item }: Props = $props()
 		{/if}
 		<div>
 			<h3 class="text-lg font-semibold text-gray-800">{item.displayName}</h3>
+			<IdLabel id={item.id} />
+
 			<p class="text-sm text-gray-600">
 				Size: {item.presentation.size}×{item.presentation.size} grid spaces
 			</p>

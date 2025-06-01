@@ -9,16 +9,16 @@ import {
 } from '../grid-drag-state'
 import { isGridPlaceable } from '../grid-placement'
 import type { GardenDragState } from '../../private-ui/state/gardenDragState'
-import type { GardenBed } from '../../private-lib/garden-bed'
 import { GardenBedLayoutCalculator } from '../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
+import type { GridArea } from '../grid-area'
 
 interface Props {
-	beds: GardenBed[]
+	grids: GridArea<GridPlaceable>[]
 	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const { beds, tileSizeForItem }: Props = $props()
+const { grids, tileSizeForItem }: Props = $props()
 
 let currentDragState = $derived($genericDragState as GardenDragState<GridPlaceable>)
 
@@ -67,7 +67,7 @@ let previewPosition = $derived.by(() => {
 		}
 	}
 
-	const targetBed = beds.find((b) => b.id === currentDragState.targetZoneId)
+	const targetBed = grids.find((b) => b.id === currentDragState.targetZoneId)
 	if (!targetBed || !currentDragState.highlightedCell) {
 		return {
 			x: currentDragState.dragPosition.x - actualPreviewSizePx / 2,

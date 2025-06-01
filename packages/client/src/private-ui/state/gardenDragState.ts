@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
-import type { GardenBed } from '../../private-lib/garden-bed'
-import type { Garden } from '../../private-lib/garden'
+import type { GardenBed } from '../../lib/garden-bed'
+import type { Garden } from '../../lib/garden'
 import type {
 	GridZoneContext,
 	GridDragState as BaseGridDragState,
@@ -28,7 +28,7 @@ export type CloningRequestDetails<T> = GridCloningRequestDetails<T>
 
 export interface GardenZoneContext<T extends WithVisualPresentation>
 	extends GridZoneContext<T>,
-		Omit<GardenBed, 'plantPlacements' | 'id' | 'width' | 'height'> {
+		Omit<GardenBed, 'placements' | 'id' | 'width' | 'height'> {
 	id: string // ID of the GardenBed
 	waterLevel: number
 	sunLevel: number

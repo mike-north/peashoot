@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi } from 'vitest'
-import { movePlantBetweenBeds, type Garden } from '../src/private-lib/garden.js'
-import type { GardenBed } from '../src/private-lib/garden-bed.js'
+import { movePlantBetweenBeds, type Garden } from '../src/lib/garden.js'
+import type { GardenBed } from '../src/lib/garden-bed.js'
 import type { GridPlacement } from '../src/grid/grid-placement.js'
-import type { Plant } from '../src/private-lib/plant.js'
+import type { Plant } from '../src/lib/plant.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',
@@ -36,7 +36,7 @@ const sourceBed: GardenBed = {
 	height: 4,
 	waterLevel: 5,
 	sunLevel: 7,
-	plantPlacements: [plantPlacement],
+	placements: [plantPlacement],
 }
 
 const targetBed: GardenBed = {
@@ -45,7 +45,7 @@ const targetBed: GardenBed = {
 	height: 4,
 	waterLevel: 5,
 	sunLevel: 7,
-	plantPlacements: [],
+	placements: [],
 }
 
 const garden: Garden = {
@@ -74,11 +74,11 @@ describe('movePlantBetweenBeds', () => {
 			(b: GardenBed) => b.id === 'bed2',
 		) satisfies GardenBed[]
 
-		expect(updatedSource.plantPlacements.length).toBe(0)
-		expect(updatedTarget.plantPlacements.length).toBe(1)
-		expect(updatedTarget.plantPlacements[0].x).toBe(3)
-		expect(updatedTarget.plantPlacements[0].y).toBe(4)
-		expect(updatedTarget.plantPlacements[0].id).toBe('placement1')
+		expect(updatedSource.placements.length).toBe(0)
+		expect(updatedTarget.placements.length).toBe(1)
+		expect(updatedTarget.placements[0].x).toBe(3)
+		expect(updatedTarget.placements[0].y).toBe(4)
+		expect(updatedTarget.placements[0].id).toBe('placement1')
 	})
 
 	it('returns the original garden if source or target bed is missing', () => {
@@ -108,7 +108,7 @@ describe('movePlantBetweenBeds', () => {
 			4,
 		)
 		expect(updated).not.toBe(garden)
-		expect(garden.beds[0].plantPlacements.length).toBe(1)
-		expect(garden.beds[1].plantPlacements.length).toBe(0)
+		expect(garden.beds[0].placements.length).toBe(1)
+		expect(garden.beds[1].placements.length).toBe(0)
 	})
 })

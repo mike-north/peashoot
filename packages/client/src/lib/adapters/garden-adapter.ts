@@ -1,4 +1,4 @@
-import type { Garden } from '../../private-lib/garden'
+import type { Garden } from '../garden'
 import { timeout } from '../../utils/promise'
 import { gardens } from '../fixture-data'
 import { GardenAdapterBase } from './garden-adapter-base'

@@ -5,14 +5,14 @@ import {
 	getSharedBorders,
 	calculateEdgeBorders,
 } from '../src/private-lib/garden-bed-layout-calculator.js'
-import type { PlantWithSize } from '../src/private-lib/garden-bed.js'
-import type { Plant } from '../src/private-lib/plant.js'
+import type { PlantWithSize } from '../src/lib/garden-bed.js'
+import type { Plant } from '../src/lib/plant.js'
 import type { GridPlacement } from '../src/grid/grid-placement.js'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new GardenBedLayoutCalculator(layoutParams)
 
-const mockPlant = {
+const mockPlant: Plant = {
 	id: 'plant_1',
 	displayName: 'Tomato',
 	family: 'Tomato',
@@ -27,7 +27,7 @@ const mockPlant = {
 		},
 		iconPath: 'tomato.png',
 	},
-} satisfies Plant
+}
 
 const plantPlacement: GridPlacement<PlantWithSize> = {
 	item: mockPlant,

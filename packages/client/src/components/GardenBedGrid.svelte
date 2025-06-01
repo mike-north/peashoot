@@ -1,11 +1,11 @@
 <script lang="ts">
-import Grid from './Grid.svelte'
-import type { GridPlaceable } from '../../private/grid/grid-placement'
+import Grid from '../private-ui/components/Grid.svelte'
+import type { GridPlaceable } from '../private/grid/grid-placement'
 import type { Component } from 'svelte'
-import type { GardenBed } from '../../lib/garden-bed'
-import type { Plant } from '../../lib/plant'
+import type { GardenBed } from '../lib/garden-bed'
+import type { Plant } from '../lib/plant'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
-import IdLabel from '../../lib/components/IdLabel.svelte'
+import IdLabel from '../lib/components/IdLabel.svelte'
 
 interface GardenBedGridProps {
 	bed: GardenBed

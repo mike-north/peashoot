@@ -22,7 +22,7 @@ import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
 import type { PlantWithSize } from '../../lib/garden-bed'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../state/dragState'
-import GardenBedGrid from './GardenBedGrid.svelte'
+import GardenBedGrid from '../../components/GardenBedGrid.svelte'
 
 interface GardenProps {
 	garden: Garden

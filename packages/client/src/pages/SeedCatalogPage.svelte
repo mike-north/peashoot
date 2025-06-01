@@ -1,5 +1,5 @@
 <script lang="ts">
-import SeedPacket from '../private-ui/components/SeedPacket.svelte'
+import SeedPacket from '../components/SeedPacket.svelte'
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 

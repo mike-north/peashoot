@@ -1,22 +1,13 @@
-import {
-	Entity,
-	PrimaryGeneratedColumn,
-	Column,
-	CreateDateColumn,
-	UpdateDateColumn,
-	OneToMany,
-} from 'typeorm'
+import { Entity, Column, OneToMany } from 'typeorm'
 import { Plant } from './plant'
+import { PeashootEntity } from './peashoot-entity'
 
 export type SeedPacketId = string & { readonly __seedPacket: unique symbol }
 
 @Entity({ name: 'seed-packets' })
-export class SeedPacket {
-	@PrimaryGeneratedColumn('uuid')
-	private _id!: string
-
-	get id(): SeedPacketId {
-		return this._id as SeedPacketId
+export class SeedPacket extends PeashootEntity<'spkt'> {
+	get id() {
+		return `spkt_${this._id}` as const
 	}
 
 	@OneToMany(() => Plant, (plant) => plant.seedPacket)
@@ -30,10 +21,4 @@ export class SeedPacket {
 
 	@Column()
 	expiresAt!: Date
-
-	@CreateDateColumn()
-	createdAt!: Date
-
-	@UpdateDateColumn()
-	updatedAt!: Date
 }

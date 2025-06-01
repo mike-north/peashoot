@@ -140,3 +140,4 @@ peashoot.sqlite
 .github/instructions/nx.instructions.md
 
 examples/
+.DS_Store

@@ -6,8 +6,9 @@
 		"test": "vitest run --coverage && tsd",
 		"test:watch": "vitest watch",
 		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-		"build": "tsc -P tsconfig.build.json",
-		"lint": "eslint ."
+		"build": "tsc -P tsconfig.build.json && npm run generate-seed-file-schema",
+		"lint": "eslint .",
+		"generate-seed-file-schema": "npx typescript-json-schema --required data/raw-seed-info.ts RawSeedPacketInfoCollection -o data/seed-packet.schema.json"
 	},
 	"keywords": [],
 	"author": "",
@@ -15,9 +16,10 @@
 	"description": "",
 	"devDependencies": {
 		"@types/chalk": "^0.4.31",
-		"@types/express": "^5.0.2",
+		"@types/express": "^4.17.0",
 		"@types/node": "^22.15.18",
 		"@types/winston": "^2.4.4",
+		"@types/yaml": "^1.9.6",
 		"@vitest/browser": "^3.1.4",
 		"@vitest/coverage-v8": "^3.1.4",
 		"@vitest/ui": "^3.1.4",
@@ -31,10 +33,12 @@
 	"dependencies": {
 		"chalk": "^5.4.1",
 		"csps": "^2.0.2",
-		"express": "^5.1.0",
+		"express": "^4.17.1",
 		"rimraf": "^6.0.1",
 		"sqlite3": "^5.1.7",
 		"typeorm": "^0.3.24",
-		"winston": "^3.17.0"
+		"winston": "^3.17.0",
+		"yaml": "^2.8.0",
+		"zod": "^3.25.46"
 	}
 }

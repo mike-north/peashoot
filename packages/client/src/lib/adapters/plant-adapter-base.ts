@@ -1,5 +1,5 @@
 import { timeout } from '../../utils/promise'
-import type { Plant } from '../plant'
+import type { Plant } from '../entities/plant'
 import { plants } from '../fixture-data'
 
 export abstract class PlantAdapterBase {

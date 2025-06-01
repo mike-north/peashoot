@@ -2,8 +2,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { movePlantBetweenBeds, type Garden } from '../src/lib/garden.js'
 import type { GardenBed } from '../src/lib/garden-bed.js'
-import type { GridPlacement } from '../src/grid/grid-placement.js'
-import type { Plant } from '../src/lib/plant.js'
+import type { GridPlacement } from '../src/private/grid/grid-placement.js'
+import type { Plant } from '../src/lib/entities/plant.js'
 
 const mockPlant: Plant = {
 	id: 'plant1',

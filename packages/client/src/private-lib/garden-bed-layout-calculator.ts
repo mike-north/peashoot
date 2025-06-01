@@ -3,7 +3,7 @@
 import { makePoint, type Line } from './types/geometry'
 import type { Keyed } from './types/ui'
 import { DEFAULT_LAYOUT_PARAMS } from '../private/grid/grid-layout-constants'
-import type { Garden } from '../lib/garden'
+import type { Garden } from '../lib/entities/garden'
 import type { GridPlaceable, GridPlacement } from '../private/grid/grid-placement'
 
 /**

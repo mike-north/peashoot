@@ -7,7 +7,7 @@ import {
 	isPlant,
 	tileSizeForPlant,
 	type Plant,
-} from '../../lib/plant'
+} from '../../lib/entities/plant'
 import type { Garden } from '../../lib/garden'
 import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
 import {

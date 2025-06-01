@@ -1,5 +1,5 @@
-import type { GridPlaceable } from '../private/grid/grid-placement'
-import type { GridItemPresentation } from '../private/grid/grid-placement'
+import type { GridPlaceable } from '../../private/grid/grid-placement'
+import type { GridItemPresentation } from '../../private/grid/grid-placement'
 
 export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { GridPlaceable } from '../private/grid/grid-placement'
 import IdLabel from './components/IdLabel.svelte'
-import { isPlant } from './plant'
+import { isPlant } from './entities/plant'
 
 interface Props {
 	item: GridPlaceable

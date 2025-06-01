@@ -4,7 +4,7 @@ import {
 	updatePlantPositionInBed,
 	type GardenBed,
 } from '../src/lib/garden-bed.js'
-import type { Plant } from '../src/lib/plant.js'
+import type { Plant } from '../src/lib/entities/plant.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
 
 const mockPlant: Plant = {

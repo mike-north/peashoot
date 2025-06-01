@@ -1,4 +1,4 @@
-import type { Garden } from '../garden'
+import type { Garden } from '../entities/garden'
 import { timeout } from '../../utils/promise'
 import { gardens } from '../fixture-data'
 

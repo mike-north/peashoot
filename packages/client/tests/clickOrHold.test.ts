@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { clickOrHold } from '../src/grid/actions/clickOrHold.js'
-import { DEFAULT_HOLD_DURATION_MS } from '../src/dnd/constants.js'
+import { clickOrHold } from '../src/private/grid/actions/clickOrHold.js'
+import { DEFAULT_HOLD_DURATION_MS } from '../src/private/dnd/constants.js'
 import type { ActionReturn } from 'svelte/action'
 
 interface ClickOrHoldOptions {

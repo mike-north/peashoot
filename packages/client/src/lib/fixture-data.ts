@@ -1,5 +1,5 @@
-import type { Garden } from './garden'
-import type { Plant } from './plant'
+import type { Garden } from './entities/garden'
+import type { Plant } from './entities/plant'
 
 export const gardens: Garden[] = [
 	{

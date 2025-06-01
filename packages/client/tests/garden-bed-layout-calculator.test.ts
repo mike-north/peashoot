@@ -4,10 +4,10 @@ import {
 	getPlantCells,
 	getSharedBorders,
 	calculateEdgeBorders,
-} from '../src/private-lib/garden-bed-layout-calculator.js'
-import type { PlantWithSize } from '../src/lib/garden-bed.js'
-import type { Plant } from '../src/lib/plant.js'
-import type { GridPlacement } from '../src/grid/grid-placement.js'
+} from '../src/private/garden-bed-layout-calculator.js'
+import type { PlantWithSize } from '../src/lib/entities/garden-bed.js'
+import type { Plant } from '../src/lib/entities/plant.js'
+import type { GridPlacement } from '../src/private/grid/grid-placement.js'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new GardenBedLayoutCalculator(layoutParams)

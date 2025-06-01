@@ -2,7 +2,7 @@
 import TaskList from '../components/TaskList.svelte'
 import type { TaskList as TaskListType } from '../lib/entities/tasks'
 import Plus from '~icons/ph/plus-circle-duotone'
-import ListChecks from '~icons/ph/list-checks-bold'
+import ListChecks from '~icons/ph/checks-bold'
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 
@@ -11,11 +11,11 @@ const { route }: { route: RouteResult } = $props()
 // Sample data for demonstration
 const sampleTaskLists: TaskListType[] = [
 	{
-		id: 'list-1',
+		id: 'tasklist_1',
 		title: 'Personal Errands',
 		tasks: [
 			{
-				id: 'task-1-1',
+				id: 'task_1-1',
 				title: 'Buy groceries',
 				description: 'Milk, Bread, Eggs, Cheese',
 				dueDate: new Date(new Date().setDate(new Date().getDate() + 2)), // Due in 2 days
@@ -23,13 +23,13 @@ const sampleTaskLists: TaskListType[] = [
 				completed: false,
 			},
 			{
-				id: 'task-1-2',
+				id: 'task_1-2',
 				title: 'Book doctor appointment',
 				urgency: 'high',
 				completed: false,
 			},
 			{
-				id: 'task-1-3',
+				id: 'task_1-3',
 				title: 'Pay electricity bill',
 				description: 'Around $50',
 				dueDate: new Date(new Date().setDate(new Date().getDate() + 5)), // Due in 5 days
@@ -39,11 +39,11 @@ const sampleTaskLists: TaskListType[] = [
 		],
 	},
 	{
-		id: 'list-2',
+		id: 'tasklist_2',
 		title: 'Work Projects - Q3',
 		tasks: [
 			{
-				id: 'task-2-1',
+				id: 'task_2-1',
 				title: 'Finalize budget report',
 				description: 'Get numbers from finance team',
 				dueDate: new Date(new Date().setDate(new Date().getDate() + 7)), // Due in 1 week
@@ -51,13 +51,13 @@ const sampleTaskLists: TaskListType[] = [
 				completed: false,
 			},
 			{
-				id: 'task-2-2',
+				id: 'task_2-2',
 				title: 'Client presentation draft',
 				urgency: 'high',
 				completed: false,
 			},
 			{
-				id: 'task-2-3',
+				id: 'task_2-3',
 				title: 'Team meeting agenda',
 				description: 'Discuss Q4 roadmap',
 				dueDate: new Date(new Date().setDate(new Date().getDate() + 1)), // Due tomorrow
@@ -67,7 +67,7 @@ const sampleTaskLists: TaskListType[] = [
 		],
 	},
 	{
-		id: 'list-3',
+		id: 'tasklist_3',
 		title: 'Learning TypeScript',
 		tasks: [], // An empty list
 	},

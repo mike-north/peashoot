@@ -1,10 +1,11 @@
 import type { GridPlaceable } from '../../private/grid/grid-placement'
 import type { GridItemPresentation } from '../../private/grid/grid-placement'
+import type { BaseEntity } from './base-entity'
 
 export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
 
-export interface Plant extends GridPlaceable {
-	readonly id: string
+export interface Plant extends BaseEntity<'plant'>, GridPlaceable {
+	readonly id: `plant_${string}`
 	readonly displayName: string
 	readonly family: string
 	readonly variant: string

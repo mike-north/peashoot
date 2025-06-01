@@ -40,11 +40,10 @@ export function removePendingOperation(id: string) {
 export const defaultAsyncValidation: AsyncValidationFunction<
 	DraggableItem,
 	DropZoneContext
-> = async (context: ValidationContext<DraggableItem, DropZoneContext>) => {
+> = async (_context: ValidationContext<DraggableItem, DropZoneContext>) => {
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			// For now, always resolve to allow operations
-			console.log('Async validation called with context:', context)
 			resolve()
 		}, ASYNC_VALIDATION_TIMEOUT_MS) // Use the constant here
 	})

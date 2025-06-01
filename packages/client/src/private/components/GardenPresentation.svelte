@@ -1,12 +1,11 @@
 <script lang="ts">
 import { dragState } from '../../private/dnd/state'
-import GridViewToolbar from './GridViewToolbar.svelte'
+import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
 import type { Garden } from '../../lib/entities/garden'
 import { calculateGardenBedViewColSpans } from '../garden-bed-layout-calculator'
 import type {
-	ExistingGardenItem,
 	PlacementRequestDetails,
 	RemovalRequestDetails,
 	CloningRequestDetails,
@@ -24,7 +23,6 @@ import {
 	plantsReady,
 } from '../../private/state/plantsStore'
 import PlantTooltipContent from '../../lib/PlantTooltipContent.svelte'
-import type { PlantWithSize } from '../../lib/entities/garden-bed'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../dnd/types'
 import GardenBedGrid from '../../components/GardenBedGrid.svelte'
@@ -161,8 +159,8 @@ async function handleDrop(dropInfo: {
 							itemDataToClone: existingItem.item,
 							sourceOriginalZoneId: sourceBedId,
 							targetCloneZoneId: dropInfo.targetZoneId,
-							sourceOriginalX: (existingItem as ExistingGardenItem<PlantWithSize>).x,
-							sourceOriginalY: (existingItem as ExistingGardenItem<PlantWithSize>).y,
+							sourceOriginalX: existingItem.x,
+							sourceOriginalY: existingItem.y,
 							targetCloneX: x,
 							targetCloneY: y,
 							operationType: 'item-clone-in-zone',

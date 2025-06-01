@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Task, TaskList, UrgencyLevel } from '../../lib/entities/tasks'
+import type { Task, TaskList, UrgencyLevel } from '../lib/entities/tasks'
 import CheckCircle from '~icons/ph/check-circle-duotone'
 import Circle from '~icons/ph/circle-duotone'
 import Calendar from '~icons/ph/calendar-duotone'
@@ -35,11 +35,6 @@ function toggleTaskCompletion(taskId: string) {
 	}
 }
 </script>
-
-<style>
-/* You can add component-specific styles here if needed, */
-/* but try to use Tailwind utility classes as much as possible. */
-</style>
 
 <div class="card bg-base-100 shadow-xl mb-6">
 	<div class="card-body">

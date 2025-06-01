@@ -1,12 +1,12 @@
 <script lang="ts" generics="TItem extends WithVisualPresentation">
-import type { GridItemPresentation } from '../../private/grid/grid-placement'
-import { dragManager } from '../../private/dnd/drag-manager'
-import { dragState } from '../../private/dnd/state'
-import GridPlacementTile from '../../private/grid/ui/GridPlacementTile.svelte'
-import type { GridPlacement } from '../../private/grid/grid-placement'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
-import { clickOrHold } from '../../private/grid/actions/clickOrHold'
-import type { WithVisualPresentation } from '../../private/grid/grid-placement'
+import type { GridItemPresentation } from '../grid-placement'
+import { dragManager } from '../../dnd/drag-manager'
+import { dragState } from '../../dnd/state'
+import GridPlacementTile from '../ui/GridPlacementTile.svelte'
+import type { GridPlacement } from '../grid-placement'
+import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
+import { clickOrHold } from '../actions/clickOrHold'
+import type { WithVisualPresentation } from '../grid-placement'
 import type { Component } from 'svelte'
 
 interface GridToolbarProps {
@@ -90,7 +90,7 @@ function selectCategoryItem(categoryName: string, itemName: string) {
 }
 
 // Handle starting drag from toolbar
-function handleToolbarDrag(categoryName: string, event: MouseEvent) {
+function handleToolbarDrag(categoryName: string, event: MouseEvent | TouchEvent) {
 	const categoryItem = categorySelectedItems[categoryName]
 	const plant = createItem(categoryName, categoryItem)
 	dragManager.startDraggingNewItem(plant, event)

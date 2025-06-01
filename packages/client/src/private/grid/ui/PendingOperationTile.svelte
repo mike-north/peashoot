@@ -1,7 +1,6 @@
 <script lang="ts" generics="T extends WithVisualPresentation">
 import GridPlacementTile from './GridPlacementTile.svelte'
 import type { GridPlacement, WithVisualPresentation } from '../grid-placement'
-import type { GardenPendingOperation } from '../../state/gardenDragState'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
@@ -9,9 +8,10 @@ import {
 import CheckIcon from '~icons/ph/check-bold'
 import XIcon from '~icons/ph/x-bold'
 import TrashIcon from '~icons/ph/trash-duotone'
+import type { GridPendingOperation } from '../grid-drag-state'
 
 interface Props<T extends WithVisualPresentation> {
-	operation: GardenPendingOperation<T>
+	operation: GridPendingOperation<T>
 	sizePx: number
 }
 

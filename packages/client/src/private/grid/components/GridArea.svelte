@@ -1,10 +1,10 @@
 <script lang="ts">
-import { GardenBedLayoutCalculator } from '../garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
-import { disablePointerEventsWhenDragging } from '../../private/grid/actions/disablePointerEventsWhenDragging'
-import { dragState } from '../dnd/state'
-import type { GridPlaceable } from '../../private/grid/grid-placement'
-import type { GridArea } from '../../private/grid/grid-area'
+import { GardenBedLayoutCalculator } from '../../garden-bed-layout-calculator'
+import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
+import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
+import { dragState } from '../../dnd/state'
+import type { GridPlaceable } from '../grid-placement'
+import type { GridArea } from '../grid-area'
 
 interface Props {
 	grid: GridArea<GridPlaceable>

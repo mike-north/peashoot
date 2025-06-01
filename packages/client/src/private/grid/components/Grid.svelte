@@ -1,33 +1,33 @@
 <script lang="ts">
-import GridPlacementTile from '../../private/grid/ui/GridPlacementTile.svelte'
-import PendingOperationTile from '../../private/grid/ui/PendingOperationTile.svelte'
+import GridPlacementTile from '../ui/GridPlacementTile.svelte'
+import PendingOperationTile from '../ui/PendingOperationTile.svelte'
 import {
 	GardenBedLayoutCalculator,
 	calculateEdgeBorders,
 	type Border,
-} from '../garden-bed-layout-calculator'
-import { DEFAULT_LAYOUT_PARAMS } from '../../private/grid/grid-layout-constants'
+} from '../../garden-bed-layout-calculator'
+import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 
-import GenericDropZone from '../../private/dnd/components/GenericDropZone.svelte'
-import GenericDraggable from '../../private/dnd/components/GenericDraggable.svelte'
+import GenericDropZone from '../../dnd/components/GenericDropZone.svelte'
+import GenericDraggable from '../../dnd/components/GenericDraggable.svelte'
 import {
 	pendingOperations as genericPendingOperations,
 	isDragStatePopulated,
 	dragState as genericDragState,
 	isDraggingNewItem,
 	isDraggingExistingItem,
-} from '../../private/dnd/state'
-import type { DraggableItem } from '../../private/dnd/types'
-import type { GardenPendingOperation } from '../../private/state/gardenDragState'
-import { disablePointerEventsWhenDragging } from '../../private/grid/actions/disablePointerEventsWhenDragging'
+} from '../../dnd/state'
+import type { DraggableItem, PendingOperation } from '../../dnd/types'
+import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
 import type { Component } from 'svelte'
 
-import type { GridPlaceable } from '../../private/grid/grid-placement'
-import { isGridPlaceable } from '../../private/grid/grid-placement'
-import type { GridArea } from '../../private/grid/grid-area'
+import type { GridPlaceable } from '../grid-placement'
+import { isGridPlaceable } from '../grid-placement'
+import type { GridArea } from '../grid-area'
+import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-state'
 
 // Define a type for the operation that should cause pulsing
-type PulsingSourceOperation = GardenPendingOperation<GridPlaceable> & {
+type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
 	type: 'placement' | 'removal'
 	originalSourceZoneId: string
 	originalInstanceId: string
@@ -35,7 +35,7 @@ type PulsingSourceOperation = GardenPendingOperation<GridPlaceable> & {
 
 // Type guard function
 function isPulsingSourceOperation(
-	op: GardenPendingOperation<GridPlaceable>,
+	op: PendingOperation<DraggableItem>,
 	currentBedId: string,
 ): op is PulsingSourceOperation {
 	return (
@@ -73,7 +73,7 @@ const gridPlacements = $derived(grid.placements)
 
 // Identify plant placements in this bed that are the source of a pending move or clone
 let pendingSourcePlantIds = $derived(
-	($genericPendingOperations as GardenPendingOperation<GridPlaceable>[])
+	$genericPendingOperations
 		.filter((op): op is PulsingSourceOperation => isPulsingSourceOperation(op, grid.id))
 		.map((op) => op.originalInstanceId),
 )
@@ -525,8 +525,8 @@ const draggedGridItemEffectiveSize = $derived(
 					{/each}
 
 					<!-- Pending Operations -->
-					{#each $genericPendingOperations.filter((op) => op.zoneId === grid.id) as operation (operation.id)}
-						{@const itemOpSize = (operation.item as GridPlaceable).presentation.size}
+					{#each $genericPendingOperations.filter( (op) => isGridPendingOperation(op, isGridPlaceable), ) as operation (operation.id)}
+						{@const itemOpSize = operation.item.presentation.size}
 						{@const tileLayout = layout.getTileLayoutInfo({
 							x: operation.x || 0,
 							y: operation.y || 0,
@@ -552,10 +552,7 @@ const draggedGridItemEffectiveSize = $derived(
 							class="tile-overlay__tile tile-overlay__tile--pending"
 							style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
 						>
-							<PendingOperationTile
-								operation={operation as GardenPendingOperation<GridPlaceable>}
-								sizePx={tileLayout.width}
-							/>
+							<PendingOperationTile operation={operation} sizePx={tileLayout.width} />
 						</div>
 					{/each}
 				</div>

@@ -1,4 +1,4 @@
-import type { GardenBed, PlantWithSize } from '../garden-bed'
+import type { GardenBed, PlantWithSize } from './garden-bed'
 import {
 	isGridPlacement,
 	type GridPlaceable,

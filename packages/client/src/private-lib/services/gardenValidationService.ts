@@ -3,7 +3,7 @@ import type { GardenBed, PlantWithSize } from '../../lib/entities/garden-bed'
 import type {
 	GardenAsyncValidationFunction,
 	GardenValidationContext,
-} from '../../private-ui/state/gardenDragState'
+} from '../../private/state/gardenDragState'
 import type { ValidationResult } from '../../private/grid/grid-drag-state'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../../private/dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'

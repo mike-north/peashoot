@@ -8,7 +8,7 @@ import {
 	isGridDraggingNewItem,
 } from '../grid-drag-state'
 import { isGridPlaceable } from '../grid-placement'
-import type { GardenDragState } from '../../../private-ui/state/gardenDragState'
+import type { GardenDragState } from '../../../private/state/gardenDragState'
 import { GardenBedLayoutCalculator } from '../../../private-lib/garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { GridArea } from '../grid-area'

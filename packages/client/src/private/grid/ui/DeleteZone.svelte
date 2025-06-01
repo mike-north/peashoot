@@ -1,7 +1,7 @@
 <script lang="ts">
 import { dragState, isDraggingExistingItem, pendingOperations } from '../../dnd/state'
 import PendingOperationTile from './PendingOperationTile.svelte'
-import { isGardenItemRemovalOperation } from '../../../private-ui/state/gardenDragState'
+import { isGardenItemRemovalOperation } from '../../state/gardenDragState'
 import { deleteZoneDragEvents } from '../actions/deleteZoneDragEvents'
 import TrashIcon from '~icons/ph/trash-duotone'
 

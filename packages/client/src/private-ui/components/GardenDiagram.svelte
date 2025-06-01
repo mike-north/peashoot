@@ -1,15 +1,19 @@
 <script lang="ts">
 import GardenView from './GardenPresentation.svelte'
-import type { GardenBed } from '../../lib/garden-bed'
-import { updatePlantPositionInBed } from '../../lib/garden-bed'
+import type { GardenBed } from '../../lib/entities/garden-bed'
+import { updatePlantPositionInBed } from '../../lib/entities/garden-bed'
 import {
 	categoryNameForPlant,
 	isPlant,
 	tileSizeForPlant,
 	type Plant,
 } from '../../lib/entities/plant'
-import type { Garden } from '../../lib/garden'
-import { movePlantBetweenBeds, findBed, findPlantPlacement } from '../../lib/garden'
+import type { Garden } from '../../lib/entities/garden'
+import {
+	movePlantBetweenBeds,
+	findBed,
+	findPlantPlacement,
+} from '../../lib/entities/garden'
 import {
 	type ExistingGardenItem,
 	type GardenValidationContext,
@@ -18,18 +22,18 @@ import {
 	type RemovalRequestDetails,
 	type CloningRequestDetails,
 	type GardenZoneContext,
-} from '../state/gardenDragState'
+} from '../../private/state/gardenDragState'
 import { GardenValidationService } from '../../private-lib/services/gardenValidationService'
 import { GardenAdapter } from '../../lib/adapters/garden-adapter'
 import { onMount } from 'svelte'
-import { plants, plantsReady } from '../state/plantsStore'
+import { plants, plantsReady } from '../../private/state/plantsStore'
 import {
 	showError,
 	showInfo,
 	removeNotificationByMessage,
 } from '../state/notificationsStore'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
-import type { PlantWithSize } from '../../lib/garden-bed'
+import type { PlantWithSize } from '../../lib/entities/garden-bed'
 import {
 	updatePendingOperation,
 	removePendingOperation,

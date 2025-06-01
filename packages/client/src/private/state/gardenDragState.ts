@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
-import type { GardenBed } from '../../../lib/entities/garden-bed'
-import type { Garden } from '../../../lib/entities/garden'
+import type { GardenBed } from '../../lib/entities/garden-bed'
+import type { Garden } from '../../lib/entities/garden'
 import type {
 	GridZoneContext,
 	GridDragState as BaseGridDragState,
@@ -10,12 +10,12 @@ import type {
 	GridPlacementRequestDetails,
 	GridRemovalRequestDetails,
 	GridCloningRequestDetails,
-} from '../../grid/grid-drag-state'
+} from '../grid/grid-drag-state'
 import {
 	isGridPendingOperation,
 	isGridItemRemovalOperation,
-} from '../../grid/grid-drag-state'
-import type { WithVisualPresentation, GridPlacement } from '../../grid/grid-placement'
+} from '../grid/grid-drag-state'
+import type { WithVisualPresentation, GridPlacement } from '../grid/grid-placement'
 
 // Generic type aliases
 export type ExistingGardenItem<T extends WithVisualPresentation> = GridPlacement<T>

@@ -1,14 +1,17 @@
 import type { Garden } from '../../lib/entities/garden'
-import type { GardenBed, PlantWithSize } from '../../lib/entities/garden-bed'
+import {
+	updatePlantPositionInBed,
+	type GardenBed,
+	type PlantWithSize,
+} from '../../lib/entities/garden-bed'
 import type { Plant } from '../../lib/entities/plant'
-import type { ExistingGardenItem } from '../../private-ui/state/gardenDragState'
 import {
 	movePlantBetweenBeds,
 	findBed,
 	findPlantPlacement,
 } from '../../lib/entities/garden'
-import { updatePlantPositionInBed } from '../../lib/entities/garden-bed'
 import type { GridPlacement } from '../../private/grid/grid-placement'
+import type { ExistingGardenItem } from '../../private/state/gardenDragState'
 
 export class GardenOperationsService {
 	movePlantInBed(

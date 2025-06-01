@@ -18,7 +18,7 @@ import {
 	isDraggingExistingItem,
 } from '../../private/dnd/state'
 import type { DraggableItem } from '../../private/dnd/types'
-import type { GardenPendingOperation } from '../state/gardenDragState'
+import type { GardenPendingOperation } from '../../private/state/gardenDragState'
 import { disablePointerEventsWhenDragging } from '../../private/grid/actions/disablePointerEventsWhenDragging'
 import type { Component } from 'svelte'
 

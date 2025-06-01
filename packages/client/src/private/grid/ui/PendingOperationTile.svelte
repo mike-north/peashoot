@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends WithVisualPresentation">
 import GridPlacementTile from './GridPlacementTile.svelte'
 import type { GridPlacement, WithVisualPresentation } from '../grid-placement'
-import type { GardenPendingOperation } from '../../../private-ui/state/gardenDragState'
+import type { GardenPendingOperation } from '../../state/gardenDragState'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,

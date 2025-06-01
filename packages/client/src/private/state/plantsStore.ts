@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store'
-import type { Plant } from '../../../lib/entities/plant'
-import { fetchPlants } from '../../../lib/plant-data'
+import type { Plant } from '../../lib/entities/plant'
+import { fetchPlants } from '../../lib/plant-data'
 
 interface PlantsState {
 	plants: Plant[]

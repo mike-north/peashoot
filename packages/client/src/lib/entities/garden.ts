@@ -5,6 +5,7 @@ import {
 	type GridPlacement,
 } from '../../private/grid/grid-placement'
 import { isPlant, type Plant } from './plant'
+import type { BaseEntity } from './base-entity'
 
 export interface EdgeIndicator {
 	id: string
@@ -12,8 +13,8 @@ export interface EdgeIndicator {
 	plantBId: string
 	color: string
 }
-export interface Garden {
-	id: string
+export interface Garden extends BaseEntity<'garden'> {
+	readonly id: `garden_${string}`
 	beds: GardenBed[]
 	edgeIndicators: EdgeIndicator[]
 }

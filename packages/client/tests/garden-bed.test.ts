@@ -6,9 +6,11 @@ import {
 } from '../src/lib/entities/garden-bed.js'
 import type { Plant } from '../src/lib/entities/plant.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
+import { ExistingDraggableItem } from '../src/private/dnd/types.js'
+import type { GridArea } from '../src/private/grid/grid-area.js'
 
 const mockPlant: Plant = {
-	id: 'plant1',
+	id: 'plant_1',
 	displayName: 'Tomato',
 	presentation: {
 		iconPath: 'tomato.png',
@@ -24,16 +26,18 @@ const mockPlant: Plant = {
 	plantingDistanceInFeet: 1,
 }
 
-const mockPlacement: GridPlacement<PlantWithSize> = {
-	item: mockPlant,
-	x: 1,
-	y: 2,
-	id: 'placement1',
-	size: 1,
-}
+const mockPlacement: GridPlacement<PlantWithSize> & ExistingDraggableItem<PlantWithSize> =
+	{
+		item: mockPlant,
+		x: 1,
+		y: 2,
+		id: 'placement1',
+		size: 1,
+		sourceZoneId: 'gbed_1',
+	}
 
-const mockBed: GardenBed = {
-	id: 'bed1',
+const mockBed: GardenBed & GridArea<PlantWithSize> = {
+	id: 'gbed_1',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -43,7 +47,8 @@ const mockBed: GardenBed = {
 
 describe('updatePlantPositionInBed', () => {
 	it('updates the position of the specified plant', () => {
-		const updated = updatePlantPositionInBed(mockBed, 'placement1', 3, 4)
+		const updated = updatePlantPositionInBed(mockBed, 'placement1', 3, 4) as GardenBed &
+			GridArea<PlantWithSize>
 		const [plant1] = updated.placements as GridPlacement<PlantWithSize>[]
 		expect(plant1.x).toBe(3)
 		expect(plant1.y).toBe(4)
@@ -55,8 +60,10 @@ describe('updatePlantPositionInBed', () => {
 	})
 
 	it('does not update if plantId does not match', () => {
-		const updated: GardenBed = updatePlantPositionInBed(mockBed, 'nonexistent', 5, 6)
-		const [plant1] = updated.placements as GridPlacement<PlantWithSize>[]
+		const updated = updatePlantPositionInBed(mockBed, 'nonexistent', 5, 6) as GardenBed &
+			GridArea<PlantWithSize>
+		const [plant1] = updated.placements as (GridPlacement<PlantWithSize> &
+			ExistingDraggableItem<PlantWithSize>)[]
 		expect(plant1.x).toBe(1)
 		expect(plant1.y).toBe(2)
 		// Should not mutate the original

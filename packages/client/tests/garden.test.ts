@@ -4,9 +4,11 @@ import { movePlantBetweenBeds, type Garden } from '../src/lib/entities/garden.js
 import type { GardenBed } from '../src/lib/entities/garden-bed.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
 import type { Plant } from '../src/lib/entities/plant.js'
+import { GridArea } from '../src/private/grid/grid-area.js'
+import { ExistingDraggableItem } from '../src/private/dnd/types.js'
 
 const mockPlant: Plant = {
-	id: 'plant1',
+	id: 'plant_1',
 	displayName: 'Tomato',
 	family: 'Tomato',
 	variant: 'red',
@@ -21,7 +23,7 @@ const mockPlant: Plant = {
 	},
 }
 
-const plantPlacement: GridPlacement<Plant> = {
+const plantPlacement: GridPlacement<Plant> & ExistingDraggableItem<Plant> = {
 	id: 'placement1',
 	item: mockPlant,
 	sourceZoneId: 'bed1',
@@ -30,8 +32,8 @@ const plantPlacement: GridPlacement<Plant> = {
 	size: 1,
 }
 
-const sourceBed: GardenBed = {
-	id: 'bed1',
+const sourceBed: GardenBed & GridArea<Plant> = {
+	id: 'gbed_1',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -39,8 +41,8 @@ const sourceBed: GardenBed = {
 	placements: [plantPlacement],
 }
 
-const targetBed: GardenBed = {
-	id: 'bed2',
+const targetBed: GardenBed & GridArea<Plant> = {
+	id: 'gbed_2',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -49,7 +51,7 @@ const targetBed: GardenBed = {
 }
 
 const garden: Garden = {
-	id: 'garden1',
+	id: 'garden_1',
 	beds: [sourceBed, targetBed],
 	edgeIndicators: [],
 }
@@ -58,8 +60,8 @@ describe('movePlantBetweenBeds', () => {
 	it('moves a plant from the source bed to the target bed with new coordinates', () => {
 		const updated: Garden = movePlantBetweenBeds(
 			garden,
-			'bed1',
-			'bed2',
+			'gbed_1',
+			'gbed_2',
 			plantPlacement,
 			3,
 			4,
@@ -67,11 +69,11 @@ describe('movePlantBetweenBeds', () => {
 		const { beds } = updated
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const [updatedSource] = beds.filter(
-			(b: GardenBed) => b.id === 'bed1',
+			(b: GardenBed) => b.id === 'gbed_1',
 		) satisfies GardenBed[]
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const [updatedTarget] = beds.filter(
-			(b: GardenBed) => b.id === 'bed2',
+			(b: GardenBed) => b.id === 'gbed_2',
 		) satisfies GardenBed[]
 
 		expect(updatedSource.placements.length).toBe(0)
@@ -101,8 +103,8 @@ describe('movePlantBetweenBeds', () => {
 	it('does not mutate the original garden object', () => {
 		const updated: Garden = movePlantBetweenBeds(
 			garden,
-			'bed1',
-			'bed2',
+			'gbed_1',
+			'gbed_2',
 			plantPlacement,
 			3,
 			4,

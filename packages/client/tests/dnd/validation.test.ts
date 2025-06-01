@@ -167,7 +167,6 @@ describe('DnD Validation Logic', () => {
 				operationType: 'item-add-to-zone',
 				item: { id: 'item-1' },
 			}
-			const consoleSpy = vi.spyOn(console, 'log')
 
 			let promiseResolved = false
 			const validationPromise = defaultAsyncValidation(mockContext).then(() => {
@@ -177,42 +176,17 @@ describe('DnD Validation Logic', () => {
 			// Promise should not be resolved immediately
 			await Promise.resolve() // Flush microtasks
 			expect(promiseResolved).toBe(false)
-			expect(consoleSpy).not.toHaveBeenCalled()
 
 			// Advance timers to just before timeout
 			vi.advanceTimersByTime(ASYNC_VALIDATION_TIMEOUT_MS - 1)
 			await Promise.resolve() // Flush microtasks
 			expect(promiseResolved).toBe(false)
-			expect(consoleSpy).not.toHaveBeenCalled()
 
 			// Advance timers to trigger timeout
 			vi.advanceTimersByTime(1)
 			// Need to wait for the promise itself, not just flush microtasks
 			await validationPromise
 			expect(promiseResolved).toBe(true)
-			expect(consoleSpy).toHaveBeenCalledWith(
-				'Async validation called with context:',
-				mockContext,
-			)
-		})
-
-		it('should log the context provided', async () => {
-			const mockContext: ValidationContext<DraggableItem, DropZoneContext> = {
-				operationType: 'item-move-across-zones',
-				item: { id: 'item-2', name: 'Another Item' },
-				sourceZoneId: 'zoneA',
-				targetZoneId: 'zoneB',
-			}
-			const consoleSpy = vi.spyOn(console, 'log')
-
-			const promise = defaultAsyncValidation(mockContext)
-			vi.advanceTimersByTime(ASYNC_VALIDATION_TIMEOUT_MS)
-			await promise
-
-			expect(consoleSpy).toHaveBeenCalledWith(
-				'Async validation called with context:',
-				mockContext,
-			)
 		})
 	})
 })

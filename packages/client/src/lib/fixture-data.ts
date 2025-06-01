@@ -7,20 +7,20 @@ export const gardens: Garden[] = [
 		edgeIndicators: [
 			{
 				id: 'edge_indicator_0',
-				plantAId: 'lettuce_1',
-				plantBId: 'tomato_1',
+				plantAId: 'plant_lettuce_1',
+				plantBId: 'plant_tomato_1',
 				color: 'red',
 			},
 			{
 				id: 'edge_indicator_1',
-				plantAId: 'cherry_tomato_1',
-				plantBId: 'tomato_2',
+				plantAId: 'plant_cherry_tomato_1',
+				plantBId: 'plant_tomato_2',
 				color: 'red',
 			},
 		],
 		beds: [
 			{
-				id: 'bed_962af647-bce5-4cff-9d47-e22ef97a20e0',
+				id: 'gbed_962af647-bce5-4cff-9d47-e22ef97a20e0',
 				width: 12,
 				height: 2,
 				waterLevel: 0,
@@ -28,7 +28,7 @@ export const gardens: Garden[] = [
 				placements: [],
 			},
 			{
-				id: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
+				id: 'gbed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 				width: 1,
 				height: 1,
 				waterLevel: 0,
@@ -40,7 +40,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 2,
 						item: {
-							id: 'tomatoes-burpee-big-boy-tomato',
+							id: 'plant_tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
 							variant: 'burpee-big-boy-tomato',
@@ -51,12 +51,12 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
-						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
+						sourceZoneId: 'gbed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 					},
 				],
 			},
 			{
-				id: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
+				id: 'gbed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 				width: 1,
 				height: 1,
 				waterLevel: 0,
@@ -68,7 +68,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 1,
 						item: {
-							id: 'lettuce-burpee-buttercrunch-lettuce',
+							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
 							variant: 'burpee-buttercrunch-lettuce',
@@ -79,12 +79,12 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
+						sourceZoneId: 'gbed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 					},
 				],
 			},
 			{
-				id: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+				id: 'gbed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 				width: 6,
 				height: 2,
 				waterLevel: 2,
@@ -97,7 +97,7 @@ export const gardens: Garden[] = [
 						size: 2,
 						item: {
 							plantingDistanceInFeet: 2,
-							id: 'tomatoes-burpee-big-boy-tomato',
+							id: 'plant_tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
 							variant: 'burpee-big-boy-tomato',
@@ -107,7 +107,7 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
-						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+						sourceZoneId: 'gbed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
 						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
@@ -115,7 +115,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 1,
 						item: {
-							id: 'lettuce-burpee-buttercrunch-lettuce',
+							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
 							variant: 'burpee-buttercrunch-lettuce',
@@ -126,12 +126,12 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+						sourceZoneId: 'gbed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 				],
 			},
 			{
-				id: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+				id: 'gbed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 				width: 6,
 				height: 2,
 				waterLevel: 2,
@@ -143,7 +143,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 1,
 						item: {
-							id: 'arugula-arugula',
+							id: 'plant_arugula-arugula',
 							displayName: 'Arugula',
 							family: 'arugula',
 							variant: 'arugula',
@@ -154,7 +154,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+						sourceZoneId: 'gbed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 					{
 						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
@@ -162,7 +162,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 1,
 						item: {
-							id: 'spinach-japanese-perpetual-spinach',
+							id: 'plant_spinach-japanese-perpetual-spinach',
 							displayName: 'Japanese Perpetual Spinach',
 							family: 'spinach',
 							variant: 'japanese-perpetual-spinach',
@@ -173,12 +173,12 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+						sourceZoneId: 'gbed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 				],
 			},
 			{
-				id: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+				id: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 				width: 12,
 				height: 4,
 				waterLevel: 3,
@@ -190,7 +190,7 @@ export const gardens: Garden[] = [
 						y: 1,
 						size: 3,
 						item: {
-							id: 'cherries-rainier-cherry',
+							id: 'plant_cherries-rainier-cherry',
 							displayName: 'Rainier Cherry',
 							family: 'cherries',
 							variant: 'rainier-cherry',
@@ -201,7 +201,7 @@ export const gardens: Garden[] = [
 								size: 3,
 							},
 						},
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
@@ -209,7 +209,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 2,
 						item: {
-							id: 'tomatoes-burpee-big-boy-tomato',
+							id: 'plant_tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
 							variant: 'burpee-big-boy-tomato',
@@ -220,7 +220,7 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
@@ -228,7 +228,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 1,
 						item: {
-							id: 'lettuce-burpee-buttercrunch-lettuce',
+							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
 							variant: 'burpee-buttercrunch-lettuce',
@@ -239,7 +239,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
@@ -248,7 +248,7 @@ export const gardens: Garden[] = [
 						y: 0,
 						size: 1,
 						item: {
-							id: 'strawberries-alexandria-strawberry',
+							id: 'plant_strawberries-alexandria-strawberry',
 							displayName: 'Alexandria Strawberry',
 							family: 'strawberries',
 							variant: 'alexandria-strawberry',
@@ -259,7 +259,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
@@ -268,7 +268,7 @@ export const gardens: Garden[] = [
 						y: 3,
 						size: 1,
 						item: {
-							id: 'daisies-zinnia-2',
+							id: 'plant_daisies-zinnia-2',
 							displayName: 'Zinnia',
 							family: 'daisies',
 							variant: 'zinnia',
@@ -279,7 +279,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 				],
 			},
@@ -290,7 +290,7 @@ export const gardens: Garden[] = [
 export const plants: Plant[] = [
 	// Tomatoes
 	{
-		id: 'tomatoes-burpee-big-boy-tomato',
+		id: 'plant_tomatoes-burpee-big-boy-tomato',
 		displayName: 'Big Boy Tomato',
 		family: 'tomatoes',
 		variant: 'burpee-big-boy-tomato',
@@ -302,7 +302,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'tomatoes-rareseeds-cherokee-purple-tomato',
+		id: 'plant_tomatoes-rareseeds-cherokee-purple-tomato',
 		displayName: 'Cherokee Purple Tomato',
 		family: 'tomatoes',
 		variant: 'rareseeds-cherokee-purple-tomato',
@@ -314,7 +314,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'tomatoes-sweet-100-tomato',
+		id: 'plant_tomatoes-sweet-100-tomato',
 		displayName: 'Sweet 100 Cherry Tomato',
 		family: 'tomatoes',
 		variant: 'sweet-100-tomato',
@@ -326,7 +326,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'tomatoes-napa-chardonnay-tomato',
+		id: 'plant_tomatoes-napa-chardonnay-tomato',
 		displayName: 'Napa Chardonnay Tomato',
 		family: 'tomatoes',
 		variant: 'napa-chardonnay-tomato',
@@ -338,7 +338,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'tomatoes-black-from-tula-tomato',
+		id: 'plant_tomatoes-black-from-tula-tomato',
 		displayName: 'Black from Tula Tomato',
 		family: 'tomatoes',
 		variant: 'black-from-tula-tomato',
@@ -352,7 +352,7 @@ export const plants: Plant[] = [
 
 	// Lettuce & Greens
 	{
-		id: 'lettuce-burpee-buttercrunch-lettuce',
+		id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 		displayName: 'Buttercrunch Lettuce',
 		family: 'lettuce',
 		variant: 'burpee-buttercrunch-lettuce',
@@ -364,7 +364,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'arugula-arugula',
+		id: 'plant_arugula-arugula',
 		displayName: 'Arugula',
 		family: 'arugula',
 		variant: 'arugula',
@@ -376,7 +376,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'spinach-spinach',
+		id: 'plant_spinach-spinach',
 		displayName: 'Spinach',
 		family: 'spinach',
 		variant: 'spinach',
@@ -388,7 +388,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'spinach-japanese-perpetual-spinach',
+		id: 'plant_spinach-japanese-perpetual-spinach',
 		displayName: 'Japanese Perpetual Spinach',
 		family: 'spinach',
 		variant: 'japanese-perpetual-spinach',
@@ -402,7 +402,7 @@ export const plants: Plant[] = [
 
 	// Carrots
 	{
-		id: 'carrots-burpee-chantenay-carrot',
+		id: 'plant_carrots-burpee-chantenay-carrot',
 		displayName: 'Chantenay Red Core Carrot',
 		family: 'carrots',
 		variant: 'burpee-chantenay-carrot',
@@ -414,7 +414,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'carrots-parisienne-carrots',
+		id: 'plant_carrots-parisienne-carrots',
 		displayName: 'Parisienne Carrots',
 		family: 'carrots',
 		variant: 'parisienne-carrots',
@@ -426,7 +426,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'carrots-lila-lu-sang-carrots',
+		id: 'plant_carrots-lila-lu-sang-carrots',
 		displayName: 'Lila Lu Sang Purple Carrots',
 		family: 'carrots',
 		variant: 'lila-lu-sang-carrots',
@@ -440,7 +440,7 @@ export const plants: Plant[] = [
 
 	// Peppers
 	{
-		id: 'peppers-burpee-california-wonder-pepper',
+		id: 'plant_peppers-burpee-california-wonder-pepper',
 		displayName: 'California Wonder Bell Pepper',
 		family: 'peppers',
 		variant: 'burpee-california-wonder-pepper',
@@ -452,7 +452,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'peppers-jalapeno-hot-pepper',
+		id: 'plant_peppers-jalapeno-hot-pepper',
 		displayName: 'Jalapeño Hot Pepper',
 		family: 'peppers',
 		variant: 'jalapeno-hot-pepper',
@@ -464,7 +464,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'peppers-habanero-hot-pepper',
+		id: 'plant_peppers-habanero-hot-pepper',
 		displayName: 'Habanero Hot Pepper',
 		family: 'peppers',
 		variant: 'habanero-hot-pepper',
@@ -476,7 +476,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'peppers-lemon-drop-hot-pepper',
+		id: 'plant_peppers-lemon-drop-hot-pepper',
 		displayName: 'Lemon Drop Hot Pepper',
 		family: 'peppers',
 		variant: 'lemon-drop-hot-pepper',
@@ -488,7 +488,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'peppers-buena-mulata-hot-pepper',
+		id: 'plant_peppers-buena-mulata-hot-pepper',
 		displayName: 'Buena Mulata Hot Pepper',
 		family: 'peppers',
 		variant: 'buena-mulata-hot-pepper',
@@ -502,7 +502,7 @@ export const plants: Plant[] = [
 
 	// Beans
 	{
-		id: 'beans-burpee-provider-bush-bean',
+		id: 'plant_beans-burpee-provider-bush-bean',
 		displayName: 'Provider Bush Bean',
 		family: 'beans',
 		variant: 'burpee-provider-bush-bean',
@@ -514,7 +514,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'beans-fava-beans',
+		id: 'plant_beans-fava-beans',
 		displayName: 'Fava Beans',
 		family: 'beans',
 		variant: 'fava-beans',
@@ -526,7 +526,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'beans-dragons-tongue-beans',
+		id: 'plant_beans-dragons-tongue-beans',
 		displayName: "Dragon's Tongue Bush Bean",
 		family: 'beans',
 		variant: 'dragons-tongue-beans',
@@ -538,7 +538,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'beans-cherokee-trail-of-tears-beans',
+		id: 'plant_beans-cherokee-trail-of-tears-beans',
 		displayName: 'Cherokee Trail of Tears Bean',
 		family: 'beans',
 		variant: 'cherokee-trail-of-tears-beans',
@@ -550,7 +550,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'beans-scarlet-runner-beans',
+		id: 'plant_beans-scarlet-runner-beans',
 		displayName: 'Scarlet Runner Bean',
 		family: 'beans',
 		variant: 'scarlet-runner-beans',
@@ -564,7 +564,7 @@ export const plants: Plant[] = [
 
 	// Onions & Alliums
 	{
-		id: 'onions-rareseeds-yellow-of-parma-onion',
+		id: 'plant_onions-rareseeds-yellow-of-parma-onion',
 		displayName: 'Yellow of Parma Onion',
 		family: 'onions',
 		variant: 'rareseeds-yellow-of-parma-onion',
@@ -576,7 +576,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'onions-burpee-evergreen-hardy-white-scallions',
+		id: 'plant_onions-burpee-evergreen-hardy-white-scallions',
 		displayName: 'Evergreen Hardy White Scallions',
 		family: 'onions',
 		variant: 'burpee-evergreen-hardy-white-scallions',
@@ -588,7 +588,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'onions-chives',
+		id: 'plant_onions-chives',
 		displayName: 'Chives',
 		family: 'onions',
 		variant: 'chives',
@@ -600,7 +600,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'onions-garlic',
+		id: 'plant_onions-garlic',
 		displayName: 'Garlic',
 		family: 'onions',
 		variant: 'garlic',
@@ -612,7 +612,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'onions-bunching-onion',
+		id: 'plant_onions-bunching-onion',
 		displayName: 'Bunching Onion',
 		family: 'onions',
 		variant: 'bunching-onion',
@@ -630,7 +630,7 @@ export const plants: Plant[] = [
 
 	// Fruits
 	{
-		id: 'cherries-rainier-cherry',
+		id: 'plant_cherries-rainier-cherry',
 		displayName: 'Rainier Cherry',
 		family: 'cherries',
 		variant: 'rainier-cherry',
@@ -642,7 +642,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'strawberries-alexandria-strawberry',
+		id: 'plant_strawberries-alexandria-strawberry',
 		displayName: 'Alexandria Strawberry',
 		family: 'strawberries',
 		variant: 'alexandria-strawberry',
@@ -656,7 +656,7 @@ export const plants: Plant[] = [
 
 	// Flowers
 	{
-		id: 'daisies-zinnia-2',
+		id: 'plant_daisies-zinnia-2',
 		displayName: 'Zinnia',
 		family: 'daisies',
 		variant: 'zinnia',
@@ -669,7 +669,7 @@ export const plants: Plant[] = [
 	},
 	// --- ADDED FROM seeds.yml ---
 	{
-		id: 'basil',
+		id: 'plant_basil',
 		displayName: 'Basil',
 		family: 'basil',
 		variant: 'basil',
@@ -681,7 +681,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'foxglove',
+		id: 'plant_foxglove',
 		displayName: 'Foxglove',
 		family: 'snapdragons',
 		variant: 'foxglove',
@@ -693,7 +693,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'zinnia',
+		id: 'plant_zinnia',
 		displayName: 'Zinnia',
 		family: 'daisies',
 		variant: 'zinnia',
@@ -705,7 +705,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'watermelon',
+		id: 'plant_watermelon',
 		displayName: 'Watermelon',
 		family: 'watermelons',
 		variant: 'watermelon',
@@ -717,7 +717,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'wheat',
+		id: 'plant_wheat',
 		displayName: 'Wheat',
 		family: 'grains',
 		variant: 'wheat',
@@ -729,7 +729,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'broccoli',
+		id: 'plant_broccoli',
 		displayName: 'Broccoli',
 		family: 'brassicas',
 		variant: 'broccoli',
@@ -741,7 +741,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'sunflower',
+		id: 'plant_sunflower',
 		displayName: 'Sunflower',
 		family: 'sunflowers',
 		variant: 'sunflower',
@@ -753,7 +753,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'lupine',
+		id: 'plant_lupine',
 		displayName: 'Lupine',
 		family: 'legumes',
 		variant: 'lupine',
@@ -765,7 +765,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'rutabaga',
+		id: 'plant_rutabaga',
 		displayName: 'Rutabaga',
 		family: 'turnips',
 		variant: 'rutabaga',
@@ -777,7 +777,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'celery',
+		id: 'plant_celery',
 		displayName: 'Celery',
 		family: 'celery',
 		variant: 'celery',
@@ -789,7 +789,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'marigold',
+		id: 'plant_marigold',
 		displayName: 'Marigold',
 		family: 'marigolds',
 		variant: 'marigold',
@@ -801,7 +801,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'cilantro',
+		id: 'plant_cilantro',
 		displayName: 'Cilantro',
 		family: 'cilantro',
 		variant: 'cilantro',
@@ -813,7 +813,7 @@ export const plants: Plant[] = [
 		},
 	},
 	{
-		id: 'bok-choy',
+		id: 'plant_brassicas-bok-choy',
 		displayName: 'Bok Choy',
 		family: 'brassicas',
 		variant: 'bok-choy',

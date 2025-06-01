@@ -1,6 +1,6 @@
 <script lang="ts">
-import SeedPacket from '../components/SeedPacket.svelte'
-import PageTitle from '../components/PageTitle.svelte'
+import SeedPacket from '../private-ui/components/SeedPacket.svelte'
+import PageTitle from '../private-ui/components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 
 const { route }: { route: RouteResult } = $props()

@@ -9,11 +9,7 @@ import {
 	type Plant,
 } from '../../lib/entities/plant'
 import type { Garden } from '../../lib/entities/garden'
-import {
-	movePlantBetweenBeds,
-	findBed,
-	findPlantPlacement,
-} from '../../lib/entities/garden'
+import { findBed, findPlantPlacement } from '../../lib/entities/garden'
 import {
 	type ExistingGardenItem,
 	type GardenValidationContext,
@@ -24,8 +20,6 @@ import {
 	type GardenZoneContext,
 } from '../../private/state/gardenDragState'
 import { GardenValidationService } from '../services/gardenValidationService'
-import { GardenAdapter } from '../../lib/adapters/garden-adapter'
-import { onMount } from 'svelte'
 import { plants, plantsReady } from '../../private/state/plantsStore'
 
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
@@ -42,9 +36,31 @@ import {
 	showInfo,
 } from '../state/notificationsStore'
 
-let gardenInstance: Garden | undefined = $state<Garden | undefined>(undefined)
+interface GardenDiagramProps {
+	handleAddNewPlant: (bedId: string, item: Plant, x: number, y: number) => void
+	handleMovePlantInBed: (
+		bedId: string,
+		plantId: string,
+		newX: number,
+		newY: number,
+	) => void
+	movePlantBetweenBeds: (
+		garden: Garden,
+		sourceBedId: string,
+		targetBedId: string,
+		placement: GridPlacement<GridPlaceable>,
+		newX: number,
+		newY: number,
+	) => void
+	garden: Garden
+}
 
-const gardenAdapter = new GardenAdapter()
+const {
+	garden,
+	movePlantBetweenBeds,
+	handleAddNewPlant,
+	handleMovePlantInBed,
+}: GardenDiagramProps = $props()
 
 // Create validation service instance
 let validationService: GardenValidationService | undefined = $state<
@@ -62,38 +78,6 @@ $effect(() => {
 	}
 })
 
-// Effect to handle deletion when an item is dropped on the delete zone
-// $effect(() => {
-// 	const currentDragState = $dragState; // Access store value
-// 	if (
-// 		currentDragState.targetType === 'delete-zone' &&
-// 		currentDragState.draggedExistingItem &&
-// 		currentDragState.sourceZoneId
-// 	) {
-// 		// Ensure the item is a plant and part of the current garden instance
-// 		if (gardenInstance && isPlant(currentDragState.draggedExistingItem.item)) {
-// 			handleDeletePlant(
-// 				currentDragState.draggedExistingItem.id,
-// 				currentDragState.sourceZoneId
-// 			);
-// 			// Optionally, we might want to tell dragManager to clean up immediately
-// 			// or ensure this runs before dragManager clears the state.
-// 			// For now, we assume dragManager.cleanup() will be called by its usual trigger (e.g., mouseup globally).
-// 		}
-// 	}
-// });
-
-onMount(() => {
-	gardenAdapter
-		.fetchGardens()
-		.then((gardens) => {
-			gardenInstance = gardens[0]
-		})
-		.catch((err: unknown) => {
-			console.error('Error fetching gardens', { cause: err })
-		})
-})
-
 function handleAsyncValidationStart() {
 	showInfo('Validating...', { autoRemove: false })
 }
@@ -107,23 +91,6 @@ function handleAsyncValidationError(errorMessage: string) {
 	// Remove the validation message and show error
 	removeNotificationByMessage('Validating...')
 	showError(errorMessage)
-}
-
-function handleMovePlantInBed(
-	bedId: string,
-	plantId: string,
-	newX: number,
-	newY: number,
-) {
-	if (!gardenInstance) return
-	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
-	if (bed) {
-		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
-			b.id === bedId ? updatePlantPositionInBed(b, plantId, newX, newY) : b,
-		)
-	} else {
-		console.error('[App.svelte] Bed not found for movePlantInBed:', bedId)
-	}
 }
 
 function handleMovePlantToDifferentBed(
@@ -142,47 +109,13 @@ function handleMovePlantToDifferentBed(
 		item: existingItem.item,
 		sourceZoneId: existingItem.sourceZoneId,
 	}
-	if (!gardenInstance) return
-	gardenInstance = movePlantBetweenBeds(
-		gardenInstance,
-		sourceBedId,
-		targetBedId,
-		gridPlacementArg,
-		newX,
-		newY,
-	)
-}
-
-function handleAddNewPlant(bedId: string, item: Plant, x: number, y: number) {
-	if (!gardenInstance) return
-	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
-	if (bed) {
-		const newPlantId = `${item.family}_${Date.now()}`
-
-		const newPlacement: GridPlacement<PlantWithSize> = {
-			id: newPlantId,
-			x,
-			y,
-			size: tileSizeForPlant(item),
-			item: item,
-			sourceZoneId: bedId,
-		}
-
-		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
-			b.id === bedId ? { ...b, placements: [...b.placements, newPlacement] } : b,
-		)
-
-		console.log(`[Garden] Added new ${item.displayName} to bed ${bedId} at (${x}, ${y})`)
-	} else {
-		console.error('[Garden] Bed not found for addNewPlant:', bedId)
-	}
+	movePlantBetweenBeds(garden, sourceBedId, targetBedId, gridPlacementArg, newX, newY)
 }
 
 function handleDeletePlant(plantId: string, bedId: string) {
-	if (!gardenInstance) return
-	const bed = gardenInstance.beds.find((b: GardenBed) => b.id === bedId)
+	const bed = garden.beds.find((b: GardenBed) => b.id === bedId)
 	if (bed) {
-		gardenInstance.beds = gardenInstance.beds.map((b: GardenBed) =>
+		garden.beds = garden.beds.map((b: GardenBed) =>
 			b.id === bedId
 				? { ...b, placements: b.placements.filter((p) => p.id !== plantId) }
 				: b,
@@ -211,14 +144,13 @@ async function handleRequestPlacement(
 	details: PlacementRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!gardenInstance) return
 	if (!isPlant(details.itemData)) throw new Error('Item is not a plant')
 
 	handleAsyncValidationStart()
 
-	const targetBed = findBed(gardenInstance, details.targetZoneId)
+	const targetBed = findBed(garden, details.targetZoneId)
 	const sourceBed = details.sourceZoneId
-		? findBed(gardenInstance, details.sourceZoneId)
+		? findBed(garden, details.sourceZoneId)
 		: undefined
 
 	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
@@ -227,7 +159,7 @@ async function handleRequestPlacement(
 		targetX: details.x,
 		targetY: details.y,
 		operationType: details.operationType,
-		applicationContext: { garden: gardenInstance },
+		applicationContext: { garden: garden },
 	}
 
 	const targetCtx = buildGardenZoneContext(targetBed)
@@ -339,19 +271,13 @@ async function handleRequestRemoval(
 	details: RemovalRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	// console.log('[GardenDiagram] handleRequestRemoval - details:', details);
-	if (!gardenInstance) {
-		// console.error('[GardenDiagram] handleRequestRemoval - no gardenInstance');
-		return
-	}
 	if (!isPlant(details.itemData)) {
-		// console.error('[GardenDiagram] handleRequestRemoval - item is not a plant:', details.itemData);
 		throw new Error('Item is not a plant')
 	}
 
 	handleAsyncValidationStart()
 
-	const sourceBed = findBed(gardenInstance, details.sourceZoneId)
+	const sourceBed = findBed(garden, details.sourceZoneId)
 	const plantToRemove = sourceBed
 		? findPlantPlacement(sourceBed, details.instanceId)
 		: undefined
@@ -361,7 +287,7 @@ async function handleRequestRemoval(
 		item: details.itemData,
 		itemInstanceId: details.instanceId,
 		sourceZoneId: details.sourceZoneId,
-		applicationContext: { garden: gardenInstance },
+		applicationContext: { garden: garden },
 	}
 	const remSourceCtx = buildGardenZoneContext(sourceBed)
 	if (remSourceCtx) baseValidationContext.sourceZoneContext = remSourceCtx
@@ -426,12 +352,11 @@ async function handleRequestCloning(
 	details: CloningRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!gardenInstance) return
 	if (!isPlant(details.itemDataToClone)) throw new Error('Item is not a plant')
 	handleAsyncValidationStart()
 
-	const sourceBed = findBed(gardenInstance, details.sourceOriginalZoneId)
-	const targetBed = findBed(gardenInstance, details.targetCloneZoneId)
+	const sourceBed = findBed(garden, details.sourceOriginalZoneId)
+	const targetBed = findBed(garden, details.targetCloneZoneId)
 
 	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
 		operationType: 'item-clone-in-zone',
@@ -442,7 +367,7 @@ async function handleRequestCloning(
 		sourceY: details.sourceOriginalY,
 		targetX: details.targetCloneX,
 		targetY: details.targetCloneY,
-		applicationContext: { garden: gardenInstance },
+		applicationContext: { garden: garden },
 	}
 	const cloneSourceCtx = buildGardenZoneContext(sourceBed)
 	if (cloneSourceCtx) baseValidationContext.sourceZoneContext = cloneSourceCtx
@@ -514,10 +439,10 @@ function categoryNameForItem(item: DraggableItem): string {
 }
 </script>
 
-{#if gardenInstance}
+{#if garden}
 	<GardenView
-		garden={gardenInstance}
-		edgeIndicators={gardenInstance.edgeIndicators}
+		garden={garden}
+		edgeIndicators={garden.edgeIndicators}
 		onRequestPlacement={handleRequestPlacement}
 		onRequestRemoval={handleRequestRemoval}
 		onRequestCloning={handleRequestCloning}

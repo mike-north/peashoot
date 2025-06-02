@@ -20,3 +20,34 @@ export type IDistance = z.infer<typeof DistanceSchema>
 export function distanceToHumanReadable(distance: IDistance): string {
 	return `${distance.value}${distance.unit}`
 }
+
+export function convertDistanceToFeet(distance: IDistance): IDistance {
+	switch (distance.unit) {
+		case 'inches':
+			return {
+				value: distance.value / 12,
+				unit: 'feet',
+			}
+		case 'feet':
+			return distance
+		case 'yards':
+			return {
+				value: distance.value * 3,
+				unit: 'feet',
+			}
+		case 'meters':
+			return {
+				value: distance.value * 3.28084,
+				unit: 'feet',
+			}
+		case 'centimeters':
+			return {
+				value: distance.value * 0.0328084,
+				unit: 'feet',
+			}
+		default: {
+			const nvr: never = distance.unit
+			throw new Error(`Invalid distance unit: ${nvr as string}`)
+		}
+	}
+}

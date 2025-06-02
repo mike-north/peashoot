@@ -6,9 +6,9 @@ import { Plant } from './plant'
 import { XYCoordinate } from '../values/xy-coordinate'
 
 @Entity({ name: 'plant-placements' })
-export class PlantPlacement extends PeashootEntity<'plant'> implements IPlantPlacement {
+export class PlantPlacement extends PeashootEntity<'plcmnt'> implements IPlantPlacement {
 	constructor() {
-		super('plant')
+		super('plcmnt')
 	}
 
 	@ManyToOne(() => GardenBed, (gardenBed) => gardenBed.plantPlacements)

@@ -6,8 +6,8 @@ import type { Plant } from './plant'
 // Canonical type for plant grid operations
 export type PlantWithSize = Plant
 
-export interface GardenBed extends BaseEntity<'gbed'>, GridArea<PlantWithSize> {
-	readonly id: `gbed_${string}`
+export interface GardenBed extends BaseEntity<'bed'>, GridArea<PlantWithSize> {
+	readonly id: `bed_${string}`
 	width: number
 	height: number
 	waterLevel: number

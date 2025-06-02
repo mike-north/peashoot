@@ -13,13 +13,13 @@ export interface EdgeIndicator {
 	plantBId: string
 	color: string
 }
-export interface Garden extends BaseEntity<'garden'> {
-	readonly id: `garden_${string}`
+export interface Garden extends BaseEntity<'grdn'> {
+	readonly id: `grdn_${string}`
 	beds: GardenBed[]
 	edgeIndicators: EdgeIndicator[]
 }
 
-export function movePlantBetweenBeds(
+export function movePlantBetweenBedsAndCreateNewGarden(
 	garden: Garden,
 	sourceBedId: string,
 	targetBedId: string,

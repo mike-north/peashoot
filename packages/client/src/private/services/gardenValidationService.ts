@@ -31,6 +31,13 @@ export class GardenValidationService {
 			itemX + itemSize > targetBed.width ||
 			itemY + itemSize > targetBed.height
 		) {
+			console.debug('Placement is out of bounds.', {
+				itemX,
+				itemY,
+				itemSize,
+				targetBed,
+				excludeItemId,
+			})
 			return { isValid: false, reason: 'Placement is out of bounds.' }
 		}
 

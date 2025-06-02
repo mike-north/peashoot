@@ -1,5 +1,6 @@
 import { z } from 'zod/v4'
 import { RGBColorSchema } from '../value-objects/rgb-color.type.js'
+import { DistanceSchema } from '../value-objects/distance.type.js'
 
 export const SeedPacketPresentationSchema = z.object({
 	accentColor: RGBColorSchema,
@@ -13,7 +14,9 @@ export const SeedPacketSchema = z.object({
 	description: z.string(),
 	quantity: z.number(),
 	plantingInstructions: z.string(),
+	plantFamily: z.string(),
 	presentation: SeedPacketPresentationSchema,
+	plantingDistance: DistanceSchema,
 	netWeightGrams: z.number(),
 	originLocation: z.string(),
 	expiresAt: z.date(),

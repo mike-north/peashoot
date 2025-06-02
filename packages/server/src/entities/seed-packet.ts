@@ -1,8 +1,9 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { Plant } from './plant'
 import { PeashootEntity } from './peashoot-entity'
-import { ISeedPacket, ISeedPacketPresentation } from '@peashoot/types'
-import { RGBColor } from '../values/color'
+import { IDistance, ISeedPacket, ISeedPacketPresentation } from '@peashoot/types'
+import { RGBColor } from '../values/rgb-color'
+import { Distance } from '../values/distance'
 
 @Entity()
 export class SeedPacketPresentation implements ISeedPacketPresentation {
@@ -40,9 +41,15 @@ export class SeedPacket extends PeashootEntity<'spkt'> implements ISeedPacket {
 	@Column()
 	plantingInstructions!: string
 
+	@Column()
+	plantFamily!: string
+
 	@Column(() => SeedPacketPresentation)
 	presentation!: SeedPacketPresentation
 
 	@Column()
 	expiresAt!: Date
+
+	@Column(() => Distance)
+	plantingDistance!: IDistance
 }

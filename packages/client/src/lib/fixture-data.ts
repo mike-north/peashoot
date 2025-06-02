@@ -16,6 +16,11 @@ export const seedPackets: SeedPacket[] = [
 		description: 'Celery seeds are a great way to add some green to your garden.',
 		plantingInstructions: 'Sow seeds 1/2 inch deep in soil.',
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+		plantFamily: 'celery',
+		plantingDistance: {
+			value: 1,
+			unit: 'feet',
+		},
 	},
 	{
 		id: 'seedp_1',
@@ -31,6 +36,11 @@ export const seedPackets: SeedPacket[] = [
 			'Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches.',
 		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+		plantFamily: 'tomatoes',
+		plantingDistance: {
+			value: 2,
+			unit: 'feet',
+		},
 	},
 	{
 		id: 'seedp_2',
@@ -46,6 +56,11 @@ export const seedPackets: SeedPacket[] = [
 			'Aromatic annual herb with excellent culinary uses. Natural pest deterrent and pollinator attractor.',
 		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+		plantFamily: 'basil',
+		plantingDistance: {
+			value: 1,
+			unit: 'feet',
+		},
 	},
 ]
 

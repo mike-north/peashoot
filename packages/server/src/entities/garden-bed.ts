@@ -13,12 +13,18 @@ export class GardenBed extends PeashootEntity<'gbed'> implements IGardenBed {
 	@Column()
 	name!: string
 
+	@Column({ type: 'int' })
+	rows!: number
+
+	@Column({ type: 'int' })
+	columns!: number
+
 	@Column()
 	description!: string
 
-	@ManyToOne(() => Garden, (garden) => garden.beds)
+	@ManyToOne(() => Garden, (garden) => garden.beds, { nullable: false })
 	garden!: Garden
 
-	@OneToMany(() => PlantPlacement, (placement) => placement.gardenBed)
+	@OneToMany(() => PlantPlacement, (placement) => placement.bed)
 	plantPlacements!: PlantPlacement[]
 }

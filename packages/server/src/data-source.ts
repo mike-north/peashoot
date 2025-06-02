@@ -4,7 +4,7 @@ import { GardenBed } from './entities/garden-bed'
 import { SeedPacket } from './entities/seed-packet'
 import { PlantPlacement } from './entities/plant-placement'
 import { Garden } from './entities/garden'
-import { RGBColor } from './values/color'
+import { RGBColor } from './values/rgb-color'
 import { XYCoordinate } from './values/xy-coordinate'
 
 export const AppDataSource = new DataSource({

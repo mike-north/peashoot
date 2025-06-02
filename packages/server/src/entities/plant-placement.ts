@@ -5,16 +5,16 @@ import { GardenBed } from './garden-bed'
 import { Plant } from './plant'
 import { XYCoordinate } from '../values/xy-coordinate'
 
-@Entity({ name: 'plants' })
+@Entity({ name: 'plant-placements' })
 export class PlantPlacement extends PeashootEntity<'plant'> implements IPlantPlacement {
 	constructor() {
 		super('plant')
 	}
 
 	@ManyToOne(() => GardenBed, (gardenBed) => gardenBed.plantPlacements)
-	gardenBed!: GardenBed
+	bed!: GardenBed
 
-	@ManyToOne(() => Plant, (plant) => plant.placements)
+	@ManyToOne(() => Plant, (plant) => plant.placements, { nullable: false })
 	plant!: Plant
 
 	@Column(() => XYCoordinate)

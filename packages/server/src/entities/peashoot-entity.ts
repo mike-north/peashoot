@@ -1,4 +1,4 @@
-import { CreateDateColumn, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import { CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
 
 const generatePrefixedUUID = <P extends string>(prefix: P): `${P}_${string}` => {
@@ -7,6 +7,7 @@ const generatePrefixedUUID = <P extends string>(prefix: P): `${P}_${string}` => 
 
 export type BaseEntityId<Prefix extends string> = `${Prefix}_${string}`
 
+@Entity({ name: 'peashoot-entities' })
 export abstract class PeashootEntity<Prefix extends string> {
 	constructor(idPrefix: Prefix) {
 		this.id = generatePrefixedUUID(idPrefix)

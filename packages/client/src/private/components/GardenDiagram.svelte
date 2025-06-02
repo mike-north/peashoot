@@ -62,6 +62,27 @@ $effect(() => {
 	}
 })
 
+// Effect to handle deletion when an item is dropped on the delete zone
+// $effect(() => {
+// 	const currentDragState = $dragState; // Access store value
+// 	if (
+// 		currentDragState.targetType === 'delete-zone' &&
+// 		currentDragState.draggedExistingItem &&
+// 		currentDragState.sourceZoneId
+// 	) {
+// 		// Ensure the item is a plant and part of the current garden instance
+// 		if (gardenInstance && isPlant(currentDragState.draggedExistingItem.item)) {
+// 			handleDeletePlant(
+// 				currentDragState.draggedExistingItem.id,
+// 				currentDragState.sourceZoneId
+// 			);
+// 			// Optionally, we might want to tell dragManager to clean up immediately
+// 			// or ensure this runs before dragManager clears the state.
+// 			// For now, we assume dragManager.cleanup() will be called by its usual trigger (e.g., mouseup globally).
+// 		}
+// 	}
+// });
+
 onMount(() => {
 	gardenAdapter
 		.fetchGardens()
@@ -318,8 +339,15 @@ async function handleRequestRemoval(
 	details: RemovalRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!gardenInstance) return
-	if (!isPlant(details.itemData)) throw new Error('Item is not a plant')
+	// console.log('[GardenDiagram] handleRequestRemoval - details:', details);
+	if (!gardenInstance) {
+		// console.error('[GardenDiagram] handleRequestRemoval - no gardenInstance');
+		return
+	}
+	if (!isPlant(details.itemData)) {
+		// console.error('[GardenDiagram] handleRequestRemoval - item is not a plant:', details.itemData);
+		throw new Error('Item is not a plant')
+	}
 
 	handleAsyncValidationStart()
 
@@ -343,12 +371,15 @@ async function handleRequestRemoval(
 	}
 
 	const validationContext = baseValidationContext as GardenValidationContext<Plant>
+	// console.log('[GardenDiagram] handleRequestRemoval - validationContext:', JSON.stringify(validationContext, null, 2));
 
 	try {
 		if (!customAsyncValidation) {
+			// console.error('[GardenDiagram] handleRequestRemoval - customAsyncValidation not ready');
 			throw new Error('Validation service not ready - plants still loading')
 		}
 		const result = await customAsyncValidation(validationContext)
+		// console.log('[GardenDiagram] handleRequestRemoval - validation result:', result);
 		if (result.isValid) {
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual removal

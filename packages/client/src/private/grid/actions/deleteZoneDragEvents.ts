@@ -33,6 +33,19 @@ export const deleteZoneDragEvents: Action<HTMLElement, DeleteZoneOptions> = (
 		}
 	}
 
+	function handleDrop(event: DragEvent) {
+		const currentDragState = get(currentOptions.dragStateStore)
+		if (checkIsDraggingExistingItem(currentDragState)) {
+			currentOptions.dragStateStore.update((state) => ({
+				...state,
+				targetType: 'delete-zone', // Explicitly set targetType on drop
+				droppedOutside: false, // Indicate drop was on a valid target
+			}))
+			// Prevent default to allow drop
+			event.preventDefault()
+		}
+	}
+
 	function handleMouseLeave() {
 		currentOptions.setIsHovered(false)
 		const currentDragState = get(currentOptions.dragStateStore) // Use get from svelte/store
@@ -46,11 +59,19 @@ export const deleteZoneDragEvents: Action<HTMLElement, DeleteZoneOptions> = (
 
 	node.addEventListener('mouseenter', handleMouseEnter)
 	node.addEventListener('mouseleave', handleMouseLeave)
+	node.addEventListener('dragover', (event) => {
+		event.preventDefault()
+	}) // Allow drop
+	node.addEventListener('drop', handleDrop)
 
 	return {
 		destroy() {
 			node.removeEventListener('mouseenter', handleMouseEnter)
 			node.removeEventListener('mouseleave', handleMouseLeave)
+			node.removeEventListener('dragover', (event) => {
+				event.preventDefault()
+			})
+			node.removeEventListener('drop', handleDrop)
 		},
 		update(newOptions: DeleteZoneOptions) {
 			currentOptions = newOptions

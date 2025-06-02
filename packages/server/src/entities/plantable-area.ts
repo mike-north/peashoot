@@ -1,37 +1,18 @@
-import {
-	Entity,
-	PrimaryGeneratedColumn,
-	CreateDateColumn,
-	UpdateDateColumn,
-	ManyToOne,
-	OneToMany,
-	Column,
-} from 'typeorm'
+import { Entity, ManyToOne, OneToMany, Column } from 'typeorm'
 import { GardenBed } from './garden-bed'
 import { Plant } from './plant'
-
-export type PlantableAreaId = string & { readonly __plantableArea: unique symbol }
+import { PeashootEntity } from './peashoot-entity'
 
 @Entity({ name: 'plantable-areas' })
-export class PlantableArea {
-	@PrimaryGeneratedColumn('uuid')
-	private _id!: string
-
-	get id(): PlantableAreaId {
-		return this._id as PlantableAreaId
+export class PlantableArea extends PeashootEntity<'plarea'> {
+	constructor() {
+		super('plarea')
 	}
-
-	@CreateDateColumn()
-	createdAt!: Date
-
 	@OneToMany(() => Plant, (plant) => plant.plantableArea)
 	plants!: Plant[]
 
 	@ManyToOne(() => GardenBed, (gardenBed) => gardenBed.plantableAreas)
 	gardenBed!: GardenBed
-
-	@UpdateDateColumn()
-	updatedAt!: Date
 
 	@Column({ type: 'int', nullable: false })
 	width!: number

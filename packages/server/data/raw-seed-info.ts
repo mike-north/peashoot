@@ -73,10 +73,21 @@ interface TimeDurationRange {
  * minimum winter temperatures. Zone 1 is coldest, Zone 11 is warmest.
  * Subzones (a/b) provide finer granularity within each zone.
  */
-interface USDAHardinessZone {
-	zone: number // 1-11, where 1 is coldest
-	subzone?: number // 'a' or 'b' for finer temperature ranges
-}
+type USDAHardinessZone =
+	| 1
+	| 2
+	| 3
+	| 4
+	| 5
+	| 6
+	| 7
+	| 8
+	| 9
+	| 10
+	| 11
+	| 12
+	| 13
+	| `${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13}${'a' | 'b' | ''}`
 
 // ============================================================================
 // PLANT CHARACTERISTICS
@@ -457,6 +468,15 @@ interface PlantSpacing {
 	canIntercrop?: boolean // Can other plants be grown between these
 }
 
+interface USDAHardinessZoneRange {
+	min: USDAHardinessZone
+	max: USDAHardinessZone
+}
+interface USDAHardinessZoneRangeMap {
+	oneSeason?: USDAHardinessZone | USDAHardinessZoneRange // Annual plants, or range where perennial plants will be ok for only one season
+	multiSeason?: USDAHardinessZone | USDAHardinessZoneRange // Range where perennial plants will be ok for multiple seasons
+}
+
 /**
  * Environmental conditions the plant needs to thrive
  */
@@ -466,7 +486,7 @@ interface EnvironmentalRequirements {
 
 	// Climate tolerance information
 	hardiness?: {
-		usdaZone: USDAHardinessZone // Geographic climate zone
+		usdaZone: USDAHardinessZoneRangeMap
 		frostHardy?: boolean // Can survive light frost
 		heatTolerant?: boolean // Handles high temperatures well
 		coolSeasonHardy?: boolean // Prefers cool weather
@@ -653,6 +673,17 @@ interface ToxicityInfo {
 	}
 }
 
+interface RGBColor {
+	red: number
+	green: number
+	blue: number
+}
+
+interface SeedPacketPresentation {
+	accentColor: RGBColor
+	iconPath: string
+}
+
 // ============================================================================
 // MAIN DATA STRUCTURE
 // ============================================================================
@@ -671,7 +702,7 @@ interface ToxicityInfo {
  * Not all fields will be available for every plant - optional sections
  * allow for incomplete data while still being useful for garden planning.
  */
-export interface SeedPacket {
+export interface RawSeedPacketInfo {
 	// ========================================================================
 	// CORE IDENTIFICATION
 	// ========================================================================
@@ -680,7 +711,7 @@ export interface SeedPacket {
 	latinName?: string // Scientific name (e.g., "Solanum lycopersicum")
 	description?: string // Additional details about this variety
 	plantFamily: PlantFamily // Plant family for companion planting relationships
-
+	presentation: SeedPacketPresentation
 	// ========================================================================
 	// PROPAGATION METHOD
 	// ========================================================================
@@ -716,4 +747,8 @@ export interface SeedPacket {
 	// SAFETY AND TOXICITY
 	// ========================================================================
 	toxInfo?: ToxicityInfo // Safety information about the plant
+}
+
+export interface RawSeedPacketInfoCollection {
+	seedPackets: RawSeedPacketInfo[]
 }

@@ -2,8 +2,8 @@
 import { Tween } from 'svelte/motion'
 import { cubicOut } from 'svelte/easing'
 import type { SeedPacket } from '../lib/entities/seed-packet'
-import { rgbToCss } from '../lib/color'
 import SeedPacketBack from './SeedPacketBack.svelte'
+import { rgbToCss } from '@peashoot/types'
 
 interface Props {
 	seedPacket: SeedPacket
@@ -180,28 +180,29 @@ svg {
 					text-anchor="middle"
 					fill="#222"
 					class="title"
-					>{seedPacket.displayName}
+					>{seedPacket.name}
 				</text>
 				<rect
 					x="60"
 					y="140"
 					width="280"
 					height="220"
-					fill={rgbToCss(seedPacket.accentColor)}
+					fill={rgbToCss(seedPacket.presentation.accentColor)}
+					fill-opacity="0.2"
 					stroke="#333"
 					stroke-width="2"
 				/>
 				<image
-					href={`/plant-icons/${seedPacket.iconPath}`}
-					x="60"
-					y="140"
-					width="280"
-					height="220"
+					href={`/plant-icons/${seedPacket.presentation.iconPath}`}
+					x="100"
+					y="150"
+					width="200"
+					height="200"
 					preserveAspectRatio="xMidYMid slice"
 				/>
 
 				<text x="200" y="385" font-size="20" text-anchor="middle" fill="#333"
-					>Count: {seedPacket.seedCount}</text
+					>Count: {seedPacket.quantity}</text
 				>
 				<text x="30" y="470" font-size="16" fill="#444"
 					>Net Wt. {seedPacket.netWeightGrams}g</text

@@ -1,4 +1,5 @@
 <script lang="ts">
+import { rgbToCss } from '@peashoot/types'
 import type { GridPlaceable } from '../private/grid/grid-placement'
 import IdLabel from './components/IdLabel.svelte'
 import { isPlant } from './entities/plant'
@@ -46,7 +47,7 @@ let { item }: Props = $props()
 		<div class="flex items-center gap-2">
 			<span
 				class="w-3 h-3 rounded border border-gray-300"
-				style={`background-color: rgba(${item.presentation.accentColor.r}, ${item.presentation.accentColor.g}, ${item.presentation.accentColor.b}, ${item.presentation.accentColor.a ?? 0.6})`}
+				style={`background-color: ${rgbToCss(item.presentation.accentColor)}`}
 			></span>
 			<span class="text-sm text-gray-700">Accent Color</span>
 		</div>

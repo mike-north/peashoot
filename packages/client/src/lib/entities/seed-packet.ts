@@ -1,4 +1,4 @@
-import type { RGB } from '../color'
+import type { ISeedPacket } from '@peashoot/types'
 import type { BaseEntity } from './base-entity'
 
 export interface SeedPacketInstructions {
@@ -8,16 +8,4 @@ export interface SeedPacketInstructions {
 	readonly hardinessNotes: string
 }
 
-export interface SeedPacket extends BaseEntity<'seedp'> {
-	readonly id: `seedp_${string}`
-	readonly displayName: string
-	readonly seedCount: number
-	readonly iconPath: string
-	readonly accentColor: RGB
-	readonly netWeightGrams: number
-	readonly originLocation: string
-	readonly description: string
-	readonly instructions: SeedPacketInstructions
-	readonly daysToHarvest: number
-	readonly yieldNotes: string
-}
+export interface SeedPacket extends BaseEntity<'seedp'>, ISeedPacket {}

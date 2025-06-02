@@ -5,4 +5,4 @@ export const GardenBedSchema = z.object({
 	description: z.string(),
 })
 
-export type IPlant = z.infer<typeof GardenBedSchema>
+export type IGardenBed = z.infer<typeof GardenBedSchema>

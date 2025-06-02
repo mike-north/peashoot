@@ -13,7 +13,7 @@ export const PlantSchema = z.object({
 	name: z.string(),
 	description: z.string(),
 	presentation: PlantPresentationSchema,
-	seedPacket: SeedPacketSchema
+	seedPacket: SeedPacketSchema,
 })
 
 export type IPlant = z.infer<typeof PlantSchema>

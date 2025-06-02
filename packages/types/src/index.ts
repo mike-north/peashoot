@@ -1,2 +1,7 @@
 export * from './entities/seed-packet.type.js'
+export * from './entities/garden.type.js'
+export * from './entities/garden-bed.type.js'
+export * from './entities/plant-placement.type.js'
+export * from './entities/plant.type.js'
 export * from './value-objects/rgb-color.type.js'
+export * from './value-objects/xy-coordinate.type.js'

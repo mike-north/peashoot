@@ -1,5 +1,5 @@
 import { z } from 'zod/v4'
-import { GardenBedSchema } from './garden-bed.js'
+import { GardenBedSchema } from './garden-bed.type.js'
 
 export const GardenSchema = z.object({
 	name: z.string(),
@@ -7,4 +7,4 @@ export const GardenSchema = z.object({
 	beds: z.array(GardenBedSchema),
 })
 
-export type IPlant = z.infer<typeof GardenSchema>
+export type IGarden = z.infer<typeof GardenSchema>

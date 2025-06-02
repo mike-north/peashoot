@@ -526,34 +526,49 @@ const draggedGridItemEffectiveSize = $derived(
 
 					<!-- Pending Operations -->
 					{#each $genericPendingOperations.filter( (op) => isGridPendingOperation(op, isGridPlaceable), ) as operation (operation.id)}
-						{@const itemOpSize = operation.item.presentation.size}
-						{@const tileLayout = layout.getTileLayoutInfo({
-							x: operation.x || 0,
-							y: operation.y || 0,
-							size: itemOpSize,
-						})}
-						{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-							x: operation.x || 0,
-							y: operation.y || 0,
-							size: itemOpSize,
-							strokeWidth: 2,
-						})}
-						{@const corners = layout.getTileFrameCornerPositions({
-							x: operation.x || 0,
-							y: operation.y || 0,
-							size: itemOpSize,
-							bedWidth: grid.width,
-							bedHeight: grid.height,
-						})}
-						{@const borderRadiusStyle = corners
-							.map((corner) => `border-${corner}-radius: 8px;`)
-							.join(' ')}
-						<div
-							class="tile-overlay__tile tile-overlay__tile--pending"
-							style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
-						>
-							<PendingOperationTile operation={operation} sizePx={tileLayout.width} />
-						</div>
+						<!-- prettier-ignore -->
+						<!-- eslint-disable no-console -->
+						<!-- console.log(
+							`[Grid.svelte] Checking Op: ${operation.id}, Op.zoneId: ${operation.zoneId}, Op.state: ${operation.state}, Op.coords: (${operation.x},${operation.y}) -- For Grid ID: ${grid.id}`,
+						) -->
+						{#if operation.zoneId === grid.id && operation.x !== undefined && operation.y !== undefined}
+							<!-- prettier-ignore -->
+							<!-- eslint-disable no-console -->
+							<!-- console.log(
+								`[Grid.svelte] MATCH! Rendering PendingOp ${operation.id} in Grid ID: ${grid.id}. Op state: ${operation.state}`,
+							) -->
+							{@const itemOpSize = operation.item.presentation.size}
+							{@const tileLayout = layout.getTileLayoutInfo({
+								x: operation.x || 0,
+								y: operation.y || 0,
+								size: itemOpSize,
+							})}
+							{@const overlayLayout = layout.getTileOverlayLayoutInfo({
+								x: operation.x || 0,
+								y: operation.y || 0,
+								size: itemOpSize,
+								strokeWidth: 2,
+							})}
+							{#if isValidPlacement(operation.x || 0, operation.y || 0, itemOpSize)}
+								<!-- Use tileLayout.isValid -->
+								{@const corners = layout.getTileFrameCornerPositions({
+									x: operation.x || 0,
+									y: operation.y || 0,
+									size: itemOpSize,
+									bedWidth: grid.width,
+									bedHeight: grid.height,
+								})}
+								{@const borderRadiusStyle = corners
+									.map((corner) => `border-${corner}-radius: 8px;`)
+									.join(' ')}
+								<div
+									class="tile-overlay__tile tile-overlay__tile--pending"
+									style="left: {overlayLayout.svgX}px; top: {overlayLayout.svgY}px; width: {overlayLayout.width}px; height: {overlayLayout.height}px; z-index: 5; {borderRadiusStyle}"
+								>
+									<PendingOperationTile operation={operation} sizePx={tileLayout.width} />
+								</div>
+							{/if}
+						{/if}
 					{/each}
 				</div>
 			</GenericDropZone>

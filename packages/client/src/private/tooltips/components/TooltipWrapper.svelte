@@ -23,7 +23,7 @@ let {
 	tileCenterY,
 }: Props = $props()
 
-const accentColor = `rgba(${item.presentation.accentColor.r}, ${item.presentation.accentColor.g}, ${item.presentation.accentColor.b}, ${item.presentation.accentColor.a ?? 0.4})`
+const accentColor = `rgba(${item.presentation.accentColor.red}, ${item.presentation.accentColor.green}, ${item.presentation.accentColor.blue}, ${item.presentation.accentColor.alpha ?? 0.4})`
 let contentContainer: HTMLDivElement | null = $state(null)
 let isVisible = $state(true)
 

@@ -673,6 +673,17 @@ interface ToxicityInfo {
 	}
 }
 
+interface RGBColor {
+	red: number
+	green: number
+	blue: number
+}
+
+interface SeedPacketPresentation {
+	accentColor: RGBColor
+	iconPath: string
+}
+
 // ============================================================================
 // MAIN DATA STRUCTURE
 // ============================================================================
@@ -700,7 +711,7 @@ export interface RawSeedPacketInfo {
 	latinName?: string // Scientific name (e.g., "Solanum lycopersicum")
 	description?: string // Additional details about this variety
 	plantFamily: PlantFamily // Plant family for companion planting relationships
-
+	presentation: SeedPacketPresentation
 	// ========================================================================
 	// PROPAGATION METHOD
 	// ========================================================================

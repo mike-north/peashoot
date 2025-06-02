@@ -5,59 +5,47 @@ import type { SeedPacket } from './entities/seed-packet'
 export const seedPackets: SeedPacket[] = [
 	{
 		id: 'seedp_0',
-		displayName: 'Celery Seeds',
-		seedCount: 10,
-		iconPath: 'celery-celery.png',
-		accentColor: { r: 144, g: 238, b: 144 },
+		name: 'Celery Seeds',
+		quantity: 10,
+		presentation: {
+			iconPath: 'celery-celery.png',
+			accentColor: { red: 144, green: 238, blue: 144 },
+		},
 		netWeightGrams: 10,
 		originLocation: 'Colombia',
 		description: 'Celery seeds are a great way to add some green to your garden.',
-		instructions: {
-			sowInstructions: 'Sow seeds 1/2 inch deep in soil.',
-			germinationInstructions: 'Germinate at 70-80° F.',
-			transplantInstructions: 'Transplant @ 6-8 in. tall',
-			hardinessNotes: 'Hardy to zone 5.',
-		},
-		daysToHarvest: 60,
-		yieldNotes: '10-12 stalks per plant.',
+		plantingInstructions: 'Sow seeds 1/2 inch deep in soil.',
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
 	},
 	{
 		id: 'seedp_1',
-		displayName: 'Big Boy Tomato',
-		seedCount: 30, // from seedPacketInfo.seedCount
-		iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-		accentColor: { r: 255, g: 99, b: 71 }, // Tomato red
+		name: 'Big Boy Tomato',
+		quantity: 30, // from seedPacketInfo.seedCount
+		presentation: {
+			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+			accentColor: { red: 255, green: 99, blue: 71 }, // Tomato red
+		},
 		netWeightGrams: 1, // Placeholder, not directly in YAML for this item
 		originLocation: 'USA', // Placeholder, not directly in YAML
 		description:
 			'Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches.',
-		instructions: {
-			sowInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
-			germinationInstructions: '7-14 days.', // from planting.daysToGermination
-			transplantInstructions: 'Transplant after 2 weeks of last frost.', // from planting.timing
-			hardinessNotes: 'Not frost hardy.', // from environmental.hardiness.frostHardy
-		},
-		daysToHarvest: 80, // from production.harvestDuration
-		yieldNotes: 'Continuous harvest over 60 days.', // from production.harvestMethod and harvestWindow
+		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
 	},
 	{
 		id: 'seedp_2',
-		displayName: 'Basil',
-		seedCount: 100, // from seedPacketInfo.seedCount
-		iconPath: 'basil-basil.png',
-		accentColor: { r: 133, g: 187, b: 101 }, // Basil green
+		name: 'Basil',
+		quantity: 100, // from seedPacketInfo.seedCount
+		presentation: {
+			iconPath: 'basil-basil.png',
+			accentColor: { red: 133, green: 187, blue: 101 }, // Basil green
+		},
 		netWeightGrams: 0.5, // Placeholder
 		originLocation: 'India', // Placeholder
 		description:
 			'Aromatic annual herb with excellent culinary uses. Natural pest deterrent and pollinator attractor.',
-		instructions: {
-			sowInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
-			germinationInstructions: '5-10 days.', // from planting.daysToGermination
-			transplantInstructions: 'Transplant after 2 weeks of last frost.', // from planting.timing
-			hardinessNotes: 'Not frost hardy.', // from environmental.hardiness.frostHardy
-		},
-		daysToHarvest: 60, // from production.harvestDuration
-		yieldNotes: 'Continuous harvest over 90 days.', // from production.harvestMethod and harvestWindow
+		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
 	},
 ]
 
@@ -106,7 +94,7 @@ export const gardens: Garden[] = [
 							variant: 'burpee-big-boy-tomato',
 							plantingDistanceInFeet: 2,
 							presentation: {
-								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 								size: 2,
 							},
@@ -134,7 +122,7 @@ export const gardens: Garden[] = [
 							variant: 'burpee-buttercrunch-lettuce',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 								size: 1,
 							},
@@ -162,7 +150,7 @@ export const gardens: Garden[] = [
 							family: 'tomatoes',
 							variant: 'burpee-big-boy-tomato',
 							presentation: {
-								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 								size: 2,
 							},
@@ -181,7 +169,7 @@ export const gardens: Garden[] = [
 							variant: 'burpee-buttercrunch-lettuce',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 								size: 1,
 							},
@@ -209,7 +197,7 @@ export const gardens: Garden[] = [
 							variant: 'arugula',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 								iconPath: 'arugula-arugula.png',
 								size: 1,
 							},
@@ -228,7 +216,7 @@ export const gardens: Garden[] = [
 							variant: 'japanese-perpetual-spinach',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 56, g: 142, b: 60 }, // --color-spinach-green
+								accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
 								iconPath: 'spinach-japanese-perpetual-spinach.png',
 								size: 1,
 							},
@@ -256,7 +244,7 @@ export const gardens: Garden[] = [
 							variant: 'rainier-cherry',
 							plantingDistanceInFeet: 3,
 							presentation: {
-								accentColor: { r: 255, g: 192, b: 203 }, // --color-cherries-pink
+								accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
 								iconPath: 'cherries-rainier-cherry.png',
 								size: 3,
 							},
@@ -275,7 +263,7 @@ export const gardens: Garden[] = [
 							variant: 'burpee-big-boy-tomato',
 							plantingDistanceInFeet: 2,
 							presentation: {
-								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 								size: 2,
 							},
@@ -294,7 +282,7 @@ export const gardens: Garden[] = [
 							variant: 'burpee-buttercrunch-lettuce',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 								size: 1,
 							},
@@ -314,7 +302,7 @@ export const gardens: Garden[] = [
 							variant: 'alexandria-strawberry',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 								iconPath: 'strawberries-alexandria-strawberry.png',
 								size: 1,
 							},
@@ -334,7 +322,7 @@ export const gardens: Garden[] = [
 							variant: 'zinnia',
 							plantingDistanceInFeet: 1,
 							presentation: {
-								accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 								iconPath: 'daisies-zinnia.png',
 								size: 1,
 							},
@@ -356,7 +344,7 @@ export const plants: Plant[] = [
 		variant: 'burpee-big-boy-tomato',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 			size: 2,
 		},
@@ -368,7 +356,7 @@ export const plants: Plant[] = [
 		variant: 'rareseeds-cherokee-purple-tomato',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 128, g: 0, b: 128 }, // --color-tomatoes-purple
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
 			iconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
 			size: 2,
 		},
@@ -380,7 +368,7 @@ export const plants: Plant[] = [
 		variant: 'sweet-100-tomato',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 214, g: 40, b: 40 }, // --color-tomatoes-red
+			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 			iconPath: 'tomatoes-sweet-100-tomato.png',
 			size: 2,
 		},
@@ -392,7 +380,7 @@ export const plants: Plant[] = [
 		variant: 'napa-chardonnay-tomato',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 255, g: 212, b: 0 }, // --color-tomatoes-yellow
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-tomatoes-yellow
 			iconPath: 'tomatoes-napa-chardonnay-tomato.png',
 			size: 2,
 		},
@@ -404,7 +392,7 @@ export const plants: Plant[] = [
 		variant: 'black-from-tula-tomato',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 128, g: 0, b: 128 }, // --color-tomatoes-purple
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
 			iconPath: 'tomatoes-black-from-tula-tomato.png',
 			size: 2,
 		},
@@ -418,7 +406,7 @@ export const plants: Plant[] = [
 		variant: 'burpee-buttercrunch-lettuce',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 			iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 			size: 1,
 		},
@@ -430,7 +418,7 @@ export const plants: Plant[] = [
 		variant: 'arugula',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 123, g: 182, b: 97 }, // --color-lettuce-green
+			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 			iconPath: 'arugula-arugula.png',
 			size: 1,
 		},
@@ -442,7 +430,7 @@ export const plants: Plant[] = [
 		variant: 'spinach',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 56, g: 142, b: 60 }, // --color-spinach-green
+			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
 			iconPath: 'spinach-spinach.png',
 			size: 1,
 		},
@@ -454,7 +442,7 @@ export const plants: Plant[] = [
 		variant: 'japanese-perpetual-spinach',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 56, g: 142, b: 60 }, // --color-spinach-green
+			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
 			iconPath: 'spinach-japanese-perpetual-spinach.png',
 			size: 1,
 		},
@@ -468,7 +456,7 @@ export const plants: Plant[] = [
 		variant: 'burpee-chantenay-carrot',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 167, b: 38 }, // --color-carrots-orange
+			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
 			iconPath: 'carrots-burpee-chantenay-carrot.png',
 			size: 1,
 		},
@@ -480,7 +468,7 @@ export const plants: Plant[] = [
 		variant: 'parisienne-carrots',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 167, b: 38 }, // --color-carrots-orange
+			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
 			iconPath: 'carrots-parisienne-carrots.png',
 			size: 1,
 		},
@@ -492,7 +480,7 @@ export const plants: Plant[] = [
 		variant: 'lila-lu-sang-carrots',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 128, g: 0, b: 128 }, // --color-carrots-purple
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-carrots-purple
 			iconPath: 'carrots-lila-lu-sang-carrots.png',
 			size: 1,
 		},
@@ -506,7 +494,7 @@ export const plants: Plant[] = [
 		variant: 'burpee-california-wonder-pepper',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 58, g: 145, b: 63 }, // --color-peppers-green
+			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
 			iconPath: 'peppers-burpee-california-wonder-pepper.png',
 			size: 1,
 		},
@@ -518,7 +506,7 @@ export const plants: Plant[] = [
 		variant: 'jalapeno-hot-pepper',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 58, g: 145, b: 63 }, // --color-peppers-green
+			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
 			iconPath: 'peppers-jalapeno-hot-pepper.png',
 			size: 1,
 		},
@@ -530,7 +518,7 @@ export const plants: Plant[] = [
 		variant: 'habanero-hot-pepper',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 247, g: 92, b: 3 }, // --color-peppers-orange
+			accentColor: { red: 247, green: 92, blue: 3 }, // --color-peppers-orange
 			iconPath: 'peppers-habanero-hot-pepper.png',
 			size: 1,
 		},
@@ -542,7 +530,7 @@ export const plants: Plant[] = [
 		variant: 'lemon-drop-hot-pepper',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 212, b: 0 }, // --color-peppers-yellow
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-peppers-yellow
 			iconPath: 'peppers-lemon-drop-hot-pepper.png',
 			size: 1,
 		},
@@ -554,7 +542,7 @@ export const plants: Plant[] = [
 		variant: 'buena-mulata-hot-pepper',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 128, g: 0, b: 128 }, // --color-peppers-purple
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-peppers-purple
 			iconPath: 'peppers-buena-mulata-hot-pepper.png',
 			size: 1,
 		},
@@ -568,7 +556,7 @@ export const plants: Plant[] = [
 		variant: 'burpee-provider-bush-bean',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 86, g: 130, b: 3 }, // --color-beans-green
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
 			iconPath: 'beans-burpee-provider-bush-bean.png',
 			size: 1,
 		},
@@ -580,7 +568,7 @@ export const plants: Plant[] = [
 		variant: 'fava-beans',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 86, g: 130, b: 3 }, // --color-beans-green
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
 			iconPath: 'beans-fava-beans.png',
 			size: 1,
 		},
@@ -592,7 +580,7 @@ export const plants: Plant[] = [
 		variant: 'dragons-tongue-beans',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 212, b: 0 }, // --color-beans-yellow
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-beans-yellow
 			iconPath: 'beans-dragons-tongue-beans.png',
 			size: 1,
 		},
@@ -604,7 +592,7 @@ export const plants: Plant[] = [
 		variant: 'cherokee-trail-of-tears-beans',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 128, g: 0, b: 128 }, // --color-beans-purple
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-beans-purple
 			iconPath: 'beans-cherokee-trail-of-tears-beans.png',
 			size: 1,
 		},
@@ -616,7 +604,7 @@ export const plants: Plant[] = [
 		variant: 'scarlet-runner-beans',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 86, g: 130, b: 3 }, // --color-beans-green
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
 			iconPath: 'beans-scarlet-runner-beans.png',
 			size: 1,
 		},
@@ -630,7 +618,7 @@ export const plants: Plant[] = [
 		variant: 'rareseeds-yellow-of-parma-onion',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 212, b: 0 }, // --color-onions-yellow
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-onions-yellow
 			iconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
 			size: 1,
 		},
@@ -642,7 +630,7 @@ export const plants: Plant[] = [
 		variant: 'burpee-evergreen-hardy-white-scallions',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 245, g: 245, b: 245 }, // --color-onions-white
+			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
 			iconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
 			size: 1,
 		},
@@ -654,7 +642,7 @@ export const plants: Plant[] = [
 		variant: 'chives',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 86, g: 130, b: 3 }, // --color-mint-green
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-mint-green
 			iconPath: 'onions-chives.png',
 			size: 1,
 		},
@@ -666,7 +654,7 @@ export const plants: Plant[] = [
 		variant: 'garlic',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 245, g: 245, b: 245 }, // --color-onions-white
+			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
 			iconPath: 'onions-garlic.png',
 			size: 1,
 		},
@@ -678,11 +666,7 @@ export const plants: Plant[] = [
 		variant: 'bunching-onion',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: {
-				r: 245,
-				g: 245,
-				b: 245,
-			},
+			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
 			iconPath: 'onions-bunching-onion.png',
 			size: 1,
 		},
@@ -696,7 +680,7 @@ export const plants: Plant[] = [
 		variant: 'rainier-cherry',
 		plantingDistanceInFeet: 3,
 		presentation: {
-			accentColor: { r: 255, g: 192, b: 203 }, // --color-cherries-pink
+			accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
 			iconPath: 'cherries-rainier-cherry.png',
 			size: 3,
 		},
@@ -708,7 +692,7 @@ export const plants: Plant[] = [
 		variant: 'alexandria-strawberry',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 220, g: 20, b: 60 }, // --color-strawberries-red
+			accentColor: { red: 220, green: 20, blue: 60 }, // --color-strawberries-red
 			iconPath: 'strawberries-alexandria-strawberry.png',
 			size: 1,
 		},
@@ -722,7 +706,7 @@ export const plants: Plant[] = [
 		variant: 'zinnia',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 105, b: 180 },
+			accentColor: { red: 255, green: 105, blue: 180 },
 			iconPath: 'daisies-zinnia.png',
 			size: 1,
 		},
@@ -735,7 +719,7 @@ export const plants: Plant[] = [
 		variant: 'basil',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 85, g: 107, b: 47 },
+			accentColor: { red: 85, green: 107, blue: 47 },
 			iconPath: 'basil-basil.png',
 			size: 1,
 		},
@@ -747,7 +731,7 @@ export const plants: Plant[] = [
 		variant: 'foxglove',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 186, g: 85, b: 211 },
+			accentColor: { red: 186, green: 85, blue: 211 },
 			iconPath: 'snapdragons-foxglove.png',
 			size: 2,
 		},
@@ -759,7 +743,7 @@ export const plants: Plant[] = [
 		variant: 'zinnia',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 105, b: 180 },
+			accentColor: { red: 255, green: 105, blue: 180 },
 			iconPath: 'daisies-zinnia.png',
 			size: 1,
 		},
@@ -771,7 +755,7 @@ export const plants: Plant[] = [
 		variant: 'watermelon',
 		plantingDistanceInFeet: 4,
 		presentation: {
-			accentColor: { r: 50, g: 205, b: 50 },
+			accentColor: { red: 50, green: 205, blue: 50 },
 			iconPath: 'watermelons-watermelon.png',
 			size: 4,
 		},
@@ -783,7 +767,7 @@ export const plants: Plant[] = [
 		variant: 'wheat',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 222, g: 184, b: 135 },
+			accentColor: { red: 222, green: 184, blue: 135 },
 			iconPath: 'grains-wheat.png',
 			size: 1,
 		},
@@ -795,7 +779,7 @@ export const plants: Plant[] = [
 		variant: 'broccoli',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 85, g: 107, b: 47 },
+			accentColor: { red: 85, green: 107, blue: 47 },
 			iconPath: 'broccoli-broccoli.png',
 			size: 2,
 		},
@@ -807,7 +791,7 @@ export const plants: Plant[] = [
 		variant: 'sunflower',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 255, g: 215, b: 0 },
+			accentColor: { red: 255, green: 215, blue: 0 },
 			iconPath: 'sunflowers-sunflower.png',
 			size: 2,
 		},
@@ -819,7 +803,7 @@ export const plants: Plant[] = [
 		variant: 'lupine',
 		plantingDistanceInFeet: 2,
 		presentation: {
-			accentColor: { r: 123, g: 104, b: 238 },
+			accentColor: { red: 123, green: 104, blue: 238 },
 			iconPath: 'legumes-lupine.png',
 			size: 2,
 		},
@@ -831,7 +815,7 @@ export const plants: Plant[] = [
 		variant: 'rutabaga',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 238, g: 232, b: 170 },
+			accentColor: { red: 238, green: 232, blue: 170 },
 			iconPath: 'rutabagas-rutabaga.png',
 			size: 1,
 		},
@@ -843,7 +827,7 @@ export const plants: Plant[] = [
 		variant: 'celery',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 144, g: 238, b: 144 },
+			accentColor: { red: 144, green: 238, blue: 144 },
 			iconPath: 'celery-celery.png',
 			size: 1,
 		},
@@ -855,7 +839,7 @@ export const plants: Plant[] = [
 		variant: 'marigold',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 255, g: 140, b: 0 },
+			accentColor: { red: 255, green: 140, blue: 0 },
 			iconPath: 'marigolds-marigold.png',
 			size: 1,
 		},
@@ -867,7 +851,7 @@ export const plants: Plant[] = [
 		variant: 'cilantro',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 34, g: 139, b: 34 },
+			accentColor: { red: 34, green: 139, blue: 34 },
 			iconPath: 'cilantro-cilantro.png',
 			size: 1,
 		},
@@ -879,7 +863,7 @@ export const plants: Plant[] = [
 		variant: 'bok-choy',
 		plantingDistanceInFeet: 1,
 		presentation: {
-			accentColor: { r: 152, g: 251, b: 152 },
+			accentColor: { red: 152, green: 251, blue: 152 },
 			iconPath: 'brassicas-bok-choy.png',
 			size: 1,
 		},

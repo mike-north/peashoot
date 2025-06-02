@@ -2,6 +2,7 @@
 import type { GridPlaceable, GridPlacement } from '../grid-placement'
 import type { Component } from 'svelte'
 import { showTooltip, hideTooltip } from '../../tooltips/state/tooltipStore'
+import { rgbToCss } from '@peashoot/types'
 
 interface Props {
 	placement: GridPlacement<T>
@@ -32,10 +33,6 @@ let tileElement: HTMLDivElement | null = $state(null)
 
 // Generate unique tooltip ID for this tile
 const tooltipId = `tooltip-${placement.id}`
-
-function colorHashToCss(color: { r: number; g: number; b: number; a?: number }): string {
-	return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a ?? 0.4})`
-}
 
 function calculateTooltipPosition() {
 	if (!tileElement) return null
@@ -260,7 +257,10 @@ function handleWindowResize() {
 			width={sizePx}
 			height={sizePx}
 			class="grid-placement-tile__background"
-			style={`fill: ${colorHashToCss(item.presentation.accentColor)}`}
+			style={`fill: ${rgbToCss({
+				...item.presentation.accentColor,
+				alpha: 0.6 * (item.presentation.accentColor.alpha ?? 1),
+			})}`}
 		/>
 
 		{#if item.presentation.iconPath}

@@ -625,6 +625,25 @@
             ],
             "type": "object"
         },
+        "RGBColor": {
+            "properties": {
+                "blue": {
+                    "type": "number"
+                },
+                "green": {
+                    "type": "number"
+                },
+                "red": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "blue",
+                "green",
+                "red"
+            ],
+            "type": "object"
+        },
         "RawSeedPacketInfo": {
             "description": "Complete information about a plant variety, typically from a seed packet\nor plant tag. This model supports garden planning and plant placement\noptimization by capturing all relevant growing characteristics.\n\nThe structure is designed to handle different plant types:\n- Food crops (vegetables, fruits, herbs)\n- Ornamental plants (flowers, decorative plants)\n- Functional plants (nitrogen fixers, pest repellents)\n- Trees and perennials\n\nNot all fields will be available for every plant - optional sections\nallow for incomplete data while still being useful for garden planning.",
             "properties": {
@@ -664,6 +683,9 @@
                 "plantingInstructions": {
                     "type": "string"
                 },
+                "presentation": {
+                    "$ref": "#/definitions/SeedPacketPresentation"
+                },
                 "production": {
                     "$ref": "#/definitions/ProductionInfo"
                 },
@@ -701,6 +723,7 @@
                 "id",
                 "plantFamily",
                 "planting",
+                "presentation",
                 "propagationMethod",
                 "resources",
                 "spacing"
@@ -757,6 +780,21 @@
                     "type": "number"
                 }
             },
+            "type": "object"
+        },
+        "SeedPacketPresentation": {
+            "properties": {
+                "accentColor": {
+                    "$ref": "#/definitions/RGBColor"
+                },
+                "iconPath": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "accentColor",
+                "iconPath"
+            ],
             "type": "object"
         },
         "SeedTreatment": {

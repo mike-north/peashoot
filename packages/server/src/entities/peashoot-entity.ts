@@ -1,13 +1,22 @@
-import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { CreateDateColumn, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import { v4 as uuidv4 } from 'uuid'
+
+const generatePrefixedUUID = <P extends string>(prefix: P): `${P}_${string}` => {
+	return `${prefix}_${uuidv4().slice(prefix.length)}`
+}
 
 export type BaseEntityId<Prefix extends string> = `${Prefix}_${string}`
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export abstract class PeashootEntity<Prefix extends string> {
-	@PrimaryGeneratedColumn('uuid')
-	protected _id!: string
+	constructor(idPrefix: Prefix) {
+		this.id = generatePrefixedUUID(idPrefix)
+	}
 
-	abstract get id(): BaseEntityId<Prefix>
+	@PrimaryColumn({
+		name: 'id',
+		unique: true,
+	})
+	id!: BaseEntityId<Prefix>
 
 	@CreateDateColumn()
 	createdAt!: Date

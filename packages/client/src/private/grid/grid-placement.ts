@@ -1,4 +1,4 @@
-import type { RGB } from '../../lib/color'
+import type { IRGBColor } from '@peashoot/types'
 import {
 	type ExistingDraggableItem,
 	type DraggableItem,
@@ -70,7 +70,7 @@ export interface GridItemPresentation {
 	/** Path to the icon to display */
 	readonly iconPath: string
 	/** Accent color for the tile background */
-	readonly accentColor: RGB
+	readonly accentColor: IRGBColor
 	readonly size: number
 }
 

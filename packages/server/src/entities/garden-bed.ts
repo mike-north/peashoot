@@ -4,8 +4,8 @@ import { PeashootEntity } from './peashoot-entity'
 
 @Entity({ name: 'garden-beds' })
 export class GardenBed extends PeashootEntity<'gbed'> {
-	get id() {
-		return `gbed_${this._id}` as const
+	constructor() {
+		super('gbed')
 	}
 
 	@Column()

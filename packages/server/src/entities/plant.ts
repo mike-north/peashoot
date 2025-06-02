@@ -15,8 +15,8 @@ export type IPlant = z.infer<typeof PlantSchema>
 
 @Entity({ name: 'plants' })
 export class Plant extends PeashootEntity<'plant'> implements IPlant {
-	get id() {
-		return `plant_${this._id}` as const
+	constructor() {
+		super('plant')
 	}
 
 	@ManyToOne(() => SeedPacket, (seedPacket) => seedPacket.plants)

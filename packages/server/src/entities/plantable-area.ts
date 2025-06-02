@@ -5,10 +5,9 @@ import { PeashootEntity } from './peashoot-entity'
 
 @Entity({ name: 'plantable-areas' })
 export class PlantableArea extends PeashootEntity<'plarea'> {
-	get id() {
-		return `plarea_${this._id}` as const
+	constructor() {
+		super('plarea')
 	}
-
 	@OneToMany(() => Plant, (plant) => plant.plantableArea)
 	plants!: Plant[]
 

@@ -117,6 +117,7 @@ function setIsHovered(hovered: boolean) {
 	class="delete-zone"
 	class:delete-zone--hidden={!showDeleteZone}
 	class:delete-zone--hovered={isHovered && showDeleteZone}
+	data-delete-zone="true"
 	role="button"
 	tabindex="0"
 	use:deleteZoneDragEvents={{

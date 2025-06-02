@@ -99,14 +99,62 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 			}))
 		}
 
-		function handleMouseUp(_event: MouseEvent) {
+		function handleMouseUp(event: MouseEvent) {
 			const currentDragStateVal = get(currentOptions.dragState)
+
+			let finalTargetZoneId: string | null = null
+			let finalTargetType: 'drop-zone' | 'delete-zone' | null = null
+			let finalHighlightedCell: { x: number; y: number } | null = null
+
+			// Check elements at the exact mouseup position
+			const elementsAtPoint = document.elementsFromPoint(event.clientX, event.clientY)
+			const deleteZoneElement = elementsAtPoint.find((el) =>
+				el.closest('[data-delete-zone="true"]'),
+			)
+
+			if (deleteZoneElement) {
+				finalTargetType = 'delete-zone'
+			} else {
+				for (const bed of currentOptions.beds) {
+					const bedComponentElement = htmlElement.querySelector(
+						`[data-bed-id='${bed.id}']`,
+					)
+					const svgElement = bedComponentElement?.querySelector('svg')
+
+					if (bedComponentElement && svgElement) {
+						const rect = svgElement.getBoundingClientRect()
+						if (
+							event.clientX >= rect.left &&
+							event.clientX <= rect.right &&
+							event.clientY >= rect.top &&
+							event.clientY <= rect.bottom
+						) {
+							const layout = new GardenBedLayoutCalculator({
+								width: bed.width,
+								height: bed.height,
+								tileSizeForItem,
+								...DEFAULT_LAYOUT_PARAMS,
+							})
+							const gridCoords = screenToGridCoordinates(
+								svgElement,
+								layout,
+								event.clientX,
+								event.clientY,
+							)
+							finalTargetZoneId = bed.id
+							finalTargetType = 'drop-zone'
+							finalHighlightedCell = gridCoords
+							break
+						}
+					}
+				}
+			}
 
 			if (currentDragStateVal.draggedNewItem || currentDragStateVal.draggedExistingItem) {
 				currentOptions.onDrop({
-					targetZoneId: currentDragStateVal.targetZoneId,
-					targetType: currentDragStateVal.targetType,
-					highlightedCell: currentDragStateVal.highlightedCell,
+					targetZoneId: finalTargetZoneId,
+					targetType: finalTargetType,
+					highlightedCell: finalHighlightedCell,
 					isCloneMode: currentDragStateVal.isCloneMode,
 				})
 			}

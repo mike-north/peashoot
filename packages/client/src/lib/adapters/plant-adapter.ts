@@ -5,6 +5,7 @@ import { PlantAdapterBase } from './plant-adapter-base'
 export type PlantResource = IPlant & { id: `plant_${string}` }
 
 export function convertPlant(iPlant: PlantResource): Plant {
+	const plantingDistanceInFeet = convertDistanceToFeet(iPlant.plantingDistance).value
 	return {
 		id: iPlant.id,
 		displayName: iPlant.name,
@@ -13,9 +14,9 @@ export function convertPlant(iPlant: PlantResource): Plant {
 		presentation: {
 			iconPath: iPlant.presentation.iconPath,
 			accentColor: iPlant.presentation.accentColor,
-			size: 1,
+			size: Math.max(1, Math.round(plantingDistanceInFeet)),
 		},
-		plantingDistanceInFeet: convertDistanceToFeet(iPlant.plantingDistance).value,
+		plantingDistanceInFeet: Math.round(plantingDistanceInFeet * 100) / 100,
 	}
 }
 

@@ -27,7 +27,7 @@ function convertPlantPlacement(
 		x: placement.position.x,
 		y: placement.position.y,
 		item: plant,
-		size: plant.presentation.size,
+		size: Math.max(1, Math.round(plant.plantingDistanceInFeet)),
 		sourceZoneId: bedId,
 	}
 }

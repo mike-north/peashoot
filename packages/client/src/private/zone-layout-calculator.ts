@@ -5,7 +5,7 @@ import type { Workspace } from '../lib/entities/workspace'
  */
 export function calculateZoneViewColSpans(workspace: Workspace): Record<string, number> {
 	const colSpans: Record<string, number> = {}
-	
+
 	// For now, use a simple algorithm that gives larger zones more column span
 	for (const zone of workspace.zones) {
 		const area = zone.width * zone.height
@@ -17,6 +17,6 @@ export function calculateZoneViewColSpans(workspace: Workspace): Record<string, 
 			colSpans[zone.id] = 1
 		}
 	}
-	
+
 	return colSpans
-} 
+}

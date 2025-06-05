@@ -72,7 +72,5 @@ export function findItemPlacement(
 	zone: Zone,
 	itemPlacementId: string,
 ): GridPlacement<Item> | undefined {
-	return zone.placements.find(
-		(pp: GridPlacement<Item>) => pp.id === itemPlacementId,
-	)
+	return zone.placements.find((pp: GridPlacement<Item>) => pp.id === itemPlacementId)
 }

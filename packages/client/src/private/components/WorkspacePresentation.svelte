@@ -331,4 +331,4 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 		<DeleteZone />
 		<DragPreview grids={zones} tileSizeForItem={tileSizeForItem} />
 	{/if}
-</div> 
+</div>

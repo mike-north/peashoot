@@ -36,15 +36,15 @@ const {
 <!-- Garden bed grid now uses the generic zone system -->
 <ZoneGrid
 	zone={bed}
-	{plants}
-	{TooltipComponent}
-	edgeIndicators={edgeIndicators.map(indicator => ({
+	plants={plants}
+	TooltipComponent={TooltipComponent}
+	edgeIndicators={edgeIndicators.map((indicator) => ({
 		id: indicator.id,
 		itemAId: indicator.plantAId,
 		itemBId: indicator.plantBId,
-		color: indicator.color
+		color: indicator.color,
 	}))}
-	{tileSizeForItem}
-	{colSpan}
+	tileSizeForItem={tileSizeForItem}
+	colSpan={colSpan}
 	{...rest}
 />

@@ -15,7 +15,7 @@ type ZoneResource = IGardenBed & {
 	plantPlacements: PlantPlacementResource[]
 }
 
-type WorkspaceResource = IGarden & {
+export type WorkspaceResource = IGarden & {
 	id: `grdn_${string}`
 	beds: ZoneResource[]
 }
@@ -35,7 +35,7 @@ function convertPlantPlacement(
 	}
 }
 
-function convertZone(iZone: ZoneResource): Zone {
+export function convertZone(iZone: ZoneResource): Zone {
 	return {
 		id: iZone.id,
 		width: iZone.rows,
@@ -48,17 +48,10 @@ function convertZone(iZone: ZoneResource): Zone {
 	}
 }
 
-function convertWorkspace(iWorkspace: WorkspaceResource): Workspace {
-	return {
-		id: iWorkspace.id,
-		zones: iWorkspace.beds.map((iZone) => convertZone(iZone)),
-		edgeIndicators: [],
-	}
-}
 
 export class WorkspaceAdapter extends WorkspaceAdapterBase {
 	async fetchWorkspaces(): Promise<Workspace[]> {
 		// For now, delegate to base class that converts garden fixture data
 		return super.fetchWorkspaces()
 	}
-} 
+}

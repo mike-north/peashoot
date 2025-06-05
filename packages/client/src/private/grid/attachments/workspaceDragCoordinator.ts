@@ -6,10 +6,7 @@ import type {
 	DraggableItem,
 	ExistingDraggableItem,
 } from '../../../private/dnd/types'
-import {
-	ZoneLayoutCalculator,
-	screenToGridCoordinates,
-} from '../zone-layout-calculator'
+import { ZoneLayoutCalculator, screenToGridCoordinates } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { Zone } from '../../../lib/entities/zone'
 
@@ -25,7 +22,9 @@ interface WorkspaceDragCoordinatorOptions {
 	}) => void
 }
 
-export function workspaceDragCoordinator(options: WorkspaceDragCoordinatorOptions): Attachment {
+export function workspaceDragCoordinator(
+	options: WorkspaceDragCoordinatorOptions,
+): Attachment {
 	const { tileSizeForItem } = options
 	return (element) => {
 		const htmlElement = element as HTMLElement
@@ -182,4 +181,4 @@ export function workspaceDragCoordinator(options: WorkspaceDragCoordinatorOption
 			window.removeEventListener('mouseup', handleMouseUp)
 		}
 	}
-} 
+}

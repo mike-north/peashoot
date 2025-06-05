@@ -1,4 +1,5 @@
-import type { Plant } from '../../lib/entities/plant'
+import type { PlantItem } from '../../lib/item-types/plant-item'
+import { getPlantProperties } from '../../lib/item-types/plant-item'
 import type { GardenBed, PlantWithSize } from '../../lib/entities/garden-bed'
 import type {
 	GardenAsyncValidationFunction,
@@ -15,7 +16,7 @@ interface PlacementValidityResult {
 }
 
 export class GardenValidationService {
-	constructor(private readonly plants: Plant[]) {}
+	constructor(private readonly plants: PlantItem[]) {}
 
 	private checkPlacementValidity(
 		targetBed: GardenBed,
@@ -50,7 +51,7 @@ export class GardenValidationService {
 			// Get the plant data to find its size
 			const existingPlantData = this.plants.find((p) => p.id === existingPlant.item.id)
 			const existingSize = existingPlantData
-				? existingPlantData.plantingDistanceInFeet
+				? existingPlantData.metadata.plantingDistanceInFeet
 				: 1
 
 			if (
@@ -87,6 +88,8 @@ export class GardenValidationService {
 				setTimeout(() => {
 					try {
 						const plant = context.item
+						const plantProps = getPlantProperties(plant)
+
 						switch (context.operationType) {
 							case 'item-move-within-zone':
 								resolve(
@@ -112,7 +115,7 @@ export class GardenValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									plant.plantingDistanceInFeet <= 0
+									plantProps.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -125,14 +128,14 @@ export class GardenValidationService {
 									targetBed,
 									context.targetX,
 									context.targetY,
-									plant.plantingDistanceInFeet,
+									plantProps.plantingDistanceInFeet,
 									context.itemInstanceId,
 								)
 								if (!placementCheck.isValid) {
 									reject(new Error(`Cannot move plant: ${placementCheck.reason}`))
 									return
 								}
-								if (plant.family === 'tomatoes' && targetBed.sunLevel < 3) {
+								if (plantProps.family === 'tomatoes' && targetBed.sunLevel < 3) {
 									resolve({
 										isValid: false,
 										error: 'Target bed has insufficient sunlight for tomatoes',
@@ -147,7 +150,6 @@ export class GardenValidationService {
 							}
 
 							case 'item-add-to-zone': {
-								const plant = context.item
 								const addTargetBed = currentGarden.beds.find(
 									(b: GardenBed) => b.id === context.targetZoneId,
 								)
@@ -168,13 +170,14 @@ export class GardenValidationService {
 											)
 										}
 										// Use the existing plant's size, not the new plant's size
-										return total + existingPlant.plantingDistanceInFeet ** 2
+										const existingProps = getPlantProperties(existingPlant)
+										return total + existingProps.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
 
 								// Add the footprint of the plant being added
-								const newPlantFootprint = plant.plantingDistanceInFeet ** 2
+								const newPlantFootprint = plantProps.plantingDistanceInFeet ** 2
 								const totalOccupiedAfterAdd = currentOccupiedCells + newPlantFootprint
 
 								const totalCells = addTargetBed.width * addTargetBed.height
@@ -217,7 +220,7 @@ export class GardenValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									context.item.plantingDistanceInFeet <= 0
+									plantProps.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -230,7 +233,7 @@ export class GardenValidationService {
 									cloneTargetBed,
 									context.targetX,
 									context.targetY,
-									plant.plantingDistanceInFeet,
+									plantProps.plantingDistanceInFeet,
 								)
 								if (!clonePlacementCheck.isValid) {
 									resolve({
@@ -252,13 +255,14 @@ export class GardenValidationService {
 											)
 										}
 										// Use the existing plant's size, not the new plant's size
-										return total + existingPlant.plantingDistanceInFeet ** 2
+										const existingProps = getPlantProperties(existingPlant)
+										return total + existingProps.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
 
 								// Add the footprint of the plant being cloned
-								const newPlantFootprint = plant.plantingDistanceInFeet ** 2
+								const newPlantFootprint = plantProps.plantingDistanceInFeet ** 2
 								const totalOccupiedAfterClone = currentOccupiedCells + newPlantFootprint
 
 								const totalCells = cloneTargetBed.width * cloneTargetBed.height

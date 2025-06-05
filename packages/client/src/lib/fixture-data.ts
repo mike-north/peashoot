@@ -103,7 +103,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						item: {
+						item: createPlantItem({
 							id: 'plant_tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
@@ -114,7 +114,7 @@ export const gardens: Garden[] = [
 								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 								size: 2,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 					},
 				],
@@ -131,7 +131,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
@@ -142,7 +142,7 @@ export const gardens: Garden[] = [
 								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 					},
 				],
@@ -159,7 +159,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						item: {
+						item: createPlantItem({
 							plantingDistanceInFeet: 2,
 							id: 'plant_tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
@@ -170,7 +170,7 @@ export const gardens: Garden[] = [
 								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 								size: 2,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
@@ -178,7 +178,7 @@ export const gardens: Garden[] = [
 						x: 2,
 						y: 0,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
@@ -189,7 +189,7 @@ export const gardens: Garden[] = [
 								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 				],
@@ -206,7 +206,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_arugula-arugula',
 							displayName: 'Arugula',
 							family: 'arugula',
@@ -217,7 +217,7 @@ export const gardens: Garden[] = [
 								iconPath: 'arugula-arugula.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 					{
@@ -225,7 +225,7 @@ export const gardens: Garden[] = [
 						x: 2,
 						y: 0,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_spinach-japanese-perpetual-spinach',
 							displayName: 'Japanese Perpetual Spinach',
 							family: 'spinach',
@@ -236,7 +236,7 @@ export const gardens: Garden[] = [
 								iconPath: 'spinach-japanese-perpetual-spinach.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 				],
@@ -253,7 +253,7 @@ export const gardens: Garden[] = [
 						x: 2,
 						y: 1,
 						size: 3,
-						item: {
+						item: createPlantItem({
 							id: 'plant_cherries-rainier-cherry',
 							displayName: 'Rainier Cherry',
 							family: 'cherries',
@@ -264,7 +264,7 @@ export const gardens: Garden[] = [
 								iconPath: 'cherries-rainier-cherry.png',
 								size: 3,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
@@ -272,7 +272,7 @@ export const gardens: Garden[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						item: {
+						item: createPlantItem({
 							id: 'plant_tomatoes-burpee-big-boy-tomato',
 							displayName: 'Big Boy Tomato',
 							family: 'tomatoes',
@@ -283,7 +283,7 @@ export const gardens: Garden[] = [
 								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
 								size: 2,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
@@ -291,7 +291,7 @@ export const gardens: Garden[] = [
 						x: 2,
 						y: 0,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 							displayName: 'Buttercrunch Lettuce',
 							family: 'lettuce',
@@ -302,7 +302,7 @@ export const gardens: Garden[] = [
 								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
@@ -311,7 +311,7 @@ export const gardens: Garden[] = [
 						x: 6,
 						y: 0,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_strawberries-alexandria-strawberry',
 							displayName: 'Alexandria Strawberry',
 							family: 'strawberries',
@@ -322,7 +322,7 @@ export const gardens: Garden[] = [
 								iconPath: 'strawberries-alexandria-strawberry.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
@@ -331,7 +331,7 @@ export const gardens: Garden[] = [
 						x: 6,
 						y: 3,
 						size: 1,
-						item: {
+						item: createPlantItem({
 							id: 'plant_daisies-zinnia-2',
 							displayName: 'Zinnia',
 							family: 'daisies',
@@ -342,7 +342,7 @@ export const gardens: Garden[] = [
 								iconPath: 'daisies-zinnia.png',
 								size: 1,
 							},
-						},
+						}),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 				],
@@ -888,4 +888,6 @@ const legacyPlantData = [
 ]
 
 // Convert legacy plant data to PlantItem format
-export const plants: PlantItem[] = legacyPlantData.map(plantData => createPlantItem(plantData))
+export const plants: PlantItem[] = legacyPlantData.map((plantData) =>
+	createPlantItem(plantData),
+)

@@ -1,7 +1,11 @@
 // Backward compatibility layer for legacy code
 // This file re-exports PlantItem as Plant to maintain compatibility
 import type { PlantItem } from '../item-types/plant-item'
-import { isPlantItem, createPlantItem, getPlantProperties } from '../item-types/plant-item'
+import {
+	isPlantItem,
+	createPlantItem,
+	getPlantProperties,
+} from '../item-types/plant-item'
 
 /**
  * @deprecated Use PlantItem instead. This is kept for backward compatibility.
@@ -21,4 +25,4 @@ export const createPlant = createPlantItem
 /**
  * @deprecated Use getPlantProperties instead. This is kept for backward compatibility.
  */
-export const getPlantPropertiesLegacy = getPlantProperties 
+export const getPlantPropertiesLegacy = getPlantProperties

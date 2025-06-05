@@ -4,7 +4,8 @@ import {
 	type Zone,
 	type ItemWithSize,
 } from '../../lib/entities/zone'
-import type { Plant } from '../../lib/entities/plant'
+import type { PlantItem } from '../../lib/item-types/plant-item'
+import { getPlantProperties } from '../../lib/item-types/plant-item'
 import {
 	findZone,
 	findItemPlacement,
@@ -23,7 +24,10 @@ export class WorkspaceOperationsService {
 	): Workspace {
 		const zone = workspace.zones.find((z: Zone) => z.id === zoneId)
 		if (!zone) {
-			console.error('[WorkspaceOperationsService] Zone not found for moveItemInZone:', zoneId)
+			console.error(
+				'[WorkspaceOperationsService] Zone not found for moveItemInZone:',
+				zoneId,
+			)
 			return workspace
 		}
 
@@ -54,27 +58,34 @@ export class WorkspaceOperationsService {
 		)
 	}
 
-	addNewItem(workspace: Workspace, zoneId: string, item: Plant, x: number, y: number): Workspace {
+	addNewItem(
+		workspace: Workspace,
+		zoneId: string,
+		item: PlantItem,
+		x: number,
+		y: number,
+	): Workspace {
 		const zone = workspace.zones.find((z: Zone) => z.id === zoneId)
 		if (!zone) {
 			console.error('[WorkspaceOperationsService] Zone not found for addNewItem:', zoneId)
 			return workspace
 		}
 
-		const itemForPlacement: Plant = {
+		const itemForPlacement: PlantItem = {
 			...item,
 		}
-		const newItemId = `${itemForPlacement.family}_${Date.now()}`
+		const plantProps = getPlantProperties(itemForPlacement)
+		const newItemId = `${plantProps.family}_${Date.now()}`
 		const itemWithSize = {
 			...itemForPlacement,
-			size: itemForPlacement.plantingDistanceInFeet,
+			size: plantProps.plantingDistanceInFeet,
 		}
 
 		const newPlacement: GridPlacement<ItemWithSize> = {
 			id: newItemId,
 			x,
 			y,
-			size: itemForPlacement.plantingDistanceInFeet,
+			size: plantProps.plantingDistanceInFeet,
 			item: itemWithSize,
 			sourceZoneId: zoneId,
 		}
@@ -108,10 +119,7 @@ export class WorkspaceOperationsService {
 		return findZone(workspace, zoneId)
 	}
 
-	findItemPlacement(
-		zone: Zone,
-		itemId: string,
-	): GridPlacement<ItemWithSize> | undefined {
+	findItemPlacement(zone: Zone, itemId: string): GridPlacement<ItemWithSize> | undefined {
 		return findItemPlacement(zone, itemId)
 	}
-} 
+}

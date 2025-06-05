@@ -85,4 +85,4 @@ export function createWorkspaceAppDragState<T extends WithVisualPresentation>() 
 		targetType: null,
 		isCloneMode: false,
 	})
-} 
+}

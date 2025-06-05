@@ -4,8 +4,7 @@ import {
 	type GridPlaceable,
 	type GridPlacement,
 } from '../../private/grid/grid-placement'
-import { isPlant, type Plant } from './plant'
-import type { BaseEntity } from './base-entity'
+import { isPlantItem, type PlantItem } from '../item-types/plant-item'
 
 export interface EdgeIndicator {
 	id: string
@@ -13,7 +12,7 @@ export interface EdgeIndicator {
 	plantBId: string
 	color: string
 }
-export interface Garden extends BaseEntity<'grdn'> {
+export interface Garden {
 	readonly id: `grdn_${string}`
 	beds: GardenBed[]
 	edgeIndicators: EdgeIndicator[]
@@ -27,7 +26,7 @@ export function movePlantBetweenBedsAndCreateNewGarden(
 	newX: number,
 	newY: number,
 ): Garden {
-	if (!isGridPlacement(placement, isPlant)) {
+	if (!isGridPlacement(placement, isPlantItem)) {
 		throw new Error('Can only move grid placements between beds')
 	}
 	const sourceBed = garden.beds.find((b: GardenBed) => b.id === sourceBedId)
@@ -57,7 +56,7 @@ export function movePlantBetweenBedsAndCreateNewGarden(
 				y: newY,
 				sourceZoneId: targetBedId,
 				item: placement.item,
-			} satisfies GridPlacement<Plant>,
+			} satisfies GridPlacement<PlantItem>,
 		],
 	}
 

@@ -42,4 +42,4 @@ export function assertItemExists(item: Item | undefined): asserts item is Item {
 
 export function categoryNameForItem(item: Item): string {
 	return item.category
-} 
+}

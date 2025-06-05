@@ -7,9 +7,13 @@ import {
 	moveItemBetweenZonesAndCreateNewWorkspace,
 	type Workspace,
 } from '../lib/entities/workspace'
-import type { GridPlaceable, GridPlacement } from '../private/grid/grid-placement'
+import type { GridPlacement } from '../private/grid/grid-placement'
 import { PlantItemAdapter } from '../lib/adapters/plant-item-adapter'
-import { updateItemPositionInZone, type Zone, type ItemWithSize } from '../lib/entities/zone'
+import {
+	updateItemPositionInZone,
+	type Zone,
+	type ItemWithSize,
+} from '../lib/entities/zone'
 import type { PlantItem } from '../lib/item-types/plant-item'
 
 const { route } = $props()
@@ -33,7 +37,7 @@ function moveItemBetweenZones(
 	workspace: Workspace,
 	sourceZoneId: string,
 	targetZoneId: string,
-	placement: GridPlacement<GridPlaceable>,
+	placement: GridPlacement<PlantItem>,
 	newX: number,
 	newY: number,
 ) {
@@ -69,7 +73,9 @@ function handleAddNewItem(zoneId: string, item: PlantItem, x: number, y: number)
 			z.id === zoneId ? { ...z, placements: [...z.placements, newPlacement] } : z,
 		)
 
-		console.log(`[Workspace] Added new ${item.displayName} to zone ${zoneId} at (${x}, ${y})`)
+		console.log(
+			`[Workspace] Added new ${item.displayName} to zone ${zoneId} at (${x}, ${y})`,
+		)
 	} else {
 		console.error('[Workspace] Zone not found for addNewItem:', zoneId)
 	}
@@ -122,4 +128,4 @@ function handleDeleteItem(zoneId: string, itemId: string) {
 		moveItemBetweenZones={moveItemBetweenZones}
 		itemAdapter={plantAdapter}
 	/>
-{/if} 
+{/if}

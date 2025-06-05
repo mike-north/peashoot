@@ -74,4 +74,4 @@ export function getPlantProperties(item: PlantItem): {
 		plantingDistanceInFeet: item.metadata.plantingDistanceInFeet,
 		family: item.metadata.family,
 	}
-} 
+}

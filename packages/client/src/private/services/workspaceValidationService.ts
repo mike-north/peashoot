@@ -1,4 +1,5 @@
-import type { Plant } from '../../lib/entities/plant'
+import type { PlantItem } from '../../lib/item-types/plant-item'
+import { getPlantProperties } from '../../lib/item-types/plant-item'
 import type { Zone, ItemWithSize } from '../../lib/entities/zone'
 import type {
 	WorkspaceAsyncValidationFunction,
@@ -50,7 +51,7 @@ export class WorkspaceValidationService {
 			// Get the item data to find its size
 			const existingItemData = this.items.find((p) => p.id === existingItem.item.id)
 			const existingSize = existingItemData
-				? existingItemData.plantingDistanceInFeet
+				? existingItemData.metadata.plantingDistanceInFeet
 				: 1
 
 			if (
@@ -59,9 +60,7 @@ export class WorkspaceValidationService {
 				itemY < existingItem.y + existingSize &&
 				itemY + itemSize > existingItem.y
 			) {
-				const itemName = existingItemData
-					? existingItemData.displayName
-					: 'Unknown item'
+				const itemName = existingItemData ? existingItemData.displayName : 'Unknown item'
 				return {
 					isValid: false,
 					reason: `Overlaps with existing item '${itemName}' (ID: ${existingItem.id}).`,
@@ -88,8 +87,9 @@ export class WorkspaceValidationService {
 					try {
 						const item = context.item
 						// For now, assume all items are plants (this can be extended with item adapters)
-						const plant = item as Plant
-						
+						const plant = item as PlantItem
+						const plantProps = getPlantProperties(plant)
+
 						switch (context.operationType) {
 							case 'item-move-within-zone':
 								resolve(
@@ -115,7 +115,7 @@ export class WorkspaceValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									plant.plantingDistanceInFeet <= 0
+									plantProps.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -128,14 +128,14 @@ export class WorkspaceValidationService {
 									targetZone,
 									context.targetX,
 									context.targetY,
-									plant.plantingDistanceInFeet,
+									plantProps.plantingDistanceInFeet,
 									context.itemInstanceId,
 								)
 								if (!placementCheck.isValid) {
 									reject(new Error(`Cannot move item: ${placementCheck.reason}`))
 									return
 								}
-								if (plant.family === 'tomatoes' && targetZone.sunLevel < 3) {
+								if (plantProps.family === 'tomatoes' && targetZone.sunLevel < 3) {
 									resolve({
 										isValid: false,
 										error: 'Target zone has insufficient sunlight for tomatoes',
@@ -170,13 +170,14 @@ export class WorkspaceValidationService {
 											)
 										}
 										// Use the existing item's size, not the new item's size
-										return total + existingItem.plantingDistanceInFeet ** 2
+										const existingProps = getPlantProperties(existingItem)
+										return total + existingProps.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
 
 								// Add the footprint of the item being added
-								const newItemFootprint = plant.plantingDistanceInFeet ** 2
+								const newItemFootprint = plantProps.plantingDistanceInFeet ** 2
 								const totalOccupiedAfterAdd = currentOccupiedCells + newItemFootprint
 
 								const totalCells = addTargetZone.width * addTargetZone.height
@@ -219,7 +220,7 @@ export class WorkspaceValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									plant.plantingDistanceInFeet <= 0
+									plantProps.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -232,7 +233,7 @@ export class WorkspaceValidationService {
 									cloneTargetZone,
 									context.targetX,
 									context.targetY,
-									plant.plantingDistanceInFeet,
+									plantProps.plantingDistanceInFeet,
 								)
 								if (!clonePlacementCheck.isValid) {
 									resolve({
@@ -254,13 +255,14 @@ export class WorkspaceValidationService {
 											)
 										}
 										// Use the existing item's size, not the new item's size
-										return total + existingItem.plantingDistanceInFeet ** 2
+										const existingProps = getPlantProperties(existingItem)
+										return total + existingProps.plantingDistanceInFeet ** 2
 									},
 									0,
 								)
 
 								// Add the footprint of the item being cloned
-								const newItemFootprint = plant.plantingDistanceInFeet ** 2
+								const newItemFootprint = plantProps.plantingDistanceInFeet ** 2
 								const totalOccupiedAfterClone = currentOccupiedCells + newItemFootprint
 
 								const totalCells = cloneTargetZone.width * cloneTargetZone.height
@@ -304,4 +306,4 @@ export class WorkspaceValidationService {
 			})
 		}
 	}
-} 
+}

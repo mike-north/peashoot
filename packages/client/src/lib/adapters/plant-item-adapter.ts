@@ -29,11 +29,11 @@ export class PlantItemAdapter implements ItemAdapter<PlantItem> {
 	getItemSize(item: PlantItem): number {
 		return tileSizeForItem(item)
 	}
-	
+
 	getCategoryName(item: PlantItem): string {
 		return categoryNameForItem(item)
 	}
-	
+
 	isValidItem(item: unknown): item is PlantItem {
 		return isPlantItem(item)
 	}
@@ -45,4 +45,4 @@ export class PlantItemAdapter implements ItemAdapter<PlantItem> {
 		console.debug('Plants fetched.', { plants })
 		return plants
 	}
-} 
+}

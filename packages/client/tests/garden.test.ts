@@ -6,27 +6,29 @@ import {
 } from '../src/lib/entities/garden.js'
 import type { GardenBed } from '../src/lib/entities/garden-bed.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
-import type { Plant } from '../src/lib/entities/plant.js'
+import type { PlantItem } from '../src/lib/item-types/plant-item.js'
+import { createPlantItem } from '../src/lib/item-types/plant-item.js'
 import { GridArea } from '../src/private/grid/grid-area.js'
 import { ExistingDraggableItem } from '../src/private/dnd/types.js'
 
-const mockPlant: Plant = {
+const mockPlant: PlantItem = createPlantItem({
 	id: 'plant_1',
 	displayName: 'Tomato',
-	family: 'Tomato',
+	family: 'tomatoes',
 	variant: 'red',
 	plantingDistanceInFeet: 1,
 	presentation: {
 		accentColor: {
-			r: 1,
-			g: 0,
-			b: 0,
+			red: 255,
+			green: 0,
+			blue: 0,
 		},
 		iconPath: 'tomato.png',
+		size: 1,
 	},
-}
+})
 
-const plantPlacement: GridPlacement<Plant> & ExistingDraggableItem<Plant> = {
+const plantPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem> = {
 	id: 'placement1',
 	item: mockPlant,
 	sourceZoneId: 'bed1',
@@ -35,7 +37,7 @@ const plantPlacement: GridPlacement<Plant> & ExistingDraggableItem<Plant> = {
 	size: 1,
 }
 
-const sourceBed: GardenBed & GridArea<Plant> = {
+const sourceBed: GardenBed & GridArea<PlantItem> = {
 	id: 'bed_1',
 	width: 4,
 	height: 4,
@@ -44,7 +46,7 @@ const sourceBed: GardenBed & GridArea<Plant> = {
 	placements: [plantPlacement],
 }
 
-const targetBed: GardenBed & GridArea<Plant> = {
+const targetBed: GardenBed & GridArea<PlantItem> = {
 	id: 'bed_2',
 	width: 4,
 	height: 4,
@@ -63,8 +65,8 @@ describe('movePlantBetweenBeds', () => {
 	it('moves a plant from the source bed to the target bed with new coordinates', () => {
 		const updated: Garden = movePlantBetweenBedsAndCreateNewGarden(
 			garden,
-			'gbed_1',
-			'gbed_2',
+			'bed_1',
+			'bed_2',
 			plantPlacement,
 			3,
 			4,
@@ -106,8 +108,8 @@ describe('movePlantBetweenBeds', () => {
 	it('does not mutate the original garden object', () => {
 		const updated: Garden = movePlantBetweenBedsAndCreateNewGarden(
 			garden,
-			'gbed_1',
-			'gbed_2',
+			'bed_1',
+			'bed_2',
 			plantPlacement,
 			3,
 			4,

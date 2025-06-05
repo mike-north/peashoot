@@ -331,4 +331,4 @@ export function screenToGridCoordinates<T extends GridPlaceable>(
 	const relativeSvgY = clientY - rect.top
 	const gridCoords = layout.getGridCellFromRelativeSvgCoords(relativeSvgX, relativeSvgY)
 	return gridCoords || { x: -1, y: -1 }
-} 
+}

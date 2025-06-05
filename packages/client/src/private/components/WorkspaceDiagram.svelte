@@ -17,6 +17,7 @@ import { plants, plantsReady } from '../../private/state/plantsStore'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 import type { ItemWithSize } from '../../lib/entities/zone'
 import type { ItemAdapter } from '../../lib/adapters/item-adapter'
+import type { PlantItem } from '../../lib/item-types/plant-item'
 import {
 	updatePendingOperation,
 	removePendingOperation,
@@ -42,7 +43,7 @@ interface WorkspaceDiagramProps<TItem extends GridPlaceable> {
 		workspace: Workspace,
 		sourceZoneId: string,
 		targetZoneId: string,
-		placement: GridPlacement<GridPlaceable>,
+		placement: GridPlacement<PlantItem>,
 		newX: number,
 		newY: number,
 	) => void
@@ -57,7 +58,7 @@ const {
 	handleMoveItemInZone,
 	handleDeleteItem,
 	itemAdapter,
-}: WorkspaceDiagramProps<GridPlaceable> = $props()
+}: WorkspaceDiagramProps<PlantItem> = $props()
 
 // Create validation service instance
 let validationService: WorkspaceValidationService | undefined = $state<
@@ -93,12 +94,12 @@ function handleAsyncValidationError(errorMessage: string) {
 function handleMoveItemToDifferentZone(
 	sourceZoneId: string,
 	targetZoneId: string,
-	existingItem: ExistingWorkspaceItem<GridPlaceable>,
+	existingItem: ExistingWorkspaceItem<PlantItem>,
 	newX: number,
 	newY: number,
 ) {
 	// Inline conversion from ExistingWorkspaceItem<ItemWithSize> to GridPlacement<ItemWithSize>
-	const gridPlacementArg: GridPlacement<GridPlaceable> = {
+	const gridPlacementArg: GridPlacement<PlantItem> = {
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
@@ -106,7 +107,14 @@ function handleMoveItemToDifferentZone(
 		item: existingItem.item,
 		sourceZoneId: existingItem.sourceZoneId,
 	}
-	moveItemBetweenZones(workspace, sourceZoneId, targetZoneId, gridPlacementArg, newX, newY)
+	moveItemBetweenZones(
+		workspace,
+		sourceZoneId,
+		targetZoneId,
+		gridPlacementArg,
+		newX,
+		newY,
+	)
 }
 
 function performDeleteItem(itemId: string, zoneId: string) {
@@ -132,7 +140,8 @@ async function handleRequestPlacement(
 	details: PlacementRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!itemAdapter.isValidItem(details.itemData)) throw new Error('Item is not valid for this adapter')
+	if (!itemAdapter.isValidItem(details.itemData))
+		throw new Error('Item is not valid for this adapter')
 
 	handleAsyncValidationStart()
 
@@ -141,7 +150,7 @@ async function handleRequestPlacement(
 		? findZone(workspace, details.sourceZoneId)
 		: undefined
 
-	const baseValidationContext: Partial<WorkspaceValidationContext<GridPlaceable>> = {
+	const baseValidationContext: Partial<WorkspaceValidationContext<PlantItem>> = {
 		item: details.itemData,
 		targetZoneId: details.targetZoneId,
 		targetX: details.x,
@@ -151,12 +160,14 @@ async function handleRequestPlacement(
 	}
 
 	const targetCtx = buildWorkspaceZoneContext(targetZone)
-	if (targetCtx) baseValidationContext.targetZoneContext = targetCtx
+	if (targetCtx)
+		baseValidationContext.targetZoneContext = targetCtx as WorkspaceZoneContext<PlantItem>
 	if (details.originalInstanceId)
 		baseValidationContext.itemInstanceId = details.originalInstanceId
 	if (details.sourceZoneId) baseValidationContext.sourceZoneId = details.sourceZoneId
 	const sourceCtx = buildWorkspaceZoneContext(sourceZone)
-	if (sourceCtx) baseValidationContext.sourceZoneContext = sourceCtx
+	if (sourceCtx)
+		baseValidationContext.sourceZoneContext = sourceCtx as WorkspaceZoneContext<PlantItem>
 
 	if (details.originalInstanceId && sourceZone) {
 		const originalItemPlacement = findItemPlacement(
@@ -169,8 +180,7 @@ async function handleRequestPlacement(
 		}
 	}
 
-	const validationContext =
-		baseValidationContext as WorkspaceValidationContext<ItemWithSize>
+	const validationContext = baseValidationContext as WorkspaceValidationContext<PlantItem>
 
 	try {
 		if (!customAsyncValidation) {
@@ -179,7 +189,8 @@ async function handleRequestPlacement(
 		const result = await customAsyncValidation(validationContext)
 		if (result.isValid) {
 			const item = details.itemData
-			if (!itemAdapter.isValidItem(item)) throw new Error('Item is not valid for this adapter')
+			if (!itemAdapter.isValidItem(item))
+				throw new Error('Item is not valid for this adapter')
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual operation
 			if (
@@ -199,7 +210,7 @@ async function handleRequestPlacement(
 				baseValidationContext.sourceX !== undefined &&
 				baseValidationContext.sourceY !== undefined
 			) {
-				const existingItem: ExistingWorkspaceItem<GridPlaceable> = {
+				const existingItem: ExistingWorkspaceItem<PlantItem> = {
 					id: details.originalInstanceId,
 					x: baseValidationContext.sourceX,
 					y: baseValidationContext.sourceY,
@@ -270,7 +281,7 @@ async function handleRequestRemoval(
 		? findItemPlacement(sourceZone, details.instanceId)
 		: undefined
 
-	const baseValidationContext: Partial<WorkspaceValidationContext<GridPlaceable>> = {
+	const baseValidationContext: Partial<WorkspaceValidationContext<PlantItem>> = {
 		operationType: 'item-remove-from-zone',
 		item: details.itemData,
 		itemInstanceId: details.instanceId,
@@ -278,13 +289,15 @@ async function handleRequestRemoval(
 		applicationContext: { workspace: workspace },
 	}
 	const remSourceCtx = buildWorkspaceZoneContext(sourceZone)
-	if (remSourceCtx) baseValidationContext.sourceZoneContext = remSourceCtx
+	if (remSourceCtx)
+		baseValidationContext.sourceZoneContext =
+			remSourceCtx as WorkspaceZoneContext<PlantItem>
 	if (itemToRemove) {
 		baseValidationContext.sourceX = itemToRemove.x
 		baseValidationContext.sourceY = itemToRemove.y
 	}
 
-	const validationContext = baseValidationContext as WorkspaceValidationContext<GridPlaceable>
+	const validationContext = baseValidationContext as WorkspaceValidationContext<PlantItem>
 
 	try {
 		if (!customAsyncValidation) {
@@ -337,13 +350,14 @@ async function handleRequestCloning(
 	details: CloningRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!itemAdapter.isValidItem(details.itemDataToClone)) throw new Error('Item is not valid for this adapter')
+	if (!itemAdapter.isValidItem(details.itemDataToClone))
+		throw new Error('Item is not valid for this adapter')
 	handleAsyncValidationStart()
 
 	const sourceZone = findZone(workspace, details.sourceOriginalZoneId)
 	const targetZone = findZone(workspace, details.targetCloneZoneId)
 
-	const baseValidationContext: Partial<WorkspaceValidationContext<GridPlaceable>> = {
+	const baseValidationContext: Partial<WorkspaceValidationContext<PlantItem>> = {
 		operationType: 'item-clone-in-zone',
 		item: details.itemDataToClone,
 		sourceZoneId: details.sourceOriginalZoneId,
@@ -355,11 +369,15 @@ async function handleRequestCloning(
 		applicationContext: { workspace: workspace },
 	}
 	const cloneSourceCtx = buildWorkspaceZoneContext(sourceZone)
-	if (cloneSourceCtx) baseValidationContext.sourceZoneContext = cloneSourceCtx
+	if (cloneSourceCtx)
+		baseValidationContext.sourceZoneContext =
+			cloneSourceCtx as WorkspaceZoneContext<PlantItem>
 	const cloneTargetCtx = buildWorkspaceZoneContext(targetZone)
-	if (cloneTargetCtx) baseValidationContext.targetZoneContext = cloneTargetCtx
+	if (cloneTargetCtx)
+		baseValidationContext.targetZoneContext =
+			cloneTargetCtx as WorkspaceZoneContext<PlantItem>
 
-	const validationContext = baseValidationContext as WorkspaceValidationContext<GridPlaceable>
+	const validationContext = baseValidationContext as WorkspaceValidationContext<PlantItem>
 
 	try {
 		if (!customAsyncValidation) {
@@ -414,12 +432,14 @@ async function handleRequestCloning(
 }
 
 function tileSizeForItem(item: DraggableItem): number {
-	if (!itemAdapter.isValidItem(item)) throw new Error('Item is not valid for this adapter')
+	if (!itemAdapter.isValidItem(item))
+		throw new Error('Item is not valid for this adapter')
 	return itemAdapter.getItemSize(item)
 }
 
 function categoryNameForItem(item: DraggableItem): string {
-	if (!itemAdapter.isValidItem(item)) throw new Error('Item is not valid for this adapter')
+	if (!itemAdapter.isValidItem(item))
+		throw new Error('Item is not valid for this adapter')
 	return itemAdapter.getCategoryName(item)
 }
 </script>
@@ -439,4 +459,4 @@ function categoryNameForItem(item: DraggableItem): string {
 		<span class="loading loading-ring loading-xl"></span>
 		<div class="text-md font-bold">Loading workspace...</div>
 	</div>
-{/if} 
+{/if}

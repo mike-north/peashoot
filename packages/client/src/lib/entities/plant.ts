@@ -1,41 +1,24 @@
-import type { GridPlaceable } from '../../private/grid/grid-placement'
-import type { GridItemPresentation } from '../../private/grid/grid-placement'
-import type { BaseEntity } from './base-entity'
+// Backward compatibility layer for legacy code
+// This file re-exports PlantItem as Plant to maintain compatibility
+import type { PlantItem } from '../item-types/plant-item'
+import { isPlantItem, createPlantItem, getPlantProperties } from '../item-types/plant-item'
 
-export type CompanionPlantingEdgeType = 'prefers-company' | 'prefers-not-company'
+/**
+ * @deprecated Use PlantItem instead. This is kept for backward compatibility.
+ */
+export type Plant = PlantItem
 
-export interface Plant extends BaseEntity<'plant'>, GridPlaceable {
-	readonly id: `plant_${string}`
-	readonly displayName: string
-	readonly family: string
-	readonly variant: string
-	readonly plantingDistanceInFeet: number
-	readonly presentation: GridItemPresentation
-}
+/**
+ * @deprecated Use isPlantItem instead. This is kept for backward compatibility.
+ */
+export const isPlant = isPlantItem
 
-export function isPlant(item: unknown): item is Plant {
-	return (
-		typeof item === 'object' &&
-		item !== null &&
-		'id' in item &&
-		'displayName' in item &&
-		'family' in item &&
-		'variant' in item &&
-		'plantingDistanceInFeet' in item &&
-		'presentation' in item
-	)
-}
+/**
+ * @deprecated Use createPlantItem instead. This is kept for backward compatibility.
+ */
+export const createPlant = createPlantItem
 
-export function tileSizeForPlant(plant: Plant): number {
-	return Math.max(1, Math.ceil(plant.plantingDistanceInFeet))
-}
-
-export function assertPlantExists(plant: Plant | undefined): asserts plant is Plant {
-	if (!plant) {
-		throw new Error('Plant not found for isValidPlacement')
-	}
-}
-
-export function categoryNameForPlant(plant: Plant): string {
-	return plant.family
-}
+/**
+ * @deprecated Use getPlantProperties instead. This is kept for backward compatibility.
+ */
+export const getPlantPropertiesLegacy = getPlantProperties 

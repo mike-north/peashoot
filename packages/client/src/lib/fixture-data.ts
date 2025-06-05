@@ -1,5 +1,6 @@
 import type { Garden } from './entities/garden'
-import type { Plant } from './entities/plant'
+import type { PlantItem } from './item-types/plant-item'
+import { createPlantItem } from './item-types/plant-item'
 import type { SeedPacket } from './entities/seed-packet'
 
 export const seedPackets: SeedPacket[] = [
@@ -350,7 +351,8 @@ export const gardens: Garden[] = [
 	},
 ]
 
-export const plants: Plant[] = [
+// Convert legacy plant data to PlantItem format
+const legacyPlantData = [
 	// Tomatoes
 	{
 		id: 'plant_tomatoes-burpee-big-boy-tomato',
@@ -884,3 +886,6 @@ export const plants: Plant[] = [
 		},
 	},
 ]
+
+// Convert legacy plant data to PlantItem format
+export const plants: PlantItem[] = legacyPlantData.map(plantData => createPlantItem(plantData))

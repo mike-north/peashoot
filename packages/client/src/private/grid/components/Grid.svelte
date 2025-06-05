@@ -327,7 +327,7 @@ const draggedGridItemEffectiveSize = $derived(
 <div class="figure-container">
 	<figure
 		class="raised-bed-diagram"
-		data-bed-id={grid.id}
+		data-zone-id={grid.id}
 		style="width: {svgWidth}px; height: {svgHeight}px;"
 	>
 		<!-- SVG Plantable Area and Grid (background) -->

@@ -9,7 +9,7 @@ import {
 } from '../grid-drag-state'
 import { isGridPlaceable } from '../grid-placement'
 import type { GardenDragState } from '../../../private/state/gardenDragState'
-import { GardenBedLayoutCalculator } from '../../garden-bed-layout-calculator'
+import { ZoneLayoutCalculator } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { GridArea } from '../grid-area'
 
@@ -76,7 +76,7 @@ let previewPosition = $derived.by(() => {
 		}
 	}
 
-	const layout = new GardenBedLayoutCalculator({
+	const layout = new ZoneLayoutCalculator({
 		width: targetBed.width,
 		height: targetBed.height,
 		tileSizeForItem,
@@ -90,7 +90,7 @@ let previewPosition = $derived.by(() => {
 	})
 
 	const svgElement = document.querySelector<SVGSVGElement>(
-		`[data-bed-id='${targetBed.id}'] svg`,
+		`[data-zone-id='${targetBed.id}'] svg`,
 	)
 
 	if (!svgElement) {

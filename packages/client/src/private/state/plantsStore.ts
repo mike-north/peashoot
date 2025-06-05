@@ -1,15 +1,15 @@
 import { writable, derived } from 'svelte/store'
-import type { Plant } from '../../lib/entities/plant'
-import { PlantAdapter } from '../../lib/adapters/plant-adapter'
+import type { PlantItem } from '../../lib/item-types/plant-item'
+import { PlantItemAdapter } from '../../lib/adapters/plant-item-adapter'
 // import { fetchPlants } from '../../lib/plant-data'
 
 interface PlantsState {
-	plants: Plant[]
+	plants: PlantItem[]
 	loading: boolean
 	error: string | null
 }
 
-const plantAdapter = new PlantAdapter()
+const plantItemAdapter = new PlantItemAdapter()
 
 const initialState: PlantsState = {
 	plants: [],
@@ -34,7 +34,7 @@ export async function loadPlants(): Promise<void> {
 	plantsState.update((state) => ({ ...state, loading: true, error: null }))
 
 	try {
-		const plantsData = await plantAdapter.fetchPlants()
+		const plantsData = await plantItemAdapter.fetchPlants()
 		plantsState.update((state) => ({
 			...state,
 			plants: plantsData,
@@ -54,15 +54,15 @@ export async function loadPlants(): Promise<void> {
 
 // Function to get a plant by ID
 export const getPlantById = derived(plants, ($plants) => {
-	return (id: string): Plant | undefined => {
+	return (id: string): PlantItem | undefined => {
 		return $plants.find((plant) => plant.id === id)
 	}
 })
 
 // Function to get plants by family
 export const getPlantsByFamily = derived(plants, ($plants) => {
-	return (family: string): Plant[] => {
-		return $plants.filter((plant) => plant.family === family)
+	return (family: string): PlantItem[] => {
+		return $plants.filter((plant) => plant.metadata.family === family)
 	}
 })
 

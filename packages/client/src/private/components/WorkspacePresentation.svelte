@@ -3,14 +3,14 @@ import { dragState } from '../../private/dnd/state'
 import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
-import type { Garden } from '../../lib/entities/garden'
-import { calculateGardenBedViewColSpans } from '../garden-bed-layout-calculator'
+import type { Workspace } from '../../lib/entities/workspace'
+import { calculateZoneViewColSpans } from '../zone-layout-calculator'
 import type {
 	PlacementRequestDetails,
 	RemovalRequestDetails,
 	CloningRequestDetails,
-} from '../../private/state/gardenDragState'
-import { gardenDragCoordinator } from '../../private/grid/attachments/gardenDragCoordinator'
+} from '../../private/state/workspaceDragState'
+import { workspaceDragCoordinator } from '../../private/grid/attachments/workspaceDragCoordinator'
 import {
 	addPendingOperation,
 	updatePendingOperation,
@@ -25,14 +25,14 @@ import {
 import ItemTooltipContent from '../../lib/ItemTooltipContent.svelte'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../dnd/types'
-import GardenBedGrid from '../../components/GardenBedGrid.svelte'
+import ZoneGrid from '../../components/ZoneGrid.svelte'
 
-interface GardenProps {
-	garden: Garden
+interface WorkspaceProps {
+	workspace: Workspace
 	edgeIndicators: {
 		id: string
-		plantAId: string
-		plantBId: string
+		itemAId: string
+		itemBId: string
 		color: string
 	}[]
 	onRequestPlacement: (
@@ -52,16 +52,16 @@ interface GardenProps {
 }
 
 let {
-	garden,
+	workspace,
 	edgeIndicators,
 	onRequestPlacement,
 	onRequestRemoval,
 	onRequestCloning,
 	tileSizeForItem,
 	categoryNameForItem,
-}: GardenProps = $props()
+}: WorkspaceProps = $props()
 
-let { beds } = $derived(garden)
+let { zones } = $derived(workspace)
 
 // Handle drop events from the drag coordinator
 async function handleDrop(dropInfo: {
@@ -89,7 +89,7 @@ async function handleDrop(dropInfo: {
 	const { sourceZoneId, draggedExistingItem } = currentDragState
 	// Handle different drop scenarios
 	if (sourceZoneId && dropInfo.targetType === 'delete-zone' && draggedExistingItem) {
-		// Cast to ExistingGardenItem to access x and y coordinates
+		// Cast to ExistingWorkspaceItem to access x and y coordinates
 
 		if (!isGridPlacement(draggedExistingItem, isGridPlaceable))
 			throw new Error('Dragged item is not a grid placeable')
@@ -135,7 +135,7 @@ async function handleDrop(dropInfo: {
 
 		if (sourceZoneId && draggedExistingItem) {
 			const existingItem = draggedExistingItem
-			const sourceBedId = sourceZoneId
+			const sourceZoneIdValue = sourceZoneId
 			if (!isGridPlacement(existingItem, isGridPlaceable))
 				throw new Error('Dragged item is not a grid placeable')
 
@@ -149,7 +149,7 @@ async function handleDrop(dropInfo: {
 					size: tileSizeForItem(existingItem.item),
 					x,
 					y,
-					originalSourceZoneId: sourceBedId,
+					originalSourceZoneId: sourceZoneIdValue,
 					originalInstanceId: existingItem.id,
 				})
 
@@ -157,7 +157,7 @@ async function handleDrop(dropInfo: {
 					await onRequestCloning(
 						{
 							itemDataToClone: existingItem.item,
-							sourceOriginalZoneId: sourceBedId,
+							sourceOriginalZoneId: sourceZoneIdValue,
 							targetCloneZoneId: dropInfo.targetZoneId,
 							sourceOriginalX: existingItem.x,
 							sourceOriginalY: existingItem.y,
@@ -178,7 +178,7 @@ async function handleDrop(dropInfo: {
 				}
 			} else {
 				const operationType =
-					sourceBedId === dropInfo.targetZoneId
+					sourceZoneIdValue === dropInfo.targetZoneId
 						? 'item-move-within-zone'
 						: 'item-move-across-zones'
 
@@ -191,7 +191,7 @@ async function handleDrop(dropInfo: {
 					size: tileSizeForItem(existingItem.item),
 					x,
 					y,
-					originalSourceZoneId: sourceBedId,
+					originalSourceZoneId: sourceZoneIdValue,
 					originalInstanceId: existingItem.id,
 				})
 
@@ -204,7 +204,7 @@ async function handleDrop(dropInfo: {
 							y,
 							operationType,
 							originalInstanceId: existingItem.id,
-							sourceZoneId: sourceBedId,
+							sourceZoneId: sourceZoneIdValue,
 						},
 						pendingOpId,
 					)
@@ -219,7 +219,7 @@ async function handleDrop(dropInfo: {
 				}
 			}
 		} else if (currentDragState.draggedNewItem) {
-			// Create pending operation for new plant
+			// Create pending operation for new item
 			const pendingOpId = addPendingOperation({
 				type: 'placement',
 				state: 'pending',
@@ -257,33 +257,33 @@ async function handleDrop(dropInfo: {
 	}
 }
 
-let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
+let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 </script>
 
 <style>
-.garden-container {
+.workspace-container {
 	position: relative;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
 
-.garden {
+.workspace {
 	flex: 1;
 	overflow: auto;
 	padding: 1rem;
 }
 </style>
 
-<div class="garden-container">
+<div class="workspace-container">
 	{#if $plantsError}
 		<div class="flex justify-center items-center h-full p-8">
-			<div class="text-error text-lg font-bold">Error loading plants: {$plantsError}</div>
+			<div class="text-error text-lg font-bold">Error loading items: {$plantsError}</div>
 		</div>
 	{:else if $plantsLoading}
 		<div class="flex justify-center items-center h-full p-8">
 			<span class="loading loading-ring loading-xl"></span>
-			<div class="text-md font-bold">Loading plants...</div>
+			<div class="text-md font-bold">Loading items...</div>
 		</div>
 	{:else if $plantsReady}
 		<GridViewToolbar
@@ -293,10 +293,10 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 		/>
 
 		<div
-			class="garden"
-			{@attach gardenDragCoordinator({
+			class="workspace"
+			{@attach workspaceDragCoordinator({
 				dragState,
-				beds,
+				zones: zones,
 				tileSizeForItem,
 				onDrop: (dropInfo) => {
 					handleDrop(dropInfo).catch((error: unknown) => {
@@ -308,20 +308,20 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 			<div
 				class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
 			>
-				{#each beds as bed (bed.id)}
-					<GardenBedGrid
+				{#each zones as zone (zone.id)}
+					<ZoneGrid
 						TooltipComponent={ItemTooltipContent}
-						bed={bed}
+						zone={zone}
 						plants={$plants}
 						edgeIndicators={edgeIndicators.filter(
 							(edge) =>
-								beds
-									.find((b) => b.id === bed.id)
+								zones
+									.find((z) => z.id === zone.id)
 									?.placements.some(
-										(p) => p.id === edge.plantAId || p.id === edge.plantBId,
+										(p) => p.id === edge.itemAId || p.id === edge.itemBId,
 									) ?? false,
 						)}
-						colSpan={gardenBedCardColSpans[bed.id] ?? 1}
+						colSpan={zoneCardColSpans[zone.id] ?? 1}
 						tileSizeForItem={tileSizeForItem}
 					/>
 				{/each}
@@ -329,6 +329,6 @@ let gardenBedCardColSpans = $derived(calculateGardenBedViewColSpans(garden))
 		</div>
 
 		<DeleteZone />
-		<DragPreview grids={beds} tileSizeForItem={tileSizeForItem} />
+		<DragPreview grids={zones} tileSizeForItem={tileSizeForItem} />
 	{/if}
-</div>
+</div> 

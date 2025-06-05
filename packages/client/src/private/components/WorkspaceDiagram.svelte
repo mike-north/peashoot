@@ -1,28 +1,22 @@
 <script lang="ts">
-import GardenView from './GardenPresentation.svelte'
-import type { GardenBed } from '../../lib/entities/garden-bed'
+import WorkspacePresentation from './WorkspacePresentation.svelte'
+import type { Zone } from '../../lib/entities/zone'
+import type { Workspace } from '../../lib/entities/workspace'
+import { findZone, findItemPlacement } from '../../lib/entities/workspace'
 import {
-	categoryNameForPlant,
-	isPlant,
-	tileSizeForPlant,
-	type Plant,
-} from '../../lib/entities/plant'
-import type { Garden } from '../../lib/entities/garden'
-import { findBed, findPlantPlacement } from '../../lib/entities/garden'
-import {
-	type ExistingGardenItem,
-	type GardenValidationContext,
-	type GardenAsyncValidationFunction,
+	type ExistingWorkspaceItem,
+	type WorkspaceValidationContext,
+	type WorkspaceAsyncValidationFunction,
 	type PlacementRequestDetails,
 	type RemovalRequestDetails,
 	type CloningRequestDetails,
-	type GardenZoneContext,
-} from '../../private/state/gardenDragState'
-import { GardenValidationService } from '../services/gardenValidationService'
+	type WorkspaceZoneContext,
+} from '../../private/state/workspaceDragState'
+import { WorkspaceValidationService } from '../services/workspaceValidationService'
 import { plants, plantsReady } from '../../private/state/plantsStore'
-
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
-import type { PlantWithSize } from '../../lib/entities/garden-bed'
+import type { ItemWithSize } from '../../lib/entities/zone'
+import type { ItemAdapter } from '../../lib/adapters/item-adapter'
 import {
 	updatePendingOperation,
 	removePendingOperation,
@@ -35,44 +29,48 @@ import {
 	showInfo,
 } from '../state/notificationsStore'
 
-interface GardenDiagramProps {
-	handleAddNewPlant: (bedId: string, item: Plant, x: number, y: number) => void
-	handleMovePlantInBed: (
-		bedId: string,
-		plantId: string,
+interface WorkspaceDiagramProps<TItem extends GridPlaceable> {
+	handleAddNewItem: (zoneId: string, item: TItem, x: number, y: number) => void
+	handleMoveItemInZone: (
+		zoneId: string,
+		itemId: string,
 		newX: number,
 		newY: number,
 	) => void
-	movePlantBetweenBeds: (
-		garden: Garden,
-		sourceBedId: string,
-		targetBedId: string,
+	handleDeleteItem: (zoneId: string, itemId: string) => void
+	moveItemBetweenZones: (
+		workspace: Workspace,
+		sourceZoneId: string,
+		targetZoneId: string,
 		placement: GridPlacement<GridPlaceable>,
 		newX: number,
 		newY: number,
 	) => void
-	garden: Garden
+	workspace: Workspace
+	itemAdapter: ItemAdapter<TItem>
 }
 
 const {
-	garden,
-	movePlantBetweenBeds,
-	handleAddNewPlant,
-	handleMovePlantInBed,
-}: GardenDiagramProps = $props()
+	workspace,
+	moveItemBetweenZones,
+	handleAddNewItem,
+	handleMoveItemInZone,
+	handleDeleteItem,
+	itemAdapter,
+}: WorkspaceDiagramProps<GridPlaceable> = $props()
 
 // Create validation service instance
-let validationService: GardenValidationService | undefined = $state<
-	GardenValidationService | undefined
+let validationService: WorkspaceValidationService | undefined = $state<
+	WorkspaceValidationService | undefined
 >(undefined)
-let customAsyncValidation: GardenAsyncValidationFunction<PlantWithSize> | undefined =
-	$state<GardenAsyncValidationFunction<PlantWithSize> | undefined>(undefined)
+let customAsyncValidation: WorkspaceAsyncValidationFunction<ItemWithSize> | undefined =
+	$state<WorkspaceAsyncValidationFunction<ItemWithSize> | undefined>(undefined)
 
 // Watch for plants to be ready and initialize validation service
 $effect(() => {
 	if ($plantsReady && $plants.length > 0 && !validationService) {
-		console.log('Initializing validation service with', $plants.length, 'plants')
-		validationService = new GardenValidationService($plants)
+		console.log('Initializing validation service with', $plants.length, 'items')
+		validationService = new WorkspaceValidationService($plants)
 		customAsyncValidation = validationService.createAsyncValidator()
 	}
 })
@@ -92,112 +90,103 @@ function handleAsyncValidationError(errorMessage: string) {
 	showError(errorMessage)
 }
 
-function handleMovePlantToDifferentBed(
-	sourceBedId: string,
-	targetBedId: string,
-	existingItem: ExistingGardenItem<GridPlaceable>,
+function handleMoveItemToDifferentZone(
+	sourceZoneId: string,
+	targetZoneId: string,
+	existingItem: ExistingWorkspaceItem<GridPlaceable>,
 	newX: number,
 	newY: number,
 ) {
-	// Inline conversion from ExistingGardenItem<PlantWithSize> to GridPlacement<PlantWithSize>
+	// Inline conversion from ExistingWorkspaceItem<ItemWithSize> to GridPlacement<ItemWithSize>
 	const gridPlacementArg: GridPlacement<GridPlaceable> = {
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
-		size: tileSizeForItem(existingItem.item),
+		size: itemAdapter.getItemSize(existingItem.item),
 		item: existingItem.item,
 		sourceZoneId: existingItem.sourceZoneId,
 	}
-	movePlantBetweenBeds(garden, sourceBedId, targetBedId, gridPlacementArg, newX, newY)
+	moveItemBetweenZones(workspace, sourceZoneId, targetZoneId, gridPlacementArg, newX, newY)
 }
 
-function handleDeletePlant(plantId: string, bedId: string) {
-	const bed = garden.beds.find((b: GardenBed) => b.id === bedId)
-	if (bed) {
-		garden.beds = garden.beds.map((b: GardenBed) =>
-			b.id === bedId
-				? { ...b, placements: b.placements.filter((p) => p.id !== plantId) }
-				: b,
-		)
-
-		console.log(`[Garden] Deleted plant ${plantId} from bed ${bedId}`)
-	} else {
-		console.error('[Garden] Bed not found for deletePlant:', bedId)
-	}
+function performDeleteItem(itemId: string, zoneId: string) {
+	// Delegate to parent component's callback instead of mutating the workspace prop
+	handleDeleteItem(zoneId, itemId)
+	console.log(`[Workspace] Requested deletion of item ${itemId} from zone ${zoneId}`)
 }
 
-function buildGardenZoneContext(
-	bed: GardenBed | undefined,
-): GardenZoneContext<PlantWithSize> | undefined {
-	if (!bed) return undefined
+function buildWorkspaceZoneContext(
+	zone: Zone | undefined,
+): WorkspaceZoneContext<ItemWithSize> | undefined {
+	if (!zone) return undefined
 	return {
-		...bed,
-		placements: bed.placements.map((placement) => {
-			// placement is already GridPlacement<PlantWithSize>
+		...zone,
+		placements: zone.placements.map((placement) => {
+			// placement is already GridPlacement<ItemWithSize>
 			return placement
 		}),
-	} as GardenZoneContext<PlantWithSize>
+	} as WorkspaceZoneContext<ItemWithSize>
 }
 
 async function handleRequestPlacement(
 	details: PlacementRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!isPlant(details.itemData)) throw new Error('Item is not a plant')
+	if (!itemAdapter.isValidItem(details.itemData)) throw new Error('Item is not valid for this adapter')
 
 	handleAsyncValidationStart()
 
-	const targetBed = findBed(garden, details.targetZoneId)
-	const sourceBed = details.sourceZoneId
-		? findBed(garden, details.sourceZoneId)
+	const targetZone = findZone(workspace, details.targetZoneId)
+	const sourceZone = details.sourceZoneId
+		? findZone(workspace, details.sourceZoneId)
 		: undefined
 
-	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
+	const baseValidationContext: Partial<WorkspaceValidationContext<GridPlaceable>> = {
 		item: details.itemData,
 		targetZoneId: details.targetZoneId,
 		targetX: details.x,
 		targetY: details.y,
 		operationType: details.operationType,
-		applicationContext: { garden: garden },
+		applicationContext: { workspace: workspace },
 	}
 
-	const targetCtx = buildGardenZoneContext(targetBed)
+	const targetCtx = buildWorkspaceZoneContext(targetZone)
 	if (targetCtx) baseValidationContext.targetZoneContext = targetCtx
 	if (details.originalInstanceId)
 		baseValidationContext.itemInstanceId = details.originalInstanceId
 	if (details.sourceZoneId) baseValidationContext.sourceZoneId = details.sourceZoneId
-	const sourceCtx = buildGardenZoneContext(sourceBed)
+	const sourceCtx = buildWorkspaceZoneContext(sourceZone)
 	if (sourceCtx) baseValidationContext.sourceZoneContext = sourceCtx
 
-	if (details.originalInstanceId && sourceBed) {
-		const originalPlantPlacement = findPlantPlacement(
-			sourceBed,
+	if (details.originalInstanceId && sourceZone) {
+		const originalItemPlacement = findItemPlacement(
+			sourceZone,
 			details.originalInstanceId,
 		)
-		if (originalPlantPlacement) {
-			baseValidationContext.sourceX = originalPlantPlacement.x
-			baseValidationContext.sourceY = originalPlantPlacement.y
+		if (originalItemPlacement) {
+			baseValidationContext.sourceX = originalItemPlacement.x
+			baseValidationContext.sourceY = originalItemPlacement.y
 		}
 	}
 
 	const validationContext =
-		baseValidationContext as GardenValidationContext<PlantWithSize>
+		baseValidationContext as WorkspaceValidationContext<ItemWithSize>
 
 	try {
 		if (!customAsyncValidation) {
-			throw new Error('Validation service not ready - plants still loading')
+			throw new Error('Validation service not ready - items still loading')
 		}
 		const result = await customAsyncValidation(validationContext)
 		if (result.isValid) {
 			const item = details.itemData
-			if (!isPlant(item)) throw new Error('Item is not a plant')
+			if (!itemAdapter.isValidItem(item)) throw new Error('Item is not valid for this adapter')
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual operation
 			if (
 				details.operationType === 'item-move-within-zone' &&
 				details.originalInstanceId
 			) {
-				handleMovePlantInBed(
+				handleMoveItemInZone(
 					details.targetZoneId,
 					details.originalInstanceId,
 					details.x,
@@ -210,15 +199,15 @@ async function handleRequestPlacement(
 				baseValidationContext.sourceX !== undefined &&
 				baseValidationContext.sourceY !== undefined
 			) {
-				const existingItem: ExistingGardenItem<GridPlaceable> = {
+				const existingItem: ExistingWorkspaceItem<GridPlaceable> = {
 					id: details.originalInstanceId,
 					x: baseValidationContext.sourceX,
 					y: baseValidationContext.sourceY,
 					item: details.itemData,
-					size: tileSizeForItem(details.itemData),
+					size: itemAdapter.getItemSize(details.itemData),
 					sourceZoneId: details.sourceZoneId,
 				}
-				handleMovePlantToDifferentBed(
+				handleMoveItemToDifferentZone(
 					details.sourceZoneId,
 					details.targetZoneId,
 					existingItem,
@@ -226,7 +215,7 @@ async function handleRequestPlacement(
 					details.y,
 				)
 			} else if (details.operationType === 'item-add-to-zone') {
-				handleAddNewPlant(details.targetZoneId, item, details.x, details.y)
+				handleAddNewItem(details.targetZoneId, item, details.x, details.y)
 			}
 			// Update pending operation to success
 			if (pendingOpId) {
@@ -250,7 +239,7 @@ async function handleRequestPlacement(
 		// Validation system failure (like HTTP 4xx/5xx) - unexpected infrastructure/system error
 		const errorMessage = error instanceof Error ? error.message : String(error)
 		console.error(
-			'[GardenPage] Validation system failure during placement request:',
+			'[WorkspacePage] Validation system failure during placement request:',
 			errorMessage,
 			error,
 		)
@@ -270,45 +259,42 @@ async function handleRequestRemoval(
 	details: RemovalRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!isPlant(details.itemData)) {
-		throw new Error('Item is not a plant')
+	if (!itemAdapter.isValidItem(details.itemData)) {
+		throw new Error('Item is not valid for this adapter')
 	}
 
 	handleAsyncValidationStart()
 
-	const sourceBed = findBed(garden, details.sourceZoneId)
-	const plantToRemove = sourceBed
-		? findPlantPlacement(sourceBed, details.instanceId)
+	const sourceZone = findZone(workspace, details.sourceZoneId)
+	const itemToRemove = sourceZone
+		? findItemPlacement(sourceZone, details.instanceId)
 		: undefined
 
-	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
+	const baseValidationContext: Partial<WorkspaceValidationContext<GridPlaceable>> = {
 		operationType: 'item-remove-from-zone',
 		item: details.itemData,
 		itemInstanceId: details.instanceId,
 		sourceZoneId: details.sourceZoneId,
-		applicationContext: { garden: garden },
+		applicationContext: { workspace: workspace },
 	}
-	const remSourceCtx = buildGardenZoneContext(sourceBed)
+	const remSourceCtx = buildWorkspaceZoneContext(sourceZone)
 	if (remSourceCtx) baseValidationContext.sourceZoneContext = remSourceCtx
-	if (plantToRemove) {
-		baseValidationContext.sourceX = plantToRemove.x
-		baseValidationContext.sourceY = plantToRemove.y
+	if (itemToRemove) {
+		baseValidationContext.sourceX = itemToRemove.x
+		baseValidationContext.sourceY = itemToRemove.y
 	}
 
-	const validationContext = baseValidationContext as GardenValidationContext<Plant>
-	// console.log('[GardenDiagram] handleRequestRemoval - validationContext:', JSON.stringify(validationContext, null, 2));
+	const validationContext = baseValidationContext as WorkspaceValidationContext<GridPlaceable>
 
 	try {
 		if (!customAsyncValidation) {
-			// console.error('[GardenDiagram] handleRequestRemoval - customAsyncValidation not ready');
-			throw new Error('Validation service not ready - plants still loading')
+			throw new Error('Validation service not ready - items still loading')
 		}
 		const result = await customAsyncValidation(validationContext)
-		// console.log('[GardenDiagram] handleRequestRemoval - validation result:', result);
 		if (result.isValid) {
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual removal
-			handleDeletePlant(details.instanceId, details.sourceZoneId)
+			performDeleteItem(details.instanceId, details.sourceZoneId)
 			// Update pending operation to success
 			if (pendingOpId) {
 				updatePendingOperation(pendingOpId, 'success')
@@ -331,7 +317,7 @@ async function handleRequestRemoval(
 		// Validation system failure (like HTTP 4xx/5xx) - unexpected infrastructure/system error
 		const errorMessage = error instanceof Error ? error.message : String(error)
 		console.error(
-			'[GardenPage] Validation system failure during removal request:',
+			'[WorkspacePage] Validation system failure during removal request:',
 			errorMessage,
 			error,
 		)
@@ -351,13 +337,13 @@ async function handleRequestCloning(
 	details: CloningRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!isPlant(details.itemDataToClone)) throw new Error('Item is not a plant')
+	if (!itemAdapter.isValidItem(details.itemDataToClone)) throw new Error('Item is not valid for this adapter')
 	handleAsyncValidationStart()
 
-	const sourceBed = findBed(garden, details.sourceOriginalZoneId)
-	const targetBed = findBed(garden, details.targetCloneZoneId)
+	const sourceZone = findZone(workspace, details.sourceOriginalZoneId)
+	const targetZone = findZone(workspace, details.targetCloneZoneId)
 
-	const baseValidationContext: Partial<GardenValidationContext<GridPlaceable>> = {
+	const baseValidationContext: Partial<WorkspaceValidationContext<GridPlaceable>> = {
 		operationType: 'item-clone-in-zone',
 		item: details.itemDataToClone,
 		sourceZoneId: details.sourceOriginalZoneId,
@@ -366,24 +352,24 @@ async function handleRequestCloning(
 		sourceY: details.sourceOriginalY,
 		targetX: details.targetCloneX,
 		targetY: details.targetCloneY,
-		applicationContext: { garden: garden },
+		applicationContext: { workspace: workspace },
 	}
-	const cloneSourceCtx = buildGardenZoneContext(sourceBed)
+	const cloneSourceCtx = buildWorkspaceZoneContext(sourceZone)
 	if (cloneSourceCtx) baseValidationContext.sourceZoneContext = cloneSourceCtx
-	const cloneTargetCtx = buildGardenZoneContext(targetBed)
+	const cloneTargetCtx = buildWorkspaceZoneContext(targetZone)
 	if (cloneTargetCtx) baseValidationContext.targetZoneContext = cloneTargetCtx
 
-	const validationContext = baseValidationContext as GardenValidationContext<Plant>
+	const validationContext = baseValidationContext as WorkspaceValidationContext<GridPlaceable>
 
 	try {
 		if (!customAsyncValidation) {
-			throw new Error('Validation service not ready - plants still loading')
+			throw new Error('Validation service not ready - items still loading')
 		}
 		const result = await customAsyncValidation(validationContext)
 		if (result.isValid) {
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual clone
-			handleAddNewPlant(
+			handleAddNewItem(
 				details.targetCloneZoneId,
 				details.itemDataToClone,
 				details.targetCloneX,
@@ -411,7 +397,7 @@ async function handleRequestCloning(
 		// Validation system failure (like HTTP 4xx/5xx) - unexpected infrastructure/system error
 		const errorMessage = error instanceof Error ? error.message : String(error)
 		console.error(
-			'[GardenPage] Validation system failure during cloning request:',
+			'[WorkspacePage] Validation system failure during cloning request:',
 			errorMessage,
 			error,
 		)
@@ -428,20 +414,20 @@ async function handleRequestCloning(
 }
 
 function tileSizeForItem(item: DraggableItem): number {
-	if (!isPlant(item)) throw new Error('Item is not a plant')
-	return tileSizeForPlant(item)
+	if (!itemAdapter.isValidItem(item)) throw new Error('Item is not valid for this adapter')
+	return itemAdapter.getItemSize(item)
 }
 
 function categoryNameForItem(item: DraggableItem): string {
-	if (!isPlant(item)) throw new Error('Item is not a plant')
-	return categoryNameForPlant(item)
+	if (!itemAdapter.isValidItem(item)) throw new Error('Item is not valid for this adapter')
+	return itemAdapter.getCategoryName(item)
 }
 </script>
 
-{#if garden}
-	<GardenView
-		garden={garden}
-		edgeIndicators={garden.edgeIndicators}
+{#if workspace}
+	<WorkspacePresentation
+		workspace={workspace}
+		edgeIndicators={workspace.edgeIndicators}
 		onRequestPlacement={handleRequestPlacement}
 		onRequestRemoval={handleRequestRemoval}
 		onRequestCloning={handleRequestCloning}
@@ -451,6 +437,6 @@ function categoryNameForItem(item: DraggableItem): string {
 {:else}
 	<div class="flex justify-center items-center h-full p-8">
 		<span class="loading loading-ring loading-xl"></span>
-		<div class="text-md font-bold">Loading garden...</div>
+		<div class="text-md font-bold">Loading workspace...</div>
 	</div>
-{/if}
+{/if} 

@@ -1,5 +1,4 @@
 import type { ISeedPacket } from '@peashoot/types'
-import type { BaseEntity } from './base-entity'
 
 export interface SeedPacketInstructions {
 	readonly sowInstructions: string
@@ -8,4 +7,6 @@ export interface SeedPacketInstructions {
 	readonly hardinessNotes: string
 }
 
-export interface SeedPacket extends BaseEntity<'seedp'>, ISeedPacket {}
+export interface SeedPacket extends ISeedPacket {
+	id: string
+}

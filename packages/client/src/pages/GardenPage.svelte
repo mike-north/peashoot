@@ -9,7 +9,11 @@ import {
 } from '../lib/entities/garden'
 import type { GridPlaceable, GridPlacement } from '../private/grid/grid-placement'
 import { tileSizeForPlant, type Plant } from '../lib/entities/plant'
-import { updatePlantPositionInBed, type GardenBed, type PlantWithSize } from '../lib/entities/garden-bed'
+import {
+	updatePlantPositionInBed,
+	type GardenBed,
+	type PlantWithSize,
+} from '../lib/entities/garden-bed'
 
 const { route } = $props()
 const gardenAdapter = new GardenAdapter()

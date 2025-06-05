@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi } from 'vitest'
-import { movePlantBetweenBeds, type Garden } from '../src/lib/entities/garden.js'
+import {
+	movePlantBetweenBedsAndCreateNewGarden,
+	type Garden,
+} from '../src/lib/entities/garden.js'
 import type { GardenBed } from '../src/lib/entities/garden-bed.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
 import type { Plant } from '../src/lib/entities/plant.js'
@@ -33,7 +36,7 @@ const plantPlacement: GridPlacement<Plant> & ExistingDraggableItem<Plant> = {
 }
 
 const sourceBed: GardenBed & GridArea<Plant> = {
-	id: 'gbed_1',
+	id: 'bed_1',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -42,7 +45,7 @@ const sourceBed: GardenBed & GridArea<Plant> = {
 }
 
 const targetBed: GardenBed & GridArea<Plant> = {
-	id: 'gbed_2',
+	id: 'bed_2',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -51,14 +54,14 @@ const targetBed: GardenBed & GridArea<Plant> = {
 }
 
 const garden: Garden = {
-	id: 'garden_1',
+	id: 'grdn_1',
 	beds: [sourceBed, targetBed],
 	edgeIndicators: [],
 }
 
 describe('movePlantBetweenBeds', () => {
 	it('moves a plant from the source bed to the target bed with new coordinates', () => {
-		const updated: Garden = movePlantBetweenBeds(
+		const updated: Garden = movePlantBetweenBedsAndCreateNewGarden(
 			garden,
 			'gbed_1',
 			'gbed_2',
@@ -69,11 +72,11 @@ describe('movePlantBetweenBeds', () => {
 		const { beds } = updated
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const [updatedSource] = beds.filter(
-			(b: GardenBed) => b.id === 'gbed_1',
+			(b: GardenBed) => b.id === 'bed_1',
 		) satisfies GardenBed[]
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const [updatedTarget] = beds.filter(
-			(b: GardenBed) => b.id === 'gbed_2',
+			(b: GardenBed) => b.id === 'bed_2',
 		) satisfies GardenBed[]
 
 		expect(updatedSource.placements.length).toBe(0)
@@ -87,7 +90,7 @@ describe('movePlantBetweenBeds', () => {
 		const spy = vi.spyOn(console, 'error').mockImplementation(() => {
 			void 0
 		})
-		const updated: Garden = movePlantBetweenBeds(
+		const updated: Garden = movePlantBetweenBedsAndCreateNewGarden(
 			garden,
 			'missing',
 			'bed2',
@@ -101,7 +104,7 @@ describe('movePlantBetweenBeds', () => {
 	})
 
 	it('does not mutate the original garden object', () => {
-		const updated: Garden = movePlantBetweenBeds(
+		const updated: Garden = movePlantBetweenBedsAndCreateNewGarden(
 			garden,
 			'gbed_1',
 			'gbed_2',

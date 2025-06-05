@@ -1,7 +1,6 @@
 <script lang="ts">
 import GardenView from './GardenPresentation.svelte'
 import type { GardenBed } from '../../lib/entities/garden-bed'
-import { updatePlantPositionInBed } from '../../lib/entities/garden-bed'
 import {
 	categoryNameForPlant,
 	isPlant,

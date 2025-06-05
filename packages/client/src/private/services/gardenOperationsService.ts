@@ -6,9 +6,9 @@ import {
 } from '../../lib/entities/garden-bed'
 import type { Plant } from '../../lib/entities/plant'
 import {
-	movePlantBetweenBeds,
 	findBed,
 	findPlantPlacement,
+	movePlantBetweenBedsAndCreateNewGarden,
 } from '../../lib/entities/garden'
 import type { GridPlacement } from '../grid/grid-placement'
 import type { ExistingGardenItem } from '../state/gardenDragState'
@@ -44,7 +44,7 @@ export class GardenOperationsService {
 		newY: number,
 	): Garden {
 		// Use the existing item directly since ExistingGardenItem is now GridPlacement
-		return movePlantBetweenBeds(
+		return movePlantBetweenBedsAndCreateNewGarden(
 			garden,
 			sourceBedId,
 			targetBedId,

@@ -66,7 +66,7 @@ export const seedPackets: SeedPacket[] = [
 
 export const gardens: Garden[] = [
 	{
-		id: 'garden_0',
+		id: 'grdn_0',
 		edgeIndicators: [
 			{
 				id: 'edge_indicator_0',
@@ -83,7 +83,7 @@ export const gardens: Garden[] = [
 		],
 		beds: [
 			{
-				id: 'gbed_962af647-bce5-4cff-9d47-e22ef97a20e0',
+				id: 'bed_962af647-bce5-4cff-9d47-e22ef97a20e0',
 				width: 12,
 				height: 2,
 				waterLevel: 0,
@@ -91,7 +91,7 @@ export const gardens: Garden[] = [
 				placements: [],
 			},
 			{
-				id: 'gbed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
+				id: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 				width: 1,
 				height: 1,
 				waterLevel: 0,
@@ -114,12 +114,12 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
-						sourceZoneId: 'gbed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
+						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 					},
 				],
 			},
 			{
-				id: 'gbed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
+				id: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 				width: 1,
 				height: 1,
 				waterLevel: 0,
@@ -142,12 +142,12 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
+						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 					},
 				],
 			},
 			{
-				id: 'gbed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+				id: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 				width: 6,
 				height: 2,
 				waterLevel: 2,
@@ -170,7 +170,7 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
-						sourceZoneId: 'gbed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
 						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
@@ -189,12 +189,12 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 				],
 			},
 			{
-				id: 'gbed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+				id: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 				width: 6,
 				height: 2,
 				waterLevel: 2,
@@ -217,7 +217,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 					{
 						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
@@ -236,12 +236,12 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 				],
 			},
 			{
-				id: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+				id: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 				width: 12,
 				height: 4,
 				waterLevel: 3,
@@ -264,7 +264,7 @@ export const gardens: Garden[] = [
 								size: 3,
 							},
 						},
-						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
@@ -283,7 +283,7 @@ export const gardens: Garden[] = [
 								size: 2,
 							},
 						},
-						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
@@ -302,7 +302,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
@@ -322,7 +322,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
@@ -342,7 +342,7 @@ export const gardens: Garden[] = [
 								size: 1,
 							},
 						},
-						sourceZoneId: 'gbed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 				],
 			},

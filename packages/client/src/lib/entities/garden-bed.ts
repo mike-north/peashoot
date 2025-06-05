@@ -1,13 +1,12 @@
 import type { GridArea } from '../../private/grid/grid-area'
 import type { GridPlacement } from '../../private/grid/grid-placement'
-import type { BaseEntity } from './base-entity'
 import type { Plant } from './plant'
 
 // Canonical type for plant grid operations
 export type PlantWithSize = Plant
 
-export interface GardenBed extends BaseEntity<'bed'>, GridArea<PlantWithSize> {
-	readonly id: `bed_${string}`
+export interface GardenBed extends GridArea<PlantWithSize> {
+	readonly id: string
 	width: number
 	height: number
 	waterLevel: number

@@ -6,7 +6,9 @@ export interface DraggableItem {
 }
 
 export function isDraggableItem(item: unknown): item is DraggableItem {
-	return typeof item === 'object' && item !== null && 'id' in item
+	if (typeof item !== 'object' || item === null) return false
+	const obj = item as Record<string, unknown>
+	return 'id' in obj && typeof obj.id === 'string'
 }
 
 /**

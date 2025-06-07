@@ -9,7 +9,7 @@
 		"build": "tsc -P tsconfig.build.json && npm run generate-seed-file-schema",
 		"lint": "eslint .",
 		"generate-seed-file-schema": "npx typescript-json-schema --required data/raw-seed-info.ts RawSeedPacketInfoCollection -o data/seed-packet.schema.json",
-		"format": "prettier --write {src,tests}/**/*.ts"
+		"format": "prettier --write src tests"
 	},
 	"keywords": [],
 	"author": "",

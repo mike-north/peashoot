@@ -10,7 +10,7 @@
 		"test:watch": "vitest watch",
 		"preview": "vite preview",
 		"lint": "eslint .",
-		"format": "prettier --write {src,tests}/**/*.ts"
+		"format": "prettier --write src tests"
 	},
 	"devDependencies": {
 		"@iconify-json/ph": "^1.2.2",

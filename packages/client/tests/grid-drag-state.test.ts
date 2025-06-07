@@ -7,9 +7,9 @@ import {
 	getGridDraggedItemInfo,
 	isGridPendingOperation,
 	isGridItemRemovalOperation,
-} from './grid-drag-state'
-import type { PendingOperation } from '../dnd/types'
-import type { GridPlacement, GridPlaceable } from './grid-placement'
+} from '../src/private/grid/grid-drag-state.js'
+import type { PendingOperation } from '../src/private/dnd/types.js'
+import type { GridPlacement, GridPlaceable } from '../src/private/grid/grid-placement.js'
 
 describe('Grid Drag State', () => {
 	interface TestItem extends GridPlaceable {

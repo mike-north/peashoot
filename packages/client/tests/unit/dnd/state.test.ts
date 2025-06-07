@@ -8,7 +8,7 @@ import {
 	isDraggingNewItem,
 	getDraggedItemInfo,
 } from '../../../src/private/dnd/state.js'
-import {
+import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,

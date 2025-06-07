@@ -30,7 +30,7 @@ export default defineConfig({
 				},
 			],
 		},
-		include: ['tests/svelte/**/*.test.ts', 'tests/unit/**/*.test.ts'],
+		include: ['./tests/svelte/**/*.test.ts', './tests/unit/**/*.test.ts'],
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html'],

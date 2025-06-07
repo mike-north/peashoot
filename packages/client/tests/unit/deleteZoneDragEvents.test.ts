@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { writable, get } from 'svelte/store'
-import { deleteZoneDragEvents } from '../../src/private/grid/actions/deleteZoneDragEvents.js'
 import type { ActionReturn } from 'svelte/action'
 import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,
 } from '../../src/private/dnd/types.js'
+import { deleteZoneDragEvents } from '../../src/private/grid/actions/deleteZoneDragEvents.js'
 
 // Mock the isDraggingExistingItem function
 const mockedIsDraggingExistingItem = vi.fn()

@@ -7,7 +7,7 @@ import {
 	type GridPlaceable,
 	isGridPlaceable,
 	type WithVisualPresentation,
-} from './grid-placement'
+} from '../src/private/grid/grid-placement.js'
 
 describe('Grid Placement', () => {
 	describe('GridPlacement', () => {

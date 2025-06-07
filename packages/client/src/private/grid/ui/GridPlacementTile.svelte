@@ -4,7 +4,7 @@ import type { Component } from 'svelte'
 import { showTooltip, hideTooltip } from '../../tooltips/state/tooltipStore'
 import { rgbToCss } from '@peashoot/types'
 
-interface Props {
+export interface GridPlacementTileProps<T extends GridPlaceable> {
 	placement: GridPlacement<T>
 	sizePx: number // SVG width (cellWidth * size)
 	isPulsingSource?: boolean // Visual indicator for pending operations
@@ -22,7 +22,7 @@ let {
 	TooltipComponent,
 	isInToolbar = false,
 	disableTooltip = false,
-}: Props = $props()
+}: GridPlacementTileProps<T> = $props()
 
 const item = $derived(placement.item)
 const itemSize = $derived(placement.size)

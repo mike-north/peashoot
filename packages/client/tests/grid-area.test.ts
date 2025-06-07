@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import type { GridArea } from './grid-area'
-import type { GridPlaceable, GridPlacement } from './grid-placement'
+import type { GridArea } from '../src/private/grid/grid-area.js'
+import type { GridPlaceable, GridPlacement } from '../src/private/grid/grid-placement.js'
 
 describe('Grid Area', () => {
 	interface TestItem extends GridPlaceable {

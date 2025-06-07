@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { disablePointerEventsWhenDragging } from '../../src/private/grid/actions/disablePointerEventsWhenDragging.js'
 import type { ActionReturn } from 'svelte/action'
+import { disablePointerEventsWhenDragging } from '../../src/private/grid/actions/disablePointerEventsWhenDragging.js'
 import type {
 	DraggableItem,
 	ExistingDraggableItem,

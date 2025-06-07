@@ -3,7 +3,7 @@ import type { Component } from 'svelte'
 import { mount } from 'svelte'
 import type { GridPlaceable } from '../../grid/grid-placement'
 
-interface Props {
+export interface TooltipWrapperProps<T extends GridPlaceable> {
 	x: number
 	y: number
 	orientation: 'top' | 'bottom' | 'left' | 'right'
@@ -21,7 +21,7 @@ let {
 	TooltipComponent,
 	tileCenterX,
 	tileCenterY,
-}: Props = $props()
+}: TooltipWrapperProps<T> = $props()
 
 const accentColor = `rgba(${item.presentation.accentColor.red}, ${item.presentation.accentColor.green}, ${item.presentation.accentColor.blue}, ${item.presentation.accentColor.alpha ?? 0.4})`
 let contentContainer: HTMLDivElement | null = $state(null)

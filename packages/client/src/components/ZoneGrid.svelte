@@ -3,13 +3,13 @@ import Grid from '../private/grid/components/Grid.svelte'
 import type { GridPlaceable } from '../private/grid/grid-placement'
 import type { Component } from 'svelte'
 import type { Zone } from '../lib/entities/zone'
-import type { PlantItem } from '../lib/item-types/plant-item'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import IdLabel from '../lib/components/IdLabel.svelte'
+import type { Item } from '../lib/entities/item'
 
 interface ZoneGridProps {
 	zone: Zone
-	plants: PlantItem[]
+	items: Item[]
 	TooltipComponent: Component<{ item: GridPlaceable }>
 	edgeIndicators: {
 		id: string
@@ -24,7 +24,7 @@ interface ZoneGridProps {
 
 const {
 	zone,
-	plants,
+	items,
 	TooltipComponent,
 	edgeIndicators,
 	tileSizeForItem,
@@ -71,7 +71,7 @@ const colSpanClass = $derived(
 	<Grid
 		grid={zone}
 		TooltipComponent={TooltipComponent}
-		items={plants}
+		items={items}
 		edgeIndicators={edgeIndicators.map((indicator) => ({
 			id: indicator.id,
 			plantAId: indicator.itemAId,

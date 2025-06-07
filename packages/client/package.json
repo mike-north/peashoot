@@ -5,11 +5,12 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"build": "sv check --fail-on-warnings && vite build",
 		"test": "vitest run --coverage && tsd",
 		"test:watch": "vitest watch",
 		"preview": "vite preview",
-		"lint": "sv check && eslint ."
+		"lint": "eslint .",
+		"format": "prettier --write {src,tests}/**/*.ts"
 	},
 	"devDependencies": {
 		"@iconify-json/ph": "^1.2.2",

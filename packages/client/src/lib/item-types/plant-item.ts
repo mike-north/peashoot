@@ -12,7 +12,7 @@ export interface PlantMetadata extends Record<string, unknown> {
  * Plant item type - extends the generic Item with plant-specific semantics
  */
 export interface PlantItem extends Item {
-	readonly id: `plant_${string}`
+	readonly id: string
 	readonly category: string // maps to plant family
 	readonly size: number // maps to planting distance
 	readonly metadata: PlantMetadata

@@ -4,7 +4,7 @@ import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
 import type { Workspace } from '../../lib/entities/workspace'
-import { calculateZoneViewColSpans } from '../zone-layout-calculator'
+import { calculateZoneViewColSpans } from '../grid/zone-layout-calculator'
 import type {
 	PlacementRequestDetails,
 	RemovalRequestDetails,
@@ -312,7 +312,7 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 					<ZoneGrid
 						TooltipComponent={ItemTooltipContent}
 						zone={zone}
-						plants={$plants}
+						items={$plants}
 						edgeIndicators={edgeIndicators.filter(
 							(edge) =>
 								zones

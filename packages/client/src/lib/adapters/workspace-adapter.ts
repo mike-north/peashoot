@@ -48,7 +48,6 @@ export function convertZone(iZone: ZoneResource): Zone {
 	}
 }
 
-
 export class WorkspaceAdapter extends WorkspaceAdapterBase {
 	async fetchWorkspaces(): Promise<Workspace[]> {
 		// For now, delegate to base class that converts garden fixture data

@@ -1,7 +1,7 @@
-import type { Garden } from './entities/garden'
-import type { PlantItem } from './item-types/plant-item'
 import { createPlantItem } from './item-types/plant-item'
 import type { SeedPacket } from './entities/seed-packet'
+import type { Workspace } from './entities/workspace'
+import type { Item } from './entities/item'
 
 export const seedPackets: SeedPacket[] = [
 	{
@@ -65,24 +65,24 @@ export const seedPackets: SeedPacket[] = [
 	},
 ]
 
-export const gardens: Garden[] = [
+export const gardens: Workspace[] = [
 	{
 		id: 'grdn_0',
 		edgeIndicators: [
 			{
 				id: 'edge_indicator_0',
-				plantAId: 'plant_lettuce_1',
-				plantBId: 'plant_tomato_1',
+				itemAId: 'plant_lettuce_1',
+				itemBId: 'plant_tomato_1',
 				color: 'red',
 			},
 			{
 				id: 'edge_indicator_1',
-				plantAId: 'plant_cherry_tomato_1',
-				plantBId: 'plant_tomato_2',
+				itemAId: 'plant_cherry_tomato_1',
+				itemBId: 'plant_tomato_2',
 				color: 'red',
 			},
 		],
-		beds: [
+		zones: [
 			{
 				id: 'bed_962af647-bce5-4cff-9d47-e22ef97a20e0',
 				width: 12,
@@ -352,14 +352,14 @@ export const gardens: Garden[] = [
 ]
 
 // Convert legacy plant data to PlantItem format
-const legacyPlantData = [
+export const plants: Item[] = [
 	// Tomatoes
 	{
 		id: 'plant_tomatoes-burpee-big-boy-tomato',
 		displayName: 'Big Boy Tomato',
-		family: 'tomatoes',
+		category: 'tomatoes',
 		variant: 'burpee-big-boy-tomato',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
@@ -369,9 +369,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_tomatoes-rareseeds-cherokee-purple-tomato',
 		displayName: 'Cherokee Purple Tomato',
-		family: 'tomatoes',
+		category: 'tomatoes',
 		variant: 'rareseeds-cherokee-purple-tomato',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
 			iconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
@@ -381,9 +381,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_tomatoes-sweet-100-tomato',
 		displayName: 'Sweet 100 Cherry Tomato',
-		family: 'tomatoes',
+		category: 'tomatoes',
 		variant: 'sweet-100-tomato',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
 			iconPath: 'tomatoes-sweet-100-tomato.png',
@@ -393,9 +393,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_tomatoes-napa-chardonnay-tomato',
 		displayName: 'Napa Chardonnay Tomato',
-		family: 'tomatoes',
+		category: 'tomatoes',
 		variant: 'napa-chardonnay-tomato',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 255, green: 212, blue: 0 }, // --color-tomatoes-yellow
 			iconPath: 'tomatoes-napa-chardonnay-tomato.png',
@@ -405,9 +405,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_tomatoes-black-from-tula-tomato',
 		displayName: 'Black from Tula Tomato',
-		family: 'tomatoes',
+		category: 'tomatoes',
 		variant: 'black-from-tula-tomato',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
 			iconPath: 'tomatoes-black-from-tula-tomato.png',
@@ -419,9 +419,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_lettuce-burpee-buttercrunch-lettuce',
 		displayName: 'Buttercrunch Lettuce',
-		family: 'lettuce',
+		category: 'lettuce',
 		variant: 'burpee-buttercrunch-lettuce',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 			iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
@@ -431,9 +431,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_arugula-arugula',
 		displayName: 'Arugula',
-		family: 'arugula',
+		category: 'arugula',
 		variant: 'arugula',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
 			iconPath: 'arugula-arugula.png',
@@ -443,9 +443,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_spinach-spinach',
 		displayName: 'Spinach',
-		family: 'spinach',
+		category: 'spinach',
 		variant: 'spinach',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
 			iconPath: 'spinach-spinach.png',
@@ -455,9 +455,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_spinach-japanese-perpetual-spinach',
 		displayName: 'Japanese Perpetual Spinach',
-		family: 'spinach',
+		category: 'spinach',
 		variant: 'japanese-perpetual-spinach',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
 			iconPath: 'spinach-japanese-perpetual-spinach.png',
@@ -469,9 +469,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_carrots-burpee-chantenay-carrot',
 		displayName: 'Chantenay Red Core Carrot',
-		family: 'carrots',
+		category: 'carrots',
 		variant: 'burpee-chantenay-carrot',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
 			iconPath: 'carrots-burpee-chantenay-carrot.png',
@@ -481,9 +481,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_carrots-parisienne-carrots',
 		displayName: 'Parisienne Carrots',
-		family: 'carrots',
+		category: 'carrots',
 		variant: 'parisienne-carrots',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
 			iconPath: 'carrots-parisienne-carrots.png',
@@ -493,9 +493,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_carrots-lila-lu-sang-carrots',
 		displayName: 'Lila Lu Sang Purple Carrots',
-		family: 'carrots',
+		category: 'carrots',
 		variant: 'lila-lu-sang-carrots',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-carrots-purple
 			iconPath: 'carrots-lila-lu-sang-carrots.png',
@@ -507,9 +507,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_peppers-burpee-california-wonder-pepper',
 		displayName: 'California Wonder Bell Pepper',
-		family: 'peppers',
+		category: 'peppers',
 		variant: 'burpee-california-wonder-pepper',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
 			iconPath: 'peppers-burpee-california-wonder-pepper.png',
@@ -519,9 +519,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_peppers-jalapeno-hot-pepper',
 		displayName: 'Jalapeño Hot Pepper',
-		family: 'peppers',
+		category: 'peppers',
 		variant: 'jalapeno-hot-pepper',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
 			iconPath: 'peppers-jalapeno-hot-pepper.png',
@@ -531,9 +531,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_peppers-habanero-hot-pepper',
 		displayName: 'Habanero Hot Pepper',
-		family: 'peppers',
+		category: 'peppers',
 		variant: 'habanero-hot-pepper',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 247, green: 92, blue: 3 }, // --color-peppers-orange
 			iconPath: 'peppers-habanero-hot-pepper.png',
@@ -543,9 +543,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_peppers-lemon-drop-hot-pepper',
 		displayName: 'Lemon Drop Hot Pepper',
-		family: 'peppers',
+		category: 'peppers',
 		variant: 'lemon-drop-hot-pepper',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 212, blue: 0 }, // --color-peppers-yellow
 			iconPath: 'peppers-lemon-drop-hot-pepper.png',
@@ -555,9 +555,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_peppers-buena-mulata-hot-pepper',
 		displayName: 'Buena Mulata Hot Pepper',
-		family: 'peppers',
+		category: 'peppers',
 		variant: 'buena-mulata-hot-pepper',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-peppers-purple
 			iconPath: 'peppers-buena-mulata-hot-pepper.png',
@@ -569,9 +569,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_beans-burpee-provider-bush-bean',
 		displayName: 'Provider Bush Bean',
-		family: 'beans',
+		category: 'beans',
 		variant: 'burpee-provider-bush-bean',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
 			iconPath: 'beans-burpee-provider-bush-bean.png',
@@ -581,9 +581,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_beans-fava-beans',
 		displayName: 'Fava Beans',
-		family: 'beans',
+		category: 'beans',
 		variant: 'fava-beans',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
 			iconPath: 'beans-fava-beans.png',
@@ -593,9 +593,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_beans-dragons-tongue-beans',
 		displayName: "Dragon's Tongue Bush Bean",
-		family: 'beans',
+		category: 'beans',
 		variant: 'dragons-tongue-beans',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 212, blue: 0 }, // --color-beans-yellow
 			iconPath: 'beans-dragons-tongue-beans.png',
@@ -605,9 +605,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_beans-cherokee-trail-of-tears-beans',
 		displayName: 'Cherokee Trail of Tears Bean',
-		family: 'beans',
+		category: 'beans',
 		variant: 'cherokee-trail-of-tears-beans',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-beans-purple
 			iconPath: 'beans-cherokee-trail-of-tears-beans.png',
@@ -617,9 +617,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_beans-scarlet-runner-beans',
 		displayName: 'Scarlet Runner Bean',
-		family: 'beans',
+		category: 'beans',
 		variant: 'scarlet-runner-beans',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
 			iconPath: 'beans-scarlet-runner-beans.png',
@@ -631,9 +631,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_onions-rareseeds-yellow-of-parma-onion',
 		displayName: 'Yellow of Parma Onion',
-		family: 'onions',
+		category: 'onions',
 		variant: 'rareseeds-yellow-of-parma-onion',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 212, blue: 0 }, // --color-onions-yellow
 			iconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
@@ -643,9 +643,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_onions-burpee-evergreen-hardy-white-scallions',
 		displayName: 'Evergreen Hardy White Scallions',
-		family: 'onions',
+		category: 'onions',
 		variant: 'burpee-evergreen-hardy-white-scallions',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
 			iconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
@@ -655,9 +655,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_onions-chives',
 		displayName: 'Chives',
-		family: 'onions',
+		category: 'onions',
 		variant: 'chives',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 86, green: 130, blue: 3 }, // --color-mint-green
 			iconPath: 'onions-chives.png',
@@ -667,9 +667,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_onions-garlic',
 		displayName: 'Garlic',
-		family: 'onions',
+		category: 'onions',
 		variant: 'garlic',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
 			iconPath: 'onions-garlic.png',
@@ -679,9 +679,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_onions-bunching-onion',
 		displayName: 'Bunching Onion',
-		family: 'onions',
+		category: 'onions',
 		variant: 'bunching-onion',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
 			iconPath: 'onions-bunching-onion.png',
@@ -693,9 +693,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_cherries-rainier-cherry',
 		displayName: 'Rainier Cherry',
-		family: 'cherries',
+		category: 'cherries',
 		variant: 'rainier-cherry',
-		plantingDistanceInFeet: 3,
+		size: 3,
 		presentation: {
 			accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
 			iconPath: 'cherries-rainier-cherry.png',
@@ -705,9 +705,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_strawberries-alexandria-strawberry',
 		displayName: 'Alexandria Strawberry',
-		family: 'strawberries',
+		category: 'strawberries',
 		variant: 'alexandria-strawberry',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 220, green: 20, blue: 60 }, // --color-strawberries-red
 			iconPath: 'strawberries-alexandria-strawberry.png',
@@ -719,9 +719,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_daisies-zinnia-2',
 		displayName: 'Zinnia',
-		family: 'daisies',
+		category: 'daisies',
 		variant: 'zinnia',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 105, blue: 180 },
 			iconPath: 'daisies-zinnia.png',
@@ -732,9 +732,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_basil',
 		displayName: 'Basil',
-		family: 'basil',
+		category: 'basil',
 		variant: 'basil',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 85, green: 107, blue: 47 },
 			iconPath: 'basil-basil.png',
@@ -744,9 +744,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_foxglove',
 		displayName: 'Foxglove',
-		family: 'snapdragons',
+		category: 'snapdragons',
 		variant: 'foxglove',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 186, green: 85, blue: 211 },
 			iconPath: 'snapdragons-foxglove.png',
@@ -756,9 +756,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_zinnia',
 		displayName: 'Zinnia',
-		family: 'daisies',
+		category: 'daisies',
 		variant: 'zinnia',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 105, blue: 180 },
 			iconPath: 'daisies-zinnia.png',
@@ -768,9 +768,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_watermelon',
 		displayName: 'Watermelon',
-		family: 'watermelons',
+		category: 'watermelons',
 		variant: 'watermelon',
-		plantingDistanceInFeet: 4,
+		size: 4,
 		presentation: {
 			accentColor: { red: 50, green: 205, blue: 50 },
 			iconPath: 'watermelons-watermelon.png',
@@ -780,9 +780,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_wheat',
 		displayName: 'Wheat',
-		family: 'grains',
+		category: 'grains',
 		variant: 'wheat',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 222, green: 184, blue: 135 },
 			iconPath: 'grains-wheat.png',
@@ -792,9 +792,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_broccoli',
 		displayName: 'Broccoli',
-		family: 'brassicas',
+		category: 'brassicas',
 		variant: 'broccoli',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 85, green: 107, blue: 47 },
 			iconPath: 'broccoli-broccoli.png',
@@ -804,9 +804,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_sunflower',
 		displayName: 'Sunflower',
-		family: 'sunflowers',
+		category: 'sunflowers',
 		variant: 'sunflower',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 255, green: 215, blue: 0 },
 			iconPath: 'sunflowers-sunflower.png',
@@ -816,9 +816,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_lupine',
 		displayName: 'Lupine',
-		family: 'legumes',
+		category: 'legumes',
 		variant: 'lupine',
-		plantingDistanceInFeet: 2,
+		size: 2,
 		presentation: {
 			accentColor: { red: 123, green: 104, blue: 238 },
 			iconPath: 'legumes-lupine.png',
@@ -828,9 +828,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_rutabaga',
 		displayName: 'Rutabaga',
-		family: 'turnips',
+		category: 'turnips',
 		variant: 'rutabaga',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 238, green: 232, blue: 170 },
 			iconPath: 'rutabagas-rutabaga.png',
@@ -840,9 +840,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_celery',
 		displayName: 'Celery',
-		family: 'celery',
+		category: 'celery',
 		variant: 'celery',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 144, green: 238, blue: 144 },
 			iconPath: 'celery-celery.png',
@@ -852,9 +852,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_marigold',
 		displayName: 'Marigold',
-		family: 'marigolds',
+		category: 'marigolds',
 		variant: 'marigold',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 255, green: 140, blue: 0 },
 			iconPath: 'marigolds-marigold.png',
@@ -864,9 +864,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_cilantro',
 		displayName: 'Cilantro',
-		family: 'cilantro',
+		category: 'cilantro',
 		variant: 'cilantro',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 34, green: 139, blue: 34 },
 			iconPath: 'cilantro-cilantro.png',
@@ -876,9 +876,9 @@ const legacyPlantData = [
 	{
 		id: 'plant_brassicas-bok-choy',
 		displayName: 'Bok Choy',
-		family: 'brassicas',
+		category: 'brassicas',
 		variant: 'bok-choy',
-		plantingDistanceInFeet: 1,
+		size: 1,
 		presentation: {
 			accentColor: { red: 152, green: 251, blue: 152 },
 			iconPath: 'brassicas-bok-choy.png',
@@ -886,8 +886,3 @@ const legacyPlantData = [
 		},
 	},
 ]
-
-// Convert legacy plant data to PlantItem format
-export const plants: PlantItem[] = legacyPlantData.map((plantData) =>
-	createPlantItem(plantData),
-)

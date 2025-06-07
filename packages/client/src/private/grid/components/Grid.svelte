@@ -1,11 +1,6 @@
 <script lang="ts">
 import GridPlacementTile from '../ui/GridPlacementTile.svelte'
 import PendingOperationTile from '../ui/PendingOperationTile.svelte'
-import {
-	GardenBedLayoutCalculator,
-	calculateEdgeBorders,
-	type Border,
-} from '../../garden-bed-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 
 import GenericDropZone from '../../dnd/components/GenericDropZone.svelte'
@@ -25,6 +20,11 @@ import type { GridPlaceable } from '../grid-placement'
 import { isGridPlaceable } from '../grid-placement'
 import type { GridArea } from '../grid-area'
 import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-state'
+import {
+	ZoneLayoutCalculator,
+	calculateEdgeBorders,
+	type Border,
+} from '../zone-layout-calculator'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
@@ -79,7 +79,7 @@ let pendingSourcePlantIds = $derived(
 )
 
 // Instantiate the layout calculator
-const layout = new GardenBedLayoutCalculator({
+const layout = new ZoneLayoutCalculator<GridPlaceable>({
 	width: grid.width,
 	height: grid.height,
 	tileSizeForItem,
@@ -105,8 +105,8 @@ const verticalLines = layout.getVerticalLines()
 const horizontalLines = layout.getHorizontalLines()
 
 // Function to convert garden coordinates (0,0 at bottom-left) to SVG coordinates
-const gardenToSvgX = (gardenX: number) => layout.gardenToSvgX(gardenX)
-const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
+const zoneToSvgX = (zoneX: number) => layout.zoneToSvgX(zoneX)
+const zoneToSvgY = (zoneY: number) => layout.zoneToSvgY(zoneY)
 
 // Use the factored-out isValidPlacement
 function isValidPlacement(x: number, y: number, size: number): boolean {
@@ -131,7 +131,11 @@ $effect(() => {
 			},
 		})),
 	}
-	const newBorders = calculateEdgeBorders(bedWithSizes, edgeIndicators, layout)
+	const newBorders = calculateEdgeBorders<GridPlaceable>(
+		bedWithSizes,
+		edgeIndicators,
+		layout,
+	)
 	if (
 		newBorders.length !== edgeBorders.length ||
 		newBorders.some((b, i) => JSON.stringify(b) !== JSON.stringify(edgeBorders[i]))
@@ -386,7 +390,7 @@ const draggedGridItemEffectiveSize = $derived(
 					<!-- Show all labels for beds up to 16 wide -->
 					{#each Array.from({ length: grid.width }, (_, i) => i) as x (`${grid.id}-x-${x}`)}
 						<text
-							x={gardenToSvgX(x) + cellWidth / 2}
+							x={zoneToSvgX(x) + cellWidth / 2}
 							y={svgHeight - 5}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
@@ -400,7 +404,7 @@ const draggedGridItemEffectiveSize = $derived(
 					<!-- For very wide beds, show labels every 5 cells -->
 					{#each Array.from({ length: grid.width }, (_, i) => i).filter((x) => x % 5 === 0 || x === grid.width - 1) as x (`${grid.id}-x-${x}`)}
 						<text
-							x={gardenToSvgX(x) + cellWidth / 2}
+							x={zoneToSvgX(x) + cellWidth / 2}
 							y={svgHeight - 5}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
@@ -418,7 +422,7 @@ const draggedGridItemEffectiveSize = $derived(
 					{#each Array.from({ length: grid.height }, (_, i) => i) as y (`${grid.id}-y-${y}`)}
 						<text
 							x="5"
-							y={gardenToSvgY(y) + cellHeight / 2 + 3}
+							y={zoneToSvgY(y) + cellHeight / 2 + 3}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
 							font-size="10"
@@ -432,7 +436,7 @@ const draggedGridItemEffectiveSize = $derived(
 					{#each Array.from({ length: grid.height }, (_, i) => i).filter((y) => y % 5 === 0 || y === grid.height - 1) as y (`${grid.id}-y-${y}`)}
 						<text
 							x="5"
-							y={gardenToSvgY(y) + cellHeight / 2 + 3}
+							y={zoneToSvgY(y) + cellHeight / 2 + 3}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
 							font-size="10"

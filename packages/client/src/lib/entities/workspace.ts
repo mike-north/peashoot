@@ -1,4 +1,4 @@
-import type { Zone } from './zone'
+import type { ItemWithSize, Zone } from './zone'
 import type { Item } from './item'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 
@@ -9,9 +9,9 @@ export interface EdgeIndicator {
 	color: string
 }
 
-export interface Workspace {
-	readonly id: `grdn_${string}`
-	zones: Zone[]
+export interface Workspace<T extends ItemWithSize = ItemWithSize> {
+	readonly id: string
+	zones: Zone<T>[]
 	edgeIndicators: EdgeIndicator[]
 }
 

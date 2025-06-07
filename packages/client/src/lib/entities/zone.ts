@@ -5,8 +5,8 @@ import type { Item } from './item'
 // Use Item directly as the placeable type
 export type ItemWithSize = Item
 
-export interface Zone extends GridArea<ItemWithSize> {
-	readonly id: `bed_${string}`
+export interface Zone<T extends ItemWithSize = ItemWithSize> extends GridArea<T> {
+	readonly id: string
 	width: number
 	height: number
 	waterLevel: number

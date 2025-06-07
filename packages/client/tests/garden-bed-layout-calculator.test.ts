@@ -1,73 +1,65 @@
 import { describe, it, expect } from 'vitest'
 import {
-	GardenBedLayoutCalculator,
-	getPlantCells,
-	getSharedBorders,
+	ZoneLayoutCalculator,
 	calculateEdgeBorders,
-} from '../src/private/garden-bed-layout-calculator.js'
-import type { PlantWithSize } from '../src/lib/entities/garden-bed.js'
-import type { Plant } from '../src/lib/entities/plant.js'
+} from '../src/private/grid/zone-layout-calculator.js'
+import type { PlantItem } from '../src/lib/item-types/plant-item.js'
+import { createPlantItem } from '../src/lib/item-types/plant-item.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
+import { ExistingDraggableItem } from '../src/private/dnd/types.js'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
-const layout = new GardenBedLayoutCalculator(layoutParams)
+const layout = new ZoneLayoutCalculator(layoutParams)
 
-const mockPlant: Plant = {
+const mockItem: PlantItem = createPlantItem({
 	id: 'plant_1',
 	displayName: 'Tomato',
-	family: 'Tomato',
+	family: 'tomatoes',
 	variant: 'red',
 	plantingDistanceInFeet: 2,
 	presentation: {
-		size: 2,
 		accentColor: {
-			r: 1,
-			g: 0,
-			b: 0,
+			red: 255,
+			green: 0,
+			blue: 0,
 		},
 		iconPath: 'tomato.png',
+		size: 2,
 	},
-}
+})
 
-const plantPlacement: GridPlacement<PlantWithSize> = {
-	item: mockPlant,
+const itemPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem> = {
 	x: 1,
 	y: 2,
 	id: 'placement1',
 	size: 1,
-	sourceZoneId: 'bed1',
+	item: mockItem,
+	sourceZoneId: 'zone1',
 }
 
-// Separate objects for tests that need different structures
-const plantTileObject = {
-	x: 1,
-	y: 2,
-	plantTile: { ...mockPlant, size: 1 },
-}
-
-const plantTileObjectWithId = {
+const itemTileObjectWithId = {
 	x: 1,
 	y: 2,
 	id: 'placement1',
-	plantTile: { ...mockPlant, size: 1 },
+	plantTile: { ...mockItem, size: 1 },
 }
 
-const plantTileObject2WithId = {
+const itemTileObject2WithId = {
 	x: 2,
 	y: 2,
 	id: 'placement2',
-	plantTile: { ...mockPlant, size: 1 },
+	plantTile: { ...mockItem, size: 1 },
 }
 
-describe('GardenBedLayoutCalculator', () => {
+describe('ZoneLayoutCalculator', () => {
 	it('calculates svgWidth and svgHeight', () => {
 		expect(layout.svgWidth).toBeGreaterThan(0)
 		expect(layout.svgHeight).toBeGreaterThan(0)
 	})
 
-	it('converts garden to SVG coordinates', () => {
-		expect(typeof layout.gardenToSvgX(0)).toBe('number')
-		expect(typeof layout.gardenToSvgY(0)).toBe('number')
+	it('converts zone coordinates to SVG coordinates', () => {
+		expect(typeof layout.zoneToSvgX(0)).toBe('number')
+		expect(typeof layout.zoneToSvgY(0)).toBe('number')
 	})
 
 	it('returns correct tile layout info', () => {
@@ -101,45 +93,18 @@ describe('GardenBedLayoutCalculator', () => {
 	})
 
 	it('validates placement in bounds and no overlap', () => {
-		const placementWithSize = { ...plantPlacement, size: 1, id: 'placement1' }
-		const valid = layout.isValidPlacement([mockPlant], 0, 0, 1, [placementWithSize])
+		const placementWithSize = { ...itemPlacement, size: 1, id: 'placement1' }
+		const valid = layout.isValidPlacement([mockItem], 0, 0, 1, [placementWithSize])
 		expect(valid).toBe(true)
-		const invalid = layout.isValidPlacement([mockPlant], 1, 2, 1, [placementWithSize])
+		const invalid = layout.isValidPlacement([mockItem], 1, 2, 1, [placementWithSize])
 		expect(invalid).toBe(false)
-	})
-})
-
-describe('getPlantCells', () => {
-	it('returns all cells for a 1x1 plant', () => {
-		const cells = getPlantCells(plantTileObject)
-		expect(cells).toContainEqual({ x: 1, y: 2 })
-	})
-	it('returns all cells for a 2x2 plant', () => {
-		const cells = getPlantCells({
-			...plantTileObject,
-			plantTile: { ...mockPlant, size: 2 },
-		})
-		expect(cells.length).toBe(4)
-	})
-})
-
-describe('getSharedBorders', () => {
-	it('returns borders for adjacent plants', () => {
-		const borders = getSharedBorders(
-			plantTileObjectWithId,
-			plantTileObject2WithId,
-			'red',
-			'indicator1',
-			layout,
-		)
-		expect(Array.isArray(borders)).toBe(true)
 	})
 })
 
 describe('calculateEdgeBorders', () => {
 	it('returns borders for edge indicators', () => {
-		const bed = {
-			plantPlacements: [plantTileObjectWithId, plantTileObject2WithId],
+		const zone = {
+			plantPlacements: [itemTileObjectWithId, itemTileObject2WithId],
 		}
 		const edgeIndicators = [
 			{
@@ -149,7 +114,7 @@ describe('calculateEdgeBorders', () => {
 				color: 'blue',
 			},
 		]
-		const borders = calculateEdgeBorders(bed, edgeIndicators, layout)
+		const borders = calculateEdgeBorders(zone, edgeIndicators, layout)
 		expect(Array.isArray(borders)).toBe(true)
 	})
 })

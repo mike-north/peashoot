@@ -1,5 +1,5 @@
 <script lang="ts">
-import { GardenBedLayoutCalculator } from '../../garden-bed-layout-calculator'
+import { ZoneLayoutCalculator } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
 import { dragState } from '../../dnd/state'
@@ -19,7 +19,7 @@ interface Props {
 const { grid, edgeBorders, tileSizeForItem }: Props = $props()
 
 // Instantiate the layout calculator
-const layout = new GardenBedLayoutCalculator({
+const layout = new ZoneLayoutCalculator({
 	width: grid.width,
 	height: grid.height,
 	tileSizeForItem,
@@ -45,8 +45,8 @@ const verticalLines = layout.getVerticalLines()
 const horizontalLines = layout.getHorizontalLines()
 
 // Function to convert garden coordinates to SVG coordinates
-const gardenToSvgX = (gardenX: number) => layout.gardenToSvgX(gardenX)
-const gardenToSvgY = (gardenY: number) => layout.gardenToSvgY(gardenY)
+const gardenToSvgX = (gardenX: number) => layout.zoneToSvgX(gardenX)
+const gardenToSvgY = (gardenY: number) => layout.zoneToSvgY(gardenY)
 </script>
 
 <style>

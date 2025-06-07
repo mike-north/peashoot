@@ -9,7 +9,8 @@
 		"dev": "lerna run dev --parallel",
 		"test": "lerna run test",
 		"test:watch": "lerna run test:watch",
-		"lint": "lerna run lint --parallel"
+		"lint": "lerna run lint --parallel",
+		"format": "lerna run format --parallel"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^8.32.1",

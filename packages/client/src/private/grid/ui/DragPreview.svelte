@@ -8,7 +8,7 @@ import {
 	isGridDraggingNewItem,
 } from '../grid-drag-state'
 import { isGridPlaceable } from '../grid-placement'
-import type { GardenDragState } from '../../../private/state/gardenDragState'
+import type { WorkspaceDragState } from '../../../private/state/workspaceDragState'
 import { ZoneLayoutCalculator } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { GridArea } from '../grid-area'
@@ -20,7 +20,7 @@ interface Props {
 
 const { grids, tileSizeForItem }: Props = $props()
 
-let currentDragState = $derived($genericDragState as GardenDragState<GridPlaceable>)
+let currentDragState = $derived($genericDragState as WorkspaceDragState<GridPlaceable>)
 
 let draggedItemForPreview: GridPlaceable | null = $derived(null)
 let previewGridFootprintSize = $derived(1)

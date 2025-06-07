@@ -1,6 +1,7 @@
 import { makePoint, type Line } from '../types/geometry'
 import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
 import type { GridPlaceable, GridPlacement } from './grid-placement'
+import type { Workspace } from '../../lib/entities/workspace'
 
 /**
  * Layout information for an item tile, used by generic placement tiles.
@@ -38,6 +39,12 @@ export interface LayoutParams<T> {
 }
 
 export type GridLine = Line & { key: string }
+
+export interface Border {
+	key: string
+	points: { x: number; y: number }[]
+	color: string
+}
 
 /**
  * Handles all layout calculations for a zone and its item tiles.
@@ -315,6 +322,48 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 		}
 		return true
 	}
+
+	/**
+	 * Returns the frame corner positions for a tile based on its position within the zone.
+	 * Used for determining which corners should have rounded borders.
+	 */
+	getTileFrameCornerPositions({
+		x,
+		y,
+		size = 1,
+		bedWidth,
+		bedHeight,
+	}: {
+		x: number
+		y: number
+		size?: number
+		bedWidth: number
+		bedHeight: number
+	}): string[] {
+		const corners: string[] = []
+
+		// Check if tile is at top-left corner
+		if (x === 0 && y + size === bedHeight) {
+			corners.push('top-left')
+		}
+
+		// Check if tile is at top-right corner
+		if (x + size === bedWidth && y + size === bedHeight) {
+			corners.push('top-right')
+		}
+
+		// Check if tile is at bottom-left corner
+		if (x === 0 && y === 0) {
+			corners.push('bottom-left')
+		}
+
+		// Check if tile is at bottom-right corner
+		if (x + size === bedWidth && y === 0) {
+			corners.push('bottom-right')
+		}
+
+		return corners
+	}
 }
 
 /**
@@ -331,4 +380,112 @@ export function screenToGridCoordinates<T extends GridPlaceable>(
 	const relativeSvgY = clientY - rect.top
 	const gridCoords = layout.getGridCellFromRelativeSvgCoords(relativeSvgX, relativeSvgY)
 	return gridCoords || { x: -1, y: -1 }
+}
+
+/**
+ * Calculate column spans for zones in the workspace view
+ */
+export function calculateZoneViewColSpans(workspace: Workspace): Record<string, number> {
+	const colSpans: Record<string, number> = {}
+
+	// For now, use a simple algorithm that gives larger zones more column span
+	for (const zone of workspace.zones) {
+		const area = zone.width * zone.height
+		if (area >= 20) {
+			colSpans[zone.id] = 2
+		} else if (area >= 10) {
+			colSpans[zone.id] = 1
+		} else {
+			colSpans[zone.id] = 1
+		}
+	}
+
+	return colSpans
+}
+
+/**
+ * Calculate edge borders for the zone based on edge indicators.
+ * This creates visual lines between adjacent items that have edge relationships.
+ */
+export function calculateEdgeBorders<T extends GridPlaceable>(
+	zone: {
+		plantPlacements: {
+			x: number
+			y: number
+			id: string
+			plantTile: { size: number }
+		}[]
+	},
+	edgeIndicators: {
+		id: string
+		plantAId: string
+		plantBId: string
+		color: string
+	}[],
+	layout: ZoneLayoutCalculator<T>,
+): Border[] {
+	const borders: Border[] = []
+
+	// For each edge indicator, find the corresponding placements and create borders
+	for (const indicator of edgeIndicators) {
+		const plantA = zone.plantPlacements.find((p) => p.id === indicator.plantAId)
+		const plantB = zone.plantPlacements.find((p) => p.id === indicator.plantBId)
+
+		if (!plantA || !plantB) continue
+
+		// Check if plants are adjacent
+		const isAdjacent =
+			(Math.abs(plantA.x - plantB.x) === 1 && plantA.y === plantB.y) ||
+			(Math.abs(plantA.y - plantB.y) === 1 && plantA.x === plantB.x)
+
+		if (isAdjacent) {
+			// Create a border line between the adjacent plants
+			const aLayout = layout.getTileLayoutInfo({
+				x: plantA.x,
+				y: plantA.y,
+				size: plantA.plantTile.size,
+			})
+			const bLayout = layout.getTileLayoutInfo({
+				x: plantB.x,
+				y: plantB.y,
+				size: plantB.plantTile.size,
+			})
+
+			// Calculate the border line between the two tiles
+			let x1: number, y1: number, x2: number, y2: number
+
+			if (plantA.x < plantB.x) {
+				// A is to the left of B
+				x1 = x2 = aLayout.svgX + aLayout.width
+				y1 = Math.max(aLayout.svgY, bLayout.svgY)
+				y2 = Math.min(aLayout.svgY + aLayout.height, bLayout.svgY + bLayout.height)
+			} else if (plantA.x > plantB.x) {
+				// A is to the right of B
+				x1 = x2 = aLayout.svgX
+				y1 = Math.max(aLayout.svgY, bLayout.svgY)
+				y2 = Math.min(aLayout.svgY + aLayout.height, bLayout.svgY + bLayout.height)
+			} else if (plantA.y < plantB.y) {
+				// A is below B
+				y1 = y2 = aLayout.svgY + aLayout.height
+				x1 = Math.max(aLayout.svgX, bLayout.svgX)
+				x2 = Math.min(aLayout.svgX + aLayout.width, bLayout.svgX + bLayout.width)
+			} else {
+				// A is above B
+				y1 = y2 = aLayout.svgY
+				x1 = Math.max(aLayout.svgX, bLayout.svgX)
+				x2 = Math.min(aLayout.svgX + aLayout.width, bLayout.svgX + bLayout.width)
+			}
+
+			borders.push({
+				key: `edge-${indicator.id}`,
+				points: [
+					{ x: x1, y: y1 },
+					{ x: x2, y: y2 },
+				],
+				color: indicator.color,
+			})
+		}
+	}
+
+	return borders
 }

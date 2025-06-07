@@ -4,27 +4,23 @@
 import ZoneGrid from './ZoneGrid.svelte'
 import type { GridPlaceable } from '../private/grid/grid-placement'
 import type { Component } from 'svelte'
-import type { GardenBed } from '../lib/entities/garden-bed'
-import type { PlantItem } from '../lib/item-types/plant-item'
+import type { EdgeIndicator } from '../lib/entities/workspace'
+import type { Zone } from '../lib/entities/zone'
+import type { Item } from '../lib/entities/item'
 
 interface GardenBedGridProps {
-	bed: GardenBed
-	plants: PlantItem[]
+	zone: Zone
+	items: Item[]
 	TooltipComponent: Component<{ item: GridPlaceable }>
-	edgeIndicators: {
-		id: string
-		plantAId: string
-		plantBId: string
-		color: string
-	}[]
+	edgeIndicators: EdgeIndicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 	colSpan?: number
 	[k: string]: unknown
 }
 
 const {
-	bed,
-	plants,
+	zone: bed,
+	items: plants,
 	TooltipComponent,
 	edgeIndicators,
 	tileSizeForItem,
@@ -36,12 +32,12 @@ const {
 <!-- Garden bed grid now uses the generic zone system -->
 <ZoneGrid
 	zone={bed}
-	plants={plants}
+	items={plants}
 	TooltipComponent={TooltipComponent}
 	edgeIndicators={edgeIndicators.map((indicator) => ({
 		id: indicator.id,
-		itemAId: indicator.plantAId,
-		itemBId: indicator.plantBId,
+		itemAId: indicator.itemAId,
+		itemBId: indicator.itemBId,
 		color: indicator.color,
 	}))}
 	tileSizeForItem={tileSizeForItem}

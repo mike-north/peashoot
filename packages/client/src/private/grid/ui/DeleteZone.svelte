@@ -1,7 +1,7 @@
 <script lang="ts">
 import { dragState, isDraggingExistingItem, pendingOperations } from '../../dnd/state'
 import PendingOperationTile from './PendingOperationTile.svelte'
-import { isGardenItemRemovalOperation } from '../../state/gardenDragState'
+import { isWorkspaceItemRemovalOperation } from '../../state/workspaceDragState'
 import { deleteZoneDragEvents } from '../actions/deleteZoneDragEvents'
 import TrashIcon from '~icons/ph/trash-duotone'
 
@@ -9,7 +9,7 @@ import TrashIcon from '~icons/ph/trash-duotone'
 let showDeleteZone = $derived(isDraggingExistingItem($dragState))
 
 // Get pending removal operations
-let pendingRemovals = $derived($pendingOperations.filter(isGardenItemRemovalOperation))
+let pendingRemovals = $derived($pendingOperations.filter(isWorkspaceItemRemovalOperation))
 
 // Track if mouse is over delete zone
 let isHovered = $state(false)

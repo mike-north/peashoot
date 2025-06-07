@@ -3,6 +3,12 @@ import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
 import type { GridPlaceable, GridPlacement } from './grid-placement'
 import type { Workspace } from '../../lib/entities/workspace'
 
+import type {
+	EffectNature,
+	Indicator,
+	InteractionEffect,
+} from '../../lib/entities/indicator'
+
 /**
  * Layout information for an item tile, used by generic placement tiles.
  */
@@ -44,6 +50,29 @@ export interface Border {
 	key: string
 	points: { x: number; y: number }[]
 	color: string
+}
+
+/**
+ * Represents a visual indicator circle rendered on the grid
+ */
+export interface IndicatorVisual {
+	key: string
+	centerX: number
+	centerY: number
+	radius: number
+	gridX: number
+	gridY: number
+	indicatorIds: string[]
+	sectors?: {
+		sector: 0 | 1 | 2 | 3
+		color: string
+		opacity?: number
+	}[]
+	semicircles?: {
+		direction: 'top' | 'bottom' | 'left' | 'right'
+		color: string
+	}[]
+	tooltip?: string
 }
 
 /**
@@ -175,6 +204,15 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 	 */
 	zoneToSvgY(zoneY: number): number {
 		return this.interiorY + (this.height - zoneY - 1) * this.cellHeight
+	}
+
+	/**
+	 * Converts a zone grid Y line-coordinate (0 = bottom) to SVG Y coordinate.
+	 * @param zoneY Y position in the zone grid
+	 * @returns SVG Y coordinate
+	 */
+	gridLineToSvgY(zoneY: number): number {
+		return this.interiorY + (this.height - zoneY) * this.cellHeight
 	}
 
 	/**
@@ -488,4 +526,205 @@ export function calculateEdgeBorders<T extends GridPlaceable>(
 	}
 
 	return borders
+}
+
+function getAdjacency<T extends GridPlaceable>(
+	p1: GridPlacement<T>,
+	p2: GridPlacement<T>,
+):
+	| { type: 'edge'; p1: { x: number; y: number }; p2: { x: number; y: number } }
+	| { type: 'corner'; point: { x: number; y: number } }
+	| null {
+	const { x: x1, y: y1, size: s1 } = p1
+	const { x: x2, y: y2, size: s2 } = p2
+	const r1 = x1 + s1
+	const t1 = y1 + s1
+	const r2 = x2 + s2
+	const t2 = y2 + s2
+
+	// Edge
+	if (r1 === x2 && Math.max(y1, y2) < Math.min(t1, t2))
+		return {
+			type: 'edge',
+			p1: { x: r1, y: Math.max(y1, y2) },
+			p2: { x: r1, y: Math.min(t1, t2) },
+		}
+	if (r2 === x1 && Math.max(y1, y2) < Math.min(t1, t2))
+		return {
+			type: 'edge',
+			p1: { x: r2, y: Math.max(y1, y2) },
+			p2: { x: r2, y: Math.min(t1, t2) },
+		}
+	if (t1 === y2 && Math.max(x1, x2) < Math.min(r1, r2))
+		return {
+			type: 'edge',
+			p1: { y: t1, x: Math.max(x1, x2) },
+			p2: { y: t1, x: Math.min(r1, r2) },
+		}
+	if (t2 === y1 && Math.max(x1, x2) < Math.min(r1, r2))
+		return {
+			type: 'edge',
+			p1: { y: t2, x: Math.max(x1, x2) },
+			p2: { y: t2, x: Math.min(r1, r2) },
+		}
+
+	// Corner
+	if (r1 === x2 && t1 === y2) return { type: 'corner', point: { x: r1, y: t1 } }
+	if (r1 === x2 && y1 === t2) return { type: 'corner', point: { x: r1, y: y1 } }
+	if (x1 === r2 && t1 === y2) return { type: 'corner', point: { x: x1, y: t1 } }
+	if (x1 === r2 && y1 === t2) return { type: 'corner', point: { x: x1, y: y1 } }
+
+	return null
+}
+
+type VisualPrimitive =
+	| {
+			type: 'semicircle'
+			position: { x: number; y: number }
+			direction: 'top' | 'bottom' | 'left' | 'right'
+			color: string
+			indicatorId: string
+			tooltip?: string
+	  }
+	| {
+			type: 'sector'
+			position: { x: number; y: number }
+			sector: 0 | 1 | 2 | 3
+			color: string
+			indicatorId: string
+			tooltip?: string
+	  }
+
+export function calculateIndicatorVisuals<T extends GridPlaceable>(
+	indicators: Indicator[],
+	placements: GridPlacement<T>[],
+	zoneId: string,
+	layout: ZoneLayoutCalculator<T>,
+): IndicatorVisual[] {
+	const primitives: VisualPrimitive[] = []
+
+	for (const indicator of indicators) {
+		if (indicator.zoneId !== zoneId) continue
+
+		const { itemAId, itemBId, effectAonB, effectBonA, tooltip } = indicator
+
+		const placementA = placements.find((p) => p.id === itemAId)
+		const placementB = placements.find((p) => p.id === itemBId)
+
+		if (!placementA || !placementB) continue
+
+		const adjacency = getAdjacency(placementA, placementB)
+		if (!adjacency) continue
+
+		const processEffect = (
+			effect: InteractionEffect | undefined,
+			source: GridPlacement<T>,
+			target: GridPlacement<T>,
+		) => {
+			if (!effect) return
+
+			if (adjacency.type === 'edge') {
+				const midPoint = {
+					x: (adjacency.p1.x + adjacency.p2.x) / 2,
+					y: (adjacency.p1.y + adjacency.p2.y) / 2,
+				}
+				const orientation = adjacency.p1.x === adjacency.p2.x ? 'vertical' : 'horizontal'
+				const dir =
+					orientation === 'vertical'
+						? target.x < midPoint.x
+							? 'right'
+							: 'left'
+						: target.y < midPoint.y
+							? 'bottom'
+							: 'top'
+				const primitive: VisualPrimitive = {
+					type: 'semicircle',
+					position: midPoint,
+					direction: dir,
+					color: getColorForEffect(effect.nature),
+					indicatorId: indicator.id,
+				}
+				if (tooltip) {
+					primitive.tooltip = tooltip
+				}
+				primitives.push(primitive)
+			} else {
+				// corner
+				const { point } = adjacency
+				const { x, y, size } = target
+				let sector: 0 | 1 | 2 | 3 = 0
+				if (point.x === x + size && point.y === y + size) sector = 2 // Top-Right corner
+				if (point.x === x && point.y === y + size) sector = 1 // Top-Left corner
+				if (point.x === x && point.y === y) sector = 0 // Bottom-Left corner
+				if (point.x === x + size && point.y === y) sector = 3 // Bottom-Right corner
+
+				const primitive: VisualPrimitive = {
+					type: 'sector',
+					position: point,
+					sector,
+					color: getColorForEffect(effect.nature),
+					indicatorId: indicator.id,
+				}
+				if (tooltip) {
+					primitive.tooltip = tooltip
+				}
+				primitives.push(primitive)
+			}
+		}
+
+		processEffect(effectAonB, placementA, placementB)
+		processEffect(effectBonA, placementB, placementA)
+	}
+
+	// Group primitives by position
+	const groupedByPosition = new Map<string, VisualPrimitive[]>()
+	for (const p of primitives) {
+		const key = `${p.position.x},${p.position.y}`
+		if (!groupedByPosition.has(key)) {
+			groupedByPosition.set(key, [])
+		}
+		groupedByPosition.get(key)?.push(p)
+	}
+
+	// Create final visuals
+	const visuals: IndicatorVisual[] = []
+	for (const [positionKey, group] of groupedByPosition.entries()) {
+		const [x, y] = positionKey.split(',').map(Number)
+		visuals.push({
+			key: `indicator-visual-${positionKey}`,
+			centerX: layout.zoneToSvgX(x),
+			centerY: layout.gridLineToSvgY(y),
+			radius: Math.min(layout.cellWidth, layout.cellHeight) / 4,
+			gridX: x,
+			gridY: y,
+			indicatorIds: [...new Set(group.map((p) => p.indicatorId))],
+			semicircles: group
+				.filter(
+					(p): p is Extract<VisualPrimitive, { type: 'semicircle' }> =>
+						p.type === 'semicircle',
+				)
+				.map((p) => ({ direction: p.direction, color: p.color })),
+			sectors: group
+				.filter(
+					(p): p is Extract<VisualPrimitive, { type: 'sector' }> => p.type === 'sector',
+				)
+				.map((p) => ({ sector: p.sector, color: p.color })),
+			tooltip: group.map((p) => p.tooltip).find((t) => t) || '',
+		})
+	}
+	return visuals
+}
+
+function getColorForEffect(nature: EffectNature): string {
+	switch (nature) {
+		case 'beneficial':
+			return 'green'
+		case 'harmful':
+			return 'red'
+		case 'neutral':
+			return 'blue'
+		default:
+			// Should not happen with current data model, but provides a fallback
+			return 'grey'
+	}
 }

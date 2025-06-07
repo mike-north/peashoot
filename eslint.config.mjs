@@ -16,6 +16,8 @@ const tsRules = {
 			allowBoolean: true,
 		},
 	],
+	'@typescript-eslint/no-explicit-any': ['warn', { ignoreRestArgs: true }],
+	'prettier/prettier': ['warn'],
 }
 
 export default tseslint.config(

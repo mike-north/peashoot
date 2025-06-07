@@ -3,354 +3,6 @@ import type { SeedPacket } from './entities/seed-packet'
 import type { Workspace } from './entities/workspace'
 import type { Item } from './entities/item'
 
-export const seedPackets: SeedPacket[] = [
-	{
-		id: 'seedp_0',
-		name: 'Celery Seeds',
-		quantity: 10,
-		presentation: {
-			iconPath: 'celery-celery.png',
-			accentColor: { red: 144, green: 238, blue: 144 },
-		},
-		netWeightGrams: 10,
-		originLocation: 'Colombia',
-		description: 'Celery seeds are a great way to add some green to your garden.',
-		plantingInstructions: 'Sow seeds 1/2 inch deep in soil.',
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-		plantFamily: 'celery',
-		plantingDistance: {
-			value: 1,
-			unit: 'feet',
-		},
-	},
-	{
-		id: 'seedp_1',
-		name: 'Big Boy Tomato',
-		quantity: 30, // from seedPacketInfo.seedCount
-		presentation: {
-			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-			accentColor: { red: 255, green: 99, blue: 71 }, // Tomato red
-		},
-		netWeightGrams: 1, // Placeholder, not directly in YAML for this item
-		originLocation: 'USA', // Placeholder, not directly in YAML
-		description:
-			'Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches.',
-		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-		plantFamily: 'tomatoes',
-		plantingDistance: {
-			value: 2,
-			unit: 'feet',
-		},
-	},
-	{
-		id: 'seedp_2',
-		name: 'Basil',
-		quantity: 100, // from seedPacketInfo.seedCount
-		presentation: {
-			iconPath: 'basil-basil.png',
-			accentColor: { red: 133, green: 187, blue: 101 }, // Basil green
-		},
-		netWeightGrams: 0.5, // Placeholder
-		originLocation: 'India', // Placeholder
-		description:
-			'Aromatic annual herb with excellent culinary uses. Natural pest deterrent and pollinator attractor.',
-		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-		plantFamily: 'basil',
-		plantingDistance: {
-			value: 1,
-			unit: 'feet',
-		},
-	},
-]
-
-export const gardens: Workspace[] = [
-	{
-		id: 'grdn_0',
-		edgeIndicators: [
-			{
-				id: 'edge_indicator_0',
-				itemAId: 'plant_lettuce_1',
-				itemBId: 'plant_tomato_1',
-				color: 'red',
-			},
-			{
-				id: 'edge_indicator_1',
-				itemAId: 'plant_cherry_tomato_1',
-				itemBId: 'plant_tomato_2',
-				color: 'red',
-			},
-		],
-		zones: [
-			{
-				id: 'bed_962af647-bce5-4cff-9d47-e22ef97a20e0',
-				width: 12,
-				height: 2,
-				waterLevel: 0,
-				sunLevel: 2,
-				placements: [],
-			},
-			{
-				id: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
-				width: 1,
-				height: 1,
-				waterLevel: 0,
-				sunLevel: 0,
-				placements: [
-					{
-						id: 'plant_placement_c806fc0b-b50d-489c-9aa4-30e9448769ae',
-						x: 0,
-						y: 0,
-						size: 2,
-						item: createPlantItem({
-							id: 'plant_tomatoes-burpee-big-boy-tomato',
-							displayName: 'Big Boy Tomato',
-							family: 'tomatoes',
-							variant: 'burpee-big-boy-tomato',
-							plantingDistanceInFeet: 2,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-								size: 2,
-							},
-						}),
-						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
-					},
-				],
-			},
-			{
-				id: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
-				width: 1,
-				height: 1,
-				waterLevel: 0,
-				sunLevel: 0,
-				placements: [
-					{
-						id: 'plant_placement_16cee04a-c890-478e-9ac6-3ee02b3e0db6',
-						x: 0,
-						y: 0,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-							displayName: 'Buttercrunch Lettuce',
-							family: 'lettuce',
-							variant: 'burpee-buttercrunch-lettuce',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
-					},
-				],
-			},
-			{
-				id: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
-				width: 6,
-				height: 2,
-				waterLevel: 2,
-				sunLevel: 4,
-				placements: [
-					{
-						id: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
-						x: 0,
-						y: 0,
-						size: 2,
-						item: createPlantItem({
-							plantingDistanceInFeet: 2,
-							id: 'plant_tomatoes-burpee-big-boy-tomato',
-							displayName: 'Big Boy Tomato',
-							family: 'tomatoes',
-							variant: 'burpee-big-boy-tomato',
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-								size: 2,
-							},
-						}),
-						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
-					},
-					{
-						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
-						x: 2,
-						y: 0,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-							displayName: 'Buttercrunch Lettuce',
-							family: 'lettuce',
-							variant: 'burpee-buttercrunch-lettuce',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
-					},
-				],
-			},
-			{
-				id: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
-				width: 6,
-				height: 2,
-				waterLevel: 2,
-				sunLevel: 4,
-				placements: [
-					{
-						id: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
-						x: 0,
-						y: 0,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_arugula-arugula',
-							displayName: 'Arugula',
-							family: 'arugula',
-							variant: 'arugula',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'arugula-arugula.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
-					},
-					{
-						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
-						x: 2,
-						y: 0,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_spinach-japanese-perpetual-spinach',
-							displayName: 'Japanese Perpetual Spinach',
-							family: 'spinach',
-							variant: 'japanese-perpetual-spinach',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
-								iconPath: 'spinach-japanese-perpetual-spinach.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
-					},
-				],
-			},
-			{
-				id: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
-				width: 12,
-				height: 4,
-				waterLevel: 3,
-				sunLevel: 3,
-				placements: [
-					{
-						id: 'plant_placement_f2321084-5ff0-4328-b90a-776de35d8f81',
-						x: 2,
-						y: 1,
-						size: 3,
-						item: createPlantItem({
-							id: 'plant_cherries-rainier-cherry',
-							displayName: 'Rainier Cherry',
-							family: 'cherries',
-							variant: 'rainier-cherry',
-							plantingDistanceInFeet: 3,
-							presentation: {
-								accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
-								iconPath: 'cherries-rainier-cherry.png',
-								size: 3,
-							},
-						}),
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
-					},
-					{
-						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
-						x: 0,
-						y: 0,
-						size: 2,
-						item: createPlantItem({
-							id: 'plant_tomatoes-burpee-big-boy-tomato',
-							displayName: 'Big Boy Tomato',
-							family: 'tomatoes',
-							variant: 'burpee-big-boy-tomato',
-							plantingDistanceInFeet: 2,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-								size: 2,
-							},
-						}),
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
-					},
-					{
-						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
-						x: 2,
-						y: 0,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-							displayName: 'Buttercrunch Lettuce',
-							family: 'lettuce',
-							variant: 'burpee-buttercrunch-lettuce',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
-					},
-
-					{
-						id: 'plant_placement_3ca27ca0-6438-47d8-8b90-7af77b24f430',
-						x: 6,
-						y: 0,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_strawberries-alexandria-strawberry',
-							displayName: 'Alexandria Strawberry',
-							family: 'strawberries',
-							variant: 'alexandria-strawberry',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'strawberries-alexandria-strawberry.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
-					},
-
-					{
-						id: 'plant_placement_224254bb-e30b-44ab-8b6c-f9988bb49f2a',
-						x: 6,
-						y: 3,
-						size: 1,
-						item: createPlantItem({
-							id: 'plant_daisies-zinnia-2',
-							displayName: 'Zinnia',
-							family: 'daisies',
-							variant: 'zinnia',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'daisies-zinnia.png',
-								size: 1,
-							},
-						}),
-						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
-					},
-				],
-			},
-		],
-	},
-]
-
 // Convert legacy plant data to PlantItem format
 export const plants: Item[] = [
 	// Tomatoes
@@ -884,5 +536,490 @@ export const plants: Item[] = [
 			iconPath: 'brassicas-bok-choy.png',
 			size: 1,
 		},
+	},
+	{
+		id: 'plant_peas',
+		displayName: 'Super Sugar Snap Pea',
+		category: 'peas',
+		variant: 'super-sugar-snap',
+		size: 1,
+		presentation: {
+			accentColor: { red: 123, green: 182, blue: 97 },
+			iconPath: 'peas-burpee-sugar-snap-peas.png',
+			size: 1,
+		},
+	},
+	{
+		id: 'plant_dahlia',
+		displayName: 'Dahlia',
+		category: 'dasies',
+		variant: 'dahlia',
+		size: 1,
+		presentation: {
+			accentColor: { red: 255, green: 87, blue: 34 },
+			iconPath: 'daisies-dahlia.png',
+			size: 1,
+		},
+	},
+]
+
+export const seedPackets: SeedPacket[] = [
+	{
+		id: 'seedp_0',
+		name: 'Celery Seeds',
+		quantity: 10,
+		presentation: {
+			iconPath: 'celery-celery.png',
+			accentColor: { red: 144, green: 238, blue: 144 },
+		},
+		netWeightGrams: 10,
+		originLocation: 'Colombia',
+		description: 'Celery seeds are a great way to add some green to your garden.',
+		plantingInstructions: 'Sow seeds 1/2 inch deep in soil.',
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+		plantFamily: 'celery',
+		plantingDistance: {
+			value: 1,
+			unit: 'feet',
+		},
+	},
+	{
+		id: 'seedp_1',
+		name: 'Big Boy Tomato',
+		quantity: 30, // from seedPacketInfo.seedCount
+		presentation: {
+			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+			accentColor: { red: 255, green: 99, blue: 71 }, // Tomato red
+		},
+		netWeightGrams: 1, // Placeholder, not directly in YAML for this item
+		originLocation: 'USA', // Placeholder, not directly in YAML
+		description:
+			'Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches.',
+		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+		plantFamily: 'tomatoes',
+		plantingDistance: {
+			value: 2,
+			unit: 'feet',
+		},
+	},
+	{
+		id: 'seedp_2',
+		name: 'Basil',
+		quantity: 100, // from seedPacketInfo.seedCount
+		presentation: {
+			iconPath: 'basil-basil.png',
+			accentColor: { red: 133, green: 187, blue: 101 }, // Basil green
+		},
+		netWeightGrams: 0.5, // Placeholder
+		originLocation: 'India', // Placeholder
+		description:
+			'Aromatic annual herb with excellent culinary uses. Natural pest deterrent and pollinator attractor.',
+		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+		plantFamily: 'basil',
+		plantingDistance: {
+			value: 1,
+			unit: 'feet',
+		},
+	},
+]
+
+export const gardens: Workspace[] = [
+	{
+		id: 'grdn_0',
+		edgeIndicators: [
+			{
+				id: 'edge_indicator_0',
+				itemAId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
+				itemBId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
+				color: 'red',
+			},
+			{
+				id: 'edge_indicator_1',
+				itemAId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
+				itemBId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
+				color: 'red',
+			},
+		],
+		indicators: [
+			{
+				id: 'indicator_0',
+				zoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+				itemAId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
+				itemBId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
+				effectAonB: {
+					nature: 'beneficial',
+					description: 'Tomatoes provide shade for lettuce.',
+				},
+				effectBonA: {
+					nature: 'beneficial',
+					description: 'Lettuce provides a living mulch, suppressing weeds.',
+				},
+				tooltip: 'Companion planting: Tomato and Lettuce work well together',
+				interactionType: 'companion',
+			},
+			{
+				id: 'indicator_1',
+				zoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+				itemAId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
+				itemBId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
+				effectAonB: {
+					nature: 'neutral',
+					description: 'Arugula and Spinach have similar needs and do not interfere.',
+				},
+				effectBonA: {
+					nature: 'neutral',
+					description: 'Arugula and Spinach have similar needs and do not interfere.',
+				},
+				tooltip:
+					'Compatible leafy greens: Arugula and Spinach can share space efficiently',
+				interactionType: 'space-sharing',
+			},
+			{
+				id: 'indicator_2',
+				zoneId: 'bed_complex_interaction',
+				itemAId: 'plant_placement_garlic',
+				itemBId: 'plant_placement_broccoli',
+				effectAonB: {
+					nature: 'beneficial',
+					description: 'Garlic deters pests that affect Broccoli.',
+				},
+				tooltip: 'Garlic deters pests that affect Broccoli',
+				interactionType: 'companion',
+			},
+			{
+				id: 'indicator_3',
+				zoneId: 'bed_complex_interaction',
+				itemAId: 'plant_placement_dahlia',
+				itemBId: 'plant_placement_broccoli',
+				effectAonB: {
+					nature: 'beneficial',
+					description: 'Dahlia deters pests that affect Broccoli.',
+				},
+				tooltip: 'Dahlia deters pests that affect Broccoli',
+				interactionType: 'companion',
+			},
+			{
+				id: 'indicator_4',
+				zoneId: 'bed_complex_interaction',
+				itemAId: 'plant_placement_garlic',
+				itemBId: 'plant_placement_peas',
+				effectAonB: {
+					nature: 'harmful',
+					description:
+						'Garlic releases chemicals that can kill needed soil bacteria for peas.',
+				},
+				tooltip: 'Garlic inhibits the growth of Peas',
+				interactionType: 'combative',
+			},
+		],
+		zones: [
+			{
+				id: 'bed_962af647-bce5-4cff-9d47-e22ef97a20e0',
+				width: 12,
+				height: 2,
+				waterLevel: 0,
+				sunLevel: 2,
+				placements: [],
+			},
+			{
+				id: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
+				width: 1,
+				height: 1,
+				waterLevel: 0,
+				sunLevel: 0,
+				placements: [
+					{
+						id: 'plant_placement_c806fc0b-b50d-489c-9aa4-30e9448769ae',
+						x: 0,
+						y: 0,
+						size: 2,
+						item: createPlantItem({
+							id: 'plant_tomatoes-burpee-big-boy-tomato',
+							displayName: 'Big Boy Tomato',
+							family: 'tomatoes',
+							variant: 'burpee-big-boy-tomato',
+							plantingDistanceInFeet: 2,
+							presentation: {
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+								size: 2,
+							},
+						}),
+						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
+					},
+				],
+			},
+			{
+				id: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
+				width: 1,
+				height: 1,
+				waterLevel: 0,
+				sunLevel: 0,
+				placements: [
+					{
+						id: 'plant_placement_16cee04a-c890-478e-9ac6-3ee02b3e0db6',
+						x: 0,
+						y: 0,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
+							displayName: 'Buttercrunch Lettuce',
+							family: 'lettuce',
+							variant: 'burpee-buttercrunch-lettuce',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
+								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
+					},
+				],
+			},
+			{
+				id: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+				width: 6,
+				height: 2,
+				waterLevel: 2,
+				sunLevel: 4,
+				placements: [
+					{
+						id: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
+						x: 0,
+						y: 0,
+						size: 2,
+						item: createPlantItem({
+							plantingDistanceInFeet: 2,
+							id: 'plant_tomatoes-burpee-big-boy-tomato',
+							displayName: 'Big Boy Tomato',
+							family: 'tomatoes',
+							variant: 'burpee-big-boy-tomato',
+							presentation: {
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+								size: 2,
+							},
+						}),
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+					},
+					{
+						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
+						x: 2,
+						y: 0,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
+							displayName: 'Buttercrunch Lettuce',
+							family: 'lettuce',
+							variant: 'burpee-buttercrunch-lettuce',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
+								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+					},
+				],
+			},
+			{
+				id: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+				width: 6,
+				height: 2,
+				waterLevel: 2,
+				sunLevel: 4,
+				placements: [
+					{
+						id: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
+						x: 0,
+						y: 0,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_arugula-arugula',
+							displayName: 'Arugula',
+							family: 'arugula',
+							variant: 'arugula',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
+								iconPath: 'arugula-arugula.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+					},
+					{
+						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
+						x: 2,
+						y: 0,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_spinach-japanese-perpetual-spinach',
+							displayName: 'Japanese Perpetual Spinach',
+							family: 'spinach',
+							variant: 'japanese-perpetual-spinach',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
+								iconPath: 'spinach-japanese-perpetual-spinach.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
+					},
+				],
+			},
+			{
+				id: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+				width: 12,
+				height: 4,
+				waterLevel: 3,
+				sunLevel: 3,
+				placements: [
+					{
+						id: 'plant_placement_f2321084-5ff0-4328-b90a-776de35d8f81',
+						x: 2,
+						y: 1,
+						size: 3,
+						item: createPlantItem({
+							id: 'plant_cherries-rainier-cherry',
+							displayName: 'Rainier Cherry',
+							family: 'cherries',
+							variant: 'rainier-cherry',
+							plantingDistanceInFeet: 3,
+							presentation: {
+								accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
+								iconPath: 'cherries-rainier-cherry.png',
+								size: 3,
+							},
+						}),
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+					},
+					{
+						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
+						x: 0,
+						y: 0,
+						size: 2,
+						item: createPlantItem({
+							id: 'plant_tomatoes-burpee-big-boy-tomato',
+							displayName: 'Big Boy Tomato',
+							family: 'tomatoes',
+							variant: 'burpee-big-boy-tomato',
+							plantingDistanceInFeet: 2,
+							presentation: {
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+								size: 2,
+							},
+						}),
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+					},
+					{
+						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
+						x: 2,
+						y: 0,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
+							displayName: 'Buttercrunch Lettuce',
+							family: 'lettuce',
+							variant: 'burpee-buttercrunch-lettuce',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
+								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+					},
+
+					{
+						id: 'plant_placement_3ca27ca0-6438-47d8-8b90-7af77b24f430',
+						x: 6,
+						y: 0,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_strawberries-alexandria-strawberry',
+							displayName: 'Alexandria Strawberry',
+							family: 'strawberries',
+							variant: 'alexandria-strawberry',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+								iconPath: 'strawberries-alexandria-strawberry.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+					},
+
+					{
+						id: 'plant_placement_224254bb-e30b-44ab-8b6c-f9988bb49f2a',
+						x: 6,
+						y: 3,
+						size: 1,
+						item: createPlantItem({
+							id: 'plant_daisies-zinnia-2',
+							displayName: 'Zinnia',
+							family: 'daisies',
+							variant: 'zinnia',
+							plantingDistanceInFeet: 1,
+							presentation: {
+								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+								iconPath: 'daisies-zinnia.png',
+								size: 1,
+							},
+						}),
+						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
+					},
+				],
+			},
+			{
+				id: 'bed_complex_interaction',
+				width: 2,
+				height: 2,
+				waterLevel: 0,
+				sunLevel: 0,
+				placements: [
+					{
+						id: 'plant_placement_garlic',
+						x: 0,
+						y: 1,
+						size: 1,
+						item: plants.find((p) => p.id === 'plant_onions-garlic') as Item,
+						sourceZoneId: 'bed_complex_interaction',
+					},
+					{
+						id: 'plant_placement_dahlia',
+						x: 1,
+						y: 1,
+						size: 1,
+						item: plants.find((p) => p.id === 'plant_dahlia') as Item,
+						sourceZoneId: 'bed_complex_interaction',
+					},
+					{
+						id: 'plant_placement_broccoli',
+						x: 0,
+						y: 0,
+						size: 1,
+						item: plants.find((p) => p.id === 'plant_broccoli') as Item,
+						sourceZoneId: 'bed_complex_interaction',
+					},
+					{
+						id: 'plant_placement_peas',
+						x: 1,
+						y: 0,
+						size: 1,
+						item: plants.find((p) => p.id === 'plant_peas') as Item,
+						sourceZoneId: 'bed_complex_interaction',
+					},
+				],
+			},
+		],
 	},
 ]

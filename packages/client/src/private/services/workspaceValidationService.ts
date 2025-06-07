@@ -195,12 +195,18 @@ export class WorkspaceValidationService {
 							}
 
 							case 'item-remove-from-zone': {
+								// Check both legacy edge indicators and new indicators
 								const hasEdgeIndicators = currentWorkspace.edgeIndicators.some(
 									(edge: { itemAId: string; itemBId: string }) =>
 										edge.itemAId === context.itemInstanceId ||
 										edge.itemBId === context.itemInstanceId,
 								)
-								if (hasEdgeIndicators && Math.random() > 0.7)
+								const hasNewIndicators = context.itemInstanceId
+									? currentWorkspace.indicators.some((indicator) =>
+											indicator.itemIds.includes(context.itemInstanceId as string),
+										)
+									: false
+								if ((hasEdgeIndicators || hasNewIndicators) && Math.random() > 0.7)
 									resolve({
 										isValid: false,
 										error: 'Item has beneficial relationships with neighbors',

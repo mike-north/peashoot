@@ -14,7 +14,6 @@ import {
 } from '../../dnd/state'
 import type { DraggableItem, PendingOperation } from '../../dnd/types'
 import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
-import type { Component } from 'svelte'
 
 import type { GridPlaceable } from '../grid-placement'
 import { isGridPlaceable } from '../grid-placement'
@@ -23,8 +22,14 @@ import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-
 import {
 	ZoneLayoutCalculator,
 	calculateEdgeBorders,
+	calculateIndicatorVisuals,
 	type Border,
+	type IndicatorVisual,
 } from '../zone-layout-calculator'
+import type { Indicator } from '../../../lib/entities/indicator'
+import { showIndicatorTooltip, hideTooltip } from '../../tooltips/state/tooltipStore'
+import IndicatorSemicircle from './IndicatorSemicircle.svelte'
+import type { IndicatorForTooltip } from '../../tooltips/types'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
@@ -50,21 +55,15 @@ function isPulsingSourceOperation(
 interface GardenBedViewProps {
 	grid: GridArea<GridPlaceable>
 	items: GridPlaceable[]
-	TooltipComponent: Component<{ item: GridPlaceable }>
-	edgeIndicators?: {
-		id: string
-		plantAId: string
-		plantBId: string
-		color: string
-	}[]
+	/** New flexible indicator system */
+	indicators?: Indicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 }
 
 const {
 	grid,
-	TooltipComponent,
 	items,
-	edgeIndicators = [],
+	indicators = [],
 	tileSizeForItem,
 }: GardenBedViewProps = $props()
 
@@ -118,6 +117,8 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 }
 
 let edgeBorders = $state<Border[]>([])
+let indicatorVisuals = $state<IndicatorVisual[]>([])
+
 $effect(() => {
 	// Convert gridPlacements to expected format for calculateEdgeBorders
 	const bedWithSizes = {
@@ -133,7 +134,7 @@ $effect(() => {
 	}
 	const newBorders = calculateEdgeBorders<GridPlaceable>(
 		bedWithSizes,
-		edgeIndicators,
+		[],
 		layout,
 	)
 	if (
@@ -142,7 +143,113 @@ $effect(() => {
 	) {
 		edgeBorders = newBorders
 	}
+
+	// Calculate new indicator visuals
+	const newIndicatorVisuals = calculateIndicatorVisuals<GridPlaceable>(
+		indicators,
+		gridPlacements,
+		grid.id,
+		layout,
+	)
+	if (
+		newIndicatorVisuals.length !== indicatorVisuals.length ||
+		newIndicatorVisuals.some(
+			(iv, i) => JSON.stringify(iv) !== JSON.stringify(indicatorVisuals[i]),
+		)
+	) {
+		indicatorVisuals = newIndicatorVisuals
+	}
 })
+
+// Debug: log drag state to help diagnose hover issues
+$effect(() => {
+	console.log('Grid drag state:', {
+		draggedExistingItem: !!$genericDragState.draggedExistingItem,
+		draggedNewItem: !!$genericDragState.draggedNewItem,
+		isDragging: !!(
+			$genericDragState.draggedNewItem || $genericDragState.draggedExistingItem
+		),
+	})
+})
+
+// Helper function to find original indicator data from visual
+function findOriginalIndicator(indicatorVisual: IndicatorVisual): Indicator | undefined {
+	return indicators.find((indicator) => indicator.id === indicatorVisual.indicatorIds[0])
+}
+
+// Helper function to calculate tooltip position for indicators
+function calculateIndicatorTooltipPosition(
+	svgElement: SVGElement,
+	centerX: number,
+	centerY: number,
+) {
+	const svgRect = svgElement.getBoundingClientRect()
+	const indicatorScreenX = svgRect.left + centerX
+	const indicatorScreenY = svgRect.top + centerY
+
+	const viewportWidth = window.innerWidth
+	const viewportHeight = window.innerHeight
+	const TOOLTIP_WIDTH = 350
+	const TOOLTIP_HEIGHT = 300
+	const TOOLTIP_OFFSET = 24
+
+	// Simple positioning logic - try top first, then bottom
+	let orientation: 'top' | 'bottom' | 'left' | 'right' = 'top'
+	let x = indicatorScreenX - TOOLTIP_WIDTH / 2
+	let y = indicatorScreenY - TOOLTIP_HEIGHT - TOOLTIP_OFFSET
+
+	// If tooltip would go off top, show below
+	if (y < 8) {
+		orientation = 'bottom'
+		y = indicatorScreenY + TOOLTIP_OFFSET
+	}
+
+	// Constrain horizontally
+	x = Math.max(8, Math.min(x, viewportWidth - TOOLTIP_WIDTH - 8))
+	y = Math.max(8, Math.min(y, viewportHeight - TOOLTIP_HEIGHT - 8))
+
+	return {
+		position: { x, y, orientation },
+		tileCenterX: indicatorScreenX,
+		tileCenterY: indicatorScreenY,
+	}
+}
+
+// Handle indicator hover
+function handleIndicatorHover(event: MouseEvent, indicatorVisual: IndicatorVisual) {
+	const indicator = findOriginalIndicator(indicatorVisual)
+	if (!indicator) return
+
+	const svgElement = (event.currentTarget as Element).closest('svg')
+	if (!svgElement) return
+
+	const tooltipData = calculateIndicatorTooltipPosition(
+		svgElement,
+		indicatorVisual.centerX,
+		indicatorVisual.centerY,
+	)
+
+	const tooltipItem: IndicatorForTooltip = {
+		...indicator,
+		...indicatorVisual,
+	}
+
+	showIndicatorTooltip({
+		id: `indicator-tooltip-${indicator.id}`,
+		position: tooltipData.position,
+		indicator: tooltipItem,
+		tileCenterX: tooltipData.tileCenterX,
+		tileCenterY: tooltipData.tileCenterY,
+	})
+}
+
+// Handle indicator mouse leave
+function handleIndicatorLeave(indicatorVisual: IndicatorVisual) {
+	const indicator = findOriginalIndicator(indicatorVisual)
+	if (!indicator) return
+
+	hideTooltip(`indicator-tooltip-${indicator.id}`)
+}
 
 interface TileStyleProps {
 	left: string
@@ -383,6 +490,7 @@ const draggedGridItemEffectiveSize = $derived(
 					opacity="0.95"
 				/>
 			{/each}
+
 			<!-- Coordinate Labels -->
 			<g id="raised-bed-diagram__coordinate-labels" opacity="0.6">
 				<!-- X-axis labels (below) -->
@@ -519,7 +627,6 @@ const draggedGridItemEffectiveSize = $derived(
 								style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
 							>
 								<GridPlacementTile
-									TooltipComponent={TooltipComponent}
 									placement={placement}
 									sizePx={tileLayout.width}
 									isPulsingSource={isPendingSource}
@@ -595,6 +702,72 @@ const draggedGridItemEffectiveSize = $derived(
 				rx="10"
 				ry="10"
 			/>
+		</svg>
+
+		<!-- Indicator Circles (topmost layer) -->
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 {svgWidth} {svgHeight}"
+			width={svgWidth}
+			height={svgHeight}
+			style="position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none;"
+		>
+			{#each indicatorVisuals as indicator (indicator.key)}
+				<g
+					style="pointer-events: auto; cursor: pointer;"
+					onmouseenter={(e) => {
+						handleIndicatorHover(e, indicator)
+					}}
+					onmouseleave={() => {
+						handleIndicatorLeave(indicator)
+					}}
+				>
+					{#if indicator.semicircles}
+						{#each indicator.semicircles as semicircle, i (semicircle.direction + i.toString())}
+							<IndicatorSemicircle
+								centerX={indicator.centerX}
+								centerY={indicator.centerY}
+								radius={indicator.radius}
+								color={semicircle.color}
+								direction={semicircle.direction}
+							/>
+						{/each}
+					{/if}
+					<!-- Create sectors using path elements -->
+					{#if indicator.sectors}
+						{#each indicator.sectors as sector, i (sector.sector.toString() + '-' + i.toString())}
+							{@const startAngle = sector.sector * 90 - 90}
+							{@const endAngle = (sector.sector + 1) * 90 - 90}
+							{@const startRadians = (startAngle * Math.PI) / 180}
+							{@const endRadians = (endAngle * Math.PI) / 180}
+							{@const largeArcFlag = 0}
+							{@const x1 = indicator.centerX + indicator.radius * Math.cos(startRadians)}
+							{@const y1 = indicator.centerY + indicator.radius * Math.sin(startRadians)}
+							{@const x2 = indicator.centerX + indicator.radius * Math.cos(endRadians)}
+							{@const y2 = indicator.centerY + indicator.radius * Math.sin(endRadians)}
+							<!-- Filled sector -->
+							<path
+								d="M {indicator.centerX} {indicator.centerY} L {x1} {y1} A {indicator.radius} {indicator.radius} 0 {largeArcFlag} 1 {x2} {y2} Z"
+								fill={sector.color}
+								stroke="none"
+							/>
+							<!-- Arc stroke only -->
+							<path
+								d="M {x1} {y1} A {indicator.radius} {indicator.radius} 0 {largeArcFlag} 1 {x2} {y2}"
+								fill="none"
+								stroke={`color-mix(in srgb, ${sector.color} 70%, black)`}
+								stroke-width="3"
+								stroke-linecap="butt"
+							/>
+						{/each}
+					{/if}
+
+					<!-- Optional tooltip on hover -->
+					{#if indicator.tooltip}
+						<title>{indicator.tooltip}</title>
+					{/if}
+				</g>
+			{/each}
 		</svg>
 	</figure>
 </div>

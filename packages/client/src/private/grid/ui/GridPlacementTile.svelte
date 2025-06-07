@@ -1,6 +1,5 @@
 <script lang="ts" generics="T extends GridPlaceable">
 import type { GridPlaceable, GridPlacement } from '../grid-placement'
-import type { Component } from 'svelte'
 import { showTooltip, hideTooltip } from '../../tooltips/state/tooltipStore'
 import { rgbToCss } from '@peashoot/types'
 
@@ -9,7 +8,6 @@ export interface GridPlacementTileProps<T extends GridPlaceable> {
 	sizePx: number // SVG width (cellWidth * size)
 	isPulsingSource?: boolean // Visual indicator for pending operations
 	showSizeBadge?: boolean // Only show size badge if true
-	TooltipComponent?: Component<{ item: T }> // Component to render tooltip content
 	isInToolbar?: boolean // Whether this tile is in the toolbar (affects positioning)
 	disableTooltip?: boolean // Disable tooltip entirely
 }
@@ -19,7 +17,6 @@ let {
 	sizePx = 40,
 	isPulsingSource = false,
 	showSizeBadge = false,
-	TooltipComponent,
 	isInToolbar = false,
 	disableTooltip = false,
 }: GridPlacementTileProps<T> = $props()
@@ -168,7 +165,7 @@ function calculateTooltipPosition() {
 }
 
 function handleMouseEnter() {
-	if (disableTooltip || !TooltipComponent) return
+	if (disableTooltip) return
 
 	const tooltipData = calculateTooltipPosition()
 	if (tooltipData) {
@@ -176,7 +173,6 @@ function handleMouseEnter() {
 			id: tooltipId,
 			position: tooltipData.position,
 			item: item,
-			TooltipComponent,
 			tileCenterX: tooltipData.tileCenterX,
 			tileCenterY: tooltipData.tileCenterY,
 		})

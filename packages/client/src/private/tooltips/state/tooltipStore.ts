@@ -1,157 +1,52 @@
-import { writable } from 'svelte/store'
-import type { Component } from 'svelte'
+import { writable, type Writable } from 'svelte/store'
 import type { GridPlaceable } from '../../grid/grid-placement'
+import type { IndicatorForTooltip } from '../types'
+import IndicatorTooltipContent from '../../../lib/IndicatorTooltipContent.svelte'
 
-export interface TooltipState {
-	id: string | null
-	isVisible: boolean
-	position: {
-		x: number
-		y: number
-		orientation: 'top' | 'bottom' | 'left' | 'right'
-	}
-	item: GridPlaceable | null
-	TooltipComponent: Component<{ item: GridPlaceable }> | null
-	tileCenterX: number
-	tileCenterY: number
-}
-
-const initialState: TooltipState = {
-	id: null,
-	isVisible: false,
-	position: {
-		x: 0,
-		y: 0,
-		orientation: 'top',
-	},
-	item: null,
-	TooltipComponent: null,
-	tileCenterX: 0,
-	tileCenterY: 0,
-}
-
-// Create the writable store
-const tooltipState = writable<TooltipState>(initialState)
-
-// Export the store
-export const tooltip = tooltipState
-
-// Helper functions to manage tooltip state
-export function showTooltip<T extends GridPlaceable>(params: {
+export interface Tooltip {
 	id: string
-	position: {
-		x: number
-		y: number
-		orientation: 'top' | 'bottom' | 'left' | 'right'
-	}
-	item: T
-	TooltipComponent: Component<{ item: T }>
+	position: { x: number; y: number; orientation: string }
+	item?: GridPlaceable
+	indicator?: IndicatorForTooltip
 	tileCenterX: number
 	tileCenterY: number
-}): void {
-	tooltipState.update((currentState) => {
-		// If the same tooltip is already being shown, don't update
-		if (currentState.isVisible && currentState.id === params.id) {
-			return currentState
-		}
-
-		return {
-			id: params.id,
-			isVisible: true,
-			position: params.position,
-			item: params.item,
-			TooltipComponent: params.TooltipComponent as Component<{ item: GridPlaceable }>,
-			tileCenterX: params.tileCenterX,
-			tileCenterY: params.tileCenterY,
-		}
-	})
 }
 
-export function hideTooltip(id?: string): void {
-	tooltipState.update((state) => {
-		// If no tooltip is visible, don't update
-		if (!state.isVisible) {
-			return state
-		}
-
-		// If an id is provided, only hide if it matches the current tooltip
-		if (id && state.id !== id) {
-			return state
-		}
-
-		return {
-			...initialState,
-		}
-	})
+export interface TooltipStore extends Writable<Tooltip | null> {
+	show: (tooltip: Tooltip) => void
+	hide: (id: string) => void
+	IndicatorTooltipContent: typeof IndicatorTooltipContent
 }
 
-export function isTooltipVisible(id: string): boolean {
-	let isVisible = false
-	const unsubscribe = tooltipState.subscribe((state) => {
-		isVisible = state.isVisible && state.id === id
-	})
-	unsubscribe()
-	return isVisible
-}
+function createTooltipStore(): TooltipStore {
+	const { subscribe, set, update } = writable<Tooltip | null>(null)
 
-// Force hide any tooltip (useful for cleanup scenarios)
-export function forceHideTooltip(): void {
-	tooltipState.set(initialState)
-}
-
-// Global event handlers to hide tooltips in certain situations
-function setupGlobalTooltipHandlers() {
-	// Hide tooltips on scroll
-	const handleScroll = () => {
-		forceHideTooltip()
-	}
-
-	// Hide tooltips on window resize
-	const handleResize = () => {
-		forceHideTooltip()
-	}
-
-	// Hide tooltips when clicking outside
-	const handleClickOutside = (event: MouseEvent) => {
-		// Don't hide if clicking on a tooltip or tile element
-		const target = event.target as Element
-		if (target.closest('[data-tooltip-id]') || target.closest('[data-placement-id]')) {
-			return
-		}
-		forceHideTooltip()
-	}
-
-	// Hide tooltips when pressing escape
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Escape') {
-			forceHideTooltip()
-		}
-	}
-
-	// Add event listeners if we're in a browser environment
-	if (typeof window !== 'undefined') {
-		window.addEventListener('scroll', handleScroll, { passive: true })
-		window.addEventListener('resize', handleResize, { passive: true })
-		window.addEventListener('click', handleClickOutside, true)
-		window.addEventListener('keydown', handleKeyDown)
-
-		// Return cleanup function
-		return () => {
-			window.removeEventListener('scroll', handleScroll)
-			window.removeEventListener('resize', handleResize)
-			window.removeEventListener('click', handleClickOutside, true)
-			window.removeEventListener('keydown', handleKeyDown)
-		}
-	}
-
-	// No-op cleanup if not in browser environment
-	return () => {
-		// Nothing to clean up in non-browser environments
+	return {
+		subscribe,
+		set,
+		update,
+		show: (tooltip: Tooltip) => {
+			set(tooltip)
+		},
+		hide: (id: string) => {
+			update((current) => (current?.id === id ? null : current))
+		},
+		IndicatorTooltipContent,
 	}
 }
 
-// Initialize global handlers when this module is imported
-const cleanupGlobalHandlers = setupGlobalTooltipHandlers()
+export const tooltipStore = createTooltipStore()
 
-// Export cleanup function in case it's needed
-export { cleanupGlobalHandlers }
+export const showTooltip = (tooltip: Omit<Tooltip, 'item'> & { item: GridPlaceable }) => {
+	tooltipStore.show(tooltip as Tooltip)
+}
+
+export const showIndicatorTooltip = (
+	tooltip: Omit<Tooltip, 'indicator'> & { indicator: IndicatorForTooltip },
+) => {
+	tooltipStore.show(tooltip as Tooltip)
+}
+
+export const hideTooltip = (id: string) => {
+	tooltipStore.hide(id)
+}

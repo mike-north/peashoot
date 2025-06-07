@@ -3,7 +3,7 @@ import { dragState } from '../../private/dnd/state'
 import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
-import type { Workspace } from '../../lib/entities/workspace'
+import type { EdgeIndicator, Workspace } from '../../lib/entities/workspace'
 import { calculateZoneViewColSpans } from '../grid/zone-layout-calculator'
 import type {
 	PlacementRequestDetails,
@@ -29,12 +29,7 @@ import ZoneGrid from '../../components/ZoneGrid.svelte'
 
 interface WorkspaceProps {
 	workspace: Workspace
-	edgeIndicators: {
-		id: string
-		itemAId: string
-		itemBId: string
-		color: string
-	}[]
+	edgeIndicators: EdgeIndicator[]
 	onRequestPlacement: (
 		details: PlacementRequestDetails<DraggableItem>,
 		pendingOpId?: string,
@@ -320,6 +315,9 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 									?.placements.some(
 										(p) => p.id === edge.itemAId || p.id === edge.itemBId,
 									) ?? false,
+						)}
+						indicators={workspace.indicators.filter(
+							(indicator) => indicator.zoneId === zone.id,
 						)}
 						colSpan={zoneCardColSpans[zone.id] ?? 1}
 						tileSizeForItem={tileSizeForItem}

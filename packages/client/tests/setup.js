@@ -11,7 +11,7 @@ afterEach(() => {
 // Mock window.matchMedia
 const mockMatchMedia = vi.fn().mockImplementation((query) => ({
 	matches: false,
-	// @ts-expect-error - mock implementation
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	media: query,
 	onchange: null,
 	addListener: vi.fn(),

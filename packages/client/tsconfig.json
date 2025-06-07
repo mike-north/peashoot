@@ -4,6 +4,8 @@
 		"noEmit": true,
 		"module": "ESNext",
 		"target": "ES2024",
+		"declaration": true,
+		"declarationMap": true,
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"strict": true,
@@ -29,6 +31,6 @@
 		"src/**/*.svelte",
 		"../../global.d.ts",
 		"src/svelte.d.ts"
-	],
+, "tests/zone-layout-calculator.test.ts", "tests/grid-placement.test.ts", "tests/grid-drag-state.test.ts", "tests/grid-area.test.ts", "tests/types.test.ts", "tests/zone-layout-calculator.test.ts"	],
 	"exclude": ["node_modules/*", "public/*"]
 }

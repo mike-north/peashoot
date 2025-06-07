@@ -2,11 +2,11 @@ import { describe, it, expect } from 'vitest'
 import {
 	ZoneLayoutCalculator,
 	calculateEdgeBorders,
-} from '../src/private/grid/zone-layout-calculator.js'
-import type { PlantItem } from '../src/lib/item-types/plant-item.js'
-import { createPlantItem } from '../src/lib/item-types/plant-item.js'
-import type { GridPlacement } from '../src/private/grid/grid-placement.js'
-import { ExistingDraggableItem } from '../src/private/dnd/types.js'
+} from '../../src/private/grid/zone-layout-calculator.js'
+import type { PlantItem } from '../../src/lib/item-types/plant-item.js'
+import { createPlantItem } from '../../src/lib/item-types/plant-item.js'
+import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
+import type { ExistingDraggableItem } from '../../src/private/dnd/types.js'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new ZoneLayoutCalculator(layoutParams)

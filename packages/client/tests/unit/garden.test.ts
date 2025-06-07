@@ -3,13 +3,13 @@ import { describe, it, expect, vi } from 'vitest'
 import {
 	moveItemBetweenZonesAndCreateNewWorkspace,
 	type Workspace,
-} from '../src/lib/entities/workspace.js'
-import type { Zone } from '../src/lib/entities/zone.js'
-import type { GridPlacement } from '../src/private/grid/grid-placement.js'
-import type { PlantItem } from '../src/lib/item-types/plant-item.js'
-import { createPlantItem } from '../src/lib/item-types/plant-item.js'
-import { GridArea } from '../src/private/grid/grid-area.js'
-import { ExistingDraggableItem } from '../src/private/dnd/types.js'
+} from '../../src/lib/entities/workspace.js'
+import type { Zone } from '../../src/lib/entities/zone.js'
+import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
+import type { PlantItem } from '../../src/lib/item-types/plant-item.js'
+import { createPlantItem } from '../../src/lib/item-types/plant-item.js'
+import type { GridArea } from '../../src/private/grid/grid-area.js'
+import type { ExistingDraggableItem } from '../../src/private/dnd/types.js'
 
 const mockPlant: PlantItem = createPlantItem({
 	id: 'plant_1',

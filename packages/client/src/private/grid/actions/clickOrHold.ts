@@ -14,70 +14,99 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 	let timer: number | null = null
 	let isDragStarted = false
 	let hasMouseLeft = false
+	let holdFired = false
+	let clickFired = false
+	let interactionToken = 0
 	let currentOptions = options
 
-	function handleMouseDown(event: MouseEvent) {
-		event.preventDefault()
+	function clearTimer() {
+		if (timer) {
+			window.clearTimeout(timer)
+			timer = null
+		}
+	}
+
+	function resetState() {
 		isDragStarted = false
 		hasMouseLeft = false
+		holdFired = false
+		clickFired = false
+	}
 
+	function endInteraction() {
+		interactionToken++
+		clearTimer()
+	}
+
+	function handleMouseDown(event: MouseEvent) {
+		endInteraction()
+		resetState()
+		event.preventDefault()
+
+		const myToken = ++interactionToken
 		timer = window.setTimeout(() => {
-			isDragStarted = true
-			if (currentOptions.onHold) {
-				currentOptions.onHold(event)
+			if (myToken === interactionToken && !hasMouseLeft && !holdFired && !clickFired) {
+				isDragStarted = true
+				holdFired = true
+				if (currentOptions.onHold) {
+					currentOptions.onHold(event)
+				}
+				clearTimer()
 			}
 		}, currentOptions.holdDuration ?? DEFAULT_HOLD_DURATION_MS)
 	}
 
 	function handleMouseUp(event: MouseEvent) {
-		if (timer) {
-			window.clearTimeout(timer)
-			timer = null
-		}
-
-		// Only trigger click if drag wasn't started and mouse hasn't left the element
-		if (!isDragStarted && !hasMouseLeft && currentOptions.onClick) {
+		endInteraction()
+		if (
+			!isDragStarted &&
+			!hasMouseLeft &&
+			!holdFired &&
+			!clickFired &&
+			currentOptions.onClick
+		) {
+			clickFired = true
 			currentOptions.onClick(event)
 		}
-		isDragStarted = false
-		hasMouseLeft = false
+		resetState()
 	}
 
 	function handleMouseLeave() {
-		if (timer) {
-			window.clearTimeout(timer)
-			timer = null
-		}
+		endInteraction()
 		hasMouseLeft = true
 	}
 
 	function handleTouchStart(event: TouchEvent) {
+		endInteraction()
+		resetState()
 		event.preventDefault()
-		isDragStarted = false
-		hasMouseLeft = false
 
+		const myToken = ++interactionToken
 		timer = window.setTimeout(() => {
-			isDragStarted = true
-			if (currentOptions.onHold) {
-				// We need to synthesize a MouseEvent or adapt onHold to accept TouchEvent
-				// For now, let's assume onHold can handle it or we adapt it later
-				currentOptions.onHold(event)
+			if (myToken === interactionToken && !hasMouseLeft && !holdFired && !clickFired) {
+				isDragStarted = true
+				holdFired = true
+				if (currentOptions.onHold) {
+					currentOptions.onHold(event)
+				}
+				clearTimer()
 			}
 		}, currentOptions.holdDuration ?? DEFAULT_HOLD_DURATION_MS)
 	}
 
 	function handleTouchEnd(event: TouchEvent) {
-		if (timer) {
-			window.clearTimeout(timer)
-			timer = null
-		}
-
-		if (!isDragStarted && !hasMouseLeft && currentOptions.onClick) {
-			// We need to synthesize a MouseEvent or adapt onClick to accept TouchEvent
+		endInteraction()
+		if (
+			!isDragStarted &&
+			!hasMouseLeft &&
+			!holdFired &&
+			!clickFired &&
+			currentOptions.onClick
+		) {
+			clickFired = true
 			currentOptions.onClick(event)
 		}
-		isDragStarted = false
-		hasMouseLeft = false
+		resetState()
 	}
 
 	function handleContextMenu(event: Event) {
@@ -93,18 +122,18 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 
 	return {
 		update(newOptions: ClickOrHoldOptions) {
-			currentOptions = newOptions
+			endInteraction()
+			resetState()
+			currentOptions = { ...currentOptions, ...newOptions }
 		},
 		destroy() {
+			endInteraction()
 			node.removeEventListener('mousedown', handleMouseDown)
 			node.removeEventListener('mouseup', handleMouseUp)
 			node.removeEventListener('mouseleave', handleMouseLeave)
 			node.removeEventListener('touchstart', handleTouchStart)
 			node.removeEventListener('touchend', handleTouchEnd)
 			node.removeEventListener('contextmenu', handleContextMenu)
-			if (timer) {
-				window.clearTimeout(timer)
-			}
 		},
 	}
 }

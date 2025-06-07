@@ -7,7 +7,7 @@ import {
 	type ValidationContext,
 	type PendingOperation,
 	type IDragState,
-} from './types'
+} from '../src/private/dnd/types.js'
 
 describe('DnD Types', () => {
 	describe('DraggableItem', () => {

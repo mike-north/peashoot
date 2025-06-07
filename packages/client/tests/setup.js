@@ -1,21 +1,31 @@
 // Setup file for tests
-import { vi } from 'vitest'
+import { vi, afterEach } from 'vitest'
+import '@testing-library/jest-dom'
+import { cleanup } from '@testing-library/svelte'
+
+// Clean up after each test
+afterEach(() => {
+	cleanup()
+})
 
 // Mock window.matchMedia
-// eslint-disable-next-line no-undef
-Object.defineProperty(window, 'matchMedia', {
-	writable: true,
-	value: vi.fn().mockImplementation((query) => ({
-		matches: false,
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		media: query,
-		onchange: null,
-		addListener: vi.fn(), // deprecated
-		removeListener: vi.fn(), // deprecated
-		addEventListener: vi.fn(),
-		removeEventListener: vi.fn(),
-		dispatchEvent: vi.fn(),
-	})),
-})
+const mockMatchMedia = vi.fn().mockImplementation((query) => ({
+	matches: false,
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	media: query,
+	onchange: null,
+	addListener: vi.fn(),
+	removeListener: vi.fn(),
+	addEventListener: vi.fn(),
+	removeEventListener: vi.fn(),
+	dispatchEvent: vi.fn(),
+}))
+
+// Configure browser environment
+if (typeof globalThis.window !== 'undefined') {
+	globalThis.window.matchMedia = mockMatchMedia
+} else {
+	globalThis.matchMedia = mockMatchMedia
+}
 
 // Add any other global mocks or setup here

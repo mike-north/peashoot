@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { ZoneLayoutCalculator } from './zone-layout-calculator'
-import type { GridPlaceable, GridPlacement, GridItemPresentation } from './grid-placement'
-import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
+import { ZoneLayoutCalculator } from '../src/private/grid/zone-layout-calculator.js'
+import type {
+	GridPlaceable,
+	GridPlacement,
+	GridItemPresentation,
+} from '../src/private/grid/grid-placement.js'
+import { DEFAULT_LAYOUT_PARAMS } from '../src/private/grid/grid-layout-constants.js'
 
 interface TestItem extends GridPlaceable {
 	id: string

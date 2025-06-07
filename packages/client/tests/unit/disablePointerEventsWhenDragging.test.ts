@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { disablePointerEventsWhenDragging } from '../src/private/grid/actions/disablePointerEventsWhenDragging.js'
 import type { ActionReturn } from 'svelte/action'
-import {
+import { disablePointerEventsWhenDragging } from '../../src/private/grid/actions/disablePointerEventsWhenDragging.js'
+import type {
 	DraggableItem,
 	ExistingDraggableItem,
 	IDragState,
-} from '../src/private/dnd/types.js'
+} from '../../src/private/dnd/types.js'
 
 const createMockDragState = (
 	isDragging: boolean,

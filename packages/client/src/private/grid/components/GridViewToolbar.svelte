@@ -9,7 +9,7 @@ import { clickOrHold } from '../actions/clickOrHold'
 import type { WithVisualPresentation } from '../grid-placement'
 import type { Component } from 'svelte'
 
-interface GridToolbarProps {
+export interface GridToolbarProps<TItem extends WithVisualPresentation> {
 	items: TItem[]
 	categoryNameForItem: (item: TItem) => string
 	TooltipComponent: Component<{ item: TItem }>
@@ -32,7 +32,7 @@ const {
 	categoryNameForItem,
 	TooltipComponent,
 	...rest
-}: GridToolbarProps = $props()
+}: GridToolbarProps<TItem> = $props()
 
 const itemListToToolbarCategories = (itemList: TItem[]): ToolbarGridItemCategory[] => {
 	const categories = new Map<string, ToolbarGridItemCategory>()

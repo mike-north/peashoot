@@ -1,17 +1,18 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { PlantableArea } from './plantable-area'
 import { SeedPacket } from './seed-packet'
 import { PeashootEntity } from './peashoot-entity'
-import { z } from 'zod/v4'
+import { IDistance, IPlant, IPlantPresentation } from '@peashoot/types'
+import { PlantPlacement } from './plant-placement'
+import { RGBColor } from '../values/rgb-color'
+import { Distance } from '../values/distance'
 
-export const PlantSchema = z.object({
-	name: z.string(),
-	family: z.string(),
-	description: z.string(),
-	variant: z.string(),
-	plantingDistance: z.number(),
-})
-export type IPlant = z.infer<typeof PlantSchema>
+export class PlantPresentation implements IPlantPresentation {
+	@Column(() => RGBColor)
+	accentColor!: RGBColor
+
+	@Column()
+	iconPath!: string
+}
 
 @Entity({ name: 'plants' })
 export class Plant extends PeashootEntity<'plant'> implements IPlant {
@@ -19,15 +20,18 @@ export class Plant extends PeashootEntity<'plant'> implements IPlant {
 		super('plant')
 	}
 
-	@ManyToOne(() => SeedPacket, (seedPacket) => seedPacket.plants)
-	seedPacket?: SeedPacket
+	@ManyToOne(() => SeedPacket, (seedPacket) => seedPacket.plants, { nullable: false })
+	seedPacket!: SeedPacket
 
-	@ManyToOne(() => PlantableArea, (plantableArea) => plantableArea.plants)
-	plantableArea?: PlantableArea
+	@ManyToOne(() => PlantPlacement, (placement) => placement.plant)
+	placements!: PlantPlacement[]
+
+	@Column(() => PlantPresentation)
+	presentation!: PlantPresentation
 
 	@Column({ nullable: false }) name!: string
 	@Column({ nullable: false }) family!: string
 	@Column({ nullable: false }) description!: string
-	@Column({ nullable: false }) variant!: string
-	@Column({ nullable: false }) plantingDistance!: number
+	@Column(() => Distance)
+	plantingDistance!: IDistance
 }

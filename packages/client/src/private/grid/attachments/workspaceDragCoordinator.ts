@@ -6,16 +6,13 @@ import type {
 	DraggableItem,
 	ExistingDraggableItem,
 } from '../../../private/dnd/types'
-import {
-	GardenBedLayoutCalculator,
-	screenToGridCoordinates,
-} from '../../garden-bed-layout-calculator'
+import { ZoneLayoutCalculator, screenToGridCoordinates } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
-import type { GardenBed } from '../../../lib/entities/garden-bed'
+import type { Zone } from '../../../lib/entities/zone'
 
-interface GardenDragCoordinatorOptions {
+interface WorkspaceDragCoordinatorOptions {
 	dragState: Writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-	beds: GardenBed[]
+	zones: Zone[]
 	tileSizeForItem: (item: DraggableItem) => number
 	onDrop: (dropInfo: {
 		targetZoneId: string | null
@@ -25,7 +22,9 @@ interface GardenDragCoordinatorOptions {
 	}) => void
 }
 
-export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): Attachment {
+export function workspaceDragCoordinator(
+	options: WorkspaceDragCoordinatorOptions,
+): Attachment {
 	const { tileSizeForItem } = options
 	return (element) => {
 		const htmlElement = element as HTMLElement
@@ -52,14 +51,14 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 				newTargetType = 'delete-zone'
 				newHighlightedCell = null
 			} else {
-				// Iterate over beds to find the target
-				for (const bed of currentOptions.beds) {
-					const bedComponentElement = htmlElement.querySelector(
-						`[data-bed-id='${bed.id}']`,
+				// Iterate over zones to find the target
+				for (const zone of currentOptions.zones) {
+					const zoneComponentElement = htmlElement.querySelector(
+						`[data-zone-id='${zone.id}']`,
 					)
-					const svgElement = bedComponentElement?.querySelector('svg')
+					const svgElement = zoneComponentElement?.querySelector('svg')
 
-					if (bedComponentElement && svgElement) {
+					if (zoneComponentElement && svgElement) {
 						const rect = svgElement.getBoundingClientRect()
 
 						if (
@@ -68,9 +67,9 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 							event.clientY >= rect.top &&
 							event.clientY <= rect.bottom
 						) {
-							const layout = new GardenBedLayoutCalculator({
-								width: bed.width,
-								height: bed.height,
+							const layout = new ZoneLayoutCalculator({
+								width: zone.width,
+								height: zone.height,
 								tileSizeForItem,
 								...DEFAULT_LAYOUT_PARAMS,
 							})
@@ -80,7 +79,7 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 								event.clientX,
 								event.clientY,
 							)
-							newTargetZoneId = bed.id
+							newTargetZoneId = zone.id
 							newTargetType = 'drop-zone'
 							newHighlightedCell = gridCoords
 							break
@@ -115,13 +114,13 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 			if (deleteZoneElement) {
 				finalTargetType = 'delete-zone'
 			} else {
-				for (const bed of currentOptions.beds) {
-					const bedComponentElement = htmlElement.querySelector(
-						`[data-bed-id='${bed.id}']`,
+				for (const zone of currentOptions.zones) {
+					const zoneComponentElement = htmlElement.querySelector(
+						`[data-zone-id='${zone.id}']`,
 					)
-					const svgElement = bedComponentElement?.querySelector('svg')
+					const svgElement = zoneComponentElement?.querySelector('svg')
 
-					if (bedComponentElement && svgElement) {
+					if (zoneComponentElement && svgElement) {
 						const rect = svgElement.getBoundingClientRect()
 						if (
 							event.clientX >= rect.left &&
@@ -129,9 +128,9 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 							event.clientY >= rect.top &&
 							event.clientY <= rect.bottom
 						) {
-							const layout = new GardenBedLayoutCalculator({
-								width: bed.width,
-								height: bed.height,
+							const layout = new ZoneLayoutCalculator({
+								width: zone.width,
+								height: zone.height,
 								tileSizeForItem,
 								...DEFAULT_LAYOUT_PARAMS,
 							})
@@ -141,7 +140,7 @@ export function gardenDragCoordinator(options: GardenDragCoordinatorOptions): At
 								event.clientX,
 								event.clientY,
 							)
-							finalTargetZoneId = bed.id
+							finalTargetZoneId = zone.id
 							finalTargetType = 'drop-zone'
 							finalHighlightedCell = gridCoords
 							break

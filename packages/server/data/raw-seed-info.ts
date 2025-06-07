@@ -30,17 +30,11 @@ enum TemperatureUnit {
 	celsius = 'celsius',
 }
 
-enum DistanceUnit {
-	inches = 'inches',
-	feet = 'feet',
-	yards = 'yards',
-	meters = 'meters',
-	centimeters = 'centimeters',
-}
+type RawDistanceUnit = 'inches' | 'feet' | 'yards' | 'meters' | 'centimeters'
 
 interface Distance {
 	value: number
-	unit: DistanceUnit
+	unit: RawDistanceUnit
 }
 
 interface DistanceRange {

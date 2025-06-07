@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
-import type { GardenBed } from '../../lib/entities/garden-bed'
-import type { Garden } from '../../lib/entities/garden'
+import type { Zone } from '../../lib/entities/zone'
+import type { Workspace } from '../../lib/entities/workspace'
 import type {
 	GridZoneContext,
 	GridDragState,
@@ -18,29 +18,29 @@ import {
 import type { WithVisualPresentation, GridPlacement } from '../grid/grid-placement'
 
 // Generic type aliases
-export type ExistingGardenItem<T extends WithVisualPresentation> = GridPlacement<T>
-export type GardenDragState<T extends WithVisualPresentation> = GridDragState<T>
-export type GardenPendingOperation<T extends WithVisualPresentation> =
+export type ExistingWorkspaceItem<T extends WithVisualPresentation> = GridPlacement<T>
+export type WorkspaceDragState<T extends WithVisualPresentation> = GridDragState<T>
+export type WorkspacePendingOperation<T extends WithVisualPresentation> =
 	GridPendingOperation<T>
 export type PlacementRequestDetails<T> = GridPlacementRequestDetails<T>
 export type RemovalRequestDetails<T> = GridRemovalRequestDetails<T>
 export type CloningRequestDetails<T> = GridCloningRequestDetails<T>
 
-export interface GardenZoneContext<T extends WithVisualPresentation>
+export interface WorkspaceZoneContext<T extends WithVisualPresentation>
 	extends GridZoneContext<T>,
-		Omit<GardenBed, 'placements' | 'id' | 'width' | 'height'> {
-	id: string // ID of the GardenBed
+		Omit<Zone, 'placements' | 'id' | 'width' | 'height'> {
+	id: string // ID of the Zone
 	waterLevel: number
 	sunLevel: number
 }
 
-export type GardenValidationContext<T extends WithVisualPresentation> =
-	GridValidationContext<T, GardenZoneContext<T>> & {
-		applicationContext?: { garden: Garden }
+export type WorkspaceValidationContext<T extends WithVisualPresentation> =
+	GridValidationContext<T, WorkspaceZoneContext<T>> & {
+		applicationContext?: { workspace: Workspace }
 	}
 
-export type GardenAsyncValidationFunction<T extends WithVisualPresentation> =
-	GridAsyncValidationFunction<T, GardenZoneContext<T>>
+export type WorkspaceAsyncValidationFunction<T extends WithVisualPresentation> =
+	GridAsyncValidationFunction<T, WorkspaceZoneContext<T>>
 
 export function isWithVisualPresentation(item: unknown): item is WithVisualPresentation {
 	return (
@@ -56,23 +56,23 @@ export function isWithVisualPresentation(item: unknown): item is WithVisualPrese
 }
 
 // Generic type guards
-export function isGardenPendingOperation<T extends WithVisualPresentation>(
+export function isWorkspacePendingOperation<T extends WithVisualPresentation>(
 	operation: GridPendingOperation<T>,
-): operation is GardenPendingOperation<T> {
+): operation is WorkspacePendingOperation<T> {
 	return isGridPendingOperation(operation, isWithVisualPresentation)
 }
 
-export function isGardenItemRemovalOperation<T extends WithVisualPresentation>(
+export function isWorkspaceItemRemovalOperation<T extends WithVisualPresentation>(
 	op: unknown,
-): op is GardenPendingOperation<T> {
+): op is WorkspacePendingOperation<T> {
 	return isGridItemRemovalOperation(
 		op as GridPendingOperation<T>,
 		isWithVisualPresentation,
 	)
 }
 
-export function createGardenAppDragState<T extends WithVisualPresentation>() {
-	return writable<GardenDragState<T>>({
+export function createWorkspaceAppDragState<T extends WithVisualPresentation>() {
+	return writable<WorkspaceDragState<T>>({
 		draggedExistingItem: null,
 		draggedNewItem: null,
 		draggedItemEffectiveSize: 1,

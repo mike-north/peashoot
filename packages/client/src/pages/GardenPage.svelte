@@ -1,10 +1,10 @@
 <script lang="ts">
-import GardenDiagram from '../private/components/GardenDiagram.svelte'
-import PageTitle from '../components/PageTitle.svelte'
+// This file now redirects to the new WorkspacePage with generic terminology
+// The old garden-specific implementation is preserved but uses the new workspace system
+import WorkspacePage from './WorkspacePage.svelte'
 
 const { route } = $props()
 </script>
 
-<PageTitle route={route} />
-
-<GardenDiagram />
+<!-- Garden page now uses the generic workspace system -->
+<WorkspacePage route={route} />

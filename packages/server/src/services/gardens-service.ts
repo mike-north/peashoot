@@ -5,7 +5,15 @@ import { InvalidArgsError } from '../application/errors/invalid-args-error'
 
 export class GardensService {
 	async getAllGardens(): Promise<Garden[]> {
-		return await AppDataSource.manager.find(Garden)
+		return await AppDataSource.manager.find(Garden, {
+			relations: {
+				beds: {
+					plantPlacements: {
+						plant: true,
+					},
+				},
+			},
+		})
 	}
 	async getGardenById(id: string): Promise<Garden | null> {
 		if (!isIdWithPrefix('grdn', id)) {

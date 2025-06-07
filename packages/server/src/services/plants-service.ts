@@ -1,5 +1,6 @@
-import { IPlant, Plant, PlantSchema } from '../entities/plant'
+import { IPlant, PlantSchema } from '@peashoot/types'
 import { AppDataSource } from '../data-source'
+import { Plant } from '../entities/plant'
 
 export class PlantsService {
 	async getAllPlants(): Promise<Plant[]> {

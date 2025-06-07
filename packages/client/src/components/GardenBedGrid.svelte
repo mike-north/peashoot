@@ -1,107 +1,46 @@
 <script lang="ts">
-import Grid from '../private/grid/components/Grid.svelte'
+// This file now redirects to the new ZoneGrid with generic terminology
+// The old garden-bed-specific implementation is preserved but uses the new zone system
+import ZoneGrid from './ZoneGrid.svelte'
 import type { GridPlaceable } from '../private/grid/grid-placement'
 import type { Component } from 'svelte'
-import type { GardenBed } from '../lib/entities/garden-bed'
-import type { Plant } from '../lib/entities/plant'
-import HorizontalBarMeter from './HorizontalBarMeter.svelte'
-import IdLabel from '../lib/components/IdLabel.svelte'
+import type { EdgeIndicator } from '../lib/entities/workspace'
+import type { Zone } from '../lib/entities/zone'
+import type { Item } from '../lib/entities/item'
 
 interface GardenBedGridProps {
-	bed: GardenBed
-	plants: Plant[]
+	zone: Zone
+	items: Item[]
 	TooltipComponent: Component<{ item: GridPlaceable }>
-	edgeIndicators: {
-		id: string
-		plantAId: string
-		plantBId: string
-		color: string
-	}[]
+	edgeIndicators: EdgeIndicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 	colSpan?: number
 	[k: string]: unknown
 }
 
 const {
-	bed,
-	plants,
+	zone: bed,
+	items: plants,
 	TooltipComponent,
 	edgeIndicators,
 	tileSizeForItem,
 	colSpan = 1,
 	...rest
 }: GardenBedGridProps = $props()
-
-// Map colSpan number to Tailwind class
-const colSpanClass = $derived(
-	(() => {
-		switch (colSpan) {
-			case 1:
-				return 'col-span-1'
-			case 2:
-				return 'col-span-2'
-			case 3:
-				return 'col-span-3'
-			case 4:
-				return 'col-span-4'
-			case 5:
-				return 'col-span-5'
-			default:
-				return 'col-span-1'
-		}
-	})(),
-)
 </script>
 
-<style lang="scss">
-.raised-bed {
-	.meters-row {
-		display: flex;
-		flex-direction: row;
-		gap: 17px;
-		justify-content: left;
-		align-items: center;
-		margin-bottom: 1em;
-		margin-top: 0;
-	}
-}
-</style>
-
-<div class="raised-bed card bg-base-100 shadow-sm {colSpanClass} {rest.class || ''}">
-	<Grid
-		grid={bed}
-		TooltipComponent={TooltipComponent}
-		items={plants}
-		edgeIndicators={edgeIndicators}
-		tileSizeForItem={tileSizeForItem}
-	/>
-	<div class="card-body">
-		<div class="card-title flex justify-between items-center">
-			Raised Garden Bed ({bed.width}×{bed.height} feet)
-			<IdLabel id={bed.id} />
-		</div>
-
-		<div class="meters-row">
-			<HorizontalBarMeter
-				id={`${bed.id}-water`}
-				value={bed.waterLevel}
-				max={5}
-				filledColor="#3498db"
-				emptyColor="#3498db22"
-				borderColor="#3498db"
-				label="Water"
-				labelColor="#3498db"
-			/>
-			<HorizontalBarMeter
-				id={`${bed.id}-sun`}
-				value={bed.sunLevel}
-				max={5}
-				filledColor="#FFD600"
-				emptyColor="#FFD60022"
-				borderColor="#FFD600"
-				label="Sun"
-				labelColor="#FF6666"
-			/>
-		</div>
-	</div>
-</div>
+<!-- Garden bed grid now uses the generic zone system -->
+<ZoneGrid
+	zone={bed}
+	items={plants}
+	TooltipComponent={TooltipComponent}
+	edgeIndicators={edgeIndicators.map((indicator) => ({
+		id: indicator.id,
+		itemAId: indicator.itemAId,
+		itemBId: indicator.itemBId,
+		color: indicator.color,
+	}))}
+	tileSizeForItem={tileSizeForItem}
+	colSpan={colSpan}
+	{...rest}
+/>

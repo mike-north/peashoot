@@ -1,39 +1,44 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi } from 'vitest'
-import { movePlantBetweenBeds, type Garden } from '../src/lib/entities/garden.js'
-import type { GardenBed } from '../src/lib/entities/garden-bed.js'
+import {
+	moveItemBetweenZonesAndCreateNewWorkspace,
+	type Workspace,
+} from '../src/lib/entities/workspace.js'
+import type { Zone } from '../src/lib/entities/zone.js'
 import type { GridPlacement } from '../src/private/grid/grid-placement.js'
-import type { Plant } from '../src/lib/entities/plant.js'
+import type { PlantItem } from '../src/lib/item-types/plant-item.js'
+import { createPlantItem } from '../src/lib/item-types/plant-item.js'
 import { GridArea } from '../src/private/grid/grid-area.js'
 import { ExistingDraggableItem } from '../src/private/dnd/types.js'
 
-const mockPlant: Plant = {
+const mockPlant: PlantItem = createPlantItem({
 	id: 'plant_1',
 	displayName: 'Tomato',
-	family: 'Tomato',
+	family: 'tomatoes',
 	variant: 'red',
 	plantingDistanceInFeet: 1,
 	presentation: {
 		accentColor: {
-			r: 1,
-			g: 0,
-			b: 0,
+			red: 255,
+			green: 0,
+			blue: 0,
 		},
 		iconPath: 'tomato.png',
+		size: 1,
 	},
-}
+})
 
-const plantPlacement: GridPlacement<Plant> & ExistingDraggableItem<Plant> = {
+const plantPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem> = {
 	id: 'placement1',
 	item: mockPlant,
-	sourceZoneId: 'bed1',
+	sourceZoneId: 'zone1',
 	x: 1,
 	y: 2,
 	size: 1,
 }
 
-const sourceBed: GardenBed & GridArea<Plant> = {
-	id: 'gbed_1',
+const sourceZone: Zone<PlantItem> & GridArea<PlantItem> = {
+	id: 'zone_1',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -41,8 +46,8 @@ const sourceBed: GardenBed & GridArea<Plant> = {
 	placements: [plantPlacement],
 }
 
-const targetBed: GardenBed & GridArea<Plant> = {
-	id: 'gbed_2',
+const targetZone: Zone<PlantItem> & GridArea<PlantItem> = {
+	id: 'zone_2',
 	width: 4,
 	height: 4,
 	waterLevel: 5,
@@ -50,31 +55,31 @@ const targetBed: GardenBed & GridArea<Plant> = {
 	placements: [],
 }
 
-const garden: Garden = {
-	id: 'garden_1',
-	beds: [sourceBed, targetBed],
+const workspace: Workspace = {
+	id: 'workspace_1',
+	zones: [sourceZone, targetZone],
 	edgeIndicators: [],
 }
 
-describe('movePlantBetweenBeds', () => {
-	it('moves a plant from the source bed to the target bed with new coordinates', () => {
-		const updated: Garden = movePlantBetweenBeds(
-			garden,
-			'gbed_1',
-			'gbed_2',
+describe('moveItemBetweenZones', () => {
+	it('moves an item from the source zone to the target zone with new coordinates', () => {
+		const updated: Workspace = moveItemBetweenZonesAndCreateNewWorkspace(
+			workspace,
+			'zone_1',
+			'zone_2',
 			plantPlacement,
 			3,
 			4,
 		)
-		const { beds } = updated
+		const { zones } = updated
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const [updatedSource] = beds.filter(
-			(b: GardenBed) => b.id === 'gbed_1',
-		) satisfies GardenBed[]
+		const [updatedSource] = zones.filter(
+			(z: Zone<PlantItem>) => z.id === 'zone_1',
+		) satisfies Zone<PlantItem>[]
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		const [updatedTarget] = beds.filter(
-			(b: GardenBed) => b.id === 'gbed_2',
-		) satisfies GardenBed[]
+		const [updatedTarget] = zones.filter(
+			(z: Zone<PlantItem>) => z.id === 'zone_2',
+		) satisfies Zone<PlantItem>[]
 
 		expect(updatedSource.placements.length).toBe(0)
 		expect(updatedTarget.placements.length).toBe(1)
@@ -83,34 +88,34 @@ describe('movePlantBetweenBeds', () => {
 		expect(updatedTarget.placements[0].id).toBe('placement1')
 	})
 
-	it('returns the original garden if source or target bed is missing', () => {
+	it('returns the original workspace if source or target zone is missing', () => {
 		const spy = vi.spyOn(console, 'error').mockImplementation(() => {
 			void 0
 		})
-		const updated: Garden = movePlantBetweenBeds(
-			garden,
+		const updated: Workspace = moveItemBetweenZonesAndCreateNewWorkspace(
+			workspace,
 			'missing',
-			'bed2',
+			'zone2',
 			plantPlacement,
 			3,
 			4,
 		)
-		expect(updated).toBe(garden)
+		expect(updated).toBe(workspace)
 		expect(spy).toHaveBeenCalled()
 		spy.mockRestore()
 	})
 
-	it('does not mutate the original garden object', () => {
-		const updated: Garden = movePlantBetweenBeds(
-			garden,
-			'gbed_1',
-			'gbed_2',
+	it('does not mutate the original workspace object', () => {
+		const updated: Workspace = moveItemBetweenZonesAndCreateNewWorkspace(
+			workspace,
+			'zone_1',
+			'zone_2',
 			plantPlacement,
 			3,
 			4,
 		)
-		expect(updated).not.toBe(garden)
-		expect(garden.beds[0].placements.length).toBe(1)
-		expect(garden.beds[1].placements.length).toBe(0)
+		expect(updated).not.toBe(workspace)
+		expect(workspace.zones[0].placements.length).toBe(1)
+		expect(workspace.zones[1].placements.length).toBe(0)
 	})
 })

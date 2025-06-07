@@ -58,7 +58,13 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 
 	function handleMouseUp(event: MouseEvent) {
 		endInteraction()
-		if (!isDragStarted && !hasMouseLeft && !holdFired && !clickFired && currentOptions.onClick) {
+		if (
+			!isDragStarted &&
+			!hasMouseLeft &&
+			!holdFired &&
+			!clickFired &&
+			currentOptions.onClick
+		) {
 			clickFired = true
 			currentOptions.onClick(event)
 		}
@@ -90,7 +96,13 @@ export const clickOrHold: Action<HTMLElement, ClickOrHoldOptions> = (
 
 	function handleTouchEnd(event: TouchEvent) {
 		endInteraction()
-		if (!isDragStarted && !hasMouseLeft && !holdFired && !clickFired && currentOptions.onClick) {
+		if (
+			!isDragStarted &&
+			!hasMouseLeft &&
+			!holdFired &&
+			!clickFired &&
+			currentOptions.onClick
+		) {
 			clickFired = true
 			currentOptions.onClick(event)
 		}

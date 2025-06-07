@@ -1,12 +1,21 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { DragManager, dragManager as globalDragManagerInstance } from '../../../src/private/dnd/drag-manager.js'
+import {
+	DragManager,
+	dragManager as globalDragManagerInstance,
+} from '../../../src/private/dnd/drag-manager.js'
 import { dragState } from '../../../src/private/dnd/state.js'
-import type { DraggableItem, ExistingDraggableItem, IDragState } from '../../../src/private/dnd/types.js'
+import type {
+	DraggableItem,
+	ExistingDraggableItem,
+	IDragState,
+} from '../../../src/private/dnd/types.js'
 import { get } from 'svelte/store'
 import { writable } from 'svelte/store'
 
 // Mock the Svelte store
-const mockDragState = writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>({
+const mockDragState = writable<
+	IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
+>({
 	draggedExistingItem: null,
 	draggedNewItem: null,
 	draggedItemEffectiveSize: 1,
@@ -17,7 +26,7 @@ const mockDragState = writable<IDragState<DraggableItem, ExistingDraggableItem<D
 	sourceZoneId: null,
 	targetZoneId: null,
 	targetType: null,
-	isCloneMode: false
+	isCloneMode: false,
 })
 
 // Helper function to reset the mock store
@@ -33,7 +42,7 @@ const resetMockDragState = () => {
 		sourceZoneId: null,
 		targetZoneId: null,
 		targetType: null,
-		isCloneMode: false
+		isCloneMode: false,
 	})
 }
 

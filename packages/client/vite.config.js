@@ -15,10 +15,25 @@ export default defineConfig({
 		alias: {
 			'~': path.resolve(__dirname, 'src/assets'),
 		},
+		extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.svelte'],
 	},
 	test: {
 		environment: 'jsdom',
 		globals: true,
 		setupFiles: ['./tests/setup.js'],
+		browser: {
+			enabled: true,
+			provider: 'playwright',
+			instances: [
+				{
+					browser: 'chromium',
+				},
+			],
+		},
+		include: ['tests/svelte/**/*.test.ts', 'tests/unit/**/*.test.ts'],
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'json', 'html'],
+		},
 	},
 })

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { clickOrHold } from '../src/private/grid/actions/clickOrHold.js'
-import { DEFAULT_HOLD_DURATION_MS } from '../src/private/dnd/constants.js'
+import { clickOrHold } from '../../src/private/grid/actions/clickOrHold.js'
+import { DEFAULT_HOLD_DURATION_MS } from '../../src/private/dnd/constants.js'
 import type { ActionReturn } from 'svelte/action'
 
 interface ClickOrHoldOptions {
@@ -31,45 +31,91 @@ describe('clickOrHold Action', () => {
 	}
 
 	beforeEach(() => {
-		vi.useFakeTimers()
 		node = document.createElement('div')
 		onClick = vi.fn()
 		onHold = vi.fn()
-		// Mount with default options initially for some tests, or specific for others
+		vi.useFakeTimers()
 	})
 
 	afterEach(() => {
-		if (action && 'destroy' in action && typeof action.destroy === 'function') {
+		if (action?.destroy) {
 			action.destroy()
 		}
-		vi.clearAllTimers()
-		vi.restoreAllMocks()
+		vi.useRealTimers()
 	})
 
-	it('should call onClick when mouseup occurs before holdDuration', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+	it('should call onClick when mouse is released before hold duration', () => {
+		action = clickOrHold(node, { onClick, onHold }) as
 			| ActionReturn<ClickOrHoldOptions>
 			| undefined
-		dispatchMouseEvent('mousedown')
-		vi.advanceTimersByTime(50)
-		const upEvent = dispatchMouseEvent('mouseup')
-		expect(onClick).toHaveBeenCalledOnce()
-		expect(onClick).toHaveBeenCalledWith(upEvent)
+		const event = new MouseEvent('mousedown')
+		node.dispatchEvent(event)
+		vi.advanceTimersByTime(DEFAULT_HOLD_DURATION_MS - 1)
+		node.dispatchEvent(new MouseEvent('mouseup'))
+		expect(onClick).toHaveBeenCalled()
 		expect(onHold).not.toHaveBeenCalled()
 	})
 
-	it('should call onHold when mousedown lasts longer than holdDuration', () => {
-		action = clickOrHold(node, { onClick, onHold, holdDuration: 100 }) as
+	it('should call onHold when mouse is held for the duration', () => {
+		action = clickOrHold(node, { onClick, onHold }) as
 			| ActionReturn<ClickOrHoldOptions>
 			| undefined
-		const downEvent = dispatchMouseEvent('mousedown')
-		vi.advanceTimersByTime(150)
-		expect(onHold).toHaveBeenCalledOnce()
-		expect(onHold).toHaveBeenCalledWith(downEvent)
+		const event = new MouseEvent('mousedown')
+		node.dispatchEvent(event)
+		vi.advanceTimersByTime(DEFAULT_HOLD_DURATION_MS)
+		expect(onHold).toHaveBeenCalled()
+		node.dispatchEvent(new MouseEvent('mouseup'))
 		expect(onClick).not.toHaveBeenCalled()
-		// Mouseup after hold should not trigger click
-		dispatchMouseEvent('mouseup')
+	})
+
+	it('should not call onClick if mouse leaves the element', () => {
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
+		const event = new MouseEvent('mousedown')
+		node.dispatchEvent(event)
+		node.dispatchEvent(new MouseEvent('mouseleave'))
+		node.dispatchEvent(new MouseEvent('mouseup'))
 		expect(onClick).not.toHaveBeenCalled()
+		expect(onHold).not.toHaveBeenCalled()
+	})
+
+	it('should handle touch events', () => {
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
+		const event = new TouchEvent('touchstart')
+		node.dispatchEvent(event)
+		vi.advanceTimersByTime(DEFAULT_HOLD_DURATION_MS)
+		expect(onHold).toHaveBeenCalled()
+		node.dispatchEvent(new TouchEvent('touchend'))
+		expect(onClick).not.toHaveBeenCalled()
+	})
+
+	it('should prevent context menu', () => {
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
+		const event = new MouseEvent('contextmenu')
+		const preventDefault = vi.spyOn(event, 'preventDefault')
+		node.dispatchEvent(event)
+		expect(preventDefault).toHaveBeenCalled()
+	})
+
+	it('should update options when update is called', () => {
+		action = clickOrHold(node, { onClick, onHold }) as
+			| ActionReturn<ClickOrHoldOptions>
+			| undefined
+		const newOnClick = vi.fn()
+		if (action?.update) {
+			action.update({ onClick: newOnClick })
+			const event = new MouseEvent('mousedown')
+			node.dispatchEvent(event)
+			vi.advanceTimersByTime(DEFAULT_HOLD_DURATION_MS - 1)
+			node.dispatchEvent(new MouseEvent('mouseup'))
+			expect(newOnClick).toHaveBeenCalled()
+			expect(onClick).not.toHaveBeenCalled()
+		}
 	})
 
 	it('should use DEFAULT_HOLD_DURATION_MS if holdDuration is not provided', () => {

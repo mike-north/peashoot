@@ -3,12 +3,12 @@ import {
 	updateItemPositionInZone,
 	type Zone,
 	type ItemWithSize,
-} from '../src/lib/entities/zone.js'
-import type { PlantItem } from '../src/lib/item-types/plant-item.js'
-import { createPlantItem } from '../src/lib/item-types/plant-item.js'
-import type { GridPlacement } from '../src/private/grid/grid-placement.js'
-import { ExistingDraggableItem } from '../src/private/dnd/types.js'
-import type { GridArea } from '../src/private/grid/grid-area.js'
+} from '../../src/lib/entities/zone.js'
+import type { PlantItem } from '../../src/lib/item-types/plant-item.js'
+import { createPlantItem } from '../../src/lib/item-types/plant-item.js'
+import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
+import type { ExistingDraggableItem } from '../../src/private/dnd/types.js'
+import type { GridArea } from '../../src/private/grid/grid-area.js'
 
 const mockItem: PlantItem = createPlantItem({
 	id: 'plant_1',

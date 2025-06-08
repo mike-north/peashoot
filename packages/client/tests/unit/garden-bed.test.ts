@@ -1,12 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { updateItemPositionInZone, type Zone } from '../../src/lib/entities/zone.js'
 import type { PlantMetadata } from '../../src/lib/entities/plant-metadata.js'
-import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
-import type { ExistingDraggableItem } from '../../src/private/dnd/types.js'
+import type {
+	GridPlaceable,
+	GridPlacement,
+} from '../../src/private/grid/grid-placement.js'
 import type { GridArea } from '../../src/private/grid/grid-area.js'
 import { type Item } from '../../src/lib/entities/item.js'
+import { type WithId } from '../../src/lib/entities/with-id.js'
+import { type ItemInZone } from '../../src/private/dnd/types.js'
 
-const mockItem: Item<PlantMetadata> = {
+const mockItem: Item<PlantMetadata> & WithId & GridPlaceable = {
 	id: 'plant_1',
 	displayName: 'Tomato',
 	category: 'tomatoes',
@@ -23,11 +27,10 @@ const mockItem: Item<PlantMetadata> = {
 			blue: 0,
 		},
 		iconPath: 'tomato.png',
-		size: 1,
 	},
 }
 
-const mockPlacement: GridPlacement<Item> & ExistingDraggableItem<Item> = {
+const mockPlacement: GridPlacement<Item> & ItemInZone<Item> = {
 	item: mockItem,
 	x: 1,
 	y: 2,
@@ -36,7 +39,7 @@ const mockPlacement: GridPlacement<Item> & ExistingDraggableItem<Item> = {
 	sourceZoneId: 'zone_1',
 }
 
-const mockZone: Zone & GridArea<Item> = {
+const mockZone: Zone<Item> & WithId & GridArea<Item> = {
 	id: 'zone_1',
 	width: 4,
 	height: 4,
@@ -62,8 +65,7 @@ describe('updateItemPositionInZone', () => {
 	it('does not update if itemId does not match', () => {
 		const updated = updateItemPositionInZone(mockZone, 'nonexistent', 5, 6) as Zone &
 			GridArea<Item>
-		const [item1] = updated.placements as (GridPlacement<Item> &
-			ExistingDraggableItem<Item>)[]
+		const [item1] = updated.placements as (GridPlacement<Item> & ItemInZone<Item>)[]
 		expect(item1.x).toBe(1)
 		expect(item1.y).toBe(2)
 		// Should not mutate the original

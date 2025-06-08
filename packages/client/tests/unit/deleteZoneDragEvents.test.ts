@@ -1,37 +1,28 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { writable, get } from 'svelte/store'
 import type { ActionReturn } from 'svelte/action'
-import type {
-	DraggableItem,
-	ExistingDraggableItem,
-	IDragState,
-} from '../../src/private/dnd/types.js'
+import type { IDragState, ItemInZone } from '../../src/private/dnd/types.js'
 import { deleteZoneDragEvents } from '../../src/private/grid/actions/deleteZoneDragEvents.js'
+import { type WithId } from '../../src/lib/entities/with-id.js'
 
 // Mock the isDraggingExistingItem function
 const mockedIsDraggingExistingItem = vi.fn()
 
 // Define the type for options passed to the action
 interface DeleteZoneOptions {
-	dragStateStore: ReturnType<
-		typeof writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-	>
+	dragStateStore: ReturnType<typeof writable<IDragState<WithId, ItemInZone<WithId>>>>
 	setIsHovered: (hovered: boolean) => void
 }
 
 describe('deleteZoneDragEvents', () => {
 	let node: HTMLElement
-	let dragStateStore: ReturnType<
-		typeof writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-	>
+	let dragStateStore: ReturnType<typeof writable<IDragState<WithId, ItemInZone<WithId>>>>
 	let setIsHovered: ReturnType<typeof vi.fn>
 	let action: ActionReturn<DeleteZoneOptions> | undefined
 
 	beforeEach(() => {
 		node = document.createElement('div')
-		dragStateStore = writable<
-			IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
-		>({
+		dragStateStore = writable<IDragState<WithId, ItemInZone<WithId>>>({
 			draggedExistingItem: null,
 			draggedNewItem: null,
 			draggedItemEffectiveSize: 1,
@@ -72,7 +63,7 @@ describe('deleteZoneDragEvents', () => {
 	})
 
 	it('should update drag state when dragging an existing item', () => {
-		const item: ExistingDraggableItem<DraggableItem> = {
+		const item: ItemInZone<WithId> = {
 			id: 'test-id',
 			item: { id: 'item-id' },
 			sourceZoneId: 'source-zone',

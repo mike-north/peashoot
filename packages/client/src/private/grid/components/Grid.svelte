@@ -21,15 +21,11 @@ import type { GridArea } from '../grid-area'
 import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-state'
 import {
 	ZoneLayoutCalculator,
-	calculateEdgeBorders,
 	calculateIndicatorVisuals,
-	type Border,
-	type IndicatorVisual,
 } from '../zone-layout-calculator'
 import type { Indicator } from '../../../lib/entities/indicator'
-import { showIndicatorTooltip, hideTooltip } from '../../tooltips/state/tooltipStore'
+import { tooltip } from '../../../lib/tooltips/action'
 import IndicatorSemicircle from './IndicatorSemicircle.svelte'
-import type { IndicatorForTooltip } from '../../tooltips/types'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
@@ -54,18 +50,12 @@ function isPulsingSourceOperation(
 
 interface GardenBedViewProps {
 	grid: GridArea<GridPlaceable>
-	items: GridPlaceable[]
 	/** New flexible indicator system */
 	indicators?: Indicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const {
-	grid,
-	items,
-	indicators = [],
-	tileSizeForItem,
-}: GardenBedViewProps = $props()
+const { grid, indicators = [], tileSizeForItem }: GardenBedViewProps = $props()
 
 // plantPlacements is already GridPlacement<PlantWithSize>[]
 const gridPlacements = $derived(grid.placements)
@@ -113,143 +103,12 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 	const skipId = $genericDragState.draggedExistingItem?.id
 
 	// Use gridPlacements instead of bed.plantPlacements
-	return layout.isValidPlacement(items, x, y, size, gridPlacements, skipId)
+	return layout.isValidPlacement(x, y, size, gridPlacements, skipId)
 }
 
-let edgeBorders = $state<Border[]>([])
-let indicatorVisuals = $state<IndicatorVisual[]>([])
-
-$effect(() => {
-	// Convert gridPlacements to expected format for calculateEdgeBorders
-	const bedWithSizes = {
-		...grid,
-		plantPlacements: gridPlacements.map((placement) => ({
-			x: placement.x,
-			y: placement.y,
-			id: placement.id,
-			plantTile: {
-				size: placement.size,
-			},
-		})),
-	}
-	const newBorders = calculateEdgeBorders<GridPlaceable>(
-		bedWithSizes,
-		[],
-		layout,
-	)
-	if (
-		newBorders.length !== edgeBorders.length ||
-		newBorders.some((b, i) => JSON.stringify(b) !== JSON.stringify(edgeBorders[i]))
-	) {
-		edgeBorders = newBorders
-	}
-
-	// Calculate new indicator visuals
-	const newIndicatorVisuals = calculateIndicatorVisuals<GridPlaceable>(
-		indicators,
-		gridPlacements,
-		grid.id,
-		layout,
-	)
-	if (
-		newIndicatorVisuals.length !== indicatorVisuals.length ||
-		newIndicatorVisuals.some(
-			(iv, i) => JSON.stringify(iv) !== JSON.stringify(indicatorVisuals[i]),
-		)
-	) {
-		indicatorVisuals = newIndicatorVisuals
-	}
-})
-
-// Debug: log drag state to help diagnose hover issues
-$effect(() => {
-	console.log('Grid drag state:', {
-		draggedExistingItem: !!$genericDragState.draggedExistingItem,
-		draggedNewItem: !!$genericDragState.draggedNewItem,
-		isDragging: !!(
-			$genericDragState.draggedNewItem || $genericDragState.draggedExistingItem
-		),
-	})
-})
-
-// Helper function to find original indicator data from visual
-function findOriginalIndicator(indicatorVisual: IndicatorVisual): Indicator | undefined {
-	return indicators.find((indicator) => indicator.id === indicatorVisual.indicatorIds[0])
-}
-
-// Helper function to calculate tooltip position for indicators
-function calculateIndicatorTooltipPosition(
-	svgElement: SVGElement,
-	centerX: number,
-	centerY: number,
-) {
-	const svgRect = svgElement.getBoundingClientRect()
-	const indicatorScreenX = svgRect.left + centerX
-	const indicatorScreenY = svgRect.top + centerY
-
-	const viewportWidth = window.innerWidth
-	const viewportHeight = window.innerHeight
-	const TOOLTIP_WIDTH = 350
-	const TOOLTIP_HEIGHT = 300
-	const TOOLTIP_OFFSET = 24
-
-	// Simple positioning logic - try top first, then bottom
-	let orientation: 'top' | 'bottom' | 'left' | 'right' = 'top'
-	let x = indicatorScreenX - TOOLTIP_WIDTH / 2
-	let y = indicatorScreenY - TOOLTIP_HEIGHT - TOOLTIP_OFFSET
-
-	// If tooltip would go off top, show below
-	if (y < 8) {
-		orientation = 'bottom'
-		y = indicatorScreenY + TOOLTIP_OFFSET
-	}
-
-	// Constrain horizontally
-	x = Math.max(8, Math.min(x, viewportWidth - TOOLTIP_WIDTH - 8))
-	y = Math.max(8, Math.min(y, viewportHeight - TOOLTIP_HEIGHT - 8))
-
-	return {
-		position: { x, y, orientation },
-		tileCenterX: indicatorScreenX,
-		tileCenterY: indicatorScreenY,
-	}
-}
-
-// Handle indicator hover
-function handleIndicatorHover(event: MouseEvent, indicatorVisual: IndicatorVisual) {
-	const indicator = findOriginalIndicator(indicatorVisual)
-	if (!indicator) return
-
-	const svgElement = (event.currentTarget as Element).closest('svg')
-	if (!svgElement) return
-
-	const tooltipData = calculateIndicatorTooltipPosition(
-		svgElement,
-		indicatorVisual.centerX,
-		indicatorVisual.centerY,
-	)
-
-	const tooltipItem: IndicatorForTooltip = {
-		...indicator,
-		...indicatorVisual,
-	}
-
-	showIndicatorTooltip({
-		id: `indicator-tooltip-${indicator.id}`,
-		position: tooltipData.position,
-		indicator: tooltipItem,
-		tileCenterX: tooltipData.tileCenterX,
-		tileCenterY: tooltipData.tileCenterY,
-	})
-}
-
-// Handle indicator mouse leave
-function handleIndicatorLeave(indicatorVisual: IndicatorVisual) {
-	const indicator = findOriginalIndicator(indicatorVisual)
-	if (!indicator) return
-
-	hideTooltip(`indicator-tooltip-${indicator.id}`)
-}
+const indicatorVisuals = $derived(
+	calculateIndicatorVisuals<GridPlaceable>(indicators, gridPlacements, grid.id, layout),
+)
 
 interface TileStyleProps {
 	left: string
@@ -477,19 +336,6 @@ const draggedGridItemEffectiveSize = $derived(
 					class="raised-bed-diagram__grid-line"
 				/>
 			{/each}
-			<!-- Edge Indicator Lines -->
-			{#each edgeBorders as border (border.key)}
-				<line
-					x1={border.points[0].x}
-					y1={border.points[0].y}
-					x2={border.points[1].x}
-					y2={border.points[1].y}
-					stroke={border.color}
-					stroke-width={layout.frameThickness}
-					stroke-linecap="round"
-					opacity="0.95"
-				/>
-			{/each}
 
 			<!-- Coordinate Labels -->
 			<g id="raised-bed-diagram__coordinate-labels" opacity="0.6">
@@ -637,17 +483,7 @@ const draggedGridItemEffectiveSize = $derived(
 
 					<!-- Pending Operations -->
 					{#each $genericPendingOperations.filter( (op) => isGridPendingOperation(op, isGridPlaceable), ) as operation (operation.id)}
-						<!-- prettier-ignore -->
-						<!-- eslint-disable no-console -->
-						<!-- console.log(
-							`[Grid.svelte] Checking Op: ${operation.id}, Op.zoneId: ${operation.zoneId}, Op.state: ${operation.state}, Op.coords: (${operation.x},${operation.y}) -- For Grid ID: ${grid.id}`,
-						) -->
 						{#if operation.zoneId === grid.id && operation.x !== undefined && operation.y !== undefined}
-							<!-- prettier-ignore -->
-							<!-- eslint-disable no-console -->
-							<!-- console.log(
-								`[Grid.svelte] MATCH! Rendering PendingOp ${operation.id} in Grid ID: ${grid.id}. Op state: ${operation.state}`,
-							) -->
 							{@const itemOpSize = operation.item.presentation.size}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
@@ -714,13 +550,8 @@ const draggedGridItemEffectiveSize = $derived(
 		>
 			{#each indicatorVisuals as indicator (indicator.key)}
 				<g
+					use:tooltip={{ item: indicator }}
 					style="pointer-events: auto; cursor: pointer;"
-					onmouseenter={(e) => {
-						handleIndicatorHover(e, indicator)
-					}}
-					onmouseleave={() => {
-						handleIndicatorLeave(indicator)
-					}}
 				>
 					{#if indicator.semicircles}
 						{#each indicator.semicircles as semicircle, i (semicircle.direction + i.toString())}
@@ -760,11 +591,6 @@ const draggedGridItemEffectiveSize = $derived(
 								stroke-linecap="butt"
 							/>
 						{/each}
-					{/if}
-
-					<!-- Optional tooltip on hover -->
-					{#if indicator.tooltip}
-						<title>{indicator.tooltip}</title>
 					{/if}
 				</g>
 			{/each}

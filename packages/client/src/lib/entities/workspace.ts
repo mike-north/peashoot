@@ -3,25 +3,9 @@ import type { Item } from './item'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 import type { Indicator } from './indicator'
 
-/**
- * @deprecated Use Indicator instead. EdgeIndicator will be removed in a future version.
- * EdgeIndicator only supports interactions between two items, while Indicator supports
- * multiple items and more flexible visual representation.
- */
-export interface EdgeIndicator {
-	id: string
-	itemAId: string
-	itemBId: string
-	color: string
-}
-
 export interface Workspace<T extends ItemWithSize = ItemWithSize> {
 	readonly id: string
 	zones: Zone<T>[]
-	/**
-	 * @deprecated Use indicators instead. edgeIndicators will be removed in a future version.
-	 */
-	edgeIndicators: EdgeIndicator[]
 	/** New flexible indicator system that supports multiple items and sector-based visualization */
 	indicators: Indicator[]
 }

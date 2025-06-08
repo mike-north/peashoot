@@ -4,13 +4,10 @@ import type { GridPlaceable } from '../private/grid/grid-placement'
 import type { Zone } from '../lib/entities/zone'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import IdLabel from '../lib/components/IdLabel.svelte'
-import type { Item } from '../lib/entities/item'
 import type { Indicator } from '../lib/entities/indicator'
 
 interface ZoneGridProps {
 	zone: Zone
-	items: Item[]
-	/** New flexible indicator system */
 	indicators?: Indicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 	colSpan?: number
@@ -19,7 +16,6 @@ interface ZoneGridProps {
 
 const {
 	zone,
-	items,
 	indicators = [],
 	tileSizeForItem,
 	colSpan = 1,
@@ -62,12 +58,7 @@ const colSpanClass = $derived(
 </style>
 
 <div class="zone-container card bg-base-100 shadow-sm {colSpanClass} {rest.class || ''}">
-	<Grid
-		grid={zone}
-		items={items}
-		indicators={indicators}
-		tileSizeForItem={tileSizeForItem}
-	/>
+	<Grid grid={zone} indicators={indicators} tileSizeForItem={tileSizeForItem} />
 	<div class="card-body">
 		<div class="card-title flex justify-between items-center">
 			Work Zone ({zone.width}×{zone.height} units)

@@ -1,152 +1,115 @@
 <script lang="ts">
-	import type { IndicatorForTooltip } from '../private/tooltips/types'
-	import IdLabel from './components/IdLabel.svelte'
-	import type { EffectNature } from './entities/indicator'
+import type { IndicatorVisual } from '../private/grid/zone-layout-calculator'
+import type { EffectNature } from './entities/indicator'
 
-	const { indicator } = $props<{ indicator: IndicatorForTooltip }>()
+const { item: indicator }: { item?: Partial<IndicatorVisual> } = $props()
 
-	// Helper to get interaction type description
-	function getInteractionTypeDescription(type?: string): string {
-		switch (type) {
-			case 'companion':
-				return 'Companion Planting'
-			case 'space-sharing':
-				return 'Space Sharing'
-			case 'resource-competition':
-				return 'Resource Competition'
-			case 'beneficial':
-				return 'Beneficial Relationship'
-			case 'competitive':
-				return 'Competitive Relationship'
-			default:
-				return 'Plant Interaction'
-		}
+// Group effects by nature for better display
+const effectsByNature = $derived(() => {
+	const groups: Record<EffectNature, IndicatorVisual['effects']> = {
+		beneficial: [],
+		harmful: [],
+		neutral: [],
 	}
 
-	function getColorForEffect(nature: EffectNature): string {
-		switch (nature) {
-			case 'beneficial':
-				return 'green'
-			case 'harmful':
-				return 'red'
-			case 'neutral':
-				return 'blue'
-			default:
-				return 'grey'
-		}
+	for (const effect of indicator?.effects ?? []) {
+		groups[effect.nature].push(effect)
 	}
+
+	return groups
+})
+
+// Helper function to get nature icon and color
+function getNatureStyle(nature: EffectNature) {
+	switch (nature) {
+		case 'beneficial':
+			return {
+				icon: '✓',
+				color: 'text-green-600',
+				bg: 'bg-green-50',
+				border: 'border-green-200',
+			}
+		case 'harmful':
+			return {
+				icon: '✗',
+				color: 'text-red-600',
+				bg: 'bg-red-50',
+				border: 'border-red-200',
+			}
+		case 'neutral':
+			return {
+				icon: '○',
+				color: 'text-blue-600',
+				bg: 'bg-blue-50',
+				border: 'border-blue-200',
+			}
+		default:
+			return {
+				icon: '?',
+				color: 'text-gray-600',
+				bg: 'bg-gray-50',
+				border: 'border-gray-200',
+			}
+	}
+}
 </script>
 
-<style>
-	.indicator-tooltip-content {
-		width: 300px;
-		padding: 12px;
-		font-family: sans-serif;
-	}
+<style lang="scss">
+.indicator-tooltip-content {
+	width: 350px;
+	max-height: 400px;
+	overflow-y: auto;
+	font-family: sans-serif;
+}
 
-	.header {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-bottom: 12px;
-	}
+.effect-item {
+	transition: all 0.15s ease;
 
-	.title-area {
-		flex-grow: 1;
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	}
+}
 
-	.title {
-		font-size: 1.125rem;
-		font-weight: 600;
-		color: #374151;
-		margin: 0;
-	}
-
-	.description-area {
-		margin-bottom: 16px;
-		padding: 12px;
-		background-color: #eff6ff;
-		border-radius: 8px;
-	}
-
-	.description-text {
-		font-size: 0.875rem;
-		color: #1f2937;
-		line-height: 1.6;
-		margin: 0;
-	}
-
-	.details {
-		border-top: 1px solid #e5e7eb;
-		padding-top: 12px;
-	}
-
-	.involved-items-title {
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: #374151;
-		margin-bottom: 8px;
-	}
-
-	.effects {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	.effect {
-		display: flex;
-		align-items: flex-start;
-		gap: 8px;
-	}
-
-	.color-swatch {
-		width: 12px;
-		height: 12px;
-		border-radius: 4px;
-		border: 1px solid #d1d5db;
-		margin-top: 4px;
-		flex-shrink: 0;
-	}
-
-	.description {
-		font-size: 0.875rem;
-		color: #111827;
-	}
+.grid-position {
+	background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+	border: 1px solid #cbd5e1;
+}
 </style>
 
 <div class="indicator-tooltip-content">
-	<div class="header">
-		<div class="title-area">
-			<h3 class="title">
-				{getInteractionTypeDescription(indicator.interactionType)}
-			</h3>
-			<IdLabel id={indicator.id} />
+	<!-- Header -->
+	<div class="mb-4">
+		<div class="flex items-center gap-2 mb-2">
+			<h3 class="text-lg font-semibold text-gray-800">Plant Interactions</h3>
 		</div>
 	</div>
 
-	{#if indicator.tooltip}
-		<div class="description-area">
-			<p class="description-text">
-				{indicator.tooltip}
-			</p>
-		</div>
-	{/if}
-
-	<div class="details">
-		<h4 class="involved-items-title">Effects at this location</h4>
-		<div class="effects">
-			{#if indicator.effects}
-				{#each indicator.effects as effect, i (i)}
-					<div class="effect">
-						<div
-							class="color-swatch"
-							style="background-color: {getColorForEffect(effect.nature)};"
-						></div>
-						<div class="description">{effect.description}</div>
+	<!-- Effects by Nature -->
+	<div class="space-y-3">
+		{#each Object.entries(effectsByNature()) as [nature, effects] (nature)}
+			{#if effects.length > 0}
+				{@const style = getNatureStyle(nature as EffectNature)}
+				<div class="space-y-2">
+					<div class="flex items-center gap-2">
+						<span class="text-lg {style.color}">{style.icon}</span>
+						<h4 class="font-medium {style.color} capitalize">{nature} Effects</h4>
+						<span class="text-xs {style.color} opacity-70">({effects.length})</span>
 					</div>
-				{/each}
+
+					<div class="space-y-2">
+						{#each effects as effect (effect.sourceItemId + '-' + effect.targetItemId)}
+							<div class="effect-item {style.bg} {style.border} border rounded-lg p-3">
+								<div class="flex justify-between items-start mb-2">
+									<div class="text-sm font-medium text-gray-700">
+										{effect.description}
+									</div>
+								</div>
+							</div>
+						{/each}
+					</div>
+				</div>
 			{/if}
-		</div>
+		{/each}
 	</div>
 </div>

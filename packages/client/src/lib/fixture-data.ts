@@ -628,90 +628,67 @@ export const seedPackets: SeedPacket[] = [
 export const gardens: Workspace[] = [
 	{
 		id: 'grdn_0',
-		edgeIndicators: [
-			{
-				id: 'edge_indicator_0',
-				itemAId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
-				itemBId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
-				color: 'red',
-			},
-			{
-				id: 'edge_indicator_1',
-				itemAId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
-				itemBId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
-				color: 'red',
-			},
-		],
 		indicators: [
 			{
 				id: 'indicator_0',
 				zoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
-				itemAId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
-				itemBId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
-				effectAonB: {
-					nature: 'beneficial',
-					description: 'Tomatoes provide shade for lettuce.',
-				},
-				effectBonA: {
-					nature: 'beneficial',
-					description: 'Lettuce provides a living mulch, suppressing weeds.',
-				},
-				tooltip: 'Companion planting: Tomato and Lettuce work well together',
-				interactionType: 'companion',
+				effects: [
+					{
+						sourceItemId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b', // lettuce
+						targetItemId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb', // tomato
+						nature: 'beneficial',
+						description: 'Lettuce provides a living mulch, suppressing weeds.',
+					},
+					{
+						sourceItemId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb', // tomato
+						targetItemId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b', // lettuce
+						nature: 'beneficial',
+						description: 'Tomatoes provide shade for lettuce.',
+					},
+				],
 			},
 			{
 				id: 'indicator_1',
 				zoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
-				itemAId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
-				itemBId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
-				effectAonB: {
-					nature: 'neutral',
-					description: 'Arugula and Spinach have similar needs and do not interfere.',
-				},
-				effectBonA: {
-					nature: 'neutral',
-					description: 'Arugula and Spinach have similar needs and do not interfere.',
-				},
-				tooltip:
-					'Compatible leafy greens: Arugula and Spinach can share space efficiently',
-				interactionType: 'space-sharing',
+				effects: [
+					{
+						sourceItemId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
+						targetItemId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
+						nature: 'neutral',
+						description: 'Arugula and Spinach have similar needs and do not interfere.',
+					},
+					{
+						sourceItemId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
+						targetItemId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
+						nature: 'neutral',
+						description: 'Arugula and Spinach have similar needs and do not interfere.',
+					},
+				],
 			},
 			{
 				id: 'indicator_2',
 				zoneId: 'bed_complex_interaction',
-				itemAId: 'plant_placement_garlic',
-				itemBId: 'plant_placement_broccoli',
-				effectAonB: {
-					nature: 'beneficial',
-					description: 'Garlic deters pests that affect Broccoli.',
-				},
-				tooltip: 'Garlic deters pests that affect Broccoli',
-				interactionType: 'companion',
-			},
-			{
-				id: 'indicator_3',
-				zoneId: 'bed_complex_interaction',
-				itemAId: 'plant_placement_dahlia',
-				itemBId: 'plant_placement_broccoli',
-				effectAonB: {
-					nature: 'beneficial',
-					description: 'Dahlia deters pests that affect Broccoli.',
-				},
-				tooltip: 'Dahlia deters pests that affect Broccoli',
-				interactionType: 'companion',
-			},
-			{
-				id: 'indicator_4',
-				zoneId: 'bed_complex_interaction',
-				itemAId: 'plant_placement_garlic',
-				itemBId: 'plant_placement_peas',
-				effectAonB: {
-					nature: 'harmful',
-					description:
-						'Garlic releases chemicals that can kill needed soil bacteria for peas.',
-				},
-				tooltip: 'Garlic inhibits the growth of Peas',
-				interactionType: 'combative',
+				effects: [
+					{
+						sourceItemId: 'plant_placement_dahlia',
+						targetItemId: 'plant_placement_broccoli',
+						nature: 'beneficial',
+						description: 'Dahlia deters pests that affect Broccoli.',
+					},
+					{
+						sourceItemId: 'plant_placement_garlic',
+						targetItemId: 'plant_placement_peas',
+						nature: 'harmful',
+						description:
+							'Garlic releases chemicals that can kill needed soil bacteria for peas.',
+					},
+					{
+						sourceItemId: 'plant_placement_garlic',
+						targetItemId: 'plant_placement_broccoli',
+						nature: 'beneficial',
+						description: 'Garlic deters pests that affect Broccoli.',
+					},
+				],
 			},
 		],
 		zones: [

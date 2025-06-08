@@ -9,6 +9,6 @@ export const RGBColorSchema = z.object({
 
 export type IRGBColor = z.infer<typeof RGBColorSchema>
 
-export function rgbToCss(rgb: IRGBColor): string {
+export function rgbToCss(rgb: IRGBColor = { red: 0, green: 0, blue: 0 }): string {
 	return `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`
 }

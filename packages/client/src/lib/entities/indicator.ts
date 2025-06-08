@@ -20,8 +20,15 @@ export type EffectNature = 'beneficial' | 'harmful' | 'neutral'
  * Represents the effect of one item on another in an interaction.
  */
 export interface InteractionEffect {
+	/** ID of the source item in the interaction */
+	sourceItemId: string
+
+	/** ID of the target item in the interaction */
+	targetItemId: string
+
 	/** The nature of the effect. */
 	nature: EffectNature
+
 	/** A short, one-line description of the effect. */
 	description: string
 }
@@ -38,21 +45,16 @@ export interface Indicator {
 	/** The zone this indicator belongs to */
 	zoneId: string
 
-	/** ID of the first item in the interaction */
-	itemAId: string
+	effects: InteractionEffect[]
+}
 
-	/** ID of the second item in the interaction */
-	itemBId: string
-
-	/** The effect of item A on item B. If undefined, there is no visual effect. */
-	effectAonB?: InteractionEffect
-
-	/** The effect of item B on item A. If undefined, there is no visual effect. */
-	effectBonA?: InteractionEffect
-
-	/** Optional tooltip text that appears on hover */
-	tooltip?: string
-
-	/** Optional metadata about the interaction type */
-	interactionType?: string
+export function isIndicator(item: unknown): item is Indicator {
+	const result =
+		!!item &&
+		typeof item === 'object' &&
+		'id' in item &&
+		'zoneId' in item &&
+		'effects' in item
+	console.log('isIndicator', item, result)
+	return result
 }

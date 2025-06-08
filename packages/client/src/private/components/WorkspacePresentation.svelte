@@ -3,7 +3,7 @@ import { dragState } from '../../private/dnd/state'
 import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
-import type { EdgeIndicator, Workspace } from '../../lib/entities/workspace'
+import type { Workspace } from '../../lib/entities/workspace'
 import { calculateZoneViewColSpans } from '../grid/zone-layout-calculator'
 import type {
 	PlacementRequestDetails,
@@ -22,14 +22,12 @@ import {
 	plantsError,
 	plantsReady,
 } from '../../private/state/plantsStore'
-import ItemTooltipContent from '../../lib/ItemTooltipContent.svelte'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../dnd/types'
 import ZoneGrid from '../../components/ZoneGrid.svelte'
 
 interface WorkspaceProps {
 	workspace: Workspace
-	edgeIndicators: EdgeIndicator[]
 	onRequestPlacement: (
 		details: PlacementRequestDetails<DraggableItem>,
 		pendingOpId?: string,
@@ -48,7 +46,6 @@ interface WorkspaceProps {
 
 let {
 	workspace,
-	edgeIndicators,
 	onRequestPlacement,
 	onRequestRemoval,
 	onRequestCloning,
@@ -281,11 +278,7 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 			<div class="text-md font-bold">Loading items...</div>
 		</div>
 	{:else if $plantsReady}
-		<GridViewToolbar
-			TooltipComponent={ItemTooltipContent}
-			items={$plants}
-			categoryNameForItem={categoryNameForItem}
-		/>
+		<GridViewToolbar items={$plants} categoryNameForItem={categoryNameForItem} />
 
 		<div
 			class="workspace"
@@ -305,17 +298,8 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 			>
 				{#each zones as zone (zone.id)}
 					<ZoneGrid
-						TooltipComponent={ItemTooltipContent}
 						zone={zone}
 						items={$plants}
-						edgeIndicators={edgeIndicators.filter(
-							(edge) =>
-								zones
-									.find((z) => z.id === zone.id)
-									?.placements.some(
-										(p) => p.id === edge.itemAId || p.id === edge.itemBId,
-									) ?? false,
-						)}
 						indicators={workspace.indicators.filter(
 							(indicator) => indicator.zoneId === zone.id,
 						)}

@@ -1,11 +1,15 @@
 import { describe, it, expect } from 'vitest'
-import { ZoneLayoutCalculator } from '../src/private/grid/zone-layout-calculator.js'
+import {
+	ZoneLayoutCalculator,
+	calculateIndicatorVisuals,
+} from '../src/private/grid/zone-layout-calculator.js'
 import type {
 	GridPlaceable,
 	GridPlacement,
 	GridItemPresentation,
 } from '../src/private/grid/grid-placement.js'
 import { DEFAULT_LAYOUT_PARAMS } from '../src/private/grid/grid-layout-constants.js'
+import type { Indicator } from '../src/lib/entities/indicator.js'
 
 interface TestItem extends GridPlaceable {
 	id: string
@@ -14,6 +18,26 @@ interface TestItem extends GridPlaceable {
 }
 
 describe('ZoneLayoutCalculator', () => {
+	const items: TestItem[] = [
+		{
+			id: '1',
+			displayName: 'Item 1',
+			presentation: {
+				iconPath: '/icons/item1.svg',
+				accentColor: { red: 255, green: 0, blue: 0 },
+				size: 1,
+			},
+		},
+		{
+			id: '2',
+			displayName: 'Item 2',
+			presentation: {
+				iconPath: '/icons/item2.svg',
+				accentColor: { red: 0, green: 255, blue: 0 },
+				size: 2,
+			},
+		},
+	]
 	const calculator = new ZoneLayoutCalculator<TestItem>({
 		width: 10,
 		height: 10,
@@ -57,27 +81,6 @@ describe('ZoneLayoutCalculator', () => {
 	})
 
 	describe('placement validation', () => {
-		const items: TestItem[] = [
-			{
-				id: '1',
-				displayName: 'Item 1',
-				presentation: {
-					iconPath: '/icons/item1.svg',
-					accentColor: { red: 255, green: 0, blue: 0 },
-					size: 1,
-				},
-			},
-			{
-				id: '2',
-				displayName: 'Item 2',
-				presentation: {
-					iconPath: '/icons/item2.svg',
-					accentColor: { red: 0, green: 255, blue: 0 },
-					size: 2,
-				},
-			},
-		]
-
 		const placements: GridPlacement<TestItem>[] = [
 			{
 				id: 'placement1',
@@ -99,20 +102,18 @@ describe('ZoneLayoutCalculator', () => {
 
 		it('validates placements correctly', () => {
 			// Valid placement
-			expect(calculator.isValidPlacement(items, 4, 4, 1, placements)).toBe(true)
+			expect(calculator.isValidPlacement(4, 4, 1, placements)).toBe(true)
 
 			// Invalid placement - overlaps with existing item
-			expect(calculator.isValidPlacement(items, 0, 0, 1, placements)).toBe(false)
+			expect(calculator.isValidPlacement(0, 0, 1, placements)).toBe(false)
 
 			// Invalid placement - out of bounds
-			expect(calculator.isValidPlacement(items, 9, 9, 2, placements)).toBe(false)
+			expect(calculator.isValidPlacement(9, 9, 2, placements)).toBe(false)
 		})
 
 		it('handles skipId correctly in validation', () => {
 			// Should allow placement at (0,0) when skipping item with id 'placement1'
-			expect(calculator.isValidPlacement(items, 0, 0, 1, placements, 'placement1')).toBe(
-				true,
-			)
+			expect(calculator.isValidPlacement(0, 0, 1, placements, 'placement1')).toBe(true)
 		})
 	})
 
@@ -135,6 +136,56 @@ describe('ZoneLayoutCalculator', () => {
 			})
 			// Note: Implementation currently returns [], so we expect 0 length
 			expect(corners).toHaveLength(0)
+		})
+	})
+
+	describe('indicator visuals calculation', () => {
+		const placements: GridPlacement<TestItem>[] = [
+			{
+				id: 'pA',
+				item: items[0],
+				x: 0,
+				y: 0,
+				size: 1,
+				sourceZoneId: 'zone1',
+			},
+			{
+				id: 'pB',
+				item: items[1],
+				x: 1,
+				y: 0,
+				size: 1,
+				sourceZoneId: 'zone1',
+			},
+		]
+
+		const indicators: Indicator[] = [
+			{
+				id: 'ind1',
+				zoneId: 'zone1',
+				effects: [
+					{
+						sourceItemId: 'pA',
+						targetItemId: 'pB',
+						nature: 'beneficial',
+						description: 'Helps growth',
+					},
+				],
+			},
+		]
+
+		it('calculates indicator visuals correctly for edge adjacency', () => {
+			const visuals = calculateIndicatorVisuals(
+				indicators,
+				placements,
+				'zone1',
+				calculator,
+			)
+			expect(visuals).toHaveLength(1)
+			const visual = visuals[0]
+			expect(visual.semicircles).toHaveLength(1)
+			expect(visual.semicircles?.[0].direction).toBe('left')
+			expect(visual.semicircles?.[0].color).toBe('green')
 		})
 	})
 })

@@ -447,7 +447,6 @@ function categoryNameForItem(item: DraggableItem): string {
 {#if workspace}
 	<WorkspacePresentation
 		workspace={workspace}
-		edgeIndicators={workspace.edgeIndicators}
 		onRequestPlacement={handleRequestPlacement}
 		onRequestRemoval={handleRequestRemoval}
 		onRequestCloning={handleRequestCloning}

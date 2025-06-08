@@ -1,5 +1,4 @@
 <script lang="ts">
-
 export interface Props {
 	centerX: number
 	centerY: number
@@ -21,21 +20,21 @@ function getPathData(
 	const rad = Math.PI / 180
 	const largeArc = quadrant ? 0 : 1
 
-	const angles = {
+	const semiCircleAngles = {
 		top: { start: 180, end: 360, sweep: 1 },
 		bottom: { start: 0, end: 180, sweep: 1 },
 		left: { start: 90, end: 270, sweep: 1 },
 		right: { start: -90, end: 90, sweep: 1 },
 	}
 
-	if (quadrant) {
-		Object.assign(angles, {
-			top: { start: 270, end: 360, sweep: 1 },
-			right: { start: 0, end: 90, sweep: 1 },
-			bottom: { start: 90, end: 180, sweep: 1 },
-			left: { start: 180, end: 270, sweep: 1 },
-		})
+	const quadrantAngles = {
+		top: { start: 270, end: 360, sweep: 1 }, // Top-Right Quadrant
+		right: { start: 0, end: 90, sweep: 1 }, // Bottom-Right Quadrant
+		bottom: { start: 90, end: 180, sweep: 1 }, // Bottom-Left Quadrant
+		left: { start: 180, end: 270, sweep: 1 }, // Top-Left Quadrant
 	}
+
+	const angles = quadrant ? quadrantAngles : semiCircleAngles
 
 	const { start, end, sweep } = angles[dir]
 

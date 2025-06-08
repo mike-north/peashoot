@@ -9,6 +9,7 @@ export interface Item<M extends object = object> extends GridPlaceable {
 	readonly displayName: string
 	readonly category: string
 	readonly variant: string
+	/** An integer size that represents the width and height of the item in grid cells */
 	readonly size: number
 	readonly presentation: GridItemPresentation
 	// Additional properties can be stored in metadata

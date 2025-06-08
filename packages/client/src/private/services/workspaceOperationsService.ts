@@ -70,7 +70,7 @@ export class WorkspaceOperationsService {
 		const itemForPlacement: Item<PlantMetadata> = {
 			...item,
 		}
-		const newItemId = `${itemForPlacement.metadata.family}_${Date.now()}`
+		const newItemId = `${itemForPlacement.category}_${Date.now()}`
 		const itemWithSize = {
 			...itemForPlacement,
 			size: Math.max(1, Math.ceil(itemForPlacement.metadata.plantingDistanceInFeet)),

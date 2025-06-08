@@ -45,8 +45,7 @@ export class PlantRepository
 			'metadata' in item &&
 			typeof item.metadata === 'object' &&
 			item.metadata !== null &&
-			'plantingDistanceInFeet' in item.metadata &&
-			'family' in item.metadata
+			'plantingDistanceInFeet' in item.metadata
 		)
 	}
 

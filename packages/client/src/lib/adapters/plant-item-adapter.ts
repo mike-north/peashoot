@@ -22,7 +22,6 @@ export function convertPlantItem(iPlant: PlantResource): Item<PlantMetadata> {
 		},
 		metadata: {
 			plantingDistanceInFeet,
-			family: iPlant.family,
 		},
 	}
 }

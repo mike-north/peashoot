@@ -30,7 +30,6 @@ export function createPlantItem(plantData: BasicPlantData): Item<PlantMetadata> 
 		},
 		metadata: {
 			plantingDistanceInFeet,
-			family: plantData.family,
 		},
 	}
 }

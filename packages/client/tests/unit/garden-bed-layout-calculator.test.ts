@@ -77,9 +77,9 @@ describe('ZoneLayoutCalculator', () => {
 
 	it('validates placement in bounds and no overlap', () => {
 		const placementWithSize = { ...itemPlacement, size: 1, id: 'placement1' }
-		const valid = layout.isValidPlacement([mockItem], 0, 0, 1, [placementWithSize])
+		const valid = layout.isValidPlacement(0, 0, 1, [placementWithSize])
 		expect(valid).toBe(true)
-		const invalid = layout.isValidPlacement([mockItem], 1, 2, 1, [placementWithSize])
+		const invalid = layout.isValidPlacement(1, 2, 1, [placementWithSize])
 		expect(invalid).toBe(false)
 	})
 })

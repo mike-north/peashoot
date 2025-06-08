@@ -10,7 +10,7 @@ import {
 } from '../../private/state/workspaceDragState'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 import type { ItemAdapter } from '../../lib/adapters/item-adapter'
-import type { PlantItem } from '../../lib/item-types/plant-item'
+import { isPlantItem, type PlantItem } from '../../lib/item-types/plant-item'
 import {
 	updatePendingOperation,
 	removePendingOperation,
@@ -27,6 +27,7 @@ import type {
 	WorkspaceController,
 } from '../../lib/controllers/WorkspaceController'
 import type { ItemWithSize } from '../../lib/entities/zone'
+import type { Item } from '../../lib/entities/item'
 
 interface WorkspaceDiagramProps<TItem extends GridPlaceable & ItemWithSize> {
 	handleAddNewItem: (zoneId: string, item: TItem, x: number, y: number) => Promise<void>
@@ -58,7 +59,7 @@ const {
 	handleDeleteItem,
 	itemAdapter,
 	controller,
-}: WorkspaceDiagramProps<PlantItem> = $props()
+}: WorkspaceDiagramProps<Item> = $props()
 
 function handleAsyncValidationStart() {
 	showInfo('Validating...', { autoRemove: false })
@@ -178,7 +179,12 @@ async function handleRequestPlacement(
 	// First ensure the item data is valid before any operations
 	let validatedItem: PlantItem
 	try {
-		validatedItem = itemAdapter.validateAndCastItem(details.itemData)
+		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
+		if (isPlantItem(rawValidatedItem)) {
+			validatedItem = rawValidatedItem
+		} else {
+			throw new Error('Item is not a plant item')
+		}
 	} catch (error) {
 		console.error('Invalid item data in placement request', {
 			error,
@@ -363,7 +369,12 @@ async function handleRequestRemoval(
 	// First ensure the item data is valid before any operations
 	let validatedItem: PlantItem
 	try {
-		validatedItem = itemAdapter.validateAndCastItem(details.itemData)
+		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
+		if (isPlantItem(rawValidatedItem)) {
+			validatedItem = rawValidatedItem
+		} else {
+			throw new Error('Item is not a plant item')
+		}
 	} catch (error) {
 		console.error('Invalid item data in removal request', {
 			error,
@@ -464,7 +475,12 @@ async function handleRequestCloning(
 	// First ensure the item data is valid before any operations
 	let validatedItem: PlantItem
 	try {
-		validatedItem = itemAdapter.validateAndCastItem(details.itemDataToClone)
+		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemDataToClone)
+		if (isPlantItem(rawValidatedItem)) {
+			validatedItem = rawValidatedItem
+		} else {
+			throw new Error('Item is not a plant item')
+		}
 	} catch (error) {
 		console.error('Invalid item data in cloning request', {
 			error,

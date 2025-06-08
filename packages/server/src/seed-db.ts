@@ -19,6 +19,10 @@ import { stringToDistanceUnit } from './values/distance'
 import { Garden } from './entities/garden'
 import { PlantPlacement } from './entities/plant-placement'
 import { GardenBed } from './entities/garden-bed'
+import { Location } from './entities/location'
+import { LocationMonthlyTemperature } from './entities/location-monthly-temperature'
+import { TemperatureDataSchema } from './data/temperature-data.schema'
+import { JSONValue } from './types/json'
 
 const ajv = new Ajv()
 
@@ -29,6 +33,8 @@ const SEED_DATA_SCHEMA_FILE_PATH = join(
 	'data',
 	'seed-packet.schema.json',
 )
+
+const TEMPERATURE_DATA_FILE_PATH = join(__dirname, '..', 'data', 'temperature-ranges.yml')
 
 export function readSeedDataFile(logger: Logger): RawSeedPacketInfo[] {
 	if (!fs.existsSync(SEED_DATA_FILE_PATH)) {
@@ -96,6 +102,7 @@ export async function loadSeedsIntoDb(logger: Logger) {
 		logger.info('Seed packet saved', { pkt: packet.name, id: packet.id })
 	}
 }
+
 export async function generatePlants(logger: Logger) {
 	const plantRepo = AppDataSource.getRepository(Plant)
 	const packetRepo = AppDataSource.getRepository(SeedPacket)
@@ -184,9 +191,52 @@ async function createGarden(logger: Logger) {
 	logger.info('Plant placement saved', { placement: placement2.id })
 }
 
+async function loadTemperatureData(logger: Logger) {
+	const locationRepo = AppDataSource.getRepository(Location)
+	const tempRepo = AppDataSource.getRepository(LocationMonthlyTemperature)
+
+	if (!fs.existsSync(TEMPERATURE_DATA_FILE_PATH)) {
+		logger.error(`Temperature data file not found at ${TEMPERATURE_DATA_FILE_PATH}`)
+		return
+	}
+
+	const dataString = fs.readFileSync(TEMPERATURE_DATA_FILE_PATH, 'utf8')
+	const parsedData = parse(dataString) as JSONValue
+
+	try {
+		const data = TemperatureDataSchema.parse(parsedData)
+
+		for (const locData of data.locations) {
+			const location = locationRepo.create({
+				name: locData.name,
+				region: locData.region,
+				country: locData.country,
+			})
+			await locationRepo.save(location)
+
+			for (const tempData of locData.monthlyTemperatures) {
+				const temp = tempRepo.create({
+					month: tempData.month,
+					temperatureRange: {
+						min: tempData.temperatureRange.min,
+						max: tempData.temperatureRange.max,
+					},
+					location,
+				})
+				await tempRepo.save(temp)
+			}
+			logger.info('Location temperature data saved', { location: location.name })
+		}
+	} catch (error) {
+		logger.error('Failed to validate temperature data', { error })
+		throw new Error('Invalid temperature data format', { cause: error })
+	}
+}
+
 export async function initializeNewDbWithData(logger: Logger) {
 	await AppDataSource.initialize()
 	await loadSeedsIntoDb(logger)
 	await generatePlants(logger)
 	await createGarden(logger)
+	await loadTemperatureData(logger)
 }

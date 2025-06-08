@@ -1,21 +1,14 @@
 <script lang="ts">
 import WorkspacePresentation from './WorkspacePresentation.svelte'
-import type { Zone } from '../../lib/entities/zone'
 import type { Workspace } from '../../lib/entities/workspace'
 import { findZone, findItemPlacement } from '../../lib/entities/workspace'
 import {
 	type ExistingWorkspaceItem,
-	type WorkspaceValidationContext,
-	type WorkspaceAsyncValidationFunction,
 	type PlacementRequestDetails,
 	type RemovalRequestDetails,
 	type CloningRequestDetails,
-	type WorkspaceZoneContext,
 } from '../../private/state/workspaceDragState'
-import { WorkspaceValidationService } from '../services/workspaceValidationService'
-import { plants, plantsReady } from '../../private/state/plantsStore'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
-import type { ItemWithSize } from '../../lib/entities/zone'
 import type { ItemAdapter } from '../../lib/adapters/item-adapter'
 import type { PlantItem } from '../../lib/item-types/plant-item'
 import {
@@ -29,26 +22,32 @@ import {
 	showError,
 	showInfo,
 } from '../state/notificationsStore'
+import type {
+	ValidationResult,
+	WorkspaceController,
+} from '../../lib/controllers/WorkspaceController'
+import type { ItemWithSize } from '../../lib/entities/zone'
 
-interface WorkspaceDiagramProps<TItem extends GridPlaceable> {
-	handleAddNewItem: (zoneId: string, item: TItem, x: number, y: number) => void
+interface WorkspaceDiagramProps<TItem extends GridPlaceable & ItemWithSize> {
+	handleAddNewItem: (zoneId: string, item: TItem, x: number, y: number) => Promise<void>
 	handleMoveItemInZone: (
 		zoneId: string,
 		itemId: string,
 		newX: number,
 		newY: number,
-	) => void
-	handleDeleteItem: (zoneId: string, itemId: string) => void
+	) => Promise<void>
+	handleDeleteItem: (zoneId: string, itemId: string) => Promise<void>
 	moveItemBetweenZones: (
 		workspace: Workspace,
 		sourceZoneId: string,
 		targetZoneId: string,
-		placement: GridPlacement<PlantItem>,
+		placement: GridPlacement<TItem>,
 		newX: number,
 		newY: number,
-	) => void
+	) => Promise<void>
 	workspace: Workspace
 	itemAdapter: ItemAdapter<TItem>
+	controller: WorkspaceController<TItem>
 }
 
 const {
@@ -58,23 +57,8 @@ const {
 	handleMoveItemInZone,
 	handleDeleteItem,
 	itemAdapter,
+	controller,
 }: WorkspaceDiagramProps<PlantItem> = $props()
-
-// Create validation service instance
-let validationService: WorkspaceValidationService | undefined = $state<
-	WorkspaceValidationService | undefined
->(undefined)
-let customAsyncValidation: WorkspaceAsyncValidationFunction<ItemWithSize> | undefined =
-	$state<WorkspaceAsyncValidationFunction<ItemWithSize> | undefined>(undefined)
-
-// Watch for plants to be ready and initialize validation service
-$effect(() => {
-	if ($plantsReady && $plants.length > 0 && !validationService) {
-		console.log('Initializing validation service with', $plants.length, 'items')
-		validationService = new WorkspaceValidationService($plants)
-		customAsyncValidation = validationService.createAsyncValidator()
-	}
-})
 
 function handleAsyncValidationStart() {
 	showInfo('Validating...', { autoRemove: false })
@@ -91,13 +75,44 @@ function handleAsyncValidationError(errorMessage: string) {
 	showError(errorMessage)
 }
 
-function handleMoveItemToDifferentZone(
+async function handleMoveItemToDifferentZone(
 	sourceZoneId: string,
 	targetZoneId: string,
 	existingItem: ExistingWorkspaceItem<PlantItem>,
 	newX: number,
 	newY: number,
 ) {
+	// Get the zone objects from IDs
+	const sourceZone = workspace.zones.find((z) => z.id === sourceZoneId)
+	const targetZone = workspace.zones.find((z) => z.id === targetZoneId)
+
+	if (!sourceZone || !targetZone) {
+		handleAsyncValidationError('Source or target zone not found')
+		return
+	}
+
+	// Check if dragging across zones is enabled
+	if (!controller.isFeatureEnabled('canDragItemsAcrossZones')) {
+		handleAsyncValidationError('Moving items between zones is currently disabled')
+		return
+	}
+
+	// Validate the move with controller
+	const validationResult = await controller.validateItemMove(
+		workspace,
+		existingItem.item,
+		sourceZone,
+		targetZone,
+		newX,
+		newY,
+		existingItem.id,
+	)
+
+	if (!validationResult.isValid) {
+		handleAsyncValidationError(validationResult.reason || 'Unknown validation error')
+		return
+	}
+
 	// Inline conversion from ExistingWorkspaceItem<ItemWithSize> to GridPlacement<ItemWithSize>
 	const gridPlacementArg: GridPlacement<PlantItem> = {
 		id: existingItem.id,
@@ -107,7 +122,7 @@ function handleMoveItemToDifferentZone(
 		item: existingItem.item,
 		sourceZoneId: existingItem.sourceZoneId,
 	}
-	moveItemBetweenZones(
+	await moveItemBetweenZones(
 		workspace,
 		sourceZoneId,
 		targetZoneId,
@@ -117,87 +132,154 @@ function handleMoveItemToDifferentZone(
 	)
 }
 
-function performDeleteItem(itemId: string, zoneId: string) {
-	// Delegate to parent component's callback instead of mutating the workspace prop
-	handleDeleteItem(zoneId, itemId)
-	console.log(`[Workspace] Requested deletion of item ${itemId} from zone ${zoneId}`)
-}
+async function performDeleteItem(itemId: string, zoneId: string): Promise<void> {
+	// Get the zone object from ID
+	const zone = workspace.zones.find((z) => z.id === zoneId)
+	if (!zone) {
+		handleAsyncValidationError('Zone not found')
+		return
+	}
 
-function buildWorkspaceZoneContext(
-	zone: Zone | undefined,
-): WorkspaceZoneContext<ItemWithSize> | undefined {
-	if (!zone) return undefined
-	return {
-		...zone,
-		placements: zone.placements.map((placement) => {
-			// placement is already GridPlacement<ItemWithSize>
-			return placement
-		}),
-	} as WorkspaceZoneContext<ItemWithSize>
+	// Get the item from the zone
+	const item = zone.placements.find((p) => p.id === itemId)?.item
+	if (!item) {
+		handleAsyncValidationError('Item not found')
+		return
+	}
+
+	// Check if item removal is enabled
+	if (!controller.isFeatureEnabled('canRemoveItems')) {
+		handleAsyncValidationError('Removing items is currently disabled')
+		return
+	}
+
+	// Validate removal with the controller
+	const validationResult = await controller.validateItemRemoval(
+		workspace,
+		item,
+		zone,
+		itemId,
+	)
+
+	if (!validationResult.isValid) {
+		handleAsyncValidationError(validationResult.reason || 'Unknown validation error')
+		return
+	}
+
+	// Delegate to parent component's callback instead of mutating the workspace prop
+	await handleDeleteItem(zoneId, itemId)
+	console.log(`[Workspace] Requested deletion of item ${itemId} from zone ${zoneId}`)
 }
 
 async function handleRequestPlacement(
 	details: PlacementRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!itemAdapter.isValidItem(details.itemData))
-		throw new Error('Item is not valid for this adapter')
+	// First ensure the item data is valid before any operations
+	let validatedItem: PlantItem
+	try {
+		validatedItem = itemAdapter.validateAndCastItem(details.itemData)
+	} catch (error) {
+		console.error('Invalid item data in placement request', {
+			error,
+			itemData: details.itemData,
+			operationType: details.operationType,
+		})
+		handleAsyncValidationError(
+			'Item validation failed: ' +
+				(error instanceof Error ? error.message : String(error)),
+		)
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
+	}
 
 	handleAsyncValidationStart()
 
+	// Find the zones
 	const targetZone = findZone(workspace, details.targetZoneId)
 	const sourceZone = details.sourceZoneId
 		? findZone(workspace, details.sourceZoneId)
 		: undefined
 
-	const baseValidationContext: Partial<WorkspaceValidationContext<PlantItem>> = {
-		item: details.itemData,
-		targetZoneId: details.targetZoneId,
-		targetX: details.x,
-		targetY: details.y,
-		operationType: details.operationType,
-		applicationContext: { workspace: workspace },
+	if (!targetZone) {
+		handleAsyncValidationError('Target zone not found')
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
 	}
-
-	const targetCtx = buildWorkspaceZoneContext(targetZone)
-	if (targetCtx)
-		baseValidationContext.targetZoneContext = targetCtx as WorkspaceZoneContext<PlantItem>
-	if (details.originalInstanceId)
-		baseValidationContext.itemInstanceId = details.originalInstanceId
-	if (details.sourceZoneId) baseValidationContext.sourceZoneId = details.sourceZoneId
-	const sourceCtx = buildWorkspaceZoneContext(sourceZone)
-	if (sourceCtx)
-		baseValidationContext.sourceZoneContext = sourceCtx as WorkspaceZoneContext<PlantItem>
-
-	if (details.originalInstanceId && sourceZone) {
-		const originalItemPlacement = findItemPlacement(
-			sourceZone,
-			details.originalInstanceId,
-		)
-		if (originalItemPlacement) {
-			baseValidationContext.sourceX = originalItemPlacement.x
-			baseValidationContext.sourceY = originalItemPlacement.y
-		}
-	}
-
-	const validationContext = baseValidationContext as WorkspaceValidationContext<PlantItem>
 
 	try {
-		if (!customAsyncValidation) {
-			throw new Error('Validation service not ready - items still loading')
+		// First check feature enablement based on operation type
+		if (
+			details.operationType === 'item-move-within-zone' &&
+			!controller.isFeatureEnabled('canDragItemsWithinZone')
+		) {
+			throw new Error('Moving items within zones is currently disabled')
+		} else if (
+			details.operationType === 'item-move-across-zones' &&
+			!controller.isFeatureEnabled('canDragItemsAcrossZones')
+		) {
+			throw new Error('Moving items between zones is currently disabled')
+		} else if (
+			details.operationType === 'item-add-to-zone' &&
+			!controller.isFeatureEnabled('canAddItems')
+		) {
+			throw new Error('Adding new items is currently disabled')
 		}
-		const result = await customAsyncValidation(validationContext)
-		if (result.isValid) {
-			const item = details.itemData
-			if (!itemAdapter.isValidItem(item))
-				throw new Error('Item is not valid for this adapter')
+
+		// Validate with controller - use the validated item, not the original
+		let validationResult: ValidationResult
+
+		if (details.operationType === 'item-move-within-zone' && details.originalInstanceId) {
+			validationResult = await controller.validateItemPlacement(
+				workspace,
+				validatedItem,
+				targetZone,
+				details.x,
+				details.y,
+				details.originalInstanceId,
+			)
+		} else if (
+			details.operationType === 'item-move-across-zones' &&
+			details.originalInstanceId &&
+			details.sourceZoneId &&
+			sourceZone
+		) {
+			validationResult = await controller.validateItemMove(
+				workspace,
+				validatedItem,
+				sourceZone,
+				targetZone,
+				details.x,
+				details.y,
+				details.originalInstanceId,
+			)
+		} else if (details.operationType === 'item-add-to-zone') {
+			validationResult = await controller.validateItemPlacement(
+				workspace,
+				validatedItem,
+				targetZone,
+				details.x,
+				details.y,
+			)
+		} else {
+			throw new Error(`Unsupported operation type: ${details.operationType}`)
+		}
+
+		if (validationResult.isValid) {
 			handleAsyncValidationSuccess()
-			// Validation passed - perform the actual operation
+
+			// Validation passed - perform the actual operation with the validated item
 			if (
 				details.operationType === 'item-move-within-zone' &&
 				details.originalInstanceId
 			) {
-				handleMoveItemInZone(
+				await handleMoveItemInZone(
 					details.targetZoneId,
 					details.originalInstanceId,
 					details.x,
@@ -206,19 +288,27 @@ async function handleRequestPlacement(
 			} else if (
 				details.operationType === 'item-move-across-zones' &&
 				details.originalInstanceId &&
-				details.sourceZoneId &&
-				baseValidationContext.sourceX !== undefined &&
-				baseValidationContext.sourceY !== undefined
+				details.sourceZoneId
 			) {
+				// Find original item coordinates
+				const originalItem = sourceZone?.placements.find(
+					(p) => p.id === details.originalInstanceId,
+				)
+
+				if (!originalItem) {
+					throw new Error('Original item not found')
+				}
+
 				const existingItem: ExistingWorkspaceItem<PlantItem> = {
 					id: details.originalInstanceId,
-					x: baseValidationContext.sourceX,
-					y: baseValidationContext.sourceY,
-					item: details.itemData,
-					size: itemAdapter.getItemSize(details.itemData),
+					x: originalItem.x,
+					y: originalItem.y,
+					item: validatedItem, // Use the validated item here!
+					size: itemAdapter.getItemSize(validatedItem),
 					sourceZoneId: details.sourceZoneId,
 				}
-				handleMoveItemToDifferentZone(
+
+				await handleMoveItemToDifferentZone(
 					details.sourceZoneId,
 					details.targetZoneId,
 					existingItem,
@@ -226,8 +316,9 @@ async function handleRequestPlacement(
 					details.y,
 				)
 			} else if (details.operationType === 'item-add-to-zone') {
-				handleAddNewItem(details.targetZoneId, item, details.x, details.y)
+				await handleAddNewItem(details.targetZoneId, validatedItem, details.x, details.y)
 			}
+
 			// Update pending operation to success
 			if (pendingOpId) {
 				updatePendingOperation(pendingOpId, 'success')
@@ -237,7 +328,7 @@ async function handleRequestPlacement(
 			}
 		} else {
 			// Validation failed - show error but don't perform operation
-			handleAsyncValidationError(result.error || 'Unknown validation error')
+			handleAsyncValidationError(validationResult.reason || 'Unknown validation error')
 			// Update pending operation to error
 			if (pendingOpId) {
 				updatePendingOperation(pendingOpId, 'error')
@@ -247,14 +338,14 @@ async function handleRequestPlacement(
 			}
 		}
 	} catch (error) {
-		// Validation system failure (like HTTP 4xx/5xx) - unexpected infrastructure/system error
+		// Validation system failure or feature disabled
 		const errorMessage = error instanceof Error ? error.message : String(error)
 		console.error(
-			'[WorkspacePage] Validation system failure during placement request:',
+			'[WorkspacePage] Validation error during placement request:',
 			errorMessage,
 			error,
 		)
-		handleAsyncValidationError(`Validation system error: ${errorMessage}`)
+		handleAsyncValidationError(errorMessage)
 		// Update pending operation to error
 		if (pendingOpId) {
 			updatePendingOperation(pendingOpId, 'error')
@@ -262,7 +353,6 @@ async function handleRequestPlacement(
 				removePendingOperation(pendingOpId)
 			}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
 		}
-		throw error // Re-throw system errors so calling code knows validation system failed
 	}
 }
 
@@ -270,44 +360,66 @@ async function handleRequestRemoval(
 	details: RemovalRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!itemAdapter.isValidItem(details.itemData)) {
-		throw new Error('Item is not valid for this adapter')
+	// First ensure the item data is valid before any operations
+	let validatedItem: PlantItem
+	try {
+		validatedItem = itemAdapter.validateAndCastItem(details.itemData)
+	} catch (error) {
+		console.error('Invalid item data in removal request', {
+			error,
+			itemData: details.itemData,
+		})
+		handleAsyncValidationError(
+			'Item validation failed: ' +
+				(error instanceof Error ? error.message : String(error)),
+		)
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
 	}
 
 	handleAsyncValidationStart()
 
 	const sourceZone = findZone(workspace, details.sourceZoneId)
-	const itemToRemove = sourceZone
-		? findItemPlacement(sourceZone, details.instanceId)
-		: undefined
-
-	const baseValidationContext: Partial<WorkspaceValidationContext<PlantItem>> = {
-		operationType: 'item-remove-from-zone',
-		item: details.itemData,
-		itemInstanceId: details.instanceId,
-		sourceZoneId: details.sourceZoneId,
-		applicationContext: { workspace: workspace },
-	}
-	const remSourceCtx = buildWorkspaceZoneContext(sourceZone)
-	if (remSourceCtx)
-		baseValidationContext.sourceZoneContext =
-			remSourceCtx as WorkspaceZoneContext<PlantItem>
-	if (itemToRemove) {
-		baseValidationContext.sourceX = itemToRemove.x
-		baseValidationContext.sourceY = itemToRemove.y
+	if (!sourceZone) {
+		handleAsyncValidationError('Source zone not found')
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
 	}
 
-	const validationContext = baseValidationContext as WorkspaceValidationContext<PlantItem>
+	const itemToRemove = findItemPlacement(sourceZone, details.instanceId)
+	if (!itemToRemove) {
+		handleAsyncValidationError('Item to remove not found')
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
+	}
 
 	try {
-		if (!customAsyncValidation) {
-			throw new Error('Validation service not ready - items still loading')
+		// Check if removing items is enabled
+		if (!controller.isFeatureEnabled('canRemoveItems')) {
+			throw new Error('Removing items is currently disabled')
 		}
-		const result = await customAsyncValidation(validationContext)
-		if (result.isValid) {
+
+		// Validate with controller
+		const validationResult = await controller.validateItemRemoval(
+			workspace,
+			validatedItem,
+			sourceZone,
+			details.instanceId,
+		)
+
+		if (validationResult.isValid) {
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual removal
-			performDeleteItem(details.instanceId, details.sourceZoneId)
+			await performDeleteItem(details.instanceId, details.sourceZoneId)
 			// Update pending operation to success
 			if (pendingOpId) {
 				updatePendingOperation(pendingOpId, 'success')
@@ -317,7 +429,7 @@ async function handleRequestRemoval(
 			}
 		} else {
 			// Validation failed - show error but don't perform operation
-			handleAsyncValidationError(result.error || 'Unknown validation error')
+			handleAsyncValidationError(validationResult.reason || 'Unknown validation error')
 			// Update pending operation to error
 			if (pendingOpId) {
 				updatePendingOperation(pendingOpId, 'error')
@@ -327,14 +439,14 @@ async function handleRequestRemoval(
 			}
 		}
 	} catch (error) {
-		// Validation system failure (like HTTP 4xx/5xx) - unexpected infrastructure/system error
+		// Validation system failure or feature disabled
 		const errorMessage = error instanceof Error ? error.message : String(error)
 		console.error(
-			'[WorkspacePage] Validation system failure during removal request:',
+			'[WorkspacePage] Validation error during removal request:',
 			errorMessage,
 			error,
 		)
-		handleAsyncValidationError(`Validation system error: ${errorMessage}`)
+		handleAsyncValidationError(errorMessage)
 		// Update pending operation to error
 		if (pendingOpId) {
 			updatePendingOperation(pendingOpId, 'error')
@@ -342,7 +454,6 @@ async function handleRequestRemoval(
 				removePendingOperation(pendingOpId)
 			}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
 		}
-		throw error // Re-throw system errors so calling code knows validation system failed
 	}
 }
 
@@ -350,46 +461,60 @@ async function handleRequestCloning(
 	details: CloningRequestDetails<DraggableItem>,
 	pendingOpId?: string,
 ): Promise<void> {
-	if (!itemAdapter.isValidItem(details.itemDataToClone))
-		throw new Error('Item is not valid for this adapter')
+	// First ensure the item data is valid before any operations
+	let validatedItem: PlantItem
+	try {
+		validatedItem = itemAdapter.validateAndCastItem(details.itemDataToClone)
+	} catch (error) {
+		console.error('Invalid item data in cloning request', {
+			error,
+			itemData: details.itemDataToClone,
+		})
+		handleAsyncValidationError(
+			'Item validation failed: ' +
+				(error instanceof Error ? error.message : String(error)),
+		)
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
+	}
+
 	handleAsyncValidationStart()
 
-	const sourceZone = findZone(workspace, details.sourceOriginalZoneId)
+	// Find the target zone
 	const targetZone = findZone(workspace, details.targetCloneZoneId)
-
-	const baseValidationContext: Partial<WorkspaceValidationContext<PlantItem>> = {
-		operationType: 'item-clone-in-zone',
-		item: details.itemDataToClone,
-		sourceZoneId: details.sourceOriginalZoneId,
-		targetZoneId: details.targetCloneZoneId,
-		sourceX: details.sourceOriginalX,
-		sourceY: details.sourceOriginalY,
-		targetX: details.targetCloneX,
-		targetY: details.targetCloneY,
-		applicationContext: { workspace: workspace },
+	if (!targetZone) {
+		handleAsyncValidationError('Target zone not found')
+		updatePendingOperation(pendingOpId || '', 'error')
+		setTimeout(() => {
+			removePendingOperation(pendingOpId || '')
+		}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+		return
 	}
-	const cloneSourceCtx = buildWorkspaceZoneContext(sourceZone)
-	if (cloneSourceCtx)
-		baseValidationContext.sourceZoneContext =
-			cloneSourceCtx as WorkspaceZoneContext<PlantItem>
-	const cloneTargetCtx = buildWorkspaceZoneContext(targetZone)
-	if (cloneTargetCtx)
-		baseValidationContext.targetZoneContext =
-			cloneTargetCtx as WorkspaceZoneContext<PlantItem>
-
-	const validationContext = baseValidationContext as WorkspaceValidationContext<PlantItem>
 
 	try {
-		if (!customAsyncValidation) {
-			throw new Error('Validation service not ready - items still loading')
+		// Check if cloning items is enabled
+		if (!controller.isFeatureEnabled('canCloneItems')) {
+			throw new Error('Cloning items is currently disabled')
 		}
-		const result = await customAsyncValidation(validationContext)
-		if (result.isValid) {
+
+		// Validate with controller - treat cloning like adding a new item
+		const validationResult = await controller.validateItemPlacement(
+			workspace,
+			validatedItem,
+			targetZone,
+			details.targetCloneX,
+			details.targetCloneY,
+		)
+
+		if (validationResult.isValid) {
 			handleAsyncValidationSuccess()
 			// Validation passed - perform the actual clone
-			handleAddNewItem(
+			await handleAddNewItem(
 				details.targetCloneZoneId,
-				details.itemDataToClone,
+				validatedItem,
 				details.targetCloneX,
 				details.targetCloneY,
 			)
@@ -402,7 +527,7 @@ async function handleRequestCloning(
 			}
 		} else {
 			// Validation failed - show error but don't perform operation
-			handleAsyncValidationError(result.error || 'Unknown validation error')
+			handleAsyncValidationError(validationResult.reason || 'Unknown validation error')
 			// Update pending operation to error
 			if (pendingOpId) {
 				updatePendingOperation(pendingOpId, 'error')
@@ -412,14 +537,14 @@ async function handleRequestCloning(
 			}
 		}
 	} catch (error) {
-		// Validation system failure (like HTTP 4xx/5xx) - unexpected infrastructure/system error
+		// Validation system failure or feature disabled
 		const errorMessage = error instanceof Error ? error.message : String(error)
 		console.error(
-			'[WorkspacePage] Validation system failure during cloning request:',
+			'[WorkspacePage] Validation error during cloning request:',
 			errorMessage,
 			error,
 		)
-		handleAsyncValidationError(`Validation system error: ${errorMessage}`)
+		handleAsyncValidationError(errorMessage)
 		// Update pending operation to error
 		if (pendingOpId) {
 			updatePendingOperation(pendingOpId, 'error')
@@ -427,20 +552,52 @@ async function handleRequestCloning(
 				removePendingOperation(pendingOpId)
 			}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
 		}
-		throw error // Re-throw system errors so calling code knows validation system failed
 	}
 }
 
 function tileSizeForItem(item: DraggableItem): number {
-	if (!itemAdapter.isValidItem(item))
+	try {
+		// Log the item type for debugging
+		console.debug('Validating item type', {
+			item,
+			itemType: typeof item,
+			isObject: typeof item === 'object',
+			hasId: typeof item === 'object' && 'id' in item,
+			idValue:
+				typeof item === 'object' && 'id' in item ? (item as { id: unknown }).id : null,
+			hasMetadata: typeof item === 'object' && 'metadata' in item,
+			category:
+				typeof item === 'object' && 'category' in item
+					? (item as { category: unknown }).category
+					: null,
+			size:
+				typeof item === 'object' && 'size' in item
+					? (item as { size: unknown }).size
+					: null,
+		})
+
+		const validItem = itemAdapter.validateAndCastItem(item)
+		console.debug('Item validation succeeded', { id: validItem.id })
+		return itemAdapter.getItemSize(validItem)
+	} catch (err) {
+		console.error('Item validation failed', {
+			err,
+			item,
+			itemType: typeof item,
+			itemKeys: typeof item === 'object' ? Object.keys(item as object) : null,
+		})
 		throw new Error('Item is not valid for this adapter')
-	return itemAdapter.getItemSize(item)
+	}
 }
 
 function categoryNameForItem(item: DraggableItem): string {
-	if (!itemAdapter.isValidItem(item))
-		throw new Error('Item is not valid for this adapter')
-	return itemAdapter.getCategoryName(item)
+	try {
+		const validItem = itemAdapter.validateAndCastItem(item)
+		return itemAdapter.getCategoryName(validItem)
+	} catch (error: unknown) {
+		console.error('Error getting category name for item', { item })
+		throw new Error('Item is not valid for this adapter', { cause: error })
+	}
 }
 </script>
 

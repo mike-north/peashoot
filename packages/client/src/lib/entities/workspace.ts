@@ -2,6 +2,7 @@ import type { ItemWithSize, Zone } from './zone'
 import type { Item } from './item'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 import type { Indicator } from './indicator'
+import { isPlantItem, restorePlantItemMetadata } from '../item-types/plant-item'
 
 export interface Workspace<T extends ItemWithSize = ItemWithSize> {
 	readonly id: string
@@ -23,9 +24,27 @@ export function moveItemBetweenZonesAndCreateNewWorkspace(
 
 	if (!sourceZone || !targetZone) {
 		console.error(
-			'[workspace.ts] Source or target zone not found for moveItemToDifferentZone.',
+			'[workspace.ts] Source or target zone not found for moveItemBetweenZones.',
 		)
 		return workspace // Return original workspace if zones not found
+	}
+
+	// Make sure the item has its metadata preserved
+	let itemWithMetadata = placement.item
+
+	// For plant items, ensure metadata is present
+	if (itemWithMetadata.id.startsWith('plant_') && !isPlantItem(itemWithMetadata)) {
+		console.debug('[workspace.ts] Restoring metadata for plant item during zone move', {
+			id: itemWithMetadata.id,
+		})
+		const restored = restorePlantItemMetadata(itemWithMetadata)
+		if (restored) {
+			itemWithMetadata = restored
+		} else {
+			console.warn('[workspace.ts] Failed to restore plant item metadata during move', {
+				id: itemWithMetadata.id,
+			})
+		}
 	}
 
 	const updatedSourceZone = {
@@ -44,7 +63,7 @@ export function moveItemBetweenZonesAndCreateNewWorkspace(
 				x: newX,
 				y: newY,
 				sourceZoneId: targetZoneId,
-				item: placement.item,
+				item: itemWithMetadata,
 			} satisfies GridPlacement<GridPlaceable>,
 		],
 	}

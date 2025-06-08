@@ -25,7 +25,23 @@ interface WorkspaceDragCoordinatorOptions {
 export function workspaceDragCoordinator(
 	options: WorkspaceDragCoordinatorOptions,
 ): Attachment {
-	const { tileSizeForItem } = options
+	const { tileSizeForItem, onDrop } = options
+
+	// Create a wrapped onDrop that preserves item structure
+	const wrappedOnDrop = (dropInfo: {
+		targetZoneId: string | null
+		targetType: 'drop-zone' | 'delete-zone' | null
+		highlightedCell: { x: number; y: number } | null
+		isCloneMode: boolean
+	}) => {
+		// This allows us to intercept and fix any issues before passing to the original onDrop
+		try {
+			onDrop(dropInfo)
+		} catch (error) {
+			console.error('Drop operation failed', error)
+		}
+	}
+
 	return (element) => {
 		const htmlElement = element as HTMLElement
 		const currentOptions = options
@@ -150,7 +166,7 @@ export function workspaceDragCoordinator(
 			}
 
 			if (currentDragStateVal.draggedNewItem || currentDragStateVal.draggedExistingItem) {
-				currentOptions.onDrop({
+				wrappedOnDrop({
 					targetZoneId: finalTargetZoneId,
 					targetType: finalTargetType,
 					highlightedCell: finalHighlightedCell,

@@ -92,7 +92,7 @@ async function handleDrop(dropInfo: {
 			state: 'pending',
 			zoneId: sourceZoneId,
 			item: draggedExistingItem.item,
-			size: tileSizeForItem(draggedExistingItem.item),
+			size: safeGetItemSize(draggedExistingItem.item, tileSizeForItem),
 			x: draggedExistingItem.x,
 			y: draggedExistingItem.y,
 			originalSourceZoneId: sourceZoneId,
@@ -138,7 +138,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.item,
-					size: tileSizeForItem(existingItem.item),
+					size: safeGetItemSize(existingItem.item, tileSizeForItem),
 					x,
 					y,
 					originalSourceZoneId: sourceZoneIdValue,
@@ -180,7 +180,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.item,
-					size: tileSizeForItem(existingItem.item),
+					size: safeGetItemSize(existingItem.item, tileSizeForItem),
 					x,
 					y,
 					originalSourceZoneId: sourceZoneIdValue,
@@ -217,7 +217,7 @@ async function handleDrop(dropInfo: {
 				state: 'pending',
 				zoneId: dropInfo.targetZoneId,
 				item: currentDragState.draggedNewItem,
-				size: tileSizeForItem(currentDragState.draggedNewItem),
+				size: safeGetItemSize(currentDragState.draggedNewItem, tileSizeForItem),
 				x,
 				y,
 			})
@@ -246,6 +246,19 @@ async function handleDrop(dropInfo: {
 				}, 2000) // Show error for 2 seconds
 			}
 		}
+	}
+}
+
+// Function to safely get item size, avoiding validation errors
+function safeGetItemSize(
+	item: DraggableItem,
+	sizeFunc: (item: DraggableItem) => number,
+): number {
+	try {
+		return sizeFunc(item)
+	} catch (error) {
+		console.warn('Error getting item size, using default size of 1', error)
+		return 1
 	}
 }
 

@@ -15,10 +15,9 @@ import type { GridArea } from '../grid-area'
 
 interface Props {
 	grids: GridArea<GridPlaceable>[]
-	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const { grids, tileSizeForItem }: Props = $props()
+const { grids }: Props = $props()
 
 let currentDragState = $derived($genericDragState as WorkspaceDragState<GridPlaceable>)
 
@@ -32,14 +31,13 @@ $effect(() => {
 			isGridPlaceable(currentDragState.draggedNewItem)
 		) {
 			draggedItemForPreview = currentDragState.draggedNewItem
-			previewGridFootprintSize = currentDragState.draggedNewItem.presentation.size
+			previewGridFootprintSize = currentDragState.draggedNewItem.size
 		} else if (
 			isGridDraggingExistingItem(currentDragState) &&
 			isGridPlaceable(currentDragState.draggedExistingItem.item)
 		) {
 			draggedItemForPreview = currentDragState.draggedExistingItem.item
-			previewGridFootprintSize =
-				currentDragState.draggedExistingItem.item.presentation.size
+			previewGridFootprintSize = currentDragState.draggedExistingItem.item.size
 		} else {
 			draggedItemForPreview = null
 			previewGridFootprintSize = 1
@@ -79,7 +77,6 @@ let previewPosition = $derived.by(() => {
 	const layout = new ZoneLayoutCalculator({
 		width: targetBed.width,
 		height: targetBed.height,
-		tileSizeForItem,
 		...DEFAULT_LAYOUT_PARAMS,
 	})
 
@@ -156,7 +153,7 @@ let previewPosition = $derived.by(() => {
 				id: currentDragState.draggedExistingItem.id,
 				x: currentDragState.draggedExistingItem.x,
 				y: currentDragState.draggedExistingItem.y,
-				size: itemToRender.presentation.size,
+				size: itemToRender.size,
 				item: itemToRender,
 				sourceZoneId: currentDragState.draggedExistingItem.sourceZoneId
 			}}
@@ -170,7 +167,7 @@ let previewPosition = $derived.by(() => {
 				id: 'preview',
 				x: 0,
 				y: 0,
-				size: itemToRender.presentation.size,
+				size: itemToRender.size,
 				item: itemToRender,
 				sourceZoneId: '',
 			}}

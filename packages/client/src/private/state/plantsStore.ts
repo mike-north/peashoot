@@ -1,15 +1,15 @@
 import { writable, derived } from 'svelte/store'
-import type { PlantItem } from '../../lib/item-types/plant-item'
-import { PlantItemAdapter } from '../../lib/adapters/plant-item-adapter'
-// import { fetchPlants } from '../../lib/plant-data'
+import type { PlantMetadata } from '../../lib/entities/plant-metadata'
+import { PlantRepository } from '../../lib/repositories/plant.repository'
+import type { Item } from '../../lib/entities/item'
 
 interface PlantsState {
-	plants: PlantItem[]
+	plants: Item<PlantMetadata>[]
 	loading: boolean
 	error: string | null
 }
 
-const plantItemAdapter = new PlantItemAdapter()
+const plantRepository = new PlantRepository()
 
 const initialState: PlantsState = {
 	plants: [],
@@ -34,7 +34,7 @@ export async function loadPlants(): Promise<void> {
 	plantsState.update((state) => ({ ...state, loading: true, error: null }))
 
 	try {
-		const plantsData = await plantItemAdapter.fetchPlants()
+		const plantsData = await plantRepository.findAll()
 		plantsState.update((state) => ({
 			...state,
 			plants: plantsData,
@@ -54,17 +54,27 @@ export async function loadPlants(): Promise<void> {
 
 // Function to get a plant by ID
 export const getPlantById = derived(plants, ($plants) => {
-	return (id: string): PlantItem | undefined => {
+	return (id: string): Item<PlantMetadata> | undefined => {
 		return $plants.find((plant) => plant.id === id)
 	}
 })
 
 // Function to get plants by family
 export const getPlantsByFamily = derived(plants, ($plants) => {
-	return (family: string): PlantItem[] => {
+	return (family: string): Item<PlantMetadata>[] => {
 		return $plants.filter((plant) => plant.metadata.family === family)
 	}
 })
+
+// Function to fetch a plant directly from the repository
+export async function fetchPlantById(id: string): Promise<Item<PlantMetadata> | null> {
+	return plantRepository.findById(id)
+}
+
+// Function to validate and cast an item to PlantItem
+export function validateAndCastItem(item: unknown): Item<PlantMetadata> {
+	return plantRepository.validateAndCastItem(item)
+}
 
 // Auto-load plants when the store is created
 loadPlants().catch((error: unknown) => {

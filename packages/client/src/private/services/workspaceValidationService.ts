@@ -1,6 +1,5 @@
-import type { PlantItem } from '../../lib/item-types/plant-item'
-import { getPlantProperties } from '../../lib/item-types/plant-item'
-import type { Zone, ItemWithSize } from '../../lib/entities/zone'
+import { type PlantMetadata } from '../../lib/entities/plant-metadata'
+import type { Zone } from '../../lib/entities/zone'
 import type {
 	WorkspaceAsyncValidationFunction,
 	WorkspaceValidationContext,
@@ -9,6 +8,7 @@ import type { ValidationResult } from '../grid/grid-drag-state'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import type { GridPlacement } from '../grid/grid-placement'
+import type { Item } from '../../lib/entities/item'
 
 interface PlacementValidityResult {
 	isValid: boolean
@@ -16,7 +16,7 @@ interface PlacementValidityResult {
 }
 
 export class WorkspaceValidationService {
-	constructor(private readonly items: PlantItem[]) {}
+	constructor(private readonly items: Item<PlantMetadata>[]) {}
 
 	private calculateOccupancy(
 		zone: Zone,
@@ -27,13 +27,12 @@ export class WorkspaceValidationService {
 		occupancyRateAfterAdd: number
 	} {
 		const currentOccupiedCells = zone.placements.reduce(
-			(total: number, placement: GridPlacement<ItemWithSize>) => {
+			(total: number, placement: GridPlacement<Item>) => {
 				const existingItem = this.items.find((p) => p.id === placement.item.id)
 				if (!existingItem) {
 					throw new Error(`Item not found for validation: ${placement.item.id}`)
 				}
-				const existingProps = getPlantProperties(existingItem)
-				return total + existingProps.plantingDistanceInFeet ** 2
+				return total + existingItem.size ** 2
 			},
 			0,
 		)
@@ -70,9 +69,7 @@ export class WorkspaceValidationService {
 
 			// Get the item data to find its size
 			const existingItemData = this.items.find((p) => p.id === existingItem.item.id)
-			const existingSize = existingItemData
-				? existingItemData.metadata.plantingDistanceInFeet
-				: 1
+			const existingSize = existingItemData ? existingItemData.size : 1
 
 			if (
 				itemX < existingItem.x + existingSize &&
@@ -90,9 +87,9 @@ export class WorkspaceValidationService {
 		return { isValid: true }
 	}
 
-	createAsyncValidator(): WorkspaceAsyncValidationFunction<ItemWithSize> {
+	createAsyncValidator(): WorkspaceAsyncValidationFunction<Item> {
 		return async (
-			context: WorkspaceValidationContext<ItemWithSize>,
+			context: WorkspaceValidationContext<Item>,
 		): Promise<ValidationResult> => {
 			await new Promise((resolve) => setTimeout(resolve, ASYNC_VALIDATION_TIMEOUT_MS))
 
@@ -107,8 +104,7 @@ export class WorkspaceValidationService {
 					try {
 						const item = context.item
 						// For now, assume all items are plants (this can be extended with item adapters)
-						const plant = item as PlantItem
-						const plantProps = getPlantProperties(plant)
+						const plant = item as Item<PlantMetadata>
 
 						switch (context.operationType) {
 							case 'item-move-within-zone':
@@ -129,7 +125,7 @@ export class WorkspaceValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									plantProps.plantingDistanceInFeet <= 0
+									plant.metadata.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -142,7 +138,7 @@ export class WorkspaceValidationService {
 									targetZone,
 									context.targetX,
 									context.targetY,
-									plantProps.plantingDistanceInFeet,
+									plant.metadata.plantingDistanceInFeet,
 									context.itemInstanceId,
 								)
 								if (!placementCheck.isValid) {
@@ -150,7 +146,7 @@ export class WorkspaceValidationService {
 									return
 								}
 								// TODO: Implement real environment compatibility checks
-								if (plantProps.family === 'tomatoes' && targetZone.sunLevel < 3) {
+								if (plant.metadata.family === 'tomatoes' && targetZone.sunLevel < 3) {
 									resolve({
 										isValid: false,
 										error: 'Target zone has insufficient sunlight for tomatoes',
@@ -173,7 +169,7 @@ export class WorkspaceValidationService {
 									return
 								}
 
-								const newItemFootprint = plantProps.plantingDistanceInFeet ** 2
+								const newItemFootprint = plant.metadata.plantingDistanceInFeet ** 2
 								const { occupancyRateAfterAdd } = this.calculateOccupancy(
 									addTargetZone,
 									newItemFootprint,
@@ -205,7 +201,7 @@ export class WorkspaceValidationService {
 								if (
 									context.targetX === undefined ||
 									context.targetY === undefined ||
-									plantProps.plantingDistanceInFeet <= 0
+									plant.metadata.plantingDistanceInFeet <= 0
 								) {
 									reject(
 										new Error(
@@ -218,7 +214,7 @@ export class WorkspaceValidationService {
 									cloneTargetZone,
 									context.targetX,
 									context.targetY,
-									plantProps.plantingDistanceInFeet,
+									plant.metadata.plantingDistanceInFeet,
 									context.itemInstanceId,
 								)
 								if (!clonePlacementCheck.isValid) {
@@ -229,7 +225,7 @@ export class WorkspaceValidationService {
 									return
 								}
 
-								const newCloneFootprint = plantProps.plantingDistanceInFeet ** 2
+								const newCloneFootprint = plant.metadata.plantingDistanceInFeet ** 2
 								const { occupancyRateAfterAdd: occupancyRateAfterClone } =
 									this.calculateOccupancy(cloneTargetZone, newCloneFootprint)
 

@@ -4,7 +4,7 @@ import { join } from 'path'
 import { Logger } from 'winston'
 import { RawSeedPacketInfo, RawSeedPacketInfoCollection } from '../data/raw-seed-info'
 import Ajv, { AnySchema } from 'ajv'
-import * as ld from 'lodash'
+import _, * as ld from 'lodash'
 import { SeedPacket } from './entities/seed-packet'
 import { AppDataSource } from './data-source'
 import {
@@ -102,6 +102,8 @@ export async function generatePlants(logger: Logger) {
 	const packets = await packetRepo.find()
 	logger.info(`Found ${packets.length} packets`)
 	for (const packet of packets) {
+		const variant = _.kebabCase(packet.name)
+		const iconPath = `${packet.plantFamily}-${variant}.png`
 		const plantParams = PlantSchema.parse({
 			seedPacket: packet,
 			name: packet.name,
@@ -109,6 +111,9 @@ export async function generatePlants(logger: Logger) {
 			presentation: packet.presentation,
 			family: packet.plantFamily,
 			plantingDistance: packet.plantingDistance,
+			variant,
+			iconPath,
+			accentColor: packet.presentation.accentColor,
 		})
 		const plant = plantRepo.create(plantParams)
 		await plantRepo.save(plant)

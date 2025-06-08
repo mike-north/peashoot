@@ -13,16 +13,14 @@ interface Props {
 		points: { x: number; y: number }[]
 		color: string
 	}[]
-	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const { grid, edgeBorders, tileSizeForItem }: Props = $props()
+const { grid, edgeBorders }: Props = $props()
 
 // Instantiate the layout calculator
 const layout = new ZoneLayoutCalculator({
 	width: grid.width,
 	height: grid.height,
-	tileSizeForItem,
 	...DEFAULT_LAYOUT_PARAMS,
 })
 

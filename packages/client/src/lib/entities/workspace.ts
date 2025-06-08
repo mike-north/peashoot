@@ -1,9 +1,9 @@
-import type { ItemWithSize, Zone } from './zone'
-import type { Item } from './item'
-import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
+import type { Zone } from './zone'
+import { type Item } from './item'
+import type { GridPlacement } from '../../private/grid/grid-placement'
 import type { Indicator } from './indicator'
 
-export interface Workspace<T extends ItemWithSize = ItemWithSize> {
+export interface Workspace<T extends Item = Item> {
 	readonly id: string
 	zones: Zone<T>[]
 	/** New flexible indicator system that supports multiple items and sector-based visualization */
@@ -23,7 +23,7 @@ export function moveItemBetweenZonesAndCreateNewWorkspace(
 
 	if (!sourceZone || !targetZone) {
 		console.error(
-			'[workspace.ts] Source or target zone not found for moveItemToDifferentZone.',
+			'[workspace.ts] Source or target zone not found for moveItemBetweenZones.',
 		)
 		return workspace // Return original workspace if zones not found
 	}
@@ -45,7 +45,7 @@ export function moveItemBetweenZonesAndCreateNewWorkspace(
 				y: newY,
 				sourceZoneId: targetZoneId,
 				item: placement.item,
-			} satisfies GridPlacement<GridPlaceable>,
+			} satisfies GridPlacement<Item>,
 		],
 	}
 

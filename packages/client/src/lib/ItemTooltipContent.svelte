@@ -1,8 +1,8 @@
 <script lang="ts">
 import { rgbToCss } from '@peashoot/types'
 import { isGridPlaceable, type GridPlaceable } from '../private/grid/grid-placement'
-import { isItem } from './entities/item'
-import { isPlantItem, getPlantProperties } from './item-types/plant-item'
+import { isItem, isItemWithMetadata } from './entities/item'
+import { isPlantMetadata } from './entities/plant-metadata'
 import IdLabel from './components/IdLabel.svelte'
 
 export interface Props {
@@ -22,7 +22,9 @@ const isReady = $derived(
 )
 // Get plant-specific properties if this is a plant item, guarded by isReady
 const plantProperties = $derived(
-	isReady && isItem(item) && isPlantItem(item) ? getPlantProperties(item) : null,
+	isReady && isItem(item) && isItemWithMetadata(item, isPlantMetadata)
+		? item.metadata
+		: null,
 )
 const itemData = $derived(isReady && isItem(item) ? item : null)
 </script>
@@ -50,7 +52,7 @@ const itemData = $derived(isReady && isItem(item) ? item : null)
 				<IdLabel id={item?.id ?? '---'} />
 
 				<p class="text-sm text-gray-600">
-					Size: {item?.presentation?.size}×{item?.presentation?.size} grid spaces
+					Size: {item?.size}×{item?.size} grid spaces
 				</p>
 				{#if plantProperties}
 					<p class="text-xs text-gray-500 italic">Family: {plantProperties.family}</p>

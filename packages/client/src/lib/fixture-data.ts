@@ -1,567 +1,39 @@
-import { createPlantItem } from './item-types/plant-item'
 import type { SeedPacket } from './entities/seed-packet'
 import type { Workspace } from './entities/workspace'
 import type { Item } from './entities/item'
+import type { PlantMetadata } from './entities/plant-metadata'
+import { convertDistanceToFeet } from '@peashoot/types'
 
-// Convert legacy plant data to PlantItem format
-export const plants: Item[] = [
-	// Tomatoes
-	{
-		id: 'plant_tomatoes-burpee-big-boy-tomato',
-		displayName: 'Big Boy Tomato',
-		category: 'tomatoes',
-		variant: 'burpee-big-boy-tomato',
-		size: 2,
-		presentation: {
-			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_tomatoes-rareseeds-cherokee-purple-tomato',
-		displayName: 'Cherokee Purple Tomato',
-		category: 'tomatoes',
-		variant: 'rareseeds-cherokee-purple-tomato',
-		size: 2,
-		presentation: {
-			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
-			iconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_tomatoes-sweet-100-tomato',
-		displayName: 'Sweet 100 Cherry Tomato',
-		category: 'tomatoes',
-		variant: 'sweet-100-tomato',
-		size: 2,
-		presentation: {
-			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-			iconPath: 'tomatoes-sweet-100-tomato.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_tomatoes-napa-chardonnay-tomato',
-		displayName: 'Napa Chardonnay Tomato',
-		category: 'tomatoes',
-		variant: 'napa-chardonnay-tomato',
-		size: 2,
-		presentation: {
-			accentColor: { red: 255, green: 212, blue: 0 }, // --color-tomatoes-yellow
-			iconPath: 'tomatoes-napa-chardonnay-tomato.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_tomatoes-black-from-tula-tomato',
-		displayName: 'Black from Tula Tomato',
-		category: 'tomatoes',
-		variant: 'black-from-tula-tomato',
-		size: 2,
-		presentation: {
-			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
-			iconPath: 'tomatoes-black-from-tula-tomato.png',
-			size: 2,
-		},
-	},
+interface BasicPlantData {
+	id: string
+	name: string
+	family: string
+	variant: string
+	plantingDistance: { value: number; unit: 'feet' }
+	accentColor: { red: number; green: number; blue: number }
+	iconPath: string
+}
 
-	// Lettuce & Greens
-	{
-		id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-		displayName: 'Buttercrunch Lettuce',
-		category: 'lettuce',
-		variant: 'burpee-buttercrunch-lettuce',
-		size: 1,
-		presentation: {
-			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-			iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_arugula-arugula',
-		displayName: 'Arugula',
-		category: 'arugula',
-		variant: 'arugula',
-		size: 1,
-		presentation: {
-			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-			iconPath: 'arugula-arugula.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_spinach-spinach',
-		displayName: 'Spinach',
-		category: 'spinach',
-		variant: 'spinach',
-		size: 1,
-		presentation: {
-			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
-			iconPath: 'spinach-spinach.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_spinach-japanese-perpetual-spinach',
-		displayName: 'Japanese Perpetual Spinach',
-		category: 'spinach',
-		variant: 'japanese-perpetual-spinach',
-		size: 1,
-		presentation: {
-			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
-			iconPath: 'spinach-japanese-perpetual-spinach.png',
-			size: 1,
-		},
-	},
+export function createPlantItem(plantData: BasicPlantData): Item<PlantMetadata> {
+	const plantingDistanceInFeet = convertDistanceToFeet(plantData.plantingDistance).value
+	const size = Math.max(1, Math.ceil(plantingDistanceInFeet))
 
-	// Carrots
-	{
-		id: 'plant_carrots-burpee-chantenay-carrot',
-		displayName: 'Chantenay Red Core Carrot',
-		category: 'carrots',
-		variant: 'burpee-chantenay-carrot',
-		size: 1,
+	return {
+		id: plantData.id,
+		displayName: plantData.name,
+		category: plantData.family,
+		variant: plantData.name,
+		size: size,
 		presentation: {
-			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
-			iconPath: 'carrots-burpee-chantenay-carrot.png',
-			size: 1,
+			accentColor: plantData.accentColor,
+			iconPath: plantData.iconPath,
 		},
-	},
-	{
-		id: 'plant_carrots-parisienne-carrots',
-		displayName: 'Parisienne Carrots',
-		category: 'carrots',
-		variant: 'parisienne-carrots',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
-			iconPath: 'carrots-parisienne-carrots.png',
-			size: 1,
+		metadata: {
+			plantingDistanceInFeet,
+			family: plantData.family,
 		},
-	},
-	{
-		id: 'plant_carrots-lila-lu-sang-carrots',
-		displayName: 'Lila Lu Sang Purple Carrots',
-		category: 'carrots',
-		variant: 'lila-lu-sang-carrots',
-		size: 1,
-		presentation: {
-			accentColor: { red: 128, green: 0, blue: 128 }, // --color-carrots-purple
-			iconPath: 'carrots-lila-lu-sang-carrots.png',
-			size: 1,
-		},
-	},
-
-	// Peppers
-	{
-		id: 'plant_peppers-burpee-california-wonder-pepper',
-		displayName: 'California Wonder Bell Pepper',
-		category: 'peppers',
-		variant: 'burpee-california-wonder-pepper',
-		size: 1,
-		presentation: {
-			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
-			iconPath: 'peppers-burpee-california-wonder-pepper.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_peppers-jalapeno-hot-pepper',
-		displayName: 'Jalapeño Hot Pepper',
-		category: 'peppers',
-		variant: 'jalapeno-hot-pepper',
-		size: 1,
-		presentation: {
-			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
-			iconPath: 'peppers-jalapeno-hot-pepper.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_peppers-habanero-hot-pepper',
-		displayName: 'Habanero Hot Pepper',
-		category: 'peppers',
-		variant: 'habanero-hot-pepper',
-		size: 1,
-		presentation: {
-			accentColor: { red: 247, green: 92, blue: 3 }, // --color-peppers-orange
-			iconPath: 'peppers-habanero-hot-pepper.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_peppers-lemon-drop-hot-pepper',
-		displayName: 'Lemon Drop Hot Pepper',
-		category: 'peppers',
-		variant: 'lemon-drop-hot-pepper',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 212, blue: 0 }, // --color-peppers-yellow
-			iconPath: 'peppers-lemon-drop-hot-pepper.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_peppers-buena-mulata-hot-pepper',
-		displayName: 'Buena Mulata Hot Pepper',
-		category: 'peppers',
-		variant: 'buena-mulata-hot-pepper',
-		size: 1,
-		presentation: {
-			accentColor: { red: 128, green: 0, blue: 128 }, // --color-peppers-purple
-			iconPath: 'peppers-buena-mulata-hot-pepper.png',
-			size: 1,
-		},
-	},
-
-	// Beans
-	{
-		id: 'plant_beans-burpee-provider-bush-bean',
-		displayName: 'Provider Bush Bean',
-		category: 'beans',
-		variant: 'burpee-provider-bush-bean',
-		size: 1,
-		presentation: {
-			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
-			iconPath: 'beans-burpee-provider-bush-bean.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_beans-fava-beans',
-		displayName: 'Fava Beans',
-		category: 'beans',
-		variant: 'fava-beans',
-		size: 1,
-		presentation: {
-			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
-			iconPath: 'beans-fava-beans.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_beans-dragons-tongue-beans',
-		displayName: "Dragon's Tongue Bush Bean",
-		category: 'beans',
-		variant: 'dragons-tongue-beans',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 212, blue: 0 }, // --color-beans-yellow
-			iconPath: 'beans-dragons-tongue-beans.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_beans-cherokee-trail-of-tears-beans',
-		displayName: 'Cherokee Trail of Tears Bean',
-		category: 'beans',
-		variant: 'cherokee-trail-of-tears-beans',
-		size: 1,
-		presentation: {
-			accentColor: { red: 128, green: 0, blue: 128 }, // --color-beans-purple
-			iconPath: 'beans-cherokee-trail-of-tears-beans.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_beans-scarlet-runner-beans',
-		displayName: 'Scarlet Runner Bean',
-		category: 'beans',
-		variant: 'scarlet-runner-beans',
-		size: 1,
-		presentation: {
-			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
-			iconPath: 'beans-scarlet-runner-beans.png',
-			size: 1,
-		},
-	},
-
-	// Onions & Alliums
-	{
-		id: 'plant_onions-rareseeds-yellow-of-parma-onion',
-		displayName: 'Yellow of Parma Onion',
-		category: 'onions',
-		variant: 'rareseeds-yellow-of-parma-onion',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 212, blue: 0 }, // --color-onions-yellow
-			iconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_onions-burpee-evergreen-hardy-white-scallions',
-		displayName: 'Evergreen Hardy White Scallions',
-		category: 'onions',
-		variant: 'burpee-evergreen-hardy-white-scallions',
-		size: 1,
-		presentation: {
-			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
-			iconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_onions-chives',
-		displayName: 'Chives',
-		category: 'onions',
-		variant: 'chives',
-		size: 1,
-		presentation: {
-			accentColor: { red: 86, green: 130, blue: 3 }, // --color-mint-green
-			iconPath: 'onions-chives.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_onions-garlic',
-		displayName: 'Garlic',
-		category: 'onions',
-		variant: 'garlic',
-		size: 1,
-		presentation: {
-			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
-			iconPath: 'onions-garlic.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_onions-bunching-onion',
-		displayName: 'Bunching Onion',
-		category: 'onions',
-		variant: 'bunching-onion',
-		size: 1,
-		presentation: {
-			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
-			iconPath: 'onions-bunching-onion.png',
-			size: 1,
-		},
-	},
-
-	// Fruits
-	{
-		id: 'plant_cherries-rainier-cherry',
-		displayName: 'Rainier Cherry',
-		category: 'cherries',
-		variant: 'rainier-cherry',
-		size: 3,
-		presentation: {
-			accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
-			iconPath: 'cherries-rainier-cherry.png',
-			size: 3,
-		},
-	},
-	{
-		id: 'plant_strawberries-alexandria-strawberry',
-		displayName: 'Alexandria Strawberry',
-		category: 'strawberries',
-		variant: 'alexandria-strawberry',
-		size: 1,
-		presentation: {
-			accentColor: { red: 220, green: 20, blue: 60 }, // --color-strawberries-red
-			iconPath: 'strawberries-alexandria-strawberry.png',
-			size: 1,
-		},
-	},
-
-	// Flowers
-	{
-		id: 'plant_daisies-zinnia-2',
-		displayName: 'Zinnia',
-		category: 'daisies',
-		variant: 'zinnia',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 105, blue: 180 },
-			iconPath: 'daisies-zinnia.png',
-			size: 1,
-		},
-	},
-	// --- ADDED FROM seeds.yml ---
-	{
-		id: 'plant_basil',
-		displayName: 'Basil',
-		category: 'basil',
-		variant: 'basil',
-		size: 1,
-		presentation: {
-			accentColor: { red: 85, green: 107, blue: 47 },
-			iconPath: 'basil-basil.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_foxglove',
-		displayName: 'Foxglove',
-		category: 'snapdragons',
-		variant: 'foxglove',
-		size: 2,
-		presentation: {
-			accentColor: { red: 186, green: 85, blue: 211 },
-			iconPath: 'snapdragons-foxglove.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_zinnia',
-		displayName: 'Zinnia',
-		category: 'daisies',
-		variant: 'zinnia',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 105, blue: 180 },
-			iconPath: 'daisies-zinnia.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_watermelon',
-		displayName: 'Watermelon',
-		category: 'watermelons',
-		variant: 'watermelon',
-		size: 4,
-		presentation: {
-			accentColor: { red: 50, green: 205, blue: 50 },
-			iconPath: 'watermelons-watermelon.png',
-			size: 4,
-		},
-	},
-	{
-		id: 'plant_wheat',
-		displayName: 'Wheat',
-		category: 'grains',
-		variant: 'wheat',
-		size: 1,
-		presentation: {
-			accentColor: { red: 222, green: 184, blue: 135 },
-			iconPath: 'grains-wheat.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_broccoli',
-		displayName: 'Broccoli',
-		category: 'brassicas',
-		variant: 'broccoli',
-		size: 2,
-		presentation: {
-			accentColor: { red: 85, green: 107, blue: 47 },
-			iconPath: 'broccoli-broccoli.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_sunflower',
-		displayName: 'Sunflower',
-		category: 'sunflowers',
-		variant: 'sunflower',
-		size: 2,
-		presentation: {
-			accentColor: { red: 255, green: 215, blue: 0 },
-			iconPath: 'sunflowers-sunflower.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_lupine',
-		displayName: 'Lupine',
-		category: 'legumes',
-		variant: 'lupine',
-		size: 2,
-		presentation: {
-			accentColor: { red: 123, green: 104, blue: 238 },
-			iconPath: 'legumes-lupine.png',
-			size: 2,
-		},
-	},
-	{
-		id: 'plant_rutabaga',
-		displayName: 'Rutabaga',
-		category: 'turnips',
-		variant: 'rutabaga',
-		size: 1,
-		presentation: {
-			accentColor: { red: 238, green: 232, blue: 170 },
-			iconPath: 'rutabagas-rutabaga.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_celery',
-		displayName: 'Celery',
-		category: 'celery',
-		variant: 'celery',
-		size: 1,
-		presentation: {
-			accentColor: { red: 144, green: 238, blue: 144 },
-			iconPath: 'celery-celery.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_marigold',
-		displayName: 'Marigold',
-		category: 'marigolds',
-		variant: 'marigold',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 140, blue: 0 },
-			iconPath: 'marigolds-marigold.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_cilantro',
-		displayName: 'Cilantro',
-		category: 'cilantro',
-		variant: 'cilantro',
-		size: 1,
-		presentation: {
-			accentColor: { red: 34, green: 139, blue: 34 },
-			iconPath: 'cilantro-cilantro.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_brassicas-bok-choy',
-		displayName: 'Bok Choy',
-		category: 'brassicas',
-		variant: 'bok-choy',
-		size: 1,
-		presentation: {
-			accentColor: { red: 152, green: 251, blue: 152 },
-			iconPath: 'brassicas-bok-choy.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_peas',
-		displayName: 'Super Sugar Snap Pea',
-		category: 'peas',
-		variant: 'super-sugar-snap',
-		size: 1,
-		presentation: {
-			accentColor: { red: 123, green: 182, blue: 97 },
-			iconPath: 'peas-burpee-sugar-snap-peas.png',
-			size: 1,
-		},
-	},
-	{
-		id: 'plant_dahlia',
-		displayName: 'Dahlia',
-		category: 'dasies',
-		variant: 'dahlia',
-		size: 1,
-		presentation: {
-			accentColor: { red: 255, green: 87, blue: 34 },
-			iconPath: 'daisies-dahlia.png',
-			size: 1,
-		},
-	},
-]
+	}
+}
 
 export const seedPackets: SeedPacket[] = [
 	{
@@ -625,23 +97,457 @@ export const seedPackets: SeedPacket[] = [
 	},
 ]
 
+// Convert legacy plant data to PlantItem format
+export const plants: Item<PlantMetadata>[] = (
+	[
+		// Tomatoes
+		{
+			id: 'plant_tomatoes-burpee-big-boy-tomato',
+			name: 'Big Boy Tomato',
+			family: 'tomatoes',
+			variant: 'burpee-big-boy-tomato',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+		},
+		{
+			id: 'plant_tomatoes-rareseeds-cherokee-purple-tomato',
+			name: 'Cherokee Purple Tomato',
+			family: 'tomatoes',
+			variant: 'rareseeds-cherokee-purple-tomato',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
+			iconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
+		},
+		{
+			id: 'plant_tomatoes-sweet-100-tomato',
+			name: 'Sweet 100 Cherry Tomato',
+			family: 'tomatoes',
+			variant: 'sweet-100-tomato',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
+			iconPath: 'tomatoes-sweet-100-tomato.png',
+		},
+		{
+			id: 'plant_tomatoes-napa-chardonnay-tomato',
+			name: 'Napa Chardonnay Tomato',
+			family: 'tomatoes',
+			variant: 'napa-chardonnay-tomato',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-tomatoes-yellow
+			iconPath: 'tomatoes-napa-chardonnay-tomato.png',
+		},
+		{
+			id: 'plant_tomatoes-black-from-tula-tomato',
+			name: 'Black from Tula Tomato',
+			family: 'tomatoes',
+			variant: 'black-from-tula-tomato',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
+			iconPath: 'tomatoes-black-from-tula-tomato.png',
+		},
+
+		// Lettuce & Greens
+		{
+			id: 'plant_lettuce-burpee-buttercrunch-lettuce',
+			name: 'Buttercrunch Lettuce',
+			family: 'lettuce',
+			variant: 'burpee-buttercrunch-lettuce',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
+			iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+		},
+		{
+			id: 'plant_arugula-arugula',
+			name: 'Arugula',
+			family: 'arugula',
+			variant: 'arugula',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
+			iconPath: 'arugula-arugula.png',
+		},
+		{
+			id: 'plant_spinach-spinach',
+			name: 'Spinach',
+			family: 'spinach',
+			variant: 'spinach',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
+			iconPath: 'spinach-spinach.png',
+		},
+		{
+			id: 'plant_spinach-japanese-perpetual-spinach',
+			name: 'Japanese Perpetual Spinach',
+			family: 'spinach',
+			variant: 'japanese-perpetual-spinach',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
+			iconPath: 'spinach-japanese-perpetual-spinach.png',
+		},
+
+		// Carrots
+		{
+			id: 'plant_carrots-burpee-chantenay-carrot',
+			name: 'Chantenay Red Core Carrot',
+			family: 'carrots',
+			variant: 'burpee-chantenay-carrot',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
+			iconPath: 'carrots-burpee-chantenay-carrot.png',
+		},
+		{
+			id: 'plant_carrots-parisienne-carrots',
+			name: 'Parisienne Carrots',
+			family: 'carrots',
+			variant: 'parisienne-carrots',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
+			iconPath: 'carrots-parisienne-carrots.png',
+		},
+		{
+			id: 'plant_carrots-lila-lu-sang-carrots',
+			name: 'Lila Lu Sang Purple Carrots',
+			family: 'carrots',
+			variant: 'lila-lu-sang-carrots',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-carrots-purple
+			iconPath: 'carrots-lila-lu-sang-carrots.png',
+		},
+
+		// Peppers
+		{
+			id: 'plant_peppers-burpee-california-wonder-pepper',
+			name: 'California Wonder Bell Pepper',
+			family: 'peppers',
+			variant: 'burpee-california-wonder-pepper',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
+			iconPath: 'peppers-burpee-california-wonder-pepper.png',
+		},
+		{
+			id: 'plant_peppers-jalapeno-hot-pepper',
+			name: 'Jalapeño Hot Pepper',
+			family: 'peppers',
+			variant: 'jalapeno-hot-pepper',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
+			iconPath: 'peppers-jalapeno-hot-pepper.png',
+		},
+		{
+			id: 'plant_peppers-habanero-hot-pepper',
+			name: 'Habanero Hot Pepper',
+			family: 'peppers',
+			variant: 'habanero-hot-pepper',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 247, green: 92, blue: 3 }, // --color-peppers-orange
+			iconPath: 'peppers-habanero-hot-pepper.png',
+		},
+		{
+			id: 'plant_peppers-lemon-drop-hot-pepper',
+			name: 'Lemon Drop Hot Pepper',
+			family: 'peppers',
+			variant: 'lemon-drop-hot-pepper',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-peppers-yellow
+			iconPath: 'peppers-lemon-drop-hot-pepper.png',
+		},
+		{
+			id: 'plant_peppers-buena-mulata-hot-pepper',
+			name: 'Buena Mulata Hot Pepper',
+			family: 'peppers',
+			variant: 'buena-mulata-hot-pepper',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-peppers-purple
+			iconPath: 'peppers-buena-mulata-hot-pepper.png',
+		},
+
+		// Beans
+		{
+			id: 'plant_beans-burpee-provider-bush-bean',
+			name: 'Provider Bush Bean',
+			family: 'beans',
+			variant: 'burpee-provider-bush-bean',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
+			iconPath: 'beans-burpee-provider-bush-bean.png',
+		},
+		{
+			id: 'plant_beans-fava-beans',
+			name: 'Fava Beans',
+			family: 'beans',
+			variant: 'fava-beans',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
+			iconPath: 'beans-fava-beans.png',
+		},
+		{
+			id: 'plant_beans-dragons-tongue-beans',
+			name: "Dragon's Tongue Bush Bean",
+			family: 'beans',
+			variant: 'dragons-tongue-beans',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-beans-yellow
+			iconPath: 'beans-dragons-tongue-beans.png',
+		},
+		{
+			id: 'plant_beans-cherokee-trail-of-tears-beans',
+			name: 'Cherokee Trail of Tears Bean',
+			family: 'beans',
+			variant: 'cherokee-trail-of-tears-beans',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 128, green: 0, blue: 128 }, // --color-beans-purple
+			iconPath: 'beans-cherokee-trail-of-tears-beans.png',
+		},
+		{
+			id: 'plant_beans-scarlet-runner-beans',
+			name: 'Scarlet Runner Bean',
+			family: 'beans',
+			variant: 'scarlet-runner-beans',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
+			iconPath: 'beans-scarlet-runner-beans.png',
+		},
+
+		// Onions & Alliums
+		{
+			id: 'plant_onions-rareseeds-yellow-of-parma-onion',
+			name: 'Yellow of Parma Onion',
+			family: 'onions',
+			variant: 'rareseeds-yellow-of-parma-onion',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 212, blue: 0 }, // --color-onions-yellow
+			iconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
+		},
+		{
+			id: 'plant_onions-burpee-evergreen-hardy-white-scallions',
+			name: 'Evergreen Hardy White Scallions',
+			family: 'onions',
+			variant: 'burpee-evergreen-hardy-white-scallions',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
+			iconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
+		},
+		{
+			id: 'plant_onions-chives',
+			name: 'Chives',
+			family: 'onions',
+			variant: 'chives',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 86, green: 130, blue: 3 }, // --color-mint-green
+			iconPath: 'onions-chives.png',
+		},
+		{
+			id: 'plant_onions-garlic',
+			name: 'Garlic',
+			family: 'onions',
+			variant: 'garlic',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
+			iconPath: 'onions-garlic.png',
+		},
+		{
+			id: 'plant_onions-bunching-onion',
+			name: 'Bunching Onion',
+			family: 'onions',
+			variant: 'bunching-onion',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
+			iconPath: 'onions-bunching-onion.png',
+		},
+
+		// Fruits
+		{
+			id: 'plant_cherries-rainier-cherry',
+			name: 'Rainier Cherry',
+			family: 'cherries',
+			variant: 'rainier-cherry',
+			plantingDistance: { value: 3, unit: 'feet' },
+			accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
+			iconPath: 'cherries-rainier-cherry.png',
+		},
+		{
+			id: 'plant_strawberries-alexandria-strawberry',
+			name: 'Alexandria Strawberry',
+			family: 'strawberries',
+			variant: 'alexandria-strawberry',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 220, green: 20, blue: 60 }, // --color-strawberries-red
+			iconPath: 'strawberries-alexandria-strawberry.png',
+		},
+
+		// Flowers
+		{
+			id: 'plant_daisies-zinnia-2',
+			name: 'Zinnia',
+			family: 'daisies',
+			variant: 'zinnia',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 105, blue: 180 },
+			iconPath: 'daisies-zinnia.png',
+		},
+		// --- ADDED FROM seeds.yml ---
+		{
+			id: 'plant_basil',
+			name: 'Basil',
+			family: 'basil',
+			variant: 'basil',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 85, green: 107, blue: 47 },
+			iconPath: 'basil-basil.png',
+		},
+		{
+			id: 'plant_foxglove',
+			name: 'Foxglove',
+			family: 'snapdragons',
+			variant: 'foxglove',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 186, green: 85, blue: 211 },
+			iconPath: 'snapdragons-foxglove.png',
+		},
+		{
+			id: 'plant_zinnia',
+			name: 'Zinnia',
+			family: 'daisies',
+			variant: 'zinnia',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 105, blue: 180 },
+			iconPath: 'daisies-zinnia.png',
+		},
+		{
+			id: 'plant_watermelon',
+			name: 'Watermelon',
+			family: 'watermelons',
+			variant: 'watermelon',
+			plantingDistance: { value: 4, unit: 'feet' },
+			accentColor: { red: 50, green: 205, blue: 50 },
+			iconPath: 'watermelons-watermelon.png',
+		},
+		{
+			id: 'plant_wheat',
+			name: 'Wheat',
+			family: 'grains',
+			variant: 'wheat',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 222, green: 184, blue: 135 },
+			iconPath: 'grains-wheat.png',
+		},
+		{
+			id: 'plant_broccoli',
+			name: 'Broccoli',
+			family: 'brassicas',
+			variant: 'broccoli',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 85, green: 107, blue: 47 },
+			iconPath: 'broccoli-broccoli.png',
+		},
+		{
+			id: 'plant_sunflower',
+			name: 'Sunflower',
+			family: 'sunflowers',
+			variant: 'sunflower',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 255, green: 215, blue: 0 },
+			iconPath: 'sunflowers-sunflower.png',
+		},
+		{
+			id: 'plant_lupine',
+			name: 'Lupine',
+			family: 'legumes',
+			variant: 'lupine',
+			plantingDistance: { value: 2, unit: 'feet' },
+			accentColor: { red: 123, green: 104, blue: 238 },
+			iconPath: 'legumes-lupine.png',
+		},
+		{
+			id: 'plant_rutabaga',
+			name: 'Rutabaga',
+			family: 'turnips',
+			variant: 'rutabaga',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 238, green: 232, blue: 170 },
+			iconPath: 'rutabagas-rutabaga.png',
+		},
+		{
+			id: 'plant_celery',
+			name: 'Celery',
+			family: 'celery',
+			variant: 'celery',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 144, green: 238, blue: 144 },
+			iconPath: 'celery-celery.png',
+		},
+		{
+			id: 'plant_marigold',
+			name: 'Marigold',
+			family: 'marigolds',
+			variant: 'marigold',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 140, blue: 0 },
+			iconPath: 'marigolds-marigold.png',
+		},
+		{
+			id: 'plant_cilantro',
+			name: 'Cilantro',
+			family: 'cilantro',
+			variant: 'cilantro',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 34, green: 139, blue: 34 },
+			iconPath: 'cilantro-cilantro.png',
+		},
+		{
+			id: 'plant_brassicas-bok-choy',
+			name: 'Bok Choy',
+			family: 'brassicas',
+			variant: 'bok-choy',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 152, green: 251, blue: 152 },
+			iconPath: 'brassicas-bok-choy.png',
+		},
+		{
+			id: 'plant_peas',
+			name: 'Super Sugar Snap Pea',
+			family: 'peas',
+			variant: 'super-sugar-snap',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 123, green: 182, blue: 97 },
+			iconPath: 'peas-burpee-sugar-snap-peas.png',
+		},
+		{
+			id: 'plant_dahlia',
+			name: 'Dahlia',
+			family: 'dasies',
+			variant: 'dahlia',
+			plantingDistance: { value: 1, unit: 'feet' },
+			accentColor: { red: 255, green: 87, blue: 34 },
+			iconPath: 'daisies-dahlia.png',
+		},
+	] satisfies BasicPlantData[]
+).map(createPlantItem)
+
+function findPlantById(id: string): Item<PlantMetadata> {
+	const result = plants.find((plant) => plant.id === id)
+	if (!result) {
+		throw new Error(`Plant with id ${id} not found`)
+	}
+	return result
+}
+
 export const gardens: Workspace[] = [
 	{
 		id: 'grdn_0',
 		indicators: [
 			{
 				id: 'indicator_0',
-				zoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 				effects: [
 					{
-						sourceItemId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b', // lettuce
-						targetItemId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb', // tomato
+						sourceItemTypeId: 'plant_lettuce-burpee-buttercrunch-lettuce',
+						targetItemTypeId: 'plant_tomatoes-burpee-big-boy-tomato',
 						nature: 'beneficial',
 						description: 'Lettuce provides a living mulch, suppressing weeds.',
 					},
 					{
-						sourceItemId: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb', // tomato
-						targetItemId: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b', // lettuce
+						sourceItemTypeId: 'plant_tomatoes-burpee-big-boy-tomato',
+						targetItemTypeId: 'plant_lettuce-burpee-buttercrunch-lettuce',
 						nature: 'beneficial',
 						description: 'Tomatoes provide shade for lettuce.',
 					},
@@ -649,17 +555,16 @@ export const gardens: Workspace[] = [
 			},
 			{
 				id: 'indicator_1',
-				zoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 				effects: [
 					{
-						sourceItemId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
-						targetItemId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
+						sourceItemTypeId: 'plant_arugula-arugula',
+						targetItemTypeId: 'plant_spinach-japanese-perpetual-spinach',
 						nature: 'neutral',
 						description: 'Arugula and Spinach have similar needs and do not interfere.',
 					},
 					{
-						sourceItemId: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
-						targetItemId: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
+						sourceItemTypeId: 'plant_spinach-japanese-perpetual-spinach',
+						targetItemTypeId: 'plant_arugula-arugula',
 						nature: 'neutral',
 						description: 'Arugula and Spinach have similar needs and do not interfere.',
 					},
@@ -667,24 +572,23 @@ export const gardens: Workspace[] = [
 			},
 			{
 				id: 'indicator_2',
-				zoneId: 'bed_complex_interaction',
 				effects: [
 					{
-						sourceItemId: 'plant_placement_dahlia',
-						targetItemId: 'plant_placement_broccoli',
+						sourceItemTypeId: 'plant_dahlia',
+						targetItemTypeId: 'plant_broccoli',
 						nature: 'beneficial',
 						description: 'Dahlia deters pests that affect Broccoli.',
 					},
 					{
-						sourceItemId: 'plant_placement_garlic',
-						targetItemId: 'plant_placement_peas',
+						sourceItemTypeId: 'plant_onions-garlic',
+						targetItemTypeId: 'plant_peas',
 						nature: 'harmful',
 						description:
 							'Garlic releases chemicals that can kill needed soil bacteria for peas.',
 					},
 					{
-						sourceItemId: 'plant_placement_garlic',
-						targetItemId: 'plant_placement_broccoli',
+						sourceItemTypeId: 'plant_onions-garlic',
+						targetItemTypeId: 'plant_broccoli',
 						nature: 'beneficial',
 						description: 'Garlic deters pests that affect Broccoli.',
 					},
@@ -712,18 +616,7 @@ export const gardens: Workspace[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						item: createPlantItem({
-							id: 'plant_tomatoes-burpee-big-boy-tomato',
-							displayName: 'Big Boy Tomato',
-							family: 'tomatoes',
-							variant: 'burpee-big-boy-tomato',
-							plantingDistanceInFeet: 2,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-								size: 2,
-							},
-						}),
+						item: findPlantById('plant_tomatoes-burpee-big-boy-tomato'),
 						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 					},
 				],
@@ -740,18 +633,7 @@ export const gardens: Workspace[] = [
 						x: 0,
 						y: 0,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-							displayName: 'Buttercrunch Lettuce',
-							family: 'lettuce',
-							variant: 'burpee-buttercrunch-lettuce',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 					},
 				],
@@ -768,18 +650,7 @@ export const gardens: Workspace[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						item: createPlantItem({
-							plantingDistanceInFeet: 2,
-							id: 'plant_tomatoes-burpee-big-boy-tomato',
-							displayName: 'Big Boy Tomato',
-							family: 'tomatoes',
-							variant: 'burpee-big-boy-tomato',
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-								size: 2,
-							},
-						}),
+						item: findPlantById('plant_tomatoes-burpee-big-boy-tomato'),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
@@ -787,18 +658,15 @@ export const gardens: Workspace[] = [
 						x: 2,
 						y: 0,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-							displayName: 'Buttercrunch Lettuce',
-							family: 'lettuce',
-							variant: 'burpee-buttercrunch-lettuce',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
+						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
+					},
+					{
+						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-7939cc841b',
+						x: 2,
+						y: 1,
+						size: 1,
+						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 				],
@@ -815,18 +683,7 @@ export const gardens: Workspace[] = [
 						x: 0,
 						y: 0,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_arugula-arugula',
-							displayName: 'Arugula',
-							family: 'arugula',
-							variant: 'arugula',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'arugula-arugula.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_arugula-arugula'),
 						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 					{
@@ -834,18 +691,7 @@ export const gardens: Workspace[] = [
 						x: 2,
 						y: 0,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_spinach-japanese-perpetual-spinach',
-							displayName: 'Japanese Perpetual Spinach',
-							family: 'spinach',
-							variant: 'japanese-perpetual-spinach',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 56, green: 142, blue: 60 }, // --color-spinach-green
-								iconPath: 'spinach-japanese-perpetual-spinach.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_spinach-japanese-perpetual-spinach'),
 						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 				],
@@ -862,18 +708,7 @@ export const gardens: Workspace[] = [
 						x: 2,
 						y: 1,
 						size: 3,
-						item: createPlantItem({
-							id: 'plant_cherries-rainier-cherry',
-							displayName: 'Rainier Cherry',
-							family: 'cherries',
-							variant: 'rainier-cherry',
-							plantingDistanceInFeet: 3,
-							presentation: {
-								accentColor: { red: 255, green: 192, blue: 203 }, // --color-cherries-pink
-								iconPath: 'cherries-rainier-cherry.png',
-								size: 3,
-							},
-						}),
+						item: findPlantById('plant_cherries-rainier-cherry'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
@@ -881,18 +716,7 @@ export const gardens: Workspace[] = [
 						x: 0,
 						y: 0,
 						size: 2,
-						item: createPlantItem({
-							id: 'plant_tomatoes-burpee-big-boy-tomato',
-							displayName: 'Big Boy Tomato',
-							family: 'tomatoes',
-							variant: 'burpee-big-boy-tomato',
-							plantingDistanceInFeet: 2,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'tomatoes-burpee-big-boy-tomato.png',
-								size: 2,
-							},
-						}),
+						item: findPlantById('plant_tomatoes-burpee-big-boy-tomato'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
@@ -900,18 +724,7 @@ export const gardens: Workspace[] = [
 						x: 2,
 						y: 0,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_lettuce-burpee-buttercrunch-lettuce',
-							displayName: 'Buttercrunch Lettuce',
-							family: 'lettuce',
-							variant: 'burpee-buttercrunch-lettuce',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-								iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
@@ -920,18 +733,7 @@ export const gardens: Workspace[] = [
 						x: 6,
 						y: 0,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_strawberries-alexandria-strawberry',
-							displayName: 'Alexandria Strawberry',
-							family: 'strawberries',
-							variant: 'alexandria-strawberry',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'strawberries-alexandria-strawberry.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_strawberries-alexandria-strawberry'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
@@ -940,18 +742,7 @@ export const gardens: Workspace[] = [
 						x: 6,
 						y: 3,
 						size: 1,
-						item: createPlantItem({
-							id: 'plant_daisies-zinnia-2',
-							displayName: 'Zinnia',
-							family: 'daisies',
-							variant: 'zinnia',
-							plantingDistanceInFeet: 1,
-							presentation: {
-								accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-								iconPath: 'daisies-zinnia.png',
-								size: 1,
-							},
-						}),
+						item: findPlantById('plant_daisies-zinnia-2'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 				],
@@ -968,7 +759,7 @@ export const gardens: Workspace[] = [
 						x: 0,
 						y: 1,
 						size: 1,
-						item: plants.find((p) => p.id === 'plant_onions-garlic') as Item,
+						item: findPlantById('plant_onions-garlic'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 					{
@@ -976,15 +767,15 @@ export const gardens: Workspace[] = [
 						x: 1,
 						y: 1,
 						size: 1,
-						item: plants.find((p) => p.id === 'plant_dahlia') as Item,
+						item: findPlantById('plant_dahlia'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 					{
 						id: 'plant_placement_broccoli',
 						x: 0,
 						y: 0,
-						size: 1,
-						item: plants.find((p) => p.id === 'plant_broccoli') as Item,
+						size: 2,
+						item: findPlantById('plant_broccoli'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 					{
@@ -992,7 +783,7 @@ export const gardens: Workspace[] = [
 						x: 1,
 						y: 0,
 						size: 1,
-						item: plants.find((p) => p.id === 'plant_peas') as Item,
+						item: findPlantById('plant_peas'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 				],

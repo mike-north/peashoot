@@ -29,7 +29,7 @@ const placementForDisplay = $derived(
 			id: `pending-${operation.id}`,
 			x: operation.x || 0,
 			y: operation.y || 0,
-			size: operation.item.presentation.size,
+			size: operation.item.size,
 			item: displayItem,
 			sourceZoneId: operation.zoneId,
 		} satisfies GridPlacement<WithVisualPresentation>

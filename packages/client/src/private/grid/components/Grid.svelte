@@ -52,10 +52,9 @@ interface GardenBedViewProps {
 	grid: GridArea<GridPlaceable>
 	/** New flexible indicator system */
 	indicators?: Indicator[]
-	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const { grid, indicators = [], tileSizeForItem }: GardenBedViewProps = $props()
+const { grid, indicators = [] }: GardenBedViewProps = $props()
 
 // plantPlacements is already GridPlacement<PlantWithSize>[]
 const gridPlacements = $derived(grid.placements)
@@ -71,7 +70,6 @@ let pendingSourcePlantIds = $derived(
 const layout = new ZoneLayoutCalculator<GridPlaceable>({
 	width: grid.width,
 	height: grid.height,
-	tileSizeForItem,
 	...DEFAULT_LAYOUT_PARAMS, // Use shared constants
 })
 
@@ -107,7 +105,7 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 }
 
 const indicatorVisuals = $derived(
-	calculateIndicatorVisuals<GridPlaceable>(indicators, gridPlacements, grid.id, layout),
+	calculateIndicatorVisuals<GridPlaceable>(indicators, gridPlacements, layout),
 )
 
 interface TileStyleProps {
@@ -170,7 +168,7 @@ function handleDropProp(payload: DropEventPayload) {
 		return
 	}
 	const { item, x, y } = payload
-	const itemSize = (item as GridPlaceable).presentation.size
+	const itemSize = (item as GridPlaceable).size
 
 	// Perform local placement validation (e.g., collision, bounds).
 	// This is a preliminary check. The full async validation will be done by GardenView.
@@ -190,11 +188,11 @@ const draggedGridItemEffectiveSize = $derived(
 		const currentDragState = $genericDragState
 		if (isDraggingNewItem(currentDragState)) {
 			if (isGridPlaceable(currentDragState.draggedNewItem)) {
-				return currentDragState.draggedNewItem.presentation.size
+				return currentDragState.draggedNewItem.size
 			}
 		} else if (isDraggingExistingItem(currentDragState)) {
 			if (isGridPlaceable(currentDragState.draggedExistingItem.item)) {
-				return currentDragState.draggedExistingItem.item.presentation.size
+				return currentDragState.draggedExistingItem.item.size
 			}
 		}
 		return 1 // Default if not GridPlaceable or not determinable
@@ -484,7 +482,7 @@ const draggedGridItemEffectiveSize = $derived(
 					<!-- Pending Operations -->
 					{#each $genericPendingOperations.filter( (op) => isGridPendingOperation(op, isGridPlaceable), ) as operation (operation.id)}
 						{#if operation.zoneId === grid.id && operation.x !== undefined && operation.y !== undefined}
-							{@const itemOpSize = operation.item.presentation.size}
+							{@const itemOpSize = operation.item.size}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
 								y: operation.y || 0,

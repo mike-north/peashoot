@@ -3,8 +3,9 @@ import type { Workspace } from '../entities/workspace'
 import { WorkspaceAdapterBase } from './workspace-adapter-base'
 import type { Zone } from '../entities/zone'
 import type { GridPlacement } from '../../private/grid/grid-placement'
-import type { PlantItem } from '../item-types/plant-item'
 import { convertPlantItem, type PlantResource } from './plant-item-adapter'
+import type { PlantMetadata } from '../entities/plant-metadata'
+import type { Item } from '../entities/item'
 
 type PlantPlacementResource = IPlantPlacement & { id: `plcmnt_${string}` } & {
 	plant: PlantResource
@@ -23,7 +24,7 @@ export type WorkspaceResource = IGarden & {
 function convertPlantPlacement(
 	zoneId: string,
 	placement: PlantPlacementResource,
-): GridPlacement<PlantItem> {
+): GridPlacement<Item<PlantMetadata>> {
 	const plant = convertPlantItem(placement.plant)
 	return {
 		id: placement.id,

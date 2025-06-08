@@ -98,7 +98,7 @@ function getNatureStyle(nature: EffectNature) {
 					</div>
 
 					<div class="space-y-2">
-						{#each effects as effect (effect.sourceItemId + '-' + effect.targetItemId)}
+						{#each effects as effect (effect.sourceItemTypeId + '-' + effect.targetItemTypeId)}
 							<div class="effect-item {style.bg} {style.border} border rounded-lg p-3">
 								<div class="flex justify-between items-start mb-2">
 									<div class="text-sm font-medium text-gray-700">

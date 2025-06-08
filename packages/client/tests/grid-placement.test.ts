@@ -30,10 +30,10 @@ describe('Grid Placement', () => {
 					id: 'test-1',
 					name: 'Test Item',
 					displayName: 'Test Item',
+					size: 1,
 					presentation: {
 						iconPath: '/icons/test.svg',
 						accentColor: { red: 255, green: 0, blue: 0 },
-						size: 1,
 					},
 				},
 				sourceZoneId: 'zone-1',
@@ -107,10 +107,10 @@ describe('Grid Placement', () => {
 					id: 'test-1',
 					name: 'Test Item',
 					displayName: 'Test Item',
+					size: 1,
 					presentation: {
 						iconPath: '/icons/test.svg',
 						accentColor: { red: 255, green: 0, blue: 0 },
-						size: 1,
 					},
 				},
 				sourceZoneId: 'zone-1',
@@ -125,10 +125,10 @@ describe('Grid Placement', () => {
 					id: 'test-1',
 					name: 'Test Item',
 					displayName: 'Test Item',
+					size: 1,
 					presentation: {
 						iconPath: '/icons/test.svg',
 						accentColor: { red: 255, green: 0, blue: 0 },
-						size: 1,
 					},
 				},
 				sourceZoneId: '',
@@ -149,10 +149,10 @@ describe('Grid Placement', () => {
 			const validItem: GridPlaceable = {
 				id: 'test-1',
 				displayName: 'Test Item',
+				size: 1,
 				presentation: {
 					iconPath: '/icons/test.svg',
 					accentColor: { red: 255, green: 0, blue: 0 },
-					size: 1,
 				},
 			}
 
@@ -189,10 +189,10 @@ describe('Grid Placement', () => {
 			const item: WithVisualPresentation = {
 				id: 'test-1',
 				displayName: 'Test Item',
+				size: 1,
 				presentation: {
 					iconPath: '/icons/test.svg',
 					accentColor: { red: 255, green: 0, blue: 0 },
-					size: 1,
 				},
 			}
 
@@ -201,7 +201,7 @@ describe('Grid Placement', () => {
 			expect(item.presentation).toBeDefined()
 			expect(item.presentation.iconPath).toBe('/icons/test.svg')
 			expect(item.presentation.accentColor).toEqual({ red: 255, green: 0, blue: 0 })
-			expect(item.presentation.size).toBe(1)
+			expect(item.size).toBe(1)
 		})
 	})
 })

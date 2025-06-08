@@ -1,5 +1,5 @@
-<script lang="ts" generics="TItem extends WithVisualPresentation">
-import type { GridItemPresentation } from '../grid-placement'
+<script lang="ts" generics="TItem extends Item">
+import type { GridItemPresentation, GridPlaceable } from '../grid-placement'
 import { dragManager } from '../../dnd/drag-manager'
 import { dragState } from '../../dnd/state'
 import GridPlacementTile from '../ui/GridPlacementTile.svelte'
@@ -7,38 +7,37 @@ import type { GridPlacement } from '../grid-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import { clickOrHold } from '../actions/clickOrHold'
 import type { WithVisualPresentation } from '../grid-placement'
+import type { Item } from '../../../lib/entities/item'
 
 export interface GridToolbarProps<TItem extends WithVisualPresentation> {
 	items: TItem[]
-	categoryNameForItem: (item: TItem) => string
 	[k: string]: unknown
 }
 
-interface ToolbarGridItem {
+interface ToolbarGridItemCategory extends GridPlaceable {
 	displayName: string
 	presentation: GridItemPresentation
+	items: GridPlaceable[]
 }
 
-interface ToolbarGridItemCategory {
-	displayName: string
-	presentation: GridItemPresentation
-	items: ToolbarGridItem[]
-}
-
-const { items = [], categoryNameForItem, ...rest }: GridToolbarProps<TItem> = $props()
+const { items = [], ...rest }: GridToolbarProps<TItem> = $props()
 
 const itemListToToolbarCategories = (itemList: TItem[]): ToolbarGridItemCategory[] => {
 	const categories = new Map<string, ToolbarGridItemCategory>()
 	for (const item of itemList) {
-		const itemCategory = categoryNameForItem(item)
+		const itemCategory = item.category
 		const category = categories.get(itemCategory)
 		if (!category) {
 			// Create a new family and add the current plant as the first variant
 			categories.set(itemCategory, {
+				id: item.id,
+				size: item.size,
 				displayName: itemCategory,
 				presentation: { ...item.presentation },
 				items: [
 					{
+						id: item.id,
+						size: item.size,
 						displayName: item.displayName,
 						presentation: { ...item.presentation },
 					},
@@ -46,6 +45,8 @@ const itemListToToolbarCategories = (itemList: TItem[]): ToolbarGridItemCategory
 			})
 		} else {
 			category.items.push({
+				id: item.id,
+				size: item.size,
 				displayName: item.displayName,
 				presentation: { ...item.presentation },
 			})
@@ -100,8 +101,7 @@ function handleClickOutside(event: MouseEvent) {
 // Create a plant object from family and variant
 function createItem(categoryName: string, categoryItemName: string): TItem {
 	const item = items.find(
-		(itm) =>
-			categoryNameForItem(itm) === categoryName && itm.displayName === categoryItemName,
+		(itm) => itm.category === categoryName && itm.displayName === categoryItemName,
 	)
 	if (!item) {
 		throw new Error(`Item not found: ${categoryName} ${categoryItemName}`)
@@ -115,8 +115,7 @@ function createToolbarGridPlacement(
 	categoryItemName: string,
 ): GridPlacement<TItem> {
 	const item = items.find(
-		(itm) =>
-			categoryNameForItem(itm) === categoryName && itm.displayName === categoryItemName,
+		(itm) => itm.category === categoryName && itm.displayName === categoryItemName,
 	)
 	if (!item) {
 		throw new Error(`Item not found: ${categoryName} ${categoryItemName}`)
@@ -125,7 +124,7 @@ function createToolbarGridPlacement(
 		id: `gridplacement_${categoryName}_${categoryItemName}`,
 		x: 0,
 		y: 0,
-		size: item.presentation.size,
+		size: item.size,
 		item: item,
 		sourceZoneId: 'toolbar', // Required by ExistingDraggableItem
 	}
@@ -200,7 +199,7 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 				<!-- Main tile (selected variant) -->
 				<div
 					class={`plant-toolbar__tile-container relative w-[60px] h-[60px] flex items-center justify-center rounded-md border-2 border-black/40 box-border shadow-md user-select-none cursor-grab transition-transform transition-shadow duration-100 overflow-visible
-					${category.items[0].presentation.size === 2 ? 'plant-toolbar__tile-container--size-2' : ''}
+					${category.items[0].size === 2 ? 'plant-toolbar__tile-container--size-2' : ''}
 					${category.items.length > 1 ? 'plant-toolbar__tile-container--clickable cursor-pointer' : ''}
 					${openDropdown === category.displayName ? 'plant-toolbar__tile-container--open border-blue-500 shadow-lg' : ''}`}
 					role="button"
@@ -260,7 +259,7 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 							)}
 							<div
 								class={`plant-toolbar__tile-container plant-toolbar__tile-container--variant relative w-[50px] h-[50px] flex items-center justify-center rounded-md border-2 border-black/40 box-border shadow-md user-select-none cursor-pointer transition-transform transition-shadow duration-100 overflow-visible
-								${item.presentation.size === 2 ? 'plant-toolbar__tile-container--size-2' : ''}`}
+								${item.size === 2 ? 'plant-toolbar__tile-container--size-2' : ''}`}
 								role="button"
 								tabindex="0"
 								use:clickOrHold={{

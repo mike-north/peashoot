@@ -71,7 +71,6 @@ export interface GridItemPresentation {
 	readonly iconPath: string
 	/** Accent color for the tile background */
 	readonly accentColor: IRGBColor
-	readonly size: number
 }
 
 /**
@@ -82,6 +81,8 @@ export interface GridPlaceable extends DraggableItem {
 	readonly displayName: string
 	/** Visual presentation data */
 	readonly presentation: GridItemPresentation
+	/** Size of the item on the grid (e.g., 2 means 2x2) */
+	readonly size: number
 }
 
 export function isGridPlaceable(item: unknown): item is GridPlaceable {
@@ -92,10 +93,10 @@ export function isGridPlaceable(item: unknown): item is GridPlaceable {
 		'displayName' in item &&
 		'presentation' in item &&
 		!('key' in item && 'centerX' in item && 'effects' in item) && // Not an IndicatorVisual
+		'size' in item &&
+		typeof item.size === 'number' &&
 		item.presentation !== null &&
 		typeof item.presentation === 'object' &&
-		'size' in item.presentation &&
-		typeof item.presentation.size === 'number' &&
 		'iconPath' in item.presentation &&
 		typeof item.presentation.iconPath === 'string'
 	)

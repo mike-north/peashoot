@@ -6,17 +6,17 @@ import {
 } from '../../src/lib/entities/workspace.js'
 import type { Zone } from '../../src/lib/entities/zone.js'
 import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
-import type { PlantItem } from '../../src/lib/item-types/plant-item.js'
-import { createPlantItem } from '../../src/lib/item-types/plant-item.js'
 import type { GridArea } from '../../src/private/grid/grid-area.js'
 import type { ExistingDraggableItem } from '../../src/private/dnd/types.js'
+import { type PlantMetadata } from '../../src/lib/entities/plant-metadata.js'
+import { type Item } from '../../src/lib/entities/item.js'
 
-const mockPlant: PlantItem = createPlantItem({
+const mockPlant: Item<PlantMetadata> = {
 	id: 'plant_1',
 	displayName: 'Tomato',
-	family: 'tomatoes',
+	category: 'tomatoes',
 	variant: 'red',
-	plantingDistanceInFeet: 1,
+	size: 1,
 	presentation: {
 		accentColor: {
 			red: 255,
@@ -26,9 +26,14 @@ const mockPlant: PlantItem = createPlantItem({
 		iconPath: 'tomato.png',
 		size: 1,
 	},
-})
+	metadata: {
+		plantingDistanceInFeet: 1,
+		family: 'tomatoes',
+	},
+}
 
-const plantPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem> = {
+const plantPlacement: GridPlacement<Item<PlantMetadata>> &
+	ExistingDraggableItem<Item<PlantMetadata>> = {
 	id: 'placement1',
 	item: mockPlant,
 	sourceZoneId: 'zone1',
@@ -37,7 +42,7 @@ const plantPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem
 	size: 1,
 }
 
-const sourceZone: Zone<PlantItem> & GridArea<PlantItem> = {
+const sourceZone: Zone<Item<PlantMetadata>> & GridArea<Item<PlantMetadata>> = {
 	id: 'zone_1',
 	width: 4,
 	height: 4,
@@ -46,7 +51,7 @@ const sourceZone: Zone<PlantItem> & GridArea<PlantItem> = {
 	placements: [plantPlacement],
 }
 
-const targetZone: Zone<PlantItem> & GridArea<PlantItem> = {
+const targetZone: Zone<Item<PlantMetadata>> & GridArea<Item<PlantMetadata>> = {
 	id: 'zone_2',
 	width: 4,
 	height: 4,
@@ -58,7 +63,6 @@ const targetZone: Zone<PlantItem> & GridArea<PlantItem> = {
 const workspace: Workspace = {
 	id: 'workspace_1',
 	zones: [sourceZone, targetZone],
-	edgeIndicators: [],
 	indicators: [],
 }
 
@@ -75,12 +79,12 @@ describe('moveItemBetweenZones', () => {
 		const { zones } = updated
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const [updatedSource] = zones.filter(
-			(z: Zone<PlantItem>) => z.id === 'zone_1',
-		) satisfies Zone<PlantItem>[]
+			(z: Zone<Item<PlantMetadata>>) => z.id === 'zone_1',
+		) satisfies Zone<Item<PlantMetadata>>[]
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const [updatedTarget] = zones.filter(
-			(z: Zone<PlantItem>) => z.id === 'zone_2',
-		) satisfies Zone<PlantItem>[]
+			(z: Zone<Item<PlantMetadata>>) => z.id === 'zone_2',
+		) satisfies Zone<Item<PlantMetadata>>[]
 
 		expect(updatedSource.placements.length).toBe(0)
 		expect(updatedTarget.placements.length).toBe(1)

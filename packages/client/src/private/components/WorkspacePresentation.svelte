@@ -22,19 +22,12 @@ import {
 	plantsError,
 	plantsReady,
 } from '../../private/state/plantsStore'
-import ItemTooltipContent from '../../lib/ItemTooltipContent.svelte'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../dnd/types'
 import ZoneGrid from '../../components/ZoneGrid.svelte'
 
 interface WorkspaceProps {
 	workspace: Workspace
-	edgeIndicators: {
-		id: string
-		itemAId: string
-		itemBId: string
-		color: string
-	}[]
 	onRequestPlacement: (
 		details: PlacementRequestDetails<DraggableItem>,
 		pendingOpId?: string,
@@ -53,7 +46,6 @@ interface WorkspaceProps {
 
 let {
 	workspace,
-	edgeIndicators,
 	onRequestPlacement,
 	onRequestRemoval,
 	onRequestCloning,
@@ -286,11 +278,7 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 			<div class="text-md font-bold">Loading items...</div>
 		</div>
 	{:else if $plantsReady}
-		<GridViewToolbar
-			TooltipComponent={ItemTooltipContent}
-			items={$plants}
-			categoryNameForItem={categoryNameForItem}
-		/>
+		<GridViewToolbar items={$plants} categoryNameForItem={categoryNameForItem} />
 
 		<div
 			class="workspace"
@@ -310,16 +298,10 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 			>
 				{#each zones as zone (zone.id)}
 					<ZoneGrid
-						TooltipComponent={ItemTooltipContent}
 						zone={zone}
 						items={$plants}
-						edgeIndicators={edgeIndicators.filter(
-							(edge) =>
-								zones
-									.find((z) => z.id === zone.id)
-									?.placements.some(
-										(p) => p.id === edge.itemAId || p.id === edge.itemBId,
-									) ?? false,
+						indicators={workspace.indicators.filter(
+							(indicator) => indicator.zoneId === zone.id,
 						)}
 						colSpan={zoneCardColSpans[zone.id] ?? 1}
 						tileSizeForItem={tileSizeForItem}

@@ -8,6 +8,9 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"noImplicitOverride": true,
-		"noImplicitReturns": false
+		"noImplicitReturns": false,
+		"paths": {
+			"@/*": ["./packages/client/src/*"]
+		}
 	}
 }

@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-	ZoneLayoutCalculator,
-	calculateEdgeBorders,
-} from '../../src/private/grid/zone-layout-calculator.js'
+import { ZoneLayoutCalculator } from '../../src/private/grid/zone-layout-calculator.js'
 import type { PlantItem } from '../../src/lib/item-types/plant-item.js'
 import { createPlantItem } from '../../src/lib/item-types/plant-item.js'
 import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
@@ -35,20 +32,6 @@ const itemPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem>
 	size: 1,
 	item: mockItem,
 	sourceZoneId: 'zone1',
-}
-
-const itemTileObjectWithId = {
-	x: 1,
-	y: 2,
-	id: 'placement1',
-	plantTile: { ...mockItem, size: 1 },
-}
-
-const itemTileObject2WithId = {
-	x: 2,
-	y: 2,
-	id: 'placement2',
-	plantTile: { ...mockItem, size: 1 },
 }
 
 describe('ZoneLayoutCalculator', () => {
@@ -94,27 +77,9 @@ describe('ZoneLayoutCalculator', () => {
 
 	it('validates placement in bounds and no overlap', () => {
 		const placementWithSize = { ...itemPlacement, size: 1, id: 'placement1' }
-		const valid = layout.isValidPlacement([mockItem], 0, 0, 1, [placementWithSize])
+		const valid = layout.isValidPlacement(0, 0, 1, [placementWithSize])
 		expect(valid).toBe(true)
-		const invalid = layout.isValidPlacement([mockItem], 1, 2, 1, [placementWithSize])
+		const invalid = layout.isValidPlacement(1, 2, 1, [placementWithSize])
 		expect(invalid).toBe(false)
-	})
-})
-
-describe('calculateEdgeBorders', () => {
-	it('returns borders for edge indicators', () => {
-		const zone = {
-			plantPlacements: [itemTileObjectWithId, itemTileObject2WithId],
-		}
-		const edgeIndicators = [
-			{
-				id: 'e1',
-				plantAId: 'placement1',
-				plantBId: 'placement2',
-				color: 'blue',
-			},
-		]
-		const borders = calculateEdgeBorders(zone, edgeIndicators, layout)
-		expect(Array.isArray(borders)).toBe(true)
 	})
 })

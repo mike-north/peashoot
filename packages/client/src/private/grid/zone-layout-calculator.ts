@@ -3,6 +3,13 @@ import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
 import type { GridPlaceable, GridPlacement } from './grid-placement'
 import type { Workspace } from '../../lib/entities/workspace'
 
+import type {
+	EffectNature,
+	Indicator,
+	InteractionEffect,
+} from '../../lib/entities/indicator'
+import { UnreachableError } from '../../lib/errors/unreachabe'
+
 /**
  * Layout information for an item tile, used by generic placement tiles.
  */
@@ -44,6 +51,39 @@ export interface Border {
 	key: string
 	points: { x: number; y: number }[]
 	color: string
+}
+
+/**
+ * Represents a visual indicator circle rendered on the grid
+ */
+export interface IndicatorVisual {
+	key: string
+	centerX: number
+	centerY: number
+	radius: number
+	gridX: number
+	gridY: number
+	effects: InteractionEffect[]
+	sectors?: {
+		sector: 0 | 1 | 2 | 3
+		color: string
+		opacity?: number
+	}[]
+	semicircles?: {
+		direction: 'top' | 'bottom' | 'left' | 'right'
+		color: string
+	}[]
+}
+
+export function isIndicatorVisual(item: unknown): item is IndicatorVisual {
+	return (
+		!!item &&
+		typeof item === 'object' &&
+		'key' in item &&
+		'centerX' in item &&
+		'effects' in item &&
+		Array.isArray((item as IndicatorVisual).effects)
+	)
 }
 
 /**
@@ -178,6 +218,15 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 	}
 
 	/**
+	 * Converts a zone grid Y line-coordinate (0 = bottom) to SVG Y coordinate.
+	 * @param zoneY Y position in the zone grid
+	 * @returns SVG Y coordinate
+	 */
+	gridLineToSvgY(zoneY: number): number {
+		return this.interiorY + (this.height - zoneY) * this.cellHeight
+	}
+
+	/**
 	 * Converts relative SVG coordinates (within the placeable area) to zone grid coordinates.
 	 * @param relativeSvgX X coordinate relative to the start of the placeable area SVG.
 	 * @param relativeSvgY Y coordinate relative to the start of the placeable area SVG.
@@ -291,7 +340,6 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 	 * Skips an item with skipId (for drag/move scenarios).
 	 */
 	isValidPlacement(
-		items: T[],
 		x: number,
 		y: number,
 		size: number,
@@ -305,19 +353,10 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 		}
 		for (const p of placements) {
 			if (skipId && p.id === skipId) continue
-			const pSize = p.size
-			for (let dx = 0; dx < size; dx++) {
-				for (let dy = 0; dy < size; dy++) {
-					const cellX = x + dx
-					const cellY = y + dy
-					for (let pdx = 0; pdx < pSize; pdx++) {
-						for (let pdy = 0; pdy < pSize; pdy++) {
-							if (cellX === p.x + pdx && cellY === p.y + pdy) {
-								return false
-							}
-						}
-					}
-				}
+
+			// Bounding box collision detection
+			if (x < p.x + p.size && x + size > p.x && y < p.y + p.size && y + size > p.y) {
+				return false // collision
 			}
 		}
 		return true
@@ -403,89 +442,186 @@ export function calculateZoneViewColSpans(workspace: Workspace): Record<string, 
 	return colSpans
 }
 
-/**
- * Calculate edge borders for the zone based on edge indicators.
- * This creates visual lines between adjacent items that have edge relationships.
- */
-export function calculateEdgeBorders<T extends GridPlaceable>(
-	zone: {
-		plantPlacements: {
-			x: number
-			y: number
-			id: string
-			plantTile: { size: number }
-		}[]
-	},
-	edgeIndicators: {
-		id: string
-		plantAId: string
-		plantBId: string
-		color: string
-	}[],
+function getAdjacency<T extends GridPlaceable>(
+	p1: GridPlacement<T>,
+	p2: GridPlacement<T>,
+):
+	| { type: 'edge'; p1: { x: number; y: number }; p2: { x: number; y: number } }
+	| { type: 'corner'; point: { x: number; y: number } }
+	| null {
+	const { x: x1, y: y1, size: s1 } = p1
+	const { x: x2, y: y2, size: s2 } = p2
+	const r1 = x1 + s1
+	const t1 = y1 + s1
+	const r2 = x2 + s2
+	const t2 = y2 + s2
+
+	// Edge
+	if (r1 === x2 && Math.max(y1, y2) < Math.min(t1, t2))
+		return {
+			type: 'edge',
+			p1: { x: r1, y: Math.max(y1, y2) },
+			p2: { x: r1, y: Math.min(t1, t2) },
+		}
+	if (r2 === x1 && Math.max(y1, y2) < Math.min(t1, t2))
+		return {
+			type: 'edge',
+			p1: { x: r2, y: Math.max(y1, y2) },
+			p2: { x: r2, y: Math.min(t1, t2) },
+		}
+	if (t1 === y2 && Math.max(x1, x2) < Math.min(r1, r2))
+		return {
+			type: 'edge',
+			p1: { y: t1, x: Math.max(x1, x2) },
+			p2: { y: t1, x: Math.min(r1, r2) },
+		}
+	if (t2 === y1 && Math.max(x1, x2) < Math.min(r1, r2))
+		return {
+			type: 'edge',
+			p1: { y: t2, x: Math.max(x1, x2) },
+			p2: { y: t2, x: Math.min(r1, r2) },
+		}
+
+	// Corner
+	if (r1 === x2 && t1 === y2) return { type: 'corner', point: { x: r1, y: t1 } }
+	if (r1 === x2 && y1 === t2) return { type: 'corner', point: { x: r1, y: y1 } }
+	if (x1 === r2 && t1 === y2) return { type: 'corner', point: { x: x1, y: t1 } }
+	if (x1 === r2 && y1 === t2) return { type: 'corner', point: { x: x1, y: y1 } }
+
+	return null
+}
+
+type VisualPrimitive =
+	| {
+			type: 'semicircle'
+			position: { x: number; y: number }
+			direction: 'top' | 'bottom' | 'left' | 'right'
+			color: string
+			effect: InteractionEffect
+	  }
+	| {
+			type: 'sector'
+			position: { x: number; y: number }
+			sector: 0 | 1 | 2 | 3
+			color: string
+			effect: InteractionEffect
+	  }
+
+export function calculateIndicatorVisuals<T extends GridPlaceable>(
+	indicators: Indicator[],
+	placements: GridPlacement<T>[],
+	zoneId: string,
 	layout: ZoneLayoutCalculator<T>,
-): Border[] {
-	const borders: Border[] = []
+): IndicatorVisual[] {
+	const primitives: VisualPrimitive[] = []
 
-	// For each edge indicator, find the corresponding placements and create borders
-	for (const indicator of edgeIndicators) {
-		const plantA = zone.plantPlacements.find((p) => p.id === indicator.plantAId)
-		const plantB = zone.plantPlacements.find((p) => p.id === indicator.plantBId)
+	for (const indicator of indicators) {
+		if (indicator.zoneId !== zoneId) continue
 
-		if (!plantA || !plantB) continue
+		for (const effect of indicator.effects) {
+			const { sourceItemId, targetItemId } = effect
 
-		// Check if plants are adjacent
-		const isAdjacent =
-			(Math.abs(plantA.x - plantB.x) === 1 && plantA.y === plantB.y) ||
-			(Math.abs(plantA.y - plantB.y) === 1 && plantA.x === plantB.x)
+			const placementA = placements.find((p) => p.id === sourceItemId)
+			const placementB = placements.find((p) => p.id === targetItemId)
 
-		if (isAdjacent) {
-			// Create a border line between the adjacent plants
-			const aLayout = layout.getTileLayoutInfo({
-				x: plantA.x,
-				y: plantA.y,
-				size: plantA.plantTile.size,
-			})
-			const bLayout = layout.getTileLayoutInfo({
-				x: plantB.x,
-				y: plantB.y,
-				size: plantB.plantTile.size,
-			})
+			if (!placementA || !placementB) continue
 
-			// Calculate the border line between the two tiles
-			let x1: number, y1: number, x2: number, y2: number
+			const adjacency = getAdjacency(placementA, placementB)
+			if (!adjacency) continue
 
-			if (plantA.x < plantB.x) {
-				// A is to the left of B
-				x1 = x2 = aLayout.svgX + aLayout.width
-				y1 = Math.max(aLayout.svgY, bLayout.svgY)
-				y2 = Math.min(aLayout.svgY + aLayout.height, bLayout.svgY + bLayout.height)
-			} else if (plantA.x > plantB.x) {
-				// A is to the right of B
-				x1 = x2 = aLayout.svgX
-				y1 = Math.max(aLayout.svgY, bLayout.svgY)
-				y2 = Math.min(aLayout.svgY + aLayout.height, bLayout.svgY + bLayout.height)
-			} else if (plantA.y < plantB.y) {
-				// A is below B
-				y1 = y2 = aLayout.svgY + aLayout.height
-				x1 = Math.max(aLayout.svgX, bLayout.svgX)
-				x2 = Math.min(aLayout.svgX + aLayout.width, bLayout.svgX + bLayout.width)
+			if (adjacency.type === 'edge') {
+				const midPoint = {
+					x: (adjacency.p1.x + adjacency.p2.x) / 2,
+					y: (adjacency.p1.y + adjacency.p2.y) / 2,
+				}
+				const orientation = adjacency.p1.x === adjacency.p2.x ? 'vertical' : 'horizontal'
+				const dir =
+					orientation === 'vertical'
+						? placementB.x < midPoint.x
+							? 'right'
+							: 'left'
+						: placementB.y < midPoint.y
+							? 'bottom'
+							: 'top'
+				const primitive: VisualPrimitive = {
+					type: 'semicircle',
+					position: midPoint,
+					direction: dir,
+					color: getColorForEffect(effect.nature),
+					effect,
+				}
+				primitives.push(primitive)
 			} else {
-				// A is above B
-				y1 = y2 = aLayout.svgY
-				x1 = Math.max(aLayout.svgX, bLayout.svgX)
-				x2 = Math.min(aLayout.svgX + aLayout.width, bLayout.svgX + bLayout.width)
-			}
+				// corner
+				const { point } = adjacency
+				const { x, y, size } = placementB
+				let sector: 0 | 1 | 2 | 3 = 0
+				if (point.x === x + size && point.y === y + size) sector = 2 // Top-Right corner
+				if (point.x === x && point.y === y + size) sector = 1 // Top-Left corner
+				if (point.x === x && point.y === y) sector = 0 // Bottom-Left corner
+				if (point.x === x + size && point.y === y) sector = 3 // Bottom-Right corner
 
-			borders.push({
-				key: `edge-${indicator.id}`,
-				points: [
-					{ x: x1, y: y1 },
-					{ x: x2, y: y2 },
-				],
-				color: indicator.color,
-			})
+				const primitive: VisualPrimitive = {
+					type: 'sector',
+					position: point,
+					sector,
+					color: getColorForEffect(effect.nature),
+					effect,
+				}
+				primitives.push(primitive)
+			}
 		}
 	}
 
-	return borders
+	// Group primitives by position
+	const groupedByPosition = new Map<string, VisualPrimitive[]>()
+	for (const p of primitives) {
+		const key = `${p.position.x},${p.position.y}`
+		if (!groupedByPosition.has(key)) {
+			groupedByPosition.set(key, [])
+		}
+		groupedByPosition.get(key)?.push(p)
+	}
+
+	// Create final visuals
+	const visuals: IndicatorVisual[] = []
+	for (const [positionKey, group] of groupedByPosition.entries()) {
+		const [x, y] = positionKey.split(',').map(Number)
+
+		visuals.push({
+			key: `indicator-visual-${positionKey}`,
+			centerX: layout.zoneToSvgX(x),
+			centerY: layout.gridLineToSvgY(y),
+			radius: Math.min(layout.cellWidth, layout.cellHeight) / 4,
+			gridX: x,
+			gridY: y,
+			effects: group.map((p) => p.effect),
+			semicircles: group
+				.filter(
+					(p): p is Extract<VisualPrimitive, { type: 'semicircle' }> =>
+						p.type === 'semicircle',
+				)
+				.map((p) => ({ direction: p.direction, color: p.color })),
+			sectors: group
+				.filter(
+					(p): p is Extract<VisualPrimitive, { type: 'sector' }> => p.type === 'sector',
+				)
+				.map((p) => ({ sector: p.sector, color: p.color })),
+		})
+	}
+	return visuals
+}
+
+function getColorForEffect(nature: EffectNature): string {
+	switch (nature) {
+		case 'beneficial':
+			return 'green'
+		case 'harmful':
+			return 'red'
+		case 'neutral':
+			return 'blue'
+		default: {
+			throw new UnreachableError(nature, `Unknown effect nature: ${nature as string}`)
+		}
+	}
 }

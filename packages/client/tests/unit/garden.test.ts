@@ -59,6 +59,7 @@ const workspace: Workspace = {
 	id: 'workspace_1',
 	zones: [sourceZone, targetZone],
 	edgeIndicators: [],
+	indicators: [],
 }
 
 describe('moveItemBetweenZones', () => {

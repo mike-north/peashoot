@@ -18,6 +18,33 @@ interface PlacementValidityResult {
 export class WorkspaceValidationService {
 	constructor(private readonly items: PlantItem[]) {}
 
+	private calculateOccupancy(
+		zone: Zone,
+		newItemFootprint: number,
+	): {
+		currentOccupiedCells: number
+		totalOccupiedAfterAdd: number
+		occupancyRateAfterAdd: number
+	} {
+		const currentOccupiedCells = zone.placements.reduce(
+			(total: number, placement: GridPlacement<ItemWithSize>) => {
+				const existingItem = this.items.find((p) => p.id === placement.item.id)
+				if (!existingItem) {
+					throw new Error(`Item not found for validation: ${placement.item.id}`)
+				}
+				const existingProps = getPlantProperties(existingItem)
+				return total + existingProps.plantingDistanceInFeet ** 2
+			},
+			0,
+		)
+
+		const totalOccupiedAfterAdd = currentOccupiedCells + newItemFootprint
+		const totalCells = zone.width * zone.height
+		const occupancyRateAfterAdd = totalOccupiedAfterAdd / totalCells
+
+		return { currentOccupiedCells, totalOccupiedAfterAdd, occupancyRateAfterAdd }
+	}
+
 	private checkPlacementValidity(
 		targetZone: Zone,
 		itemX: number,
@@ -32,13 +59,6 @@ export class WorkspaceValidationService {
 			itemX + itemSize > targetZone.width ||
 			itemY + itemSize > targetZone.height
 		) {
-			console.debug('Placement is out of bounds.', {
-				itemX,
-				itemY,
-				itemSize,
-				targetZone,
-				excludeItemId,
-			})
 			return { isValid: false, reason: 'Placement is out of bounds.' }
 		}
 
@@ -92,14 +112,8 @@ export class WorkspaceValidationService {
 
 						switch (context.operationType) {
 							case 'item-move-within-zone':
-								resolve(
-									Math.random() > 0.3
-										? { isValid: true }
-										: {
-												isValid: false,
-												error: 'Item is too established to move within zone',
-											},
-								)
+								// TODO: Implement real validation logic for moving an item within a zone
+								resolve({ isValid: true })
 								break
 							case 'item-move-across-zones': {
 								const targetZone = currentWorkspace.zones.find(
@@ -135,6 +149,7 @@ export class WorkspaceValidationService {
 									reject(new Error(`Cannot move item: ${placementCheck.reason}`))
 									return
 								}
+								// TODO: Implement real environment compatibility checks
 								if (plantProps.family === 'tomatoes' && targetZone.sunLevel < 3) {
 									resolve({
 										isValid: false,
@@ -158,54 +173,24 @@ export class WorkspaceValidationService {
 									return
 								}
 
-								// Calculate current occupancy correctly
-								const currentOccupiedCells = addTargetZone.placements.reduce(
-									(total: number, placement: GridPlacement<ItemWithSize>) => {
-										const existingItem = this.items.find(
-											(p) => p.id === placement.item.id,
-										)
-										if (!existingItem) {
-											throw new Error(
-												`Item not found for validation: ${placement.item.id}`,
-											)
-										}
-										// Use the existing item's size, not the new item's size
-										const existingProps = getPlantProperties(existingItem)
-										return total + existingProps.plantingDistanceInFeet ** 2
-									},
-									0,
+								const newItemFootprint = plantProps.plantingDistanceInFeet ** 2
+								const { occupancyRateAfterAdd } = this.calculateOccupancy(
+									addTargetZone,
+									newItemFootprint,
 								)
 
-								// Add the footprint of the item being added
-								const newItemFootprint = plantProps.plantingDistanceInFeet ** 2
-								const totalOccupiedAfterAdd = currentOccupiedCells + newItemFootprint
-
-								const totalCells = addTargetZone.width * addTargetZone.height
-								const occupancyRateAfterAdd = totalOccupiedAfterAdd / totalCells
-
-								if (occupancyRateAfterAdd > 0.8)
+								if (occupancyRateAfterAdd > 0.8) {
 									resolve({ isValid: false, error: 'Zone is too crowded for new items' })
-								else if (Math.random() > 0.05) resolve({ isValid: true })
-								else
-									resolve({
-										isValid: false,
-										error: 'Current conditions not suitable for this item',
-									})
+								} else {
+									// TODO: Implement real checks for item suitability in the zone
+									resolve({ isValid: true })
+								}
 								break
 							}
 
 							case 'item-remove-from-zone': {
-								const hasEdgeIndicators = currentWorkspace.edgeIndicators.some(
-									(edge: { itemAId: string; itemBId: string }) =>
-										edge.itemAId === context.itemInstanceId ||
-										edge.itemBId === context.itemInstanceId,
-								)
-								if (hasEdgeIndicators && Math.random() > 0.7)
-									resolve({
-										isValid: false,
-										error: 'Item has beneficial relationships with neighbors',
-									})
-								else resolve({ isValid: true })
+								// TODO: Implement real checks for removal, e.g., considering dependencies
+								resolve({ isValid: true })
 								break
 							}
 
@@ -234,6 +219,7 @@ export class WorkspaceValidationService {
 									context.targetX,
 									context.targetY,
 									plantProps.plantingDistanceInFeet,
+									context.itemInstanceId,
 								)
 								if (!clonePlacementCheck.isValid) {
 									resolve({
@@ -243,46 +229,19 @@ export class WorkspaceValidationService {
 									return
 								}
 
-								// Calculate current occupancy AND include the item being cloned
-								const currentOccupiedCells = cloneTargetZone.placements.reduce(
-									(total: number, placement: GridPlacement<ItemWithSize>) => {
-										const existingItem = this.items.find(
-											(p) => p.id === placement.item.id,
-										)
-										if (!existingItem) {
-											throw new Error(
-												`Item not found for validation: ${placement.item.id}`,
-											)
-										}
-										// Use the existing item's size, not the new item's size
-										const existingProps = getPlantProperties(existingItem)
-										return total + existingProps.plantingDistanceInFeet ** 2
-									},
-									0,
-								)
+								const newCloneFootprint = plantProps.plantingDistanceInFeet ** 2
+								const { occupancyRateAfterAdd: occupancyRateAfterClone } =
+									this.calculateOccupancy(cloneTargetZone, newCloneFootprint)
 
-								// Add the footprint of the item being cloned
-								const newItemFootprint = plantProps.plantingDistanceInFeet ** 2
-								const totalOccupiedAfterClone = currentOccupiedCells + newItemFootprint
-
-								const totalCells = cloneTargetZone.width * cloneTargetZone.height
-								const occupancyRateAfterClone = totalOccupiedAfterClone / totalCells
-
-								if (occupancyRateAfterClone > 0.75)
+								if (occupancyRateAfterClone > 0.75) {
 									resolve({
 										isValid: false,
 										error: 'Target zone is too crowded for cloning (capacity check)',
 									})
-								else
-									resolve(
-										Math.random() > 0.12
-											? { isValid: true }
-											: {
-													isValid: false,
-													error:
-														'Item properties not stable enough for cloning (random check)',
-												},
-									)
+								} else {
+									// TODO: Implement real checks for cloning suitability
+									resolve({ isValid: true })
+								}
 								break
 							}
 

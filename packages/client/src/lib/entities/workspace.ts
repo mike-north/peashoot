@@ -1,18 +1,13 @@
 import type { ItemWithSize, Zone } from './zone'
 import type { Item } from './item'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
-
-export interface EdgeIndicator {
-	id: string
-	itemAId: string
-	itemBId: string
-	color: string
-}
+import type { Indicator } from './indicator'
 
 export interface Workspace<T extends ItemWithSize = ItemWithSize> {
 	readonly id: string
 	zones: Zone<T>[]
-	edgeIndicators: EdgeIndicator[]
+	/** New flexible indicator system that supports multiple items and sector-based visualization */
+	indicators: Indicator[]
 }
 
 export function moveItemBetweenZonesAndCreateNewWorkspace(

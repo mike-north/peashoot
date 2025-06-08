@@ -7,12 +7,10 @@ import type { GridPlacement } from '../grid-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import { clickOrHold } from '../actions/clickOrHold'
 import type { WithVisualPresentation } from '../grid-placement'
-import type { Component } from 'svelte'
 
 export interface GridToolbarProps<TItem extends WithVisualPresentation> {
 	items: TItem[]
 	categoryNameForItem: (item: TItem) => string
-	TooltipComponent: Component<{ item: TItem }>
 	[k: string]: unknown
 }
 
@@ -27,12 +25,7 @@ interface ToolbarGridItemCategory {
 	items: ToolbarGridItem[]
 }
 
-const {
-	items = [],
-	categoryNameForItem,
-	TooltipComponent,
-	...rest
-}: GridToolbarProps<TItem> = $props()
+const { items = [], categoryNameForItem, ...rest }: GridToolbarProps<TItem> = $props()
 
 const itemListToToolbarCategories = (itemList: TItem[]): ToolbarGridItemCategory[] => {
 	const categories = new Map<string, ToolbarGridItemCategory>()
@@ -182,15 +175,8 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 		border-bottom: 4px solid white;
 	}
 }
-@keyframes tooltipFadeIn {
-	from {
-		opacity: 0;
-		transform: translateX(-50%) translateY(5px);
-	}
-	to {
-		opacity: 1;
-		transform: translateX(-50%) translateY(0);
-	}
+.plant-toolbar-item {
+	transition: all 0.2s;
 }
 </style>
 
@@ -247,11 +233,9 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 					}}
 				>
 					<GridPlacementTile
-						TooltipComponent={TooltipComponent}
 						placement={toolbarPlacement}
 						sizePx={toolbarTileSize}
 						showSizeBadge={true}
-						isInToolbar={true}
 					/>
 
 					<!-- Dropdown arrow for families with multiple variants -->
@@ -297,11 +281,9 @@ const toolbarTileSize = DEFAULT_LAYOUT_PARAMS.cellSize
 								}}
 							>
 								<GridPlacementTile
-									TooltipComponent={TooltipComponent}
 									placement={gridPlacement}
 									sizePx={46}
 									showSizeBadge={true}
-									isInToolbar={true}
 								/>
 							</div>
 						{/each}

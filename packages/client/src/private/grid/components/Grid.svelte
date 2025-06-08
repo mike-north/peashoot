@@ -14,7 +14,6 @@ import {
 } from '../../dnd/state'
 import type { DraggableItem, PendingOperation } from '../../dnd/types'
 import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
-import type { Component } from 'svelte'
 
 import type { GridPlaceable } from '../grid-placement'
 import { isGridPlaceable } from '../grid-placement'
@@ -22,9 +21,11 @@ import type { GridArea } from '../grid-area'
 import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-state'
 import {
 	ZoneLayoutCalculator,
-	calculateEdgeBorders,
-	type Border,
+	calculateIndicatorVisuals,
 } from '../zone-layout-calculator'
+import type { Indicator } from '../../../lib/entities/indicator'
+import { tooltip } from '../../../lib/tooltips/action'
+import IndicatorSemicircle from './IndicatorSemicircle.svelte'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
@@ -49,24 +50,12 @@ function isPulsingSourceOperation(
 
 interface GardenBedViewProps {
 	grid: GridArea<GridPlaceable>
-	items: GridPlaceable[]
-	TooltipComponent: Component<{ item: GridPlaceable }>
-	edgeIndicators?: {
-		id: string
-		plantAId: string
-		plantBId: string
-		color: string
-	}[]
+	/** New flexible indicator system */
+	indicators?: Indicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 }
 
-const {
-	grid,
-	TooltipComponent,
-	items,
-	edgeIndicators = [],
-	tileSizeForItem,
-}: GardenBedViewProps = $props()
+const { grid, indicators = [], tileSizeForItem }: GardenBedViewProps = $props()
 
 // plantPlacements is already GridPlacement<PlantWithSize>[]
 const gridPlacements = $derived(grid.placements)
@@ -114,35 +103,12 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 	const skipId = $genericDragState.draggedExistingItem?.id
 
 	// Use gridPlacements instead of bed.plantPlacements
-	return layout.isValidPlacement(items, x, y, size, gridPlacements, skipId)
+	return layout.isValidPlacement(x, y, size, gridPlacements, skipId)
 }
 
-let edgeBorders = $state<Border[]>([])
-$effect(() => {
-	// Convert gridPlacements to expected format for calculateEdgeBorders
-	const bedWithSizes = {
-		...grid,
-		plantPlacements: gridPlacements.map((placement) => ({
-			x: placement.x,
-			y: placement.y,
-			id: placement.id,
-			plantTile: {
-				size: placement.size,
-			},
-		})),
-	}
-	const newBorders = calculateEdgeBorders<GridPlaceable>(
-		bedWithSizes,
-		edgeIndicators,
-		layout,
-	)
-	if (
-		newBorders.length !== edgeBorders.length ||
-		newBorders.some((b, i) => JSON.stringify(b) !== JSON.stringify(edgeBorders[i]))
-	) {
-		edgeBorders = newBorders
-	}
-})
+const indicatorVisuals = $derived(
+	calculateIndicatorVisuals<GridPlaceable>(indicators, gridPlacements, grid.id, layout),
+)
 
 interface TileStyleProps {
 	left: string
@@ -370,19 +336,7 @@ const draggedGridItemEffectiveSize = $derived(
 					class="raised-bed-diagram__grid-line"
 				/>
 			{/each}
-			<!-- Edge Indicator Lines -->
-			{#each edgeBorders as border (border.key)}
-				<line
-					x1={border.points[0].x}
-					y1={border.points[0].y}
-					x2={border.points[1].x}
-					y2={border.points[1].y}
-					stroke={border.color}
-					stroke-width={layout.frameThickness}
-					stroke-linecap="round"
-					opacity="0.95"
-				/>
-			{/each}
+
 			<!-- Coordinate Labels -->
 			<g id="raised-bed-diagram__coordinate-labels" opacity="0.6">
 				<!-- X-axis labels (below) -->
@@ -519,7 +473,6 @@ const draggedGridItemEffectiveSize = $derived(
 								style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
 							>
 								<GridPlacementTile
-									TooltipComponent={TooltipComponent}
 									placement={placement}
 									sizePx={tileLayout.width}
 									isPulsingSource={isPendingSource}
@@ -530,17 +483,7 @@ const draggedGridItemEffectiveSize = $derived(
 
 					<!-- Pending Operations -->
 					{#each $genericPendingOperations.filter( (op) => isGridPendingOperation(op, isGridPlaceable), ) as operation (operation.id)}
-						<!-- prettier-ignore -->
-						<!-- eslint-disable no-console -->
-						<!-- console.log(
-							`[Grid.svelte] Checking Op: ${operation.id}, Op.zoneId: ${operation.zoneId}, Op.state: ${operation.state}, Op.coords: (${operation.x},${operation.y}) -- For Grid ID: ${grid.id}`,
-						) -->
 						{#if operation.zoneId === grid.id && operation.x !== undefined && operation.y !== undefined}
-							<!-- prettier-ignore -->
-							<!-- eslint-disable no-console -->
-							<!-- console.log(
-								`[Grid.svelte] MATCH! Rendering PendingOp ${operation.id} in Grid ID: ${grid.id}. Op state: ${operation.state}`,
-							) -->
 							{@const itemOpSize = operation.item.presentation.size}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
@@ -595,6 +538,62 @@ const draggedGridItemEffectiveSize = $derived(
 				rx="10"
 				ry="10"
 			/>
+		</svg>
+
+		<!-- Indicator Circles (topmost layer) -->
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 {svgWidth} {svgHeight}"
+			width={svgWidth}
+			height={svgHeight}
+			style="position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none;"
+		>
+			{#each indicatorVisuals as indicator (indicator.key)}
+				<g
+					use:tooltip={{ item: indicator }}
+					style="pointer-events: auto; cursor: pointer;"
+				>
+					{#if indicator.semicircles}
+						{#each indicator.semicircles as semicircle, i (semicircle.direction + i.toString())}
+							<IndicatorSemicircle
+								centerX={indicator.centerX}
+								centerY={indicator.centerY}
+								radius={indicator.radius}
+								color={semicircle.color}
+								direction={semicircle.direction}
+							/>
+						{/each}
+					{/if}
+					<!-- Create sectors using path elements -->
+					{#if indicator.sectors}
+						{#each indicator.sectors as sector, i (sector.sector.toString() + '-' + i.toString())}
+							{@const startAngle = sector.sector * 90 - 90}
+							{@const endAngle = (sector.sector + 1) * 90 - 90}
+							{@const startRadians = (startAngle * Math.PI) / 180}
+							{@const endRadians = (endAngle * Math.PI) / 180}
+							{@const largeArcFlag = 0}
+							{@const x1 = indicator.centerX + indicator.radius * Math.cos(startRadians)}
+							{@const y1 = indicator.centerY + indicator.radius * Math.sin(startRadians)}
+							{@const x2 = indicator.centerX + indicator.radius * Math.cos(endRadians)}
+							{@const y2 = indicator.centerY + indicator.radius * Math.sin(endRadians)}
+							<!-- Filled sector -->
+							<path
+								d="M {indicator.centerX} {indicator.centerY} L {x1} {y1} A {indicator.radius} {indicator.radius} 0 {largeArcFlag} 1 {x2} {y2} Z"
+								fill={sector.color}
+								stroke="none"
+							/>
+							<!-- Arc stroke only -->
+							<path
+								d="M {x1} {y1} A {indicator.radius} {indicator.radius} 0 {largeArcFlag} 1 {x2} {y2}"
+								fill="none"
+								stroke={`color-mix(in srgb, ${sector.color} 70%, black)`}
+								stroke-width="3"
+								stroke-linecap="butt"
+							/>
+						{/each}
+					{/if}
+				</g>
+			{/each}
 		</svg>
 	</figure>
 </div>

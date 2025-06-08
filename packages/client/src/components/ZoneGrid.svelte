@@ -1,22 +1,14 @@
 <script lang="ts">
 import Grid from '../private/grid/components/Grid.svelte'
 import type { GridPlaceable } from '../private/grid/grid-placement'
-import type { Component } from 'svelte'
 import type { Zone } from '../lib/entities/zone'
 import HorizontalBarMeter from './HorizontalBarMeter.svelte'
 import IdLabel from '../lib/components/IdLabel.svelte'
-import type { Item } from '../lib/entities/item'
+import type { Indicator } from '../lib/entities/indicator'
 
 interface ZoneGridProps {
 	zone: Zone
-	items: Item[]
-	TooltipComponent: Component<{ item: GridPlaceable }>
-	edgeIndicators: {
-		id: string
-		itemAId: string
-		itemBId: string
-		color: string
-	}[]
+	indicators?: Indicator[]
 	tileSizeForItem: (item: GridPlaceable) => number
 	colSpan?: number
 	[k: string]: unknown
@@ -24,9 +16,7 @@ interface ZoneGridProps {
 
 const {
 	zone,
-	items,
-	TooltipComponent,
-	edgeIndicators,
+	indicators = [],
 	tileSizeForItem,
 	colSpan = 1,
 	...rest
@@ -68,18 +58,7 @@ const colSpanClass = $derived(
 </style>
 
 <div class="zone-container card bg-base-100 shadow-sm {colSpanClass} {rest.class || ''}">
-	<Grid
-		grid={zone}
-		TooltipComponent={TooltipComponent}
-		items={items}
-		edgeIndicators={edgeIndicators.map((indicator) => ({
-			id: indicator.id,
-			plantAId: indicator.itemAId,
-			plantBId: indicator.itemBId,
-			color: indicator.color,
-		}))}
-		tileSizeForItem={tileSizeForItem}
-	/>
+	<Grid grid={zone} indicators={indicators} tileSizeForItem={tileSizeForItem} />
 	<div class="card-body">
 		<div class="card-title flex justify-between items-center">
 			Work Zone ({zone.width}×{zone.height} units)

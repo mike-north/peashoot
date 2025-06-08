@@ -3,10 +3,11 @@
 import type { Snippet } from 'svelte'
 import { dragState as genericDragState } from '../state'
 import { get } from 'svelte/store'
-import type { DropZoneContext, DraggableItem } from '../types'
+import type { DropZoneContext } from '../types'
+import type { WithId } from '../../../lib/entities/with-id'
 
 interface DropEventPayload {
-	item: DraggableItem
+	item: WithId
 	sourceZoneId: string | null
 	targetZoneId: string
 	x?: number
@@ -18,21 +19,11 @@ interface Props {
 	zoneId: string
 	children: Snippet
 	onDrop?: (payload: DropEventPayload) => void
-	// TODO: Add props for enabling/disabling drop, validation functions, etc.
-	// acceptFilter?: (item: DraggableItem) => boolean;
-	// onDrop?: (item: DraggableItem, zoneContext: TZoneCtx) => void; // This was a comment, we'll use the one above
-	// onDragEnter?: (item: DraggableItem, zoneContext: TZoneCtx) => void;
-	// onDragLeave?: (item: DraggableItem, zoneContext: TZoneCtx) => void;
-	// onDragOver?: (item: DraggableItem, zoneContext: TZoneCtx, x: number, y:number) => void;
 }
 
 const { zoneId, children, onDrop }: Props = $props()
 
 let zoneElement: HTMLElement | null = null
-
-// TODO: Implement event handlers (onMouseEnter, onMouseLeave, onMouseMove, onMouseUp)
-// These will interact with dragState to set targetZoneId, targetType, highlightedCell etc.
-// and ultimately trigger drop actions / validations.
 
 // Example of how it might update dragState on mouse enter
 function handleMouseEnter(_event: MouseEvent) {

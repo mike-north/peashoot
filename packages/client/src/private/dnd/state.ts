@@ -1,16 +1,10 @@
 import { writable } from 'svelte/store'
-import type {
-	DraggableItem,
-	ExistingDraggableItem,
-	IDragState,
-	PendingOperation,
-} from './types'
+import type { ItemInZone, IDragState, PendingOperation } from './types'
+import type { WithId } from '../../lib/entities/with-id'
 
-export const pendingOperations = writable<PendingOperation<DraggableItem>[]>([])
+export const pendingOperations = writable<PendingOperation<WithId>[]>([])
 
-export const dragState = writable<
-	IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
->({
+export const dragState = writable<IDragState<WithId, ItemInZone<WithId>>>({
 	draggedExistingItem: null,
 	draggedNewItem: null,
 	draggedItemEffectiveSize: 1,
@@ -25,8 +19,8 @@ export const dragState = writable<
 })
 
 export function isDragStatePopulated<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
+	TItem extends WithId,
+	TExisting extends ItemInZone<TItem>,
 >(state: IDragState<TItem, TExisting>): boolean {
 	return (
 		(state.draggedExistingItem !== null || state.draggedNewItem !== null) &&
@@ -35,8 +29,8 @@ export function isDragStatePopulated<
 }
 
 export function isDraggingExistingItem<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
+	TItem extends WithId,
+	TExisting extends ItemInZone<TItem>,
 >(
 	state: IDragState<TItem, TExisting>,
 ): state is IDragState<TItem, TExisting> & {
@@ -51,8 +45,8 @@ export function isDraggingExistingItem<
 }
 
 export function isDraggingNewItem<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
+	TItem extends WithId,
+	TExisting extends ItemInZone<TItem>,
 >(
 	state: IDragState<TItem, TExisting>,
 ): state is IDragState<TItem, TExisting> & { draggedNewItem: TItem } {
@@ -60,8 +54,8 @@ export function isDraggingNewItem<
 }
 
 export function getDraggedItemInfo<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
+	TItem extends WithId,
+	TExisting extends ItemInZone<TItem>,
 >(state: IDragState<TItem, TExisting>): { item: TItem; effectiveSize: number } | null {
 	if (isDraggingExistingItem(state)) {
 		// TExisting is guaranteed to have itemData of type TItem

@@ -1,14 +1,12 @@
 import type { Attachment } from 'svelte/attachments'
 import { get } from 'svelte/store'
 import type { Writable } from 'svelte/store'
-import type { ExistingDraggableItem, IDragState } from '../types'
+import type { ItemInZone, IDragState } from '../types'
 import { isDraggingExistingItem } from '../state'
-import type { DraggableItem } from '../types'
+import type { WithId } from '../../../lib/entities/with-id'
 
 interface DeleteZoneAttachmentOptions {
-	dragStateStore: Writable<
-		IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
-	>
+	dragStateStore: Writable<IDragState<WithId, ItemInZone<WithId>>>
 	onHoverChange?: (hovered: boolean) => void
 }
 

@@ -19,7 +19,7 @@ import {
 	movePlantBetweenZones,
 	removePlantFromZone,
 	clonePlant,
-} from '../private/state/gardenStore'
+} from '../lib/state/gardenStore'
 import { PlantRepository } from '../lib/repositories/plant.repository'
 import type { Item } from '../lib/entities/item'
 

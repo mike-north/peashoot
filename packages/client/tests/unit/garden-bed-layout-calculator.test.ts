@@ -1,14 +1,18 @@
 import { describe, it, expect } from 'vitest'
 import { ZoneLayoutCalculator } from '../../src/private/grid/zone-layout-calculator.js'
-import { type GridPlacement } from '../../src/private/grid/grid-placement.js'
+import {
+	type GridPlaceable,
+	type GridPlacement,
+} from '../../src/private/grid/grid-placement.js'
 import { type PlantMetadata } from '../../src/lib/entities/plant-metadata.js'
 import { type Item } from '../../src/lib/entities/item.js'
-import { type ExistingDraggableItem } from '../../src/private/dnd/types.js'
+import { type ItemInZone } from '../../src/private/dnd/types.js'
+import { type WithId } from '../../src/lib/entities/with-id.js'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new ZoneLayoutCalculator(layoutParams)
 
-const mockItem: Item<PlantMetadata> = {
+const mockItem: Item<PlantMetadata> & WithId & GridPlaceable = {
 	id: 'plant_1',
 	displayName: 'Tomato',
 	category: 'tomatoes',
@@ -25,12 +29,11 @@ const mockItem: Item<PlantMetadata> = {
 			blue: 0,
 		},
 		iconPath: 'tomato.png',
-		size: 2,
 	},
 }
 
 const itemPlacement: GridPlacement<Item<PlantMetadata>> &
-	ExistingDraggableItem<Item<PlantMetadata>> = {
+	ItemInZone<Item<PlantMetadata>> = {
 	x: 1,
 	y: 2,
 	id: 'placement1',

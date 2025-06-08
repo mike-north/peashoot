@@ -1,17 +1,14 @@
 import type { Attachment } from 'svelte/attachments'
 import { get } from 'svelte/store'
 import type { Writable } from 'svelte/store'
-import type {
-	IDragState,
-	DraggableItem,
-	ExistingDraggableItem,
-} from '../../../private/dnd/types'
+import type { IDragState, ItemInZone } from '../../../private/dnd/types'
 import { ZoneLayoutCalculator, screenToGridCoordinates } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { Zone } from '../../../lib/entities/zone'
+import type { WithId } from '../../../lib/entities/with-id'
 
 interface WorkspaceDragCoordinatorOptions {
-	dragState: Writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
+	dragState: Writable<IDragState<WithId, ItemInZone<WithId>>>
 	zones: Zone[]
 	onDrop: (dropInfo: {
 		targetZoneId: string | null

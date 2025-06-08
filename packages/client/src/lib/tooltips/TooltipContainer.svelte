@@ -142,7 +142,7 @@ onMount(() => {
 		style:position="fixed"
 		style:top="{tooltip.position.y}px"
 		style:left="{tooltip.position.x}px"
-		style:z-index="1000"
+		style:z-index="10000"
 		data-tooltip-id={tooltip.id}
 		transition:scale={{ duration: 100, start: 0.95 }}
 	>

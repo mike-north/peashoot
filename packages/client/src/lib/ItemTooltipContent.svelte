@@ -1,7 +1,7 @@
 <script lang="ts">
 import { rgbToCss } from '@peashoot/types'
-import { isGridPlaceable, type GridPlaceable } from '../private/grid/grid-placement'
-import { isItem, isItemWithMetadata } from './entities/item'
+import { type GridPlaceable } from '../private/grid/grid-placement'
+import { isItemWithMetadata } from './entities/item'
 import { isPlantMetadata } from './entities/plant-metadata'
 import IdLabel from './components/IdLabel.svelte'
 
@@ -11,22 +11,7 @@ export interface Props {
 
 let { item }: Props = $props()
 
-// Create a reactive guard that safely handles both GridPlaceable items and other objects
-const isReady = $derived(
-	item &&
-		typeof item === 'object' &&
-		isGridPlaceable(item) &&
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		!!item.presentation &&
-		'accentColor' in item.presentation,
-)
-// Get plant-specific properties if this is a plant item, guarded by isReady
-const plantProperties = $derived(
-	isReady && isItem(item) && isItemWithMetadata(item, isPlantMetadata)
-		? item.metadata
-		: null,
-)
-const itemData = $derived(isReady && isItem(item) ? item : null)
+const itemData = $derived(isItemWithMetadata(item, isPlantMetadata) ? item : null)
 </script>
 
 <style lang="scss">
@@ -37,7 +22,7 @@ const itemData = $derived(isReady && isItem(item) ? item : null)
 }
 </style>
 
-{#if isReady}
+{#if itemData}
 	<div class="item-tooltip-content">
 		<div class="item-tooltip-content__header flex items-center gap-3 mb-3">
 			{#if item?.presentation?.iconPath}
@@ -54,12 +39,10 @@ const itemData = $derived(isReady && isItem(item) ? item : null)
 				<p class="text-sm text-gray-600">
 					Size: {item?.size}×{item?.size} grid spaces
 				</p>
-				{#if plantProperties}
-					<p class="text-xs text-gray-500 italic">Family: {plantProperties.family}</p>
-					<p class="text-xs text-gray-500 italic">
-						Planting Distance: {plantProperties.plantingDistanceInFeet} feet
-					</p>
-				{/if}
+				<p class="text-xs text-gray-500 italic">Family: {itemData.category}</p>
+				<p class="text-xs text-gray-500 italic">
+					Planting Distance: {itemData.metadata.plantingDistanceInFeet} feet
+				</p>
 				{#if itemData}
 					<p class="text-xs text-gray-500 italic">Category: {itemData.category}</p>
 					{#if itemData.variant}
@@ -94,12 +77,6 @@ const itemData = $derived(isReady && isItem(item) ? item : null)
 				properties for other types. The positioning logic automatically adjusts the
 				tooltip orientation based on available viewport space.
 			</p>
-			<div class="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-500">
-				<div>Type: {plantProperties ? 'Plant' : 'Generic Item'}</div>
-				<div>Grid Item: Yes</div>
-				<div>Draggable: Yes</div>
-				<div>Resizable: No</div>
-			</div>
 		</div>
 	</div>
 {/if}

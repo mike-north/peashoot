@@ -1,16 +1,11 @@
 import type { Action } from 'svelte/action'
 import { type Writable, get } from 'svelte/store'
-import type {
-	DraggableItem,
-	ExistingDraggableItem,
-	IDragState,
-} from '../../../private/dnd/types'
+import type { ItemInZone, IDragState } from '../../../private/dnd/types'
+import type { WithId } from '../../../lib/entities/with-id'
 import { isDraggingExistingItem as checkIsDraggingExistingItem } from '../../../private/dnd/state' // Renamed import
 
 interface DeleteZoneOptions {
-	dragStateStore: Writable<
-		IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
-	>
+	dragStateStore: Writable<IDragState<WithId, ItemInZone<WithId>>>
 	setIsHovered: (hovered: boolean) => void
 }
 

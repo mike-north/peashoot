@@ -1,9 +1,36 @@
+import { convertDistanceToFeet, type IPlant } from '@peashoot/types'
 import type { PlantMetadata } from '../entities/plant-metadata'
-import { Repository } from './repository.base'
-import type { PlantResource } from '../adapters/plant-item-adapter'
-import { convertPlantItem } from '../adapters/plant-item-adapter'
-import type { ItemAdapter } from '../adapters/item-adapter'
 import type { Item } from '../entities/item'
+import { Repository } from './repository.base'
+import type { ItemAdapter } from '../adapters/item.adapter'
+
+export interface IPlantRepository {
+	findAll(): Promise<Item<PlantMetadata>[]>
+}
+
+export type PlantResource = IPlant & { id: `plant_${string}` }
+
+/**
+ * Convert a plant resource from API to domain entity
+ */
+export function convertPlantItem(iPlant: PlantResource): Item<PlantMetadata> {
+	const plantingDistanceInFeet = convertDistanceToFeet(iPlant.plantingDistance).value
+
+	return {
+		id: iPlant.id,
+		displayName: iPlant.name,
+		category: iPlant.family,
+		variant: iPlant.name,
+		size: Math.max(1, Math.ceil(plantingDistanceInFeet)),
+		presentation: {
+			iconPath: iPlant.iconPath,
+			accentColor: iPlant.accentColor,
+		},
+		metadata: {
+			plantingDistanceInFeet,
+		},
+	}
+}
 
 /**
  * Repository for Plant domain entities
@@ -12,7 +39,7 @@ import type { Item } from '../entities/item'
  */
 export class PlantRepository
 	extends Repository<Item<PlantMetadata>, string>
-	implements ItemAdapter<Item<PlantMetadata>>
+	implements ItemAdapter<Item<PlantMetadata>>, IPlantRepository
 {
 	constructor() {
 		super('http://localhost:3000/api')
@@ -45,8 +72,7 @@ export class PlantRepository
 			'metadata' in item &&
 			typeof item.metadata === 'object' &&
 			item.metadata !== null &&
-			'plantingDistanceInFeet' in item.metadata &&
-			'family' in item.metadata
+			'plantingDistanceInFeet' in item.metadata
 		)
 	}
 

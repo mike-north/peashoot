@@ -1,5 +1,5 @@
+import type { ValidationResult } from '../../lib/types/validation'
 import type {
-	DraggableItem,
 	DropZoneContext,
 	ValidationContext,
 	PendingOperation,
@@ -7,6 +7,7 @@ import type {
 	DropTargetType,
 } from '../dnd/types'
 import type { GridPlacement, GridPlaceable } from './grid-placement'
+import type { WithId } from '../../lib/entities/with-id'
 
 /**
  * Context for a grid-based drop zone
@@ -43,14 +44,6 @@ export type GridValidationContext<
 > = ValidationContext<T, TZoneCtx>
 
 /**
- * Result of validation
- */
-export interface ValidationResult {
-	isValid: boolean
-	error?: string
-}
-
-/**
  * Grid validation function type
  */
 export type GridAsyncValidationFunction<
@@ -67,7 +60,7 @@ export type GridPendingOperation<T extends GridPlaceable> = PendingOperation<T>
  * Check if a pending operation is for a specific item type
  */
 export function isGridPendingOperation<T extends GridPlaceable>(
-	operation: PendingOperation<DraggableItem>,
+	operation: PendingOperation<WithId>,
 	typeGuard: (item: unknown) => item is T,
 ): operation is GridPendingOperation<T> {
 	return typeGuard(operation.item)
@@ -77,7 +70,7 @@ export function isGridPendingOperation<T extends GridPlaceable>(
  * Check if a pending operation is a removal operation
  */
 export function isGridItemRemovalOperation<T extends GridPlaceable>(
-	op: PendingOperation<DraggableItem>,
+	op: PendingOperation<WithId>,
 	typeGuard: (item: unknown) => item is T,
 ): op is GridPendingOperation<T> {
 	return isGridPendingOperation(op, typeGuard) && op.type === 'removal'

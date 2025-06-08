@@ -1,16 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import type { ActionReturn } from 'svelte/action'
 import { disablePointerEventsWhenDragging } from '../../src/private/grid/actions/disablePointerEventsWhenDragging.js'
-import type {
-	DraggableItem,
-	ExistingDraggableItem,
-	IDragState,
-} from '../../src/private/dnd/types.js'
+import type { IDragState, ItemInZone } from '../../src/private/dnd/types.js'
+import { type WithId } from '../../src/lib/entities/with-id.js'
 
 const createMockDragState = (
 	isDragging: boolean,
-): Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>> => {
-	const baseState: IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>> = {
+): Readonly<IDragState<WithId, ItemInZone<WithId>>> => {
+	const baseState: IDragState<WithId, ItemInZone<WithId>> = {
 		draggedExistingItem: null,
 		draggedNewItem: null,
 		draggedItemEffectiveSize: 1,
@@ -24,18 +21,14 @@ const createMockDragState = (
 		isCloneMode: false,
 	}
 	if (isDragging) {
-		baseState.draggedNewItem = { id: 'test-item', name: 'Test' } as DraggableItem
+		baseState.draggedNewItem = { id: 'test-item' }
 	}
 	return Object.freeze(baseState)
 }
 
 describe('disablePointerEventsWhenDragging', () => {
 	let node: HTMLElement
-	let action:
-		| ActionReturn<
-				Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-		  >
-		| undefined
+	let action: ActionReturn<Readonly<IDragState<WithId, ItemInZone<WithId>>>> | undefined
 
 	beforeEach(() => {
 		node = document.createElement('div')
@@ -57,9 +50,7 @@ describe('disablePointerEventsWhenDragging', () => {
 	it('should update pointerEvents to "none" when dragging starts', () => {
 		const initialDragState = createMockDragState(false)
 		action = disablePointerEventsWhenDragging(node, initialDragState) as
-			| ActionReturn<
-					Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-			  >
+			| ActionReturn<Readonly<IDragState<WithId, ItemInZone<WithId>>>>
 			| undefined
 		expect(node.style.pointerEvents).toBe('auto')
 
@@ -73,9 +64,7 @@ describe('disablePointerEventsWhenDragging', () => {
 	it('should update pointerEvents to "auto" when dragging stops', () => {
 		const initialDragState = createMockDragState(true)
 		action = disablePointerEventsWhenDragging(node, initialDragState) as
-			| ActionReturn<
-					Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-			  >
+			| ActionReturn<Readonly<IDragState<WithId, ItemInZone<WithId>>>>
 			| undefined
 		expect(node.style.pointerEvents).toBe('none')
 
@@ -89,20 +78,16 @@ describe('disablePointerEventsWhenDragging', () => {
 	it('should handle updates when draggedExistingItem is present', () => {
 		const initialDragState = createMockDragState(false)
 		action = disablePointerEventsWhenDragging(node, initialDragState) as
-			| ActionReturn<
-					Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-			  >
+			| ActionReturn<Readonly<IDragState<WithId, ItemInZone<WithId>>>>
 			| undefined
 		expect(node.style.pointerEvents).toBe('auto')
 
-		const draggingStateWithExisting: Readonly<
-			IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
-		> = {
+		const draggingStateWithExisting: Readonly<IDragState<WithId, ItemInZone<WithId>>> = {
 			...createMockDragState(false),
 			draggedExistingItem: {
 				id: 'existing-1',
-				item: { id: 'item-data' } as DraggableItem,
-			} as ExistingDraggableItem<DraggableItem>,
+				item: { id: 'item-data' },
+			} as ItemInZone<WithId>,
 		}
 		if (action && action.update) {
 			action.update(draggingStateWithExisting)
@@ -114,9 +99,7 @@ describe('disablePointerEventsWhenDragging', () => {
 		const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 		const initialDragState = createMockDragState(true)
 		action = disablePointerEventsWhenDragging(svgNode, initialDragState) as
-			| ActionReturn<
-					Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-			  >
+			| ActionReturn<Readonly<IDragState<WithId, ItemInZone<WithId>>>>
 			| undefined
 		expect(svgNode.style.pointerEvents).toBe('none')
 
@@ -130,9 +113,7 @@ describe('disablePointerEventsWhenDragging', () => {
 	it('should not have a destroy method defined in its return object', () => {
 		const initialDragState = createMockDragState(false)
 		action = disablePointerEventsWhenDragging(node, initialDragState) as
-			| ActionReturn<
-					Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
-			  >
+			| ActionReturn<Readonly<IDragState<WithId, ItemInZone<WithId>>>>
 			| undefined
 		if (action) {
 			expect(action.destroy).toBeUndefined()

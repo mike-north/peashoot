@@ -1,11 +1,6 @@
-/**
- * Represents an item that can be dragged from place to place
- */
-export interface DraggableItem {
-	id: string
-}
+import type { WithId } from '../../lib/entities/with-id'
 
-export function isDraggableItem(item: unknown): item is DraggableItem {
+export function isDraggableItem(item: unknown): item is WithId {
 	if (typeof item !== 'object' || item === null) return false
 	const obj = item as Record<string, unknown>
 	return 'id' in obj && typeof obj.id === 'string'
@@ -18,7 +13,7 @@ export function isDraggableItem(item: unknown): item is DraggableItem {
  * This interface focuses solely on drag-and-drop concerns - the actual
  * placement data (coordinates, etc.) should be managed elsewhere.
  */
-export interface ExistingDraggableItem<TItem extends DraggableItem> {
+export interface ItemInZone<TItem extends WithId> {
 	/** Unique identifier for this specific placed instance */
 	id: string
 	/** The underlying draggable item data */
@@ -27,25 +22,23 @@ export interface ExistingDraggableItem<TItem extends DraggableItem> {
 	sourceZoneId: string
 }
 
-export function isExistingDraggableItem(
-	maybeEDI: unknown,
-): maybeEDI is ExistingDraggableItem<DraggableItem>
-export function isExistingDraggableItem<TItem extends DraggableItem>(
-	maybeEDI: unknown,
+export function isPlacedDraggableItem(zoneItem: unknown): zoneItem is ItemInZone<WithId>
+export function isPlacedDraggableItem<TItem extends WithId>(
+	zoneItem: unknown,
 	itemGuard: (item: unknown) => item is TItem,
-): maybeEDI is ExistingDraggableItem<TItem>
-export function isExistingDraggableItem<TItem extends DraggableItem>(
-	maybeEDI: unknown,
+): zoneItem is ItemInZone<TItem>
+export function isPlacedDraggableItem<TItem extends WithId>(
+	zoneItem: unknown,
 	itemGuard?: (item: unknown) => item is TItem,
-): maybeEDI is ExistingDraggableItem<TItem> {
+): zoneItem is ItemInZone<TItem> {
 	const baseCheck =
-		typeof maybeEDI === 'object' &&
-		maybeEDI !== null &&
-		'id' in maybeEDI &&
-		'sourceZoneId' in maybeEDI &&
-		'item' in maybeEDI
+		typeof zoneItem === 'object' &&
+		zoneItem !== null &&
+		'id' in zoneItem &&
+		'sourceZoneId' in zoneItem &&
+		'item' in zoneItem
 	if (itemGuard) {
-		return baseCheck && itemGuard(maybeEDI.item)
+		return baseCheck && itemGuard(zoneItem.item)
 	}
 	return baseCheck
 }
@@ -74,7 +67,7 @@ export type OperationType =
 
 // Validation context for async operations
 export interface ValidationContext<
-	TItem extends DraggableItem,
+	TItem extends WithId,
 	TZoneCtx extends DropZoneContext,
 > {
 	operationType: OperationType
@@ -93,7 +86,7 @@ export interface ValidationContext<
 }
 
 // Pending operation for async validation
-export interface PendingOperation<TItem extends DraggableItem> {
+export interface PendingOperation<TItem extends WithId> {
 	id: string
 	type: 'placement' | 'removal' | 'clone' // Added 'clone'
 	item: TItem
@@ -108,10 +101,7 @@ export interface PendingOperation<TItem extends DraggableItem> {
 }
 
 // Enhanced drag state
-export interface IDragState<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
-> {
+export interface IDragState<TItem extends WithId, TExisting extends ItemInZone<TItem>> {
 	draggedExistingItem: TExisting | null
 	draggedNewItem: TItem | null // This is the core item data for a new item
 	draggedItemEffectiveSize: number // Actual size being used for drag visuals/collision

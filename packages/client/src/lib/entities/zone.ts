@@ -3,9 +3,6 @@ import type { GridPlacement } from '../../private/grid/grid-placement'
 import type { Item } from './item'
 
 export interface Zone<T extends Item = Item> extends GridArea<T> {
-	readonly id: string
-	width: number
-	height: number
 	waterLevel: number
 	sunLevel: number
 }

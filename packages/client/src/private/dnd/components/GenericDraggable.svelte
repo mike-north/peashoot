@@ -1,20 +1,24 @@
-<script
-	lang="ts"
-	generics="TItem extends DraggableItem, TExisting extends ExistingDraggableItem<TItem>"
->
-import { dragManager } from '../drag-manager' // Updated path
-import type { DraggableItem, ExistingDraggableItem } from '../types' // Updated path
+<script lang="ts" generics="TItem extends WithId, TExisting extends ItemInZone<TItem>">
+import type { WithId } from '../../../lib/entities/with-id'
+
+import { dragManager } from '../drag-manager'
+import type { ItemInZone } from '../types'
 import type { Snippet } from 'svelte'
 
-export interface GenericDraggableProps<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
-> {
-	item: TItem // Core data for a new item, or itemData within an existing one
-	existingItemInstance?: TExisting // If this is an existing item being dragged
-	sourceZoneId?: string // Required if existingItemInstance is provided
+type GenericDraggableProps<TItem extends WithId, TExisting extends ItemInZone<TItem>> = {
 	children: Snippet
-}
+} & (
+	| {
+			item: TItem
+			existingItemInstance?: never
+			sourceZoneId?: never
+	  }
+	| {
+			item?: never
+			existingItemInstance: TExisting
+			sourceZoneId: string
+	  }
+)
 
 const {
 	item: itemData,
@@ -25,9 +29,8 @@ const {
 
 function handleMouseDown(event: MouseEvent) {
 	if (existingItemInstance && sourceZoneId) {
-		// Ensure that TExisting passed to dragManager matches its expectation
 		dragManager.startDraggingExistingItem(existingItemInstance, sourceZoneId, event)
-	} else {
+	} else if (itemData) {
 		dragManager.startDraggingNewItem(itemData, event)
 	}
 }

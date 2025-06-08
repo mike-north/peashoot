@@ -17,7 +17,7 @@ import { disablePointerEventsWhenDragging } from '../actions/disablePointerEvent
 
 import type { GridPlaceable } from '../grid-placement'
 import { isGridPlaceable } from '../grid-placement'
-import type { GridArea } from '../grid-area'
+import type { Zone } from '../../../lib/entities/zone'
 import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-state'
 import {
 	ZoneLayoutCalculator,
@@ -38,63 +38,59 @@ type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
 // Type guard function
 function isPulsingSourceOperation(
 	op: PendingOperation<WithId>,
-	currentBedId: string,
+	currentZoneId: string,
 ): op is PulsingSourceOperation {
 	return (
 		(op.type === 'placement' || op.type === 'removal') &&
 		op.state === 'pending' &&
-		op.originalSourceZoneId === currentBedId &&
+		op.originalSourceZoneId === currentZoneId &&
 		typeof op.originalInstanceId === 'string' &&
 		op.originalInstanceId.length > 0
 	)
 }
 
-interface GardenBedViewProps {
-	grid: GridArea<GridPlaceable>
-	/** New flexible indicator system */
+interface ZoneGridProps {
+	zone: Zone
 	indicators?: Indicator[]
 }
 
-const { grid, indicators = [] }: GardenBedViewProps = $props()
+const { zone, indicators = [] }: ZoneGridProps = $props()
 
-// plantPlacements is already GridPlacement<PlantWithSize>[]
-const gridPlacements = $derived(grid.placements)
+const gridPlacements = $derived(zone.placements)
 
 // Identify plant placements in this bed that are the source of a pending move or clone
 let pendingSourcePlantIds = $derived(
 	$genericPendingOperations
-		.filter((op): op is PulsingSourceOperation => isPulsingSourceOperation(op, grid.id))
+		.filter((op): op is PulsingSourceOperation => isPulsingSourceOperation(op, zone.id))
 		.map((op) => op.originalInstanceId),
 )
 
 // Instantiate the layout calculator
 const layout = new ZoneLayoutCalculator<GridPlaceable>({
-	width: grid.width,
-	height: grid.height,
+	width: zone.width,
+	height: zone.height,
 	...DEFAULT_LAYOUT_PARAMS, // Use shared constants
 })
 
 // Use layout for all layout-related values
-const svgWidth = layout.svgWidth
-const svgHeight = layout.svgHeight
-const frameX = layout.frameX
-const frameY = layout.frameY
-const frameWidth = layout.frameWidth
-const frameHeight = layout.frameHeight
-const interiorX = layout.interiorX
-const interiorY = layout.interiorY
-const interiorWidth = layout.interiorWidth
-const interiorHeight = layout.interiorHeight
-const cellWidth = layout.cellWidth
-const cellHeight = layout.cellHeight
+const {
+	svgWidth,
+	svgHeight,
+	frameX,
+	frameY,
+	frameWidth,
+	frameHeight,
+	interiorX,
+	interiorY,
+	interiorWidth,
+	interiorHeight,
+	cellWidth,
+	cellHeight,
+} = layout
 
 // Grid lines
 const verticalLines = layout.getVerticalLines()
 const horizontalLines = layout.getHorizontalLines()
-
-// Function to convert garden coordinates (0,0 at bottom-left) to SVG coordinates
-const zoneToSvgX = (zoneX: number) => layout.zoneToSvgX(zoneX)
-const zoneToSvgY = (zoneY: number) => layout.zoneToSvgY(zoneY)
 
 // Use the factored-out isValidPlacement
 function isValidPlacement(x: number, y: number, size: number): boolean {
@@ -147,54 +143,18 @@ function getTileComputedStyles(
 				: 'auto',
 	}
 }
-
-interface DropEventPayload {
-	item: WithId
-	sourceZoneId: string | null
-	targetZoneId: string
-	x?: number
-	y?: number
-	isClone: boolean
-}
-
-function handleDropProp(payload: DropEventPayload) {
-	if (
-		payload.targetZoneId !== grid.id ||
-		payload.x === undefined ||
-		payload.y === undefined
-	) {
-		console.warn(
-			'[GardenBedView] Drop event not for this bed or missing/invalid coordinates.',
-		)
-		return
-	}
-	const { item, x, y } = payload
-	const itemSize = (item as GridPlaceable).size
-
-	// Perform local placement validation (e.g., collision, bounds).
-	// This is a preliminary check. The full async validation will be done by GardenView.
-	if (!isValidPlacement(x, y, itemSize)) {
-		console.warn(
-			'[GardenBedView] Local validation failed: Invalid placement, drop rejected.',
-		)
-		// Optionally, update dragState here to indicate an invalid drop attempt to GenericDropZone/DragManager
-		// For now, just returning will prevent further processing in this component.
-		return
-	}
-}
-
 // Derive the actual size of the item being dragged for grid purposes
 const draggedGridItemEffectiveSize = $derived(
 	(() => {
-		const currentDragState = $genericDragState
-		if (isDraggingNewItem(currentDragState)) {
-			if (isGridPlaceable(currentDragState.draggedNewItem)) {
-				return currentDragState.draggedNewItem.size
-			}
-		} else if (isDraggingExistingItem(currentDragState)) {
-			if (isGridPlaceable(currentDragState.draggedExistingItem.item)) {
-				return currentDragState.draggedExistingItem.item.size
-			}
+		const { draggedNewItem, draggedExistingItem } = $genericDragState
+		if (isDraggingNewItem($genericDragState) && isGridPlaceable(draggedNewItem)) {
+			return draggedNewItem.size
+		}
+		if (
+			isDraggingExistingItem($genericDragState) &&
+			isGridPlaceable(draggedExistingItem?.item)
+		) {
+			return draggedExistingItem.item.size
 		}
 		return 1 // Default if not GridPlaceable or not determinable
 	})(),
@@ -296,7 +256,7 @@ const draggedGridItemEffectiveSize = $derived(
 <div class="figure-container">
 	<figure
 		class="raised-bed-diagram"
-		data-zone-id={grid.id}
+		data-zone-id={zone.id}
 		style="width: {svgWidth}px; height: {svgHeight}px;"
 	>
 		<!-- SVG Plantable Area and Grid (background) -->
@@ -339,11 +299,11 @@ const draggedGridItemEffectiveSize = $derived(
 			<!-- Coordinate Labels -->
 			<g id="raised-bed-diagram__coordinate-labels" opacity="0.6">
 				<!-- X-axis labels (below) -->
-				{#if grid.width <= 16}
+				{#if zone.width <= 16}
 					<!-- Show all labels for beds up to 16 wide -->
-					{#each Array.from({ length: grid.width }, (_, i) => i) as x (`${grid.id}-x-${x}`)}
+					{#each Array.from({ length: zone.width }, (_, i) => i) as x (`${zone.id}-x-${x}`)}
 						<text
-							x={zoneToSvgX(x) + cellWidth / 2}
+							x={layout.zoneToSvgX(x) + cellWidth / 2}
 							y={svgHeight - 5}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
@@ -355,9 +315,9 @@ const draggedGridItemEffectiveSize = $derived(
 					{/each}
 				{:else}
 					<!-- For very wide beds, show labels every 5 cells -->
-					{#each Array.from({ length: grid.width }, (_, i) => i).filter((x) => x % 5 === 0 || x === grid.width - 1) as x (`${grid.id}-x-${x}`)}
+					{#each Array.from({ length: zone.width }, (_, i) => i).filter((x) => x % 5 === 0 || x === zone.width - 1) as x (`${zone.id}-x-${x}`)}
 						<text
-							x={zoneToSvgX(x) + cellWidth / 2}
+							x={layout.zoneToSvgX(x) + cellWidth / 2}
 							y={svgHeight - 5}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
@@ -370,12 +330,12 @@ const draggedGridItemEffectiveSize = $derived(
 				{/if}
 
 				<!-- Y-axis labels (left) -->
-				{#if grid.height <= 16}
+				{#if zone.height <= 16}
 					<!-- Show all labels for beds up to 16 tall -->
-					{#each Array.from({ length: grid.height }, (_, i) => i) as y (`${grid.id}-y-${y}`)}
+					{#each Array.from({ length: zone.height }, (_, i) => i) as y (`${zone.id}-y-${y}`)}
 						<text
 							x="5"
-							y={zoneToSvgY(y) + cellHeight / 2 + 3}
+							y={layout.zoneToSvgY(y) + cellHeight / 2 + 3}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
 							font-size="10"
@@ -386,10 +346,10 @@ const draggedGridItemEffectiveSize = $derived(
 					{/each}
 				{:else}
 					<!-- For very tall beds, show labels every 5 cells -->
-					{#each Array.from({ length: grid.height }, (_, i) => i).filter((y) => y % 5 === 0 || y === grid.height - 1) as y (`${grid.id}-y-${y}`)}
+					{#each Array.from({ length: zone.height }, (_, i) => i).filter((y) => y % 5 === 0 || y === zone.height - 1) as y (`${zone.id}-y-${y}`)}
 						<text
 							x="5"
-							y={zoneToSvgY(y) + cellHeight / 2 + 3}
+							y={layout.zoneToSvgY(y) + cellHeight / 2 + 3}
 							text-anchor="middle"
 							font-family="Arial, sans-serif"
 							font-size="10"
@@ -404,13 +364,13 @@ const draggedGridItemEffectiveSize = $derived(
 
 		<!-- HTML Plant Tiles (middle layer) -->
 		<div class="tile-overlay" style="width: {svgWidth}px; height: {svgHeight}px;">
-			<GenericDropZone zoneId={grid.id} onDrop={handleDropProp}>
+			<GenericDropZone zoneId={zone.id}>
 				<div
 					class="tile-overlay__tiles"
 					style="width: {svgWidth}px; height: {svgHeight}px; position: relative;"
 					use:disablePointerEventsWhenDragging={$genericDragState}
 				>
-					{#if $genericDragState.targetZoneId === grid.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
+					{#if $genericDragState.targetZoneId === zone.id && $genericDragState.highlightedCell && isDragStatePopulated($genericDragState)}
 						{@const effectiveItemSize = draggedGridItemEffectiveSize}
 						{@const tileLayout = layout.getTileLayoutInfo({
 							x: $genericDragState.highlightedCell.x,
@@ -422,7 +382,7 @@ const draggedGridItemEffectiveSize = $derived(
 							$genericDragState.highlightedCell.y,
 							effectiveItemSize,
 						)}
-						{@const isSource = $genericDragState.sourceZoneId === grid.id}
+						{@const isSource = $genericDragState.sourceZoneId === zone.id}
 						<div
 							class="tile-overlay__highlight
 						{valid ? '' : 'tile-overlay__highlight--invalid'}
@@ -454,15 +414,15 @@ const draggedGridItemEffectiveSize = $derived(
 							x: placement.x,
 							y: placement.y,
 							size: itemDataSize,
-							bedWidth: grid.width,
-							bedHeight: grid.height,
+							bedWidth: zone.width,
+							bedHeight: zone.height,
 						})}
 						{@const borderRadiusStyle = corners
 							.map((corner) => `border-${corner}-radius: 8px;`)
 							.join(' ')}
 						{@const computedStyles = getTileComputedStyles(placement.id, overlayLayout)}
 						{@const isPendingSource = pendingSourcePlantIds.includes(placement.id)}
-						<GenericDraggable existingItemInstance={placement} sourceZoneId={grid.id}>
+						<GenericDraggable existingItemInstance={placement} sourceZoneId={zone.id}>
 							<div
 								class="tile-overlay__tile"
 								style="left: {computedStyles.left}; top: {computedStyles.top}; width: {computedStyles.width}; height: {computedStyles.height}; z-index: {computedStyles.zIndex}; opacity: {computedStyles.opacity}; pointer-events: {computedStyles.pointerEvents}; {borderRadiusStyle}"
@@ -478,7 +438,7 @@ const draggedGridItemEffectiveSize = $derived(
 
 					<!-- Pending Operations -->
 					{#each $genericPendingOperations.filter( (op) => isGridPendingOperation(op, isGridPlaceable), ) as operation (operation.id)}
-						{#if operation.zoneId === grid.id && operation.x !== undefined && operation.y !== undefined}
+						{#if operation.zoneId === zone.id && operation.x !== undefined && operation.y !== undefined}
 							{@const itemOpSize = operation.item.size}
 							{@const tileLayout = layout.getTileLayoutInfo({
 								x: operation.x || 0,
@@ -497,8 +457,8 @@ const draggedGridItemEffectiveSize = $derived(
 									x: operation.x || 0,
 									y: operation.y || 0,
 									size: itemOpSize,
-									bedWidth: grid.width,
-									bedHeight: grid.height,
+									bedWidth: zone.width,
+									bedHeight: zone.height,
 								})}
 								{@const borderRadiusStyle = corners
 									.map((corner) => `border-${corner}-radius: 8px;`)

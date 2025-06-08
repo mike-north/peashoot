@@ -4,16 +4,16 @@ import { SeedPacketRepository } from '../../lib/repositories'
 
 interface SeedPacketsState {
 	seedPackets: SeedPacket[]
-	loading: boolean
-	error: string | null
 }
 
 const seedPacketRepository = new SeedPacketRepository()
 
 const initialState: SeedPacketsState = {
 	seedPackets: [],
-	loading: true,
-	error: null,
+}
+
+export function setSeedPackets(seedPackets: SeedPacket[]) {
+	seedPacketsState.update((state) => ({ ...state, seedPackets }))
 }
 
 // Create the writable store
@@ -21,36 +21,6 @@ const seedPacketsState = writable<SeedPacketsState>(initialState)
 
 // Derived stores for convenience
 export const seedPackets = derived(seedPacketsState, ($state) => $state.seedPackets)
-export const seedPacketsLoading = derived(seedPacketsState, ($state) => $state.loading)
-export const seedPacketsError = derived(seedPacketsState, ($state) => $state.error)
-export const seedPacketsReady = derived(
-	seedPacketsState,
-	($state) => !$state.loading && $state.error === null,
-)
-
-// Function to load seed packets
-export async function loadSeedPackets(): Promise<void> {
-	seedPacketsState.update((state) => ({ ...state, loading: true, error: null }))
-
-	try {
-		const seedPacketsData = await seedPacketRepository.findAll()
-		seedPacketsState.update((state) => ({
-			...state,
-			seedPackets: seedPacketsData,
-			loading: false,
-			error: null,
-		}))
-	} catch (error) {
-		const errorMessage =
-			error instanceof Error ? error.message : 'Failed to load seed packets'
-		seedPacketsState.update((state) => ({
-			...state,
-			loading: false,
-			error: errorMessage,
-		}))
-		console.error('Error loading seed packets:', error)
-	}
-}
 
 // Function to get a seed packet by ID
 export const getSeedPacketById = derived(seedPackets, ($seedPackets) => {
@@ -100,10 +70,4 @@ export async function deleteSeedPacket(id: string): Promise<boolean> {
 
 	return success
 }
-
-// Auto-load seed packets when the store is created
-loadSeedPackets().catch((error: unknown) => {
-	console.error('Error loading seed packets:', error)
-})
-
 export default seedPacketsState

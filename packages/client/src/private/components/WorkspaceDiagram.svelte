@@ -2,6 +2,7 @@
 import WorkspacePresentation from './WorkspacePresentation.svelte'
 import type { Workspace } from '../../lib/entities/workspace'
 import { findZone, findItemPlacement } from '../../lib/entities/workspace'
+import { setContext } from 'svelte'
 import {
 	type ExistingWorkspaceItem,
 	type PlacementRequestDetails,
@@ -9,24 +10,22 @@ import {
 	type CloningRequestDetails,
 } from '../../private/state/workspaceDragState'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
-import type { ItemAdapter } from '../../lib/adapters/item-adapter'
+import type { ItemAdapter } from '../../lib/adapters/item.adapter'
 import {
 	updatePendingOperation,
 	removePendingOperation,
 } from '../../private/dnd/validation'
 import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../private/dnd/constants'
-import type { DraggableItem } from '../dnd'
+import type { WithId } from '../../lib/entities/with-id'
 import {
 	removeNotificationByMessage,
 	showError,
 	showInfo,
 } from '../state/notificationsStore'
-import type {
-	ValidationResult,
-	WorkspaceController,
-} from '../../lib/controllers/WorkspaceController'
 import { isItemWithMetadata, type Item } from '../../lib/entities/item'
 import { isPlantMetadata, type PlantMetadata } from '../../lib/entities/plant-metadata'
+import type { IWorkspaceController } from '../../lib/controllers/IWorkspaceController'
+import type { ValidationResult } from '../../lib/types/validation'
 
 export type AddNewItemHandler<TItem extends GridPlaceable & Item> = (
 	zoneId: string,
@@ -69,7 +68,7 @@ interface WorkspaceDiagramProps<TItem extends GridPlaceable & Item> {
 	handleCloneItem: CloneItemHandler
 	workspace: Workspace
 	itemAdapter: ItemAdapter<TItem>
-	controller: WorkspaceController<TItem>
+	controller: IWorkspaceController<TItem>
 }
 
 const {
@@ -82,6 +81,10 @@ const {
 	itemAdapter,
 	controller,
 }: WorkspaceDiagramProps<Item> = $props()
+
+// Set controller and workspace in context for child components
+setContext('workspaceController', controller)
+setContext('workspace', workspace)
 
 function handleAsyncValidationStart() {
 	showInfo('Validating...', { autoRemove: false })
@@ -194,7 +197,7 @@ async function performDeleteItem(itemId: string, zoneId: string): Promise<void> 
 }
 
 async function handleRequestPlacement(
-	details: PlacementRequestDetails<DraggableItem>,
+	details: PlacementRequestDetails<WithId>,
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
@@ -384,7 +387,7 @@ async function handleRequestPlacement(
 }
 
 async function handleRequestRemoval(
-	details: RemovalRequestDetails<DraggableItem>,
+	details: RemovalRequestDetails<WithId>,
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
@@ -490,7 +493,7 @@ async function handleRequestRemoval(
 }
 
 async function handleRequestCloning(
-	details: CloningRequestDetails<DraggableItem>,
+	details: CloningRequestDetails<WithId>,
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations

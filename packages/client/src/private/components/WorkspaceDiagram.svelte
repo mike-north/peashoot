@@ -10,7 +10,7 @@ import {
 	type CloningRequestDetails,
 } from '../../private/state/workspaceDragState'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
-import type { ItemAdapter } from '../../lib/adapters/item-adapter'
+import type { ItemAdapter } from '../../lib/adapters/item.adapter'
 import {
 	updatePendingOperation,
 	removePendingOperation,

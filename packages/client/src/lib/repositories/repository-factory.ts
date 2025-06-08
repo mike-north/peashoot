@@ -2,6 +2,8 @@ import { GardenRepository } from './garden.repository'
 import { GardenFixturesRepository } from './garden-fixtures.repository'
 import { PlantRepository } from './plant.repository'
 import { SeedPacketRepository } from './seed-packet.repository'
+import { SeedPacketFixturesRepository } from './seed-packet-fixtures.repository'
+import { PlantFixturesRepository } from './plant-fixtures.repository'
 
 // Control whether to use real API or fixture data
 // Can be toggled for development/testing purposes
@@ -24,15 +26,15 @@ export function getGardenRepository(): GardenRepository | GardenFixturesReposito
 /**
  * Get the plant repository
  */
-export function getPlantRepository(): PlantRepository {
-	// Currently only have a real API version
-	return new PlantRepository()
+export function getPlantRepository(): PlantRepository | PlantFixturesRepository {
+	return useFixtures ? new PlantFixturesRepository() : new PlantRepository()
 }
 
 /**
  * Get the seed packet repository
  */
-export function getSeedPacketRepository(): SeedPacketRepository {
-	// Currently only have a real API version
-	return new SeedPacketRepository()
+export function getSeedPacketRepository():
+	| SeedPacketRepository
+	| SeedPacketFixturesRepository {
+	return useFixtures ? new SeedPacketFixturesRepository() : new SeedPacketRepository()
 }

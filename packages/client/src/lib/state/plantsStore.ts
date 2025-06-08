@@ -5,16 +5,12 @@ import type { Item } from '../../lib/entities/item'
 
 interface PlantsState {
 	plants: Item<PlantMetadata>[]
-	loading: boolean
-	error: string | null
 }
 
 const plantRepository = new PlantRepository()
 
 const initialState: PlantsState = {
 	plants: [],
-	loading: true,
-	error: null,
 }
 
 // Create the writable store
@@ -22,34 +18,9 @@ const plantsState = writable<PlantsState>(initialState)
 
 // Derived stores for convenience
 export const plants = derived(plantsState, ($state) => $state.plants)
-export const plantsLoading = derived(plantsState, ($state) => $state.loading)
-export const plantsError = derived(plantsState, ($state) => $state.error)
-export const plantsReady = derived(
-	plantsState,
-	($state) => !$state.loading && $state.error === null,
-)
 
-// Function to load plants
-export async function loadPlants(): Promise<void> {
-	plantsState.update((state) => ({ ...state, loading: true, error: null }))
-
-	try {
-		const plantsData = await plantRepository.findAll()
-		plantsState.update((state) => ({
-			...state,
-			plants: plantsData,
-			loading: false,
-			error: null,
-		}))
-	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : 'Failed to load plants'
-		plantsState.update((state) => ({
-			...state,
-			loading: false,
-			error: errorMessage,
-		}))
-		console.error('Error loading plants:', error)
-	}
+export function setPlants(plants: Item<PlantMetadata>[]) {
+	plantsState.update((state) => ({ ...state, plants }))
 }
 
 // Function to get a plant by ID
@@ -75,10 +46,5 @@ export async function fetchPlantById(id: string): Promise<Item<PlantMetadata> | 
 export function validateAndCastItem(item: unknown): Item<PlantMetadata> {
 	return plantRepository.validateAndCastItem(item)
 }
-
-// Auto-load plants when the store is created
-loadPlants().catch((error: unknown) => {
-	console.error('Error loading plants:', error)
-})
 
 export default plantsState

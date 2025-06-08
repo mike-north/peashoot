@@ -2,6 +2,7 @@ import type { GridPlaceable } from '../../private/grid/grid-placement'
 
 /**
  * Generic interface for adapting different item types to work with the workspace system
+ * Repositories that need to provide items for the grid should implement this interface
  */
 export interface ItemAdapter<TItem extends GridPlaceable> {
 	/**

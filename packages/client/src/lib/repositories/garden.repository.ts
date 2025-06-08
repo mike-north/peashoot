@@ -3,7 +3,7 @@ import type { Zone } from '../entities/zone'
 import type { IGarden, IGardenBed, IPlantPlacement } from '@peashoot/types'
 import type { GridPlacement } from '../../private/grid/grid-placement'
 import type { PlantMetadata } from '../entities/plant-metadata'
-import { convertPlantItem, type PlantResource } from '../adapters/plant-item-adapter'
+import { convertPlantItem, type PlantResource } from './plant.repository'
 import { Repository } from './repository.base'
 import type { Item } from '../entities/item'
 

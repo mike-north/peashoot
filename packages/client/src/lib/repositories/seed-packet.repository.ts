@@ -4,6 +4,10 @@ import { Repository } from './repository.base'
 
 type SeedPacketResource = ISeedPacket & { id: string }
 
+export interface ISeedPacketRepository {
+	findAll(): Promise<SeedPacket[]>
+}
+
 /**
  * Repository for SeedPacket domain entities
  * Handles data access and persistence for SeedPacket entities
@@ -29,5 +33,13 @@ export class SeedPacketRepository extends Repository<SeedPacket, string> {
 	protected toResource(entity: SeedPacket): unknown {
 		// Return the entity directly, removing any domain-specific transformations if needed
 		return entity
+	}
+
+	/**
+	 * Fetch all seed packets
+	 * Provides the same interface as the previous adapter for compatibility
+	 */
+	async fetchSeedPackets(): Promise<SeedPacket[]> {
+		return this.findAll()
 	}
 }

@@ -16,12 +16,7 @@ import {
 	updatePendingOperation,
 	removePendingOperation,
 } from '../../private/dnd/validation'
-import {
-	plants,
-	plantsLoading,
-	plantsError,
-	plantsReady,
-} from '../../private/state/plantsStore'
+import { plants } from '../../lib/state/plantsStore'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import ZoneGrid from '../grid/components/ZoneGrid.svelte'
 import HorizontalBarMeter from '../../components/HorizontalBarMeter.svelte'
@@ -303,71 +298,60 @@ const getColSpanClass = (zoneId: string) => {
 </style>
 
 <div class="workspace-container">
-	{#if $plantsError}
-		<div class="flex justify-center items-center h-full p-8">
-			<div class="text-error text-lg font-bold">Error loading items: {$plantsError}</div>
-		</div>
-	{:else if $plantsLoading}
-		<div class="flex justify-center items-center h-full p-8">
-			<span class="loading loading-ring loading-xl"></span>
-			<div class="text-md font-bold">Loading items...</div>
-		</div>
-	{:else if $plantsReady}
-		<GridViewToolbar items={$plants} />
+	<GridViewToolbar items={$plants} />
 
+	<div
+		class="workspace"
+		{@attach workspaceDragCoordinator({
+			dragState,
+			zones: zones,
+			onDrop: (dropInfo) => {
+				handleDrop(dropInfo).catch((error: unknown) => {
+					console.error('Drop failed:', error)
+				})
+			},
+		})}
+	>
 		<div
-			class="workspace"
-			{@attach workspaceDragCoordinator({
-				dragState,
-				zones: zones,
-				onDrop: (dropInfo) => {
-					handleDrop(dropInfo).catch((error: unknown) => {
-						console.error('Drop failed:', error)
-					})
-				},
-			})}
+			class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
 		>
-			<div
-				class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-			>
-				{#each zones as zone (zone.id)}
-					<div class="card bg-base-100 shadow-sm {getColSpanClass(zone.id)}">
-						<ZoneGrid zone={zone} indicators={workspace.indicators} />
-						<div class="card-body">
-							<div class="card-title flex justify-between items-center">
-								Work Zone ({zone.width}×{zone.height} units)
-								<IdLabel id={zone.id} />
-							</div>
+			{#each zones as zone (zone.id)}
+				<div class="card bg-base-100 shadow-sm {getColSpanClass(zone.id)}">
+					<ZoneGrid zone={zone} indicators={workspace.indicators} />
+					<div class="card-body">
+						<div class="card-title flex justify-between items-center">
+							Work Zone ({zone.width}×{zone.height} units)
+							<IdLabel id={zone.id} />
+						</div>
 
-							<div class="meters-row">
-								<HorizontalBarMeter
-									id={`${zone.id}-water`}
-									value={zone.waterLevel}
-									max={5}
-									filledColor="#3498db"
-									emptyColor="#3498db22"
-									borderColor="#3498db"
-									label="Water"
-									labelColor="#3498db"
-								/>
-								<HorizontalBarMeter
-									id={`${zone.id}-sun`}
-									value={zone.sunLevel}
-									max={5}
-									filledColor="#FFD600"
-									emptyColor="#FFD60022"
-									borderColor="#FFD600"
-									label="Sun"
-									labelColor="#FF6666"
-								/>
-							</div>
+						<div class="meters-row">
+							<HorizontalBarMeter
+								id={`${zone.id}-water`}
+								value={zone.waterLevel}
+								max={5}
+								filledColor="#3498db"
+								emptyColor="#3498db22"
+								borderColor="#3498db"
+								label="Water"
+								labelColor="#3498db"
+							/>
+							<HorizontalBarMeter
+								id={`${zone.id}-sun`}
+								value={zone.sunLevel}
+								max={5}
+								filledColor="#FFD600"
+								emptyColor="#FFD60022"
+								borderColor="#FFD600"
+								label="Sun"
+								labelColor="#FF6666"
+							/>
 						</div>
 					</div>
-				{/each}
-			</div>
+				</div>
+			{/each}
 		</div>
+	</div>
 
-		<DeleteZone />
-		<DragPreview grids={zones} />
-	{/if}
+	<DeleteZone />
+	<DragPreview grids={zones} />
 </div>

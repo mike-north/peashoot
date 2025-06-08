@@ -11,6 +11,7 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
+		"noImplicitOverride": true,
 		"useDefineForClassFields": true,
 		"verbatimModuleSyntax": true,
 		"isolatedModules": true,

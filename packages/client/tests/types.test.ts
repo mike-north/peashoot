@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest'
 import {
-	type DraggableItem,
 	isDraggableItem,
-	type ExistingDraggableItem,
-	isExistingDraggableItem,
+	type ItemInZone,
+	isPlacedDraggableItem,
 	type ValidationContext,
 	type PendingOperation,
 	type IDragState,
 } from '../src/private/dnd/types.js'
+import type { WithId } from '../src/lib/entities/with-id.js'
 
 describe('DnD Types', () => {
 	describe('DraggableItem', () => {
 		it('validates draggable items correctly', () => {
-			const validItem: DraggableItem = { id: 'test-1' }
+			const validItem: WithId = { id: 'test-1' }
 			expect(isDraggableItem(validItem)).toBe(true)
 
 			// Invalid cases
@@ -25,7 +25,7 @@ describe('DnD Types', () => {
 	})
 
 	describe('ExistingDraggableItem', () => {
-		interface TestItem extends DraggableItem {
+		interface TestItem extends WithId {
 			name: string
 		}
 
@@ -38,22 +38,22 @@ describe('DnD Types', () => {
 		}
 
 		it('validates existing draggable items correctly', () => {
-			const validItem: ExistingDraggableItem<TestItem> = {
+			const validItem: ItemInZone<TestItem> = {
 				id: 'placement-1',
 				item: { id: 'test-1', name: 'Test Item' },
 				sourceZoneId: 'zone-1',
 			}
 
 			// Test without item guard
-			expect(isExistingDraggableItem(validItem)).toBe(true)
-			expect(isExistingDraggableItem(null)).toBe(false)
-			expect(isExistingDraggableItem({})).toBe(false)
-			expect(isExistingDraggableItem({ id: 'test' })).toBe(false)
+			expect(isPlacedDraggableItem(validItem)).toBe(true)
+			expect(isPlacedDraggableItem(null)).toBe(false)
+			expect(isPlacedDraggableItem({})).toBe(false)
+			expect(isPlacedDraggableItem({ id: 'test' })).toBe(false)
 
 			// Test with item guard
-			expect(isExistingDraggableItem(validItem, testItemGuard)).toBe(true)
+			expect(isPlacedDraggableItem(validItem, testItemGuard)).toBe(true)
 			expect(
-				isExistingDraggableItem(
+				isPlacedDraggableItem(
 					{
 						id: 'placement-1',
 						item: { id: 'test-1' }, // Missing name
@@ -66,7 +66,7 @@ describe('DnD Types', () => {
 	})
 
 	describe('ValidationContext', () => {
-		interface TestItem extends DraggableItem {
+		interface TestItem extends WithId {
 			name: string
 		}
 
@@ -96,7 +96,7 @@ describe('DnD Types', () => {
 	})
 
 	describe('PendingOperation', () => {
-		interface TestItem extends DraggableItem {
+		interface TestItem extends WithId {
 			name: string
 		}
 
@@ -138,11 +138,11 @@ describe('DnD Types', () => {
 	})
 
 	describe('IDragState', () => {
-		interface TestItem extends DraggableItem {
+		interface TestItem extends WithId {
 			name: string
 		}
 
-		interface TestExisting extends ExistingDraggableItem<TestItem> {
+		interface TestExisting extends ItemInZone<TestItem> {
 			customField: string
 		}
 

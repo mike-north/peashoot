@@ -1,24 +1,25 @@
 import type { Writable } from 'svelte/store'
 import { dragState } from './state'
-import type { DraggableItem, ExistingDraggableItem, IDragState } from './types'
+import type { ItemInZone, IDragState } from './types'
+import type { WithId } from '../../lib/entities/with-id'
 // import type { GridPlaceable } from '../grid/grid-placement'
 
 // Type alias for what the global dragState store holds for its "existing item" part.
-type GlobalStoreExistingItem = ExistingDraggableItem<DraggableItem>
+type GlobalStoreExistingItem = ItemInZone<WithId>
 
-export class DragManager<TItem extends DraggableItem> {
+export class DragManager<TItem extends WithId> {
 	constructor(private getItemSize: (item: TItem) => number = () => 1) {}
 
 	// Start dragging an existing item from a zone
 	startDraggingExistingItem(
-		existingItem: ExistingDraggableItem<TItem>,
+		existingItem: ItemInZone<TItem>,
 		sourceZoneId: string,
 		event: MouseEvent,
 	) {
 		const isCloneMode = event.metaKey || event.altKey
 		const effectiveSize = this.getItemSize(existingItem.item)
 
-		dragState.update((s: IDragState<DraggableItem, GlobalStoreExistingItem>) => ({
+		dragState.update((s: IDragState<WithId, GlobalStoreExistingItem>) => ({
 			...s,
 			draggedExistingItem: existingItem,
 			draggedNewItem: null,
@@ -74,9 +75,7 @@ export class DragManager<TItem extends DraggableItem> {
 	}
 
 	// Get the current drag state (remains useful for non-Svelte parts or imperative logic)
-	getCurrentDragState(): Writable<
-		IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
-	> {
+	getCurrentDragState(): Writable<IDragState<WithId, ItemInZone<WithId>>> {
 		return dragState // This still returns the writable store itself
 	}
 }
@@ -85,4 +84,4 @@ export class DragManager<TItem extends DraggableItem> {
 // The dnd system itself doesn't care about the "actual" size for its core logic.
 // It provides a default of 1 for any drag visuals or temporary state.
 // The grid or other drop targets will determine actual placement constraints.
-export const dragManager = new DragManager<DraggableItem>()
+export const dragManager = new DragManager<WithId>()

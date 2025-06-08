@@ -15,7 +15,7 @@ import {
 	removePendingOperation,
 } from '../../private/dnd/validation'
 import { OPERATION_COMPLETION_DISPLAY_DURATION_MS } from '../../private/dnd/constants'
-import type { DraggableItem } from '../dnd'
+import type { WithId } from '../../lib/entities/with-id'
 import {
 	removeNotificationByMessage,
 	showError,
@@ -192,7 +192,7 @@ async function performDeleteItem(itemId: string, zoneId: string): Promise<void> 
 }
 
 async function handleRequestPlacement(
-	details: PlacementRequestDetails<DraggableItem>,
+	details: PlacementRequestDetails<WithId>,
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
@@ -382,7 +382,7 @@ async function handleRequestPlacement(
 }
 
 async function handleRequestRemoval(
-	details: RemovalRequestDetails<DraggableItem>,
+	details: RemovalRequestDetails<WithId>,
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
@@ -488,7 +488,7 @@ async function handleRequestRemoval(
 }
 
 async function handleRequestCloning(
-	details: CloningRequestDetails<DraggableItem>,
+	details: CloningRequestDetails<WithId>,
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations

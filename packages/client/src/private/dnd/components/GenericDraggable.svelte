@@ -1,15 +1,11 @@
-<script
-	lang="ts"
-	generics="TItem extends DraggableItem, TExisting extends ExistingDraggableItem<TItem>"
->
+<script lang="ts" generics="TItem extends WithId, TExisting extends ItemInZone<TItem>">
+import type { WithId } from '../../../lib/entities/with-id'
+
 import { dragManager } from '../drag-manager'
-import type { DraggableItem, ExistingDraggableItem } from '../types'
+import type { ItemInZone } from '../types'
 import type { Snippet } from 'svelte'
 
-type GenericDraggableProps<
-	TItem extends DraggableItem,
-	TExisting extends ExistingDraggableItem<TItem>,
-> = {
+type GenericDraggableProps<TItem extends WithId, TExisting extends ItemInZone<TItem>> = {
 	children: Snippet
 } & (
 	| {

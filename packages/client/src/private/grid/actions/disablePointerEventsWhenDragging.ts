@@ -1,9 +1,6 @@
 import type { Action } from 'svelte/action'
-import type {
-	DraggableItem,
-	ExistingDraggableItem,
-	IDragState,
-} from '../../../private/dnd/types'
+import type { ItemInZone, IDragState } from '../../../private/dnd/types'
+import type { WithId } from '../../../lib/entities/with-id'
 
 /**
  * A Svelte action that disables pointer events on an element when an item is being dragged,
@@ -11,7 +8,7 @@ import type {
  */
 export const disablePointerEventsWhenDragging: Action<
 	HTMLElement | SVGElement,
-	Readonly<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
+	Readonly<IDragState<WithId, ItemInZone<WithId>>>
 > = (node, dragState) => {
 	function setPointerEvents(isDragging: boolean) {
 		node.style.pointerEvents = isDragging ? 'none' : 'auto'
@@ -21,11 +18,7 @@ export const disablePointerEventsWhenDragging: Action<
 	setPointerEvents(!!(dragState.draggedNewItem || dragState.draggedExistingItem))
 
 	return {
-		update(
-			newDragState: Readonly<
-				IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>
-			>,
-		) {
+		update(newDragState: Readonly<IDragState<WithId, ItemInZone<WithId>>>) {
 			// Update pointer events when the drag state changes
 			setPointerEvents(
 				!!(newDragState.draggedNewItem || newDragState.draggedExistingItem),

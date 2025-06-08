@@ -12,7 +12,7 @@ import {
 	isDraggingNewItem,
 	isDraggingExistingItem,
 } from '../../dnd/state'
-import type { DraggableItem, PendingOperation } from '../../dnd/types'
+import type { PendingOperation } from '../../dnd/types'
 import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
 
 import type { GridPlaceable } from '../grid-placement'
@@ -26,6 +26,7 @@ import {
 import type { Indicator } from '../../../lib/entities/indicator'
 import { tooltip } from '../../../lib/tooltips/action'
 import IndicatorSemicircle from './IndicatorSemicircle.svelte'
+import type { WithId } from '../../../lib/entities/with-id'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
@@ -36,7 +37,7 @@ type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
 
 // Type guard function
 function isPulsingSourceOperation(
-	op: PendingOperation<DraggableItem>,
+	op: PendingOperation<WithId>,
 	currentBedId: string,
 ): op is PulsingSourceOperation {
 	return (
@@ -148,7 +149,7 @@ function getTileComputedStyles(
 }
 
 interface DropEventPayload {
-	item: DraggableItem
+	item: WithId
 	sourceZoneId: string | null
 	targetZoneId: string
 	x?: number

@@ -1,20 +1,20 @@
 import { pendingOperations } from './state'
 import type {
-	DraggableItem,
 	DropZoneContext,
 	PendingOperation,
 	ValidationContext,
 	ValidationState,
 } from './types'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from './constants'
+import type { WithId } from '../../lib/entities/with-id'
 
 // Validation function type
 export type AsyncValidationFunction<
-	TItem extends DraggableItem,
+	TItem extends WithId,
 	TZoneCtx extends DropZoneContext,
 > = (context: ValidationContext<TItem, TZoneCtx>) => Promise<void>
 
-export function addPendingOperation<TItem extends DraggableItem>(
+export function addPendingOperation<TItem extends WithId>(
 	operation: Omit<PendingOperation<TItem>, 'id' | 'timestamp'>,
 ): string {
 	const id = `pending-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
@@ -38,9 +38,9 @@ export function removePendingOperation(id: string) {
 }
 
 export const defaultAsyncValidation: AsyncValidationFunction<
-	DraggableItem,
+	WithId,
 	DropZoneContext
-> = async (_context: ValidationContext<DraggableItem, DropZoneContext>) => {
+> = async (_context: ValidationContext<WithId, DropZoneContext>) => {
 	return new Promise((resolve) => {
 		setTimeout(() => {
 			// For now, always resolve to allow operations

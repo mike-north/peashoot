@@ -1,15 +1,12 @@
 import type { IRGBColor } from '@peashoot/types'
-import {
-	type ExistingDraggableItem,
-	type DraggableItem,
-	isExistingDraggableItem,
-} from '../dnd/types'
+import { type ItemInZone, isPlacedDraggableItem } from '../dnd/types'
+import { isWithId, type WithId } from '../../lib/entities/with-id'
 
 /**
  * Represents the placement of an item on a grid with integer coordinates.
  * This extends ExistingDraggableItem to be compatible with the drag system.
  */
-export interface GridPlacement<T extends DraggableItem> extends ExistingDraggableItem<T> {
+export interface GridPlacement<T extends WithId> extends ItemInZone<T> {
 	/** The x coordinate on the grid (0-based) */
 	readonly x: number
 	/** The y coordinate on the grid (0-based) */
@@ -20,17 +17,17 @@ export interface GridPlacement<T extends DraggableItem> extends ExistingDraggabl
 
 export function isGridPlacement(
 	maybePlacement: unknown,
-): maybePlacement is GridPlacement<DraggableItem>
-export function isGridPlacement<T extends DraggableItem>(
+): maybePlacement is GridPlacement<WithId>
+export function isGridPlacement<T extends WithId>(
 	maybePlacement: unknown,
 	itemGuard: (item: unknown) => item is T,
 ): maybePlacement is GridPlacement<T>
-export function isGridPlacement<T extends DraggableItem>(
+export function isGridPlacement<T extends WithId>(
 	maybePlacement: unknown,
 	itemGuard?: (item: unknown) => item is T,
 ): maybePlacement is GridPlacement<T> {
 	const baseCheck =
-		isExistingDraggableItem(maybePlacement) &&
+		isPlacedDraggableItem(maybePlacement) &&
 		'x' in maybePlacement &&
 		typeof maybePlacement.x === 'number' &&
 		'y' in maybePlacement &&
@@ -76,7 +73,7 @@ export interface GridItemPresentation {
 /**
  * Interface for items that can be placed on a grid
  */
-export interface GridPlaceable extends DraggableItem {
+export interface GridPlaceable extends WithId {
 	/** Display name for the item */
 	readonly displayName: string
 	/** Visual presentation data */
@@ -87,9 +84,7 @@ export interface GridPlaceable extends DraggableItem {
 
 export function isGridPlaceable(item: unknown): item is GridPlaceable {
 	return (
-		item !== null &&
-		typeof item === 'object' &&
-		'id' in item && // from DraggableItem
+		isWithId(item) &&
 		'displayName' in item &&
 		'presentation' in item &&
 		!('key' in item && 'centerX' in item && 'effects' in item) && // Not an IndicatorVisual

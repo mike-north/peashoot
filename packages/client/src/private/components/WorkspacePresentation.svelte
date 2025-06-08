@@ -23,23 +23,23 @@ import {
 	plantsReady,
 } from '../../private/state/plantsStore'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
-import type { DraggableItem } from '../dnd/types'
 import ZoneGrid from '../grid/components/ZoneGrid.svelte'
 import HorizontalBarMeter from '../../components/HorizontalBarMeter.svelte'
 import IdLabel from '../../lib/components/IdLabel.svelte'
+import type { WithId } from '../../lib/entities/with-id'
 
 interface WorkspaceProps {
 	workspace: Workspace
 	onRequestPlacement: (
-		details: PlacementRequestDetails<DraggableItem>,
+		details: PlacementRequestDetails<WithId>,
 		pendingOpId?: string,
 	) => Promise<void>
 	onRequestRemoval: (
-		details: RemovalRequestDetails<DraggableItem>,
+		details: RemovalRequestDetails<WithId>,
 		pendingOpId?: string,
 	) => Promise<void>
 	onRequestCloning: (
-		details: CloningRequestDetails<DraggableItem>,
+		details: CloningRequestDetails<WithId>,
 		pendingOpId?: string,
 	) => Promise<void>
 }
@@ -248,7 +248,7 @@ async function handleDrop(dropInfo: {
 }
 
 // Function to safely get item size, avoiding validation errors
-function safeGetItemSize(item: DraggableItem): number {
+function safeGetItemSize(item: WithId): number {
 	if (!isGridPlaceable(item)) {
 		console.warn('Item is not a grid placeable', item)
 		return 1

@@ -3,10 +3,11 @@
 import type { Snippet } from 'svelte'
 import { dragState as genericDragState } from '../state'
 import { get } from 'svelte/store'
-import type { DropZoneContext, DraggableItem } from '../types'
+import type { DropZoneContext } from '../types'
+import type { WithId } from '../../../lib/entities/with-id'
 
 interface DropEventPayload {
-	item: DraggableItem
+	item: WithId
 	sourceZoneId: string | null
 	targetZoneId: string
 	x?: number

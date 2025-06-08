@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-import { Plant, PlantPresentation } from './entities/plant'
+import { Plant } from './entities/plant'
 import { GardenBed } from './entities/garden-bed'
 import { SeedPacket } from './entities/seed-packet'
 import { PlantPlacement } from './entities/plant-placement'
@@ -18,7 +18,6 @@ export const AppDataSource = new DataSource({
 		SeedPacket,
 		GardenBed,
 		Garden,
-		PlantPresentation,
 		RGBColor,
 		XYCoordinate,
 	],

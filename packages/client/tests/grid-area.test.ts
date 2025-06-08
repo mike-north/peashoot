@@ -11,10 +11,10 @@ describe('Grid Area', () => {
 		id,
 		name: `Test Item ${id}`,
 		displayName: `Test Item ${id}`,
+		size,
 		presentation: {
 			iconPath: '/icons/test.svg',
 			accentColor: { red: 255, green: 0, blue: 0 },
-			size,
 		},
 	})
 
@@ -30,7 +30,7 @@ describe('Grid Area', () => {
 		sourceZoneId,
 		x,
 		y,
-		size: item.presentation.size,
+		size: item.size,
 	})
 
 	describe('Grid Area Properties', () => {

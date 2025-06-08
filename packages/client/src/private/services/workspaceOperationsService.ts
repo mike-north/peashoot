@@ -1,11 +1,6 @@
 import type { Workspace } from '../../lib/entities/workspace'
-import {
-	updateItemPositionInZone,
-	type Zone,
-	type ItemWithSize,
-} from '../../lib/entities/zone'
-import type { PlantItem } from '../../lib/item-types/plant-item'
-import { getPlantProperties } from '../../lib/item-types/plant-item'
+import { updateItemPositionInZone, type Zone } from '../../lib/entities/zone'
+import { type PlantMetadata } from '../../lib/entities/plant-metadata'
 import {
 	findZone,
 	findItemPlacement,
@@ -13,6 +8,7 @@ import {
 } from '../../lib/entities/workspace'
 import type { GridPlacement } from '../grid/grid-placement'
 import type { ExistingWorkspaceItem } from '../state/workspaceDragState'
+import type { Item } from '../../lib/entities/item'
 
 export class WorkspaceOperationsService {
 	moveItemInZone(
@@ -43,7 +39,7 @@ export class WorkspaceOperationsService {
 		workspace: Workspace,
 		sourceZoneId: string,
 		targetZoneId: string,
-		existingItem: ExistingWorkspaceItem<ItemWithSize>,
+		existingItem: ExistingWorkspaceItem<Item>,
 		newX: number,
 		newY: number,
 	): Workspace {
@@ -61,7 +57,7 @@ export class WorkspaceOperationsService {
 	addNewItem(
 		workspace: Workspace,
 		zoneId: string,
-		item: PlantItem,
+		item: Item<PlantMetadata>,
 		x: number,
 		y: number,
 	): Workspace {
@@ -71,21 +67,20 @@ export class WorkspaceOperationsService {
 			return workspace
 		}
 
-		const itemForPlacement: PlantItem = {
+		const itemForPlacement: Item<PlantMetadata> = {
 			...item,
 		}
-		const plantProps = getPlantProperties(itemForPlacement)
-		const newItemId = `${plantProps.family}_${Date.now()}`
+		const newItemId = `${itemForPlacement.metadata.family}_${Date.now()}`
 		const itemWithSize = {
 			...itemForPlacement,
-			size: plantProps.plantingDistanceInFeet,
+			size: Math.max(1, Math.ceil(itemForPlacement.metadata.plantingDistanceInFeet)),
 		}
 
-		const newPlacement: GridPlacement<ItemWithSize> = {
+		const newPlacement: GridPlacement<Item> = {
 			id: newItemId,
 			x,
 			y,
-			size: plantProps.plantingDistanceInFeet,
+			size: Math.max(1, Math.ceil(itemForPlacement.metadata.plantingDistanceInFeet)),
 			item: itemWithSize,
 			sourceZoneId: zoneId,
 		}
@@ -119,7 +114,7 @@ export class WorkspaceOperationsService {
 		return findZone(workspace, zoneId)
 	}
 
-	findItemPlacement(zone: Zone, itemId: string): GridPlacement<ItemWithSize> | undefined {
+	findItemPlacement(zone: Zone, itemId: string): GridPlacement<Item> | undefined {
 		return findItemPlacement(zone, itemId)
 	}
 }

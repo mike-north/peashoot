@@ -1,51 +1,51 @@
 <script lang="ts">
-import WorkspaceDiagram from '../private/components/WorkspaceDiagram.svelte'
+import WorkspaceDiagram, {
+	type AddNewItemHandler,
+	type MoveItemBetweenZonesHandler,
+} from '../private/components/WorkspaceDiagram.svelte'
 import PageTitle from '../components/PageTitle.svelte'
 import { onMount } from 'svelte'
-import { WorkspaceAdapter } from '../lib/adapters/workspace-adapter'
-import {
-	moveItemBetweenZonesAndCreateNewWorkspace,
-	type Workspace,
-} from '../lib/entities/workspace'
+import type { Workspace } from '../lib/entities/workspace'
 import type { GridPlacement } from '../private/grid/grid-placement'
-import { PlantItemAdapter } from '../lib/adapters/plant-item-adapter'
-import {
-	updateItemPositionInZone,
-	type Zone,
-	type ItemWithSize,
-} from '../lib/entities/zone'
-import type { PlantItem } from '../lib/item-types/plant-item'
+import type { Zone } from '../lib/entities/zone'
+import type { PlantMetadata } from '../lib/entities/plant-metadata'
 import { WorkspaceController } from '../lib/controllers/WorkspaceController'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
+import {
+	loadFirstGarden,
+	currentGarden,
+	addPlantToGarden,
+	movePlantWithinZone,
+	movePlantBetweenZones,
+	removePlantFromZone,
+	clonePlant,
+} from '../private/state/gardenStore'
+import { PlantRepository } from '../lib/repositories/plant.repository'
+import type { Item } from '../lib/entities/item'
 
 const {
 	route,
 	controller,
-}: { route: RouteResult; controller: WorkspaceController<PlantItem> } = $props()
-const workspaceAdapter = new WorkspaceAdapter()
-const plantAdapter = new PlantItemAdapter()
+}: { route: RouteResult; controller: WorkspaceController<Item<PlantMetadata>> } = $props()
 
-// Create workspace controller with default rules
-const workspaceController = $state(controller)
+// Create plant repository and workspace controller
+const plantRepository = new PlantRepository()
+const workspaceController = $derived(controller)
 
-let workspaceInstance: Workspace | undefined = $state<Workspace | undefined>(undefined)
+// Use the currentGarden store directly
+const workspaceInstance = $derived($currentGarden || undefined)
 
 onMount(() => {
-	workspaceAdapter
-		.fetchFirstWorkspace()
-		.then((workspace) => {
-			workspaceInstance = workspace
-		})
-		.catch((err: unknown) => {
-			console.error('Error fetching workspaces', { cause: err })
-		})
+	loadFirstGarden().catch((err: unknown) => {
+		console.error('Error fetching garden', { cause: err })
+	})
 })
 
 async function moveItemBetweenZones(
 	workspace: Workspace,
 	sourceZoneId: string,
 	targetZoneId: string,
-	placement: GridPlacement<PlantItem>,
+	placement: GridPlacement<Item<PlantMetadata>>,
 	newX: number,
 	newY: number,
 ) {
@@ -64,7 +64,7 @@ async function moveItemBetweenZones(
 
 	try {
 		// Cast to PlantItem
-		const plantItem = plantAdapter.validateAndCastItem(placement.item)
+		const plantItem = plantRepository.validateAndCastItem(placement.item)
 
 		// First validate the move using the controller
 		const validationResult = await workspaceController.validateItemMove(
@@ -82,22 +82,31 @@ async function moveItemBetweenZones(
 			return // Don't perform the operation if validation fails
 		}
 
-		const newWorkspace = moveItemBetweenZonesAndCreateNewWorkspace(
-			workspace,
+		// Use the garden store method that will update the API and then the store
+		const success = await movePlantBetweenZones(
+			workspace.id,
 			sourceZoneId,
 			targetZoneId,
-			placement,
+			placement.id,
 			newX,
 			newY,
 		)
-		workspaceInstance = newWorkspace
+
+		if (!success) {
+			console.error('[WorkspacePage] Failed to move item between zones')
+		}
 	} catch (error) {
 		console.error('[WorkspacePage] Invalid item type:', error)
 		return
 	}
 }
 
-async function handleAddNewItem(zoneId: string, item: PlantItem, x: number, y: number) {
+async function handleAddNewItem(
+	zoneId: string,
+	item: Item<PlantMetadata>,
+	x: number,
+	y: number,
+) {
 	if (!workspaceInstance) {
 		throw new Error('Attempt to add new item to undefined workspace')
 	}
@@ -129,24 +138,16 @@ async function handleAddNewItem(zoneId: string, item: PlantItem, x: number, y: n
 		return // Don't perform the operation if validation fails
 	}
 
-	const newItemId = `${item.category}_${Date.now()}`
+	// Use the garden store method that will update the API and then the store
+	const success = await addPlantToGarden(workspaceInstance.id, zoneId, item, x, y)
 
-	const newPlacement: GridPlacement<ItemWithSize> = {
-		id: newItemId,
-		x,
-		y,
-		size: plantAdapter.getItemSize(item),
-		item: item,
-		sourceZoneId: zoneId,
+	if (!success) {
+		console.error('[WorkspacePage] Failed to add new item')
+	} else {
+		console.log(
+			`[Workspace] Added new ${item.displayName} to zone ${zoneId} at (${x}, ${y})`,
+		)
 	}
-
-	workspaceInstance.zones = workspaceInstance.zones.map((z: Zone) =>
-		z.id === zoneId ? { ...z, placements: [...z.placements, newPlacement] } : z,
-	)
-
-	console.log(
-		`[Workspace] Added new ${item.displayName} to zone ${zoneId} at (${x}, ${y})`,
-	)
 }
 
 async function handleMoveItemInZone(
@@ -180,7 +181,7 @@ async function handleMoveItemInZone(
 
 	try {
 		// Cast to PlantItem
-		const plantItem = plantAdapter.validateAndCastItem(placement.item)
+		const plantItem = plantRepository.validateAndCastItem(placement.item)
 
 		// Validate the move
 		const validationResult = await workspaceController.validateItemPlacement(
@@ -197,9 +198,18 @@ async function handleMoveItemInZone(
 			return // Don't perform the operation if validation fails
 		}
 
-		workspaceInstance.zones = workspaceInstance.zones.map((z: Zone) =>
-			z.id === zoneId ? updateItemPositionInZone(z, itemId, newX, newY) : z,
+		// Use the garden store method that will update the API and then the store
+		const success = await movePlantWithinZone(
+			workspaceInstance.id,
+			zoneId,
+			itemId,
+			newX,
+			newY,
 		)
+
+		if (!success) {
+			console.error('[WorkspacePage] Failed to move item in zone')
+		}
 	} catch (error) {
 		console.error('[WorkspacePage] Invalid item type:', error)
 		return
@@ -232,7 +242,7 @@ async function handleDeleteItem(zoneId: string, itemId: string) {
 
 	try {
 		// Cast to PlantItem
-		const plantItem = plantAdapter.validateAndCastItem(placement.item)
+		const plantItem = plantRepository.validateAndCastItem(placement.item)
 
 		// Validate the removal
 		const validationResult = await workspaceController.validateItemRemoval(
@@ -247,15 +257,51 @@ async function handleDeleteItem(zoneId: string, itemId: string) {
 			return // Don't perform the operation if validation fails
 		}
 
-		workspaceInstance.zones = workspaceInstance.zones.map((z: Zone) =>
-			z.id === zoneId
-				? { ...z, placements: z.placements.filter((p) => p.id !== itemId) }
-				: z,
-		)
-		console.log(`[WorkspacePage] Deleted item ${itemId} from zone ${zoneId}`)
+		// Use the garden store method that will update the API and then the store
+		const success = await removePlantFromZone(workspaceInstance.id, zoneId, itemId)
+
+		if (!success) {
+			console.error('[WorkspacePage] Failed to delete item')
+		} else {
+			console.log(`[WorkspacePage] Deleted item ${itemId} from zone ${zoneId}`)
+		}
 	} catch (error) {
 		console.error('[WorkspacePage] Invalid item type:', error)
 		return
+	}
+}
+
+async function handleCloneItem(
+	sourceZoneId: string,
+	targetZoneId: string,
+	sourcePlantId: string,
+	x: number,
+	y: number,
+) {
+	if (!workspaceInstance) {
+		throw new Error('Attempt to clone item with undefined workspace')
+	}
+
+	// Check if cloning items is enabled
+	if (!workspaceController.isFeatureEnabled('canCloneItems')) {
+		console.warn('[Workspace] Cloning items is currently disabled')
+		return
+	}
+
+	// Use the garden store method that will update the API and then the store
+	const success = await clonePlant(
+		workspaceInstance.id,
+		sourceZoneId,
+		targetZoneId,
+		sourcePlantId,
+		x,
+		y,
+	)
+
+	if (!success) {
+		console.error('[WorkspacePage] Failed to clone item')
+	} else {
+		console.log(`[WorkspacePage] Cloned item ${sourcePlantId} to zone ${targetZoneId}`)
 	}
 }
 </script>
@@ -265,10 +311,11 @@ async function handleDeleteItem(zoneId: string, itemId: string) {
 	<WorkspaceDiagram
 		workspace={workspaceInstance}
 		handleMoveItemInZone={handleMoveItemInZone}
-		handleAddNewItem={handleAddNewItem}
+		handleAddNewItem={handleAddNewItem as AddNewItemHandler<Item>}
 		handleDeleteItem={handleDeleteItem}
-		moveItemBetweenZones={moveItemBetweenZones}
-		itemAdapter={plantAdapter}
-		controller={workspaceController}
+		moveItemBetweenZones={moveItemBetweenZones as MoveItemBetweenZonesHandler<Item>}
+		handleCloneItem={handleCloneItem}
+		itemAdapter={plantRepository}
+		controller={workspaceController as WorkspaceController}
 	/>
 {/if}

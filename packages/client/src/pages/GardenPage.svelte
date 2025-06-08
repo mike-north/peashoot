@@ -4,14 +4,15 @@ import {
 	WorkspaceController,
 	type ValidationRule,
 } from '../lib/controllers/WorkspaceController'
-import type { PlantItem } from '../lib/item-types/plant-item'
+import type { Item } from '../lib/entities/item'
+import type { PlantMetadata } from '../lib/entities/plant-metadata'
 // This file now redirects to the new WorkspacePage with generic terminology
 // The old garden-specific implementation is preserved but uses the new workspace system
 import WorkspacePage from './WorkspacePage.svelte'
 
 const { route } = $props()
 
-const controller = new WorkspaceController<PlantItem>({
+const controller = new WorkspaceController<Item<PlantMetadata>>({
 	validationRules: [
 		PlantValidationRules.checkBoundaries(),
 		PlantValidationRules.noOverlaps(),
@@ -29,7 +30,7 @@ const controller = new WorkspaceController<PlantItem>({
 				reason: 'Tomatoes and potatoes should not be planted together (shared diseases)',
 			},
 		]),
-	] as ValidationRule<PlantItem>[],
+	] as ValidationRule<Item<PlantMetadata>>[],
 })
 </script>
 

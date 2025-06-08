@@ -1,19 +1,23 @@
 import { describe, it, expect } from 'vitest'
 import { ZoneLayoutCalculator } from '../../src/private/grid/zone-layout-calculator.js'
-import type { PlantItem } from '../../src/lib/item-types/plant-item.js'
-import { createPlantItem } from '../../src/lib/item-types/plant-item.js'
-import type { GridPlacement } from '../../src/private/grid/grid-placement.js'
-import type { ExistingDraggableItem } from '../../src/private/dnd/types.js'
+import { type GridPlacement } from '../../src/private/grid/grid-placement.js'
+import { type PlantMetadata } from '../../src/lib/entities/plant-metadata.js'
+import { type Item } from '../../src/lib/entities/item.js'
+import { type ExistingDraggableItem } from '../../src/private/dnd/types.js'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new ZoneLayoutCalculator(layoutParams)
 
-const mockItem: PlantItem = createPlantItem({
+const mockItem: Item<PlantMetadata> = {
 	id: 'plant_1',
 	displayName: 'Tomato',
-	family: 'tomatoes',
+	category: 'tomatoes',
 	variant: 'red',
-	plantingDistanceInFeet: 2,
+	size: 2,
+	metadata: {
+		family: 'tomatoes',
+		plantingDistanceInFeet: 2,
+	},
 	presentation: {
 		accentColor: {
 			red: 255,
@@ -23,9 +27,10 @@ const mockItem: PlantItem = createPlantItem({
 		iconPath: 'tomato.png',
 		size: 2,
 	},
-})
+}
 
-const itemPlacement: GridPlacement<PlantItem> & ExistingDraggableItem<PlantItem> = {
+const itemPlacement: GridPlacement<Item<PlantMetadata>> &
+	ExistingDraggableItem<Item<PlantMetadata>> = {
 	x: 1,
 	y: 2,
 	id: 'placement1',
@@ -76,10 +81,9 @@ describe('ZoneLayoutCalculator', () => {
 	})
 
 	it('validates placement in bounds and no overlap', () => {
-		const placementWithSize = { ...itemPlacement, size: 1, id: 'placement1' }
-		const valid = layout.isValidPlacement(0, 0, 1, [placementWithSize])
+		const valid = layout.isValidPlacement(0, 0, 1, [itemPlacement])
 		expect(valid).toBe(true)
-		const invalid = layout.isValidPlacement(1, 2, 1, [placementWithSize])
+		const invalid = layout.isValidPlacement(1, 2, 1, [itemPlacement])
 		expect(invalid).toBe(false)
 	})
 })

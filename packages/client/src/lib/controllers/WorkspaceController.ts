@@ -1,6 +1,7 @@
+import type { Item } from '../entities/item'
 import type { Workspace } from '../entities/workspace'
-import type { ItemWithSize, Zone } from '../entities/zone'
-import type { PlantItem } from '../item-types/plant-item'
+import type { Zone } from '../entities/zone'
+import type { PlantMetadata } from '../entities/plant-metadata'
 
 /**
  * Feature flags that control what workspace operations are enabled
@@ -35,7 +36,7 @@ export type WorkspaceOperationType =
 /**
  * Context for validation checks
  */
-export interface ValidationContext<T extends ItemWithSize = ItemWithSize> {
+export interface ValidationContext<T extends Item = Item> {
 	workspace: Workspace
 	operationType: WorkspaceOperationType
 	item: T
@@ -49,7 +50,7 @@ export interface ValidationContext<T extends ItemWithSize = ItemWithSize> {
 /**
  * A rule function that checks if an operation is valid
  */
-export type ValidationRule<T extends ItemWithSize = ItemWithSize> = (
+export type ValidationRule<T extends Item = Item> = (
 	context: ValidationContext<T>,
 ) => ValidationResult | Promise<ValidationResult>
 
@@ -57,7 +58,7 @@ export type ValidationRule<T extends ItemWithSize = ItemWithSize> = (
  * Handles high-level business logic for workspace operations
  * including validation rules and feature enablement
  */
-export class WorkspaceController<T extends ItemWithSize = ItemWithSize> {
+export class WorkspaceController<T extends Item = Item> {
 	private validationRules: ValidationRule<T>[] = []
 	private featureFlags: WorkspaceFeatureFlags
 
@@ -208,7 +209,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Cannot place an item outside the zone boundaries
 	 */
-	checkBoundaries(): ValidationRule<PlantItem> {
+	checkBoundaries(): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			if (context.targetX === undefined || context.targetY === undefined) {
 				return { isValid: false, reason: 'Missing target coordinates' }
@@ -235,7 +236,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Cannot place an item that overlaps with existing items
 	 */
-	noOverlaps(): ValidationRule<PlantItem> {
+	noOverlaps(): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			if (context.targetX === undefined || context.targetY === undefined) {
 				return { isValid: false, reason: 'Missing target coordinates' }
@@ -252,7 +253,7 @@ export const PlantValidationRules = {
 					continue
 				}
 
-				const existingItem = placement.item as PlantItem
+				const existingItem = placement.item as Item<PlantMetadata>
 				const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
 
 				if (
@@ -275,7 +276,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Cannot exceed specified zone density
 	 */
-	maxDensity(maxDensityPercentage = 0.8): ValidationRule<PlantItem> {
+	maxDensity(maxDensityPercentage = 0.8): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			if (
 				context.operationType !== 'item-add-to-zone' &&
@@ -303,7 +304,7 @@ export const PlantValidationRules = {
 					continue
 				}
 
-				const existingItem = placement.item as PlantItem
+				const existingItem = placement.item as Item<PlantMetadata>
 				const existingFootprint = (existingItem.metadata.plantingDistanceInFeet || 1) ** 2
 				occupiedSpace += existingFootprint
 			}
@@ -327,7 +328,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Specific plant types have sunlight requirements
 	 */
-	sunlightRequirements(): ValidationRule<PlantItem> {
+	sunlightRequirements(): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			const targetZone = context.targetZone
 
@@ -352,7 +353,7 @@ export const PlantValidationRules = {
 	 */
 	restrictedPlantsByZone(
 		restrictions: { plantType: string; zoneIds: string[] }[],
-	): ValidationRule<PlantItem> {
+	): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			const plantItem = context.item
 			const targetZone = context.targetZone
@@ -378,7 +379,7 @@ export const PlantValidationRules = {
 	 */
 	incompatiblePlants(
 		incompatibilities: { plant1: string; plant2: string; reason: string }[],
-	): ValidationRule<PlantItem> {
+	): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			if (context.targetX === undefined || context.targetY === undefined) {
 				return { isValid: false, reason: 'Missing target coordinates' }
@@ -398,7 +399,7 @@ export const PlantValidationRules = {
 					continue
 				}
 
-				const existingItem = placement.item as PlantItem
+				const existingItem = placement.item as Item<PlantMetadata>
 				const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
 
 				// Check if the items are adjacent (within the margin)

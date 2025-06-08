@@ -10,7 +10,6 @@ import {
 } from '../../private/state/workspaceDragState'
 import type { GridPlaceable, GridPlacement } from '../../private/grid/grid-placement'
 import type { ItemAdapter } from '../../lib/adapters/item-adapter'
-import { isPlantItem, type PlantItem } from '../../lib/item-types/plant-item'
 import {
 	updatePendingOperation,
 	removePendingOperation,
@@ -26,26 +25,48 @@ import type {
 	ValidationResult,
 	WorkspaceController,
 } from '../../lib/controllers/WorkspaceController'
-import type { ItemWithSize } from '../../lib/entities/zone'
-import type { Item } from '../../lib/entities/item'
+import { isItemWithMetadata, type Item } from '../../lib/entities/item'
+import { isPlantMetadata, type PlantMetadata } from '../../lib/entities/plant-metadata'
 
-interface WorkspaceDiagramProps<TItem extends GridPlaceable & ItemWithSize> {
-	handleAddNewItem: (zoneId: string, item: TItem, x: number, y: number) => Promise<void>
-	handleMoveItemInZone: (
-		zoneId: string,
-		itemId: string,
-		newX: number,
-		newY: number,
-	) => Promise<void>
-	handleDeleteItem: (zoneId: string, itemId: string) => Promise<void>
-	moveItemBetweenZones: (
-		workspace: Workspace,
-		sourceZoneId: string,
-		targetZoneId: string,
-		placement: GridPlacement<TItem>,
-		newX: number,
-		newY: number,
-	) => Promise<void>
+export type AddNewItemHandler<TItem extends GridPlaceable & Item> = (
+	zoneId: string,
+	item: TItem,
+	x: number,
+	y: number,
+) => Promise<void>
+
+export type MoveItemInZoneHandler = (
+	zoneId: string,
+	itemId: string,
+	newX: number,
+	newY: number,
+) => Promise<void>
+
+export type DeleteItemHandler = (zoneId: string, itemId: string) => Promise<void>
+
+export type MoveItemBetweenZonesHandler<TItem extends GridPlaceable & Item> = (
+	workspace: Workspace,
+	sourceZoneId: string,
+	targetZoneId: string,
+	placement: GridPlacement<TItem>,
+	newX: number,
+	newY: number,
+) => Promise<void>
+
+export type CloneItemHandler = (
+	sourceZoneId: string,
+	targetZoneId: string,
+	itemId: string,
+	x: number,
+	y: number,
+) => Promise<void>
+
+interface WorkspaceDiagramProps<TItem extends GridPlaceable & Item> {
+	handleAddNewItem: AddNewItemHandler<TItem>
+	handleMoveItemInZone: MoveItemInZoneHandler
+	handleDeleteItem: DeleteItemHandler
+	moveItemBetweenZones: MoveItemBetweenZonesHandler<TItem>
+	handleCloneItem: CloneItemHandler
 	workspace: Workspace
 	itemAdapter: ItemAdapter<TItem>
 	controller: WorkspaceController<TItem>
@@ -57,6 +78,7 @@ const {
 	handleAddNewItem,
 	handleMoveItemInZone,
 	handleDeleteItem,
+	handleCloneItem,
 	itemAdapter,
 	controller,
 }: WorkspaceDiagramProps<Item> = $props()
@@ -79,7 +101,7 @@ function handleAsyncValidationError(errorMessage: string) {
 async function handleMoveItemToDifferentZone(
 	sourceZoneId: string,
 	targetZoneId: string,
-	existingItem: ExistingWorkspaceItem<PlantItem>,
+	existingItem: ExistingWorkspaceItem<Item<PlantMetadata>>,
 	newX: number,
 	newY: number,
 ) {
@@ -114,12 +136,11 @@ async function handleMoveItemToDifferentZone(
 		return
 	}
 
-	// Inline conversion from ExistingWorkspaceItem<ItemWithSize> to GridPlacement<ItemWithSize>
-	const gridPlacementArg: GridPlacement<PlantItem> = {
+	const gridPlacementArg: GridPlacement<Item<PlantMetadata>> = {
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
-		size: itemAdapter.getItemSize(existingItem.item),
+		size: existingItem.item.size,
 		item: existingItem.item,
 		sourceZoneId: existingItem.sourceZoneId,
 	}
@@ -177,10 +198,10 @@ async function handleRequestPlacement(
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
-	let validatedItem: PlantItem
+	let validatedItem: Item<PlantMetadata>
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
-		if (isPlantItem(rawValidatedItem)) {
+		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
 			validatedItem = rawValidatedItem
 		} else {
 			throw new Error('Item is not a plant item')
@@ -305,12 +326,12 @@ async function handleRequestPlacement(
 					throw new Error('Original item not found')
 				}
 
-				const existingItem: ExistingWorkspaceItem<PlantItem> = {
+				const existingItem: ExistingWorkspaceItem<Item<PlantMetadata>> = {
 					id: details.originalInstanceId,
 					x: originalItem.x,
 					y: originalItem.y,
 					item: validatedItem, // Use the validated item here!
-					size: itemAdapter.getItemSize(validatedItem),
+					size: validatedItem.size,
 					sourceZoneId: details.sourceZoneId,
 				}
 
@@ -367,10 +388,10 @@ async function handleRequestRemoval(
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
-	let validatedItem: PlantItem
+	let validatedItem: Item<PlantMetadata>
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
-		if (isPlantItem(rawValidatedItem)) {
+		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
 			validatedItem = rawValidatedItem
 		} else {
 			throw new Error('Item is not a plant item')
@@ -473,10 +494,10 @@ async function handleRequestCloning(
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
-	let validatedItem: PlantItem
+	let validatedItem: Item<PlantMetadata>
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemDataToClone)
-		if (isPlantItem(rawValidatedItem)) {
+		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
 			validatedItem = rawValidatedItem
 		} else {
 			throw new Error('Item is not a plant item')
@@ -527,19 +548,48 @@ async function handleRequestCloning(
 
 		if (validationResult.isValid) {
 			handleAsyncValidationSuccess()
-			// Validation passed - perform the actual clone
-			await handleAddNewItem(
-				details.targetCloneZoneId,
-				validatedItem,
-				details.targetCloneX,
-				details.targetCloneY,
-			)
-			// Update pending operation to success
-			if (pendingOpId) {
-				updatePendingOperation(pendingOpId, 'success')
-				setTimeout(() => {
-					removePendingOperation(pendingOpId)
-				}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+
+			// Log all the important details for debugging
+			console.log('Cloning request details:', {
+				sourceZoneId: details.sourceOriginalZoneId,
+				targetZoneId: details.targetCloneZoneId,
+				itemId: validatedItem.id,
+				itemName: validatedItem.displayName,
+				x: details.targetCloneX,
+				y: details.targetCloneY,
+			})
+
+			try {
+				// Validation passed - perform the actual clone using the parent component's handler
+				await handleCloneItem(
+					details.sourceOriginalZoneId,
+					details.targetCloneZoneId,
+					validatedItem.id,
+					details.targetCloneX,
+					details.targetCloneY,
+				)
+
+				console.log('Clone operation completed successfully')
+
+				// Update pending operation to success
+				if (pendingOpId) {
+					updatePendingOperation(pendingOpId, 'success')
+					setTimeout(() => {
+						removePendingOperation(pendingOpId)
+					}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+				}
+			} catch (cloneError) {
+				console.error('Error in handleCloneItem:', cloneError)
+				handleAsyncValidationError(
+					`Clone failed: ${cloneError instanceof Error ? cloneError.message : String(cloneError)}`,
+				)
+
+				if (pendingOpId) {
+					updatePendingOperation(pendingOpId, 'error')
+					setTimeout(() => {
+						removePendingOperation(pendingOpId)
+					}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
+				}
 			}
 		} else {
 			// Validation failed - show error but don't perform operation
@@ -570,51 +620,6 @@ async function handleRequestCloning(
 		}
 	}
 }
-
-function tileSizeForItem(item: DraggableItem): number {
-	try {
-		// Log the item type for debugging
-		console.debug('Validating item type', {
-			item,
-			itemType: typeof item,
-			isObject: typeof item === 'object',
-			hasId: typeof item === 'object' && 'id' in item,
-			idValue:
-				typeof item === 'object' && 'id' in item ? (item as { id: unknown }).id : null,
-			hasMetadata: typeof item === 'object' && 'metadata' in item,
-			category:
-				typeof item === 'object' && 'category' in item
-					? (item as { category: unknown }).category
-					: null,
-			size:
-				typeof item === 'object' && 'size' in item
-					? (item as { size: unknown }).size
-					: null,
-		})
-
-		const validItem = itemAdapter.validateAndCastItem(item)
-		console.debug('Item validation succeeded', { id: validItem.id })
-		return itemAdapter.getItemSize(validItem)
-	} catch (err) {
-		console.error('Item validation failed', {
-			err,
-			item,
-			itemType: typeof item,
-			itemKeys: typeof item === 'object' ? Object.keys(item as object) : null,
-		})
-		throw new Error('Item is not valid for this adapter')
-	}
-}
-
-function categoryNameForItem(item: DraggableItem): string {
-	try {
-		const validItem = itemAdapter.validateAndCastItem(item)
-		return itemAdapter.getCategoryName(validItem)
-	} catch (error: unknown) {
-		console.error('Error getting category name for item', { item })
-		throw new Error('Item is not valid for this adapter', { cause: error })
-	}
-}
 </script>
 
 {#if workspace}
@@ -623,8 +628,6 @@ function categoryNameForItem(item: DraggableItem): string {
 		onRequestPlacement={handleRequestPlacement}
 		onRequestRemoval={handleRequestRemoval}
 		onRequestCloning={handleRequestCloning}
-		tileSizeForItem={tileSizeForItem}
-		categoryNameForItem={categoryNameForItem}
 	/>
 {:else}
 	<div class="flex justify-center items-center h-full p-8">

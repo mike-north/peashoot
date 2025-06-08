@@ -40,8 +40,6 @@ interface WorkspaceProps {
 		details: CloningRequestDetails<DraggableItem>,
 		pendingOpId?: string,
 	) => Promise<void>
-	tileSizeForItem: (item: DraggableItem) => number
-	categoryNameForItem: (item: DraggableItem) => string
 }
 
 let {
@@ -49,8 +47,6 @@ let {
 	onRequestPlacement,
 	onRequestRemoval,
 	onRequestCloning,
-	tileSizeForItem,
-	categoryNameForItem,
 }: WorkspaceProps = $props()
 
 let { zones } = $derived(workspace)
@@ -92,7 +88,7 @@ async function handleDrop(dropInfo: {
 			state: 'pending',
 			zoneId: sourceZoneId,
 			item: draggedExistingItem.item,
-			size: safeGetItemSize(draggedExistingItem.item, tileSizeForItem),
+			size: safeGetItemSize(draggedExistingItem.item),
 			x: draggedExistingItem.x,
 			y: draggedExistingItem.y,
 			originalSourceZoneId: sourceZoneId,
@@ -138,7 +134,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.item,
-					size: safeGetItemSize(existingItem.item, tileSizeForItem),
+					size: safeGetItemSize(existingItem.item),
 					x,
 					y,
 					originalSourceZoneId: sourceZoneIdValue,
@@ -180,7 +176,7 @@ async function handleDrop(dropInfo: {
 					state: 'pending',
 					zoneId: dropInfo.targetZoneId,
 					item: existingItem.item,
-					size: safeGetItemSize(existingItem.item, tileSizeForItem),
+					size: safeGetItemSize(existingItem.item),
 					x,
 					y,
 					originalSourceZoneId: sourceZoneIdValue,
@@ -217,7 +213,7 @@ async function handleDrop(dropInfo: {
 				state: 'pending',
 				zoneId: dropInfo.targetZoneId,
 				item: currentDragState.draggedNewItem,
-				size: safeGetItemSize(currentDragState.draggedNewItem, tileSizeForItem),
+				size: safeGetItemSize(currentDragState.draggedNewItem),
 				x,
 				y,
 			})
@@ -250,16 +246,12 @@ async function handleDrop(dropInfo: {
 }
 
 // Function to safely get item size, avoiding validation errors
-function safeGetItemSize(
-	item: DraggableItem,
-	sizeFunc: (item: DraggableItem) => number,
-): number {
-	try {
-		return sizeFunc(item)
-	} catch (error) {
-		console.warn('Error getting item size, using default size of 1', error)
+function safeGetItemSize(item: DraggableItem): number {
+	if (!isGridPlaceable(item)) {
+		console.warn('Item is not a grid placeable', item)
 		return 1
 	}
+	return item.size
 }
 
 let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
@@ -291,14 +283,13 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 			<div class="text-md font-bold">Loading items...</div>
 		</div>
 	{:else if $plantsReady}
-		<GridViewToolbar items={$plants} categoryNameForItem={categoryNameForItem} />
+		<GridViewToolbar items={$plants} />
 
 		<div
 			class="workspace"
 			{@attach workspaceDragCoordinator({
 				dragState,
 				zones: zones,
-				tileSizeForItem,
 				onDrop: (dropInfo) => {
 					handleDrop(dropInfo).catch((error: unknown) => {
 						console.error('Drop failed:', error)
@@ -313,17 +304,14 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 					<ZoneGrid
 						zone={zone}
 						items={$plants}
-						indicators={workspace.indicators.filter(
-							(indicator) => indicator.zoneId === zone.id,
-						)}
+						indicators={workspace.indicators}
 						colSpan={zoneCardColSpans[zone.id] ?? 1}
-						tileSizeForItem={tileSizeForItem}
 					/>
 				{/each}
 			</div>
 		</div>
 
 		<DeleteZone />
-		<DragPreview grids={zones} tileSizeForItem={tileSizeForItem} />
+		<DragPreview grids={zones} />
 	{/if}
 </div>

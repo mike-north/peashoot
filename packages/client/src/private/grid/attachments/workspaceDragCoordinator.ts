@@ -13,7 +13,6 @@ import type { Zone } from '../../../lib/entities/zone'
 interface WorkspaceDragCoordinatorOptions {
 	dragState: Writable<IDragState<DraggableItem, ExistingDraggableItem<DraggableItem>>>
 	zones: Zone[]
-	tileSizeForItem: (item: DraggableItem) => number
 	onDrop: (dropInfo: {
 		targetZoneId: string | null
 		targetType: 'drop-zone' | 'delete-zone' | null
@@ -25,7 +24,7 @@ interface WorkspaceDragCoordinatorOptions {
 export function workspaceDragCoordinator(
 	options: WorkspaceDragCoordinatorOptions,
 ): Attachment {
-	const { tileSizeForItem, onDrop } = options
+	const { onDrop } = options
 
 	// Create a wrapped onDrop that preserves item structure
 	const wrappedOnDrop = (dropInfo: {
@@ -86,7 +85,6 @@ export function workspaceDragCoordinator(
 							const layout = new ZoneLayoutCalculator({
 								width: zone.width,
 								height: zone.height,
-								tileSizeForItem,
 								...DEFAULT_LAYOUT_PARAMS,
 							})
 							const gridCoords = screenToGridCoordinates(
@@ -147,7 +145,6 @@ export function workspaceDragCoordinator(
 							const layout = new ZoneLayoutCalculator({
 								width: zone.width,
 								height: zone.height,
-								tileSizeForItem,
 								...DEFAULT_LAYOUT_PARAMS,
 							})
 							const gridCoords = screenToGridCoordinates(

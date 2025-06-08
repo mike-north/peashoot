@@ -22,19 +22,19 @@ describe('ZoneLayoutCalculator', () => {
 		{
 			id: '1',
 			displayName: 'Item 1',
+			size: 1,
 			presentation: {
 				iconPath: '/icons/item1.svg',
 				accentColor: { red: 255, green: 0, blue: 0 },
-				size: 1,
 			},
 		},
 		{
 			id: '2',
 			displayName: 'Item 2',
+			size: 2,
 			presentation: {
 				iconPath: '/icons/item2.svg',
 				accentColor: { red: 0, green: 255, blue: 0 },
-				size: 2,
 			},
 		},
 	]
@@ -47,7 +47,6 @@ describe('ZoneLayoutCalculator', () => {
 		paddingBottom: DEFAULT_LAYOUT_PARAMS.paddingBottom,
 		paddingRight: DEFAULT_LAYOUT_PARAMS.paddingRight,
 		frameThickness: DEFAULT_LAYOUT_PARAMS.frameThickness,
-		tileSizeForItem: (item) => item.presentation.size,
 	})
 
 	describe('coordinate transformations', () => {
@@ -93,9 +92,9 @@ describe('ZoneLayoutCalculator', () => {
 			{
 				id: 'placement2',
 				item: items[1],
-				x: 2,
-				y: 2,
-				size: 2,
+				x: 1,
+				y: 0,
+				size: 1,
 				sourceZoneId: 'zone1',
 			},
 		]
@@ -162,11 +161,10 @@ describe('ZoneLayoutCalculator', () => {
 		const indicators: Indicator[] = [
 			{
 				id: 'ind1',
-				zoneId: 'zone1',
 				effects: [
 					{
-						sourceItemId: 'pA',
-						targetItemId: 'pB',
+						sourceItemTypeId: '1',
+						targetItemTypeId: '2',
 						nature: 'beneficial',
 						description: 'Helps growth',
 					},
@@ -175,12 +173,7 @@ describe('ZoneLayoutCalculator', () => {
 		]
 
 		it('calculates indicator visuals correctly for edge adjacency', () => {
-			const visuals = calculateIndicatorVisuals(
-				indicators,
-				placements,
-				'zone1',
-				calculator,
-			)
+			const visuals = calculateIndicatorVisuals(indicators, placements, calculator)
 			expect(visuals).toHaveLength(1)
 			const visual = visuals[0]
 			expect(visual.semicircles).toHaveLength(1)

@@ -1,12 +1,10 @@
 import type { GridPlaceable } from '../../private/grid/grid-placement'
 import type { GridItemPresentation } from '../../private/grid/grid-placement'
 
-export type CompanionItemEdgeType = 'prefers-company' | 'prefers-not-company'
-
 /**
  * Generic item interface that can represent any type of placeable item
  */
-export interface Item extends GridPlaceable {
+export interface Item<M extends object = object> extends GridPlaceable {
 	readonly id: string
 	readonly displayName: string
 	readonly category: string
@@ -14,7 +12,14 @@ export interface Item extends GridPlaceable {
 	readonly size: number
 	readonly presentation: GridItemPresentation
 	// Additional properties can be stored in metadata
-	readonly metadata?: Record<string, unknown>
+	readonly metadata: M
+}
+
+export function isItemWithMetadata<M extends object>(
+	item: unknown,
+	metadataGuard: (metadata: unknown) => metadata is M,
+): item is Item<M> {
+	return isItem(item) && 'metadata' in item && metadataGuard(item.metadata)
 }
 
 export function isItem(item: unknown): item is Item {
@@ -38,8 +43,4 @@ export function assertItemExists(item: Item | undefined): asserts item is Item {
 	if (!item) {
 		throw new Error('Item not found for isValidPlacement')
 	}
-}
-
-export function categoryNameForItem(item: Item): string {
-	return item.category
 }

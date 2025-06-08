@@ -33,7 +33,7 @@ export interface ItemTileLayoutInfo {
 /**
  * Parameters for zone layout calculations.
  */
-export interface LayoutParams<T> {
+export interface LayoutParams {
 	width: number
 	height: number
 	cellSize?: number
@@ -42,7 +42,6 @@ export interface LayoutParams<T> {
 	paddingBottom?: number
 	paddingRight?: number
 	frameThickness?: number
-	tileSizeForItem: (item: T) => number
 }
 
 export type GridLine = Line & { key: string }
@@ -100,12 +99,11 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 	public readonly paddingBottom: number
 	public readonly paddingRight: number
 	public readonly frameThickness: number
-	public readonly tileSizeForItem: (item: T) => number
 
 	/**
 	 * @param params Layout parameters for the zone
 	 */
-	constructor(params: LayoutParams<T>) {
+	constructor(params: LayoutParams) {
 		this.width = params.width
 		this.height = params.height
 		this.cellSize = params.cellSize ?? DEFAULT_LAYOUT_PARAMS.cellSize
@@ -114,7 +112,6 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 		this.paddingBottom = params.paddingBottom ?? DEFAULT_LAYOUT_PARAMS.paddingBottom
 		this.paddingRight = params.paddingRight ?? DEFAULT_LAYOUT_PARAMS.paddingRight
 		this.frameThickness = params.frameThickness ?? DEFAULT_LAYOUT_PARAMS.frameThickness
-		this.tileSizeForItem = params.tileSizeForItem
 	}
 
 	/**
@@ -510,65 +507,67 @@ type VisualPrimitive =
 export function calculateIndicatorVisuals<T extends GridPlaceable>(
 	indicators: Indicator[],
 	placements: GridPlacement<T>[],
-	zoneId: string,
 	layout: ZoneLayoutCalculator<T>,
 ): IndicatorVisual[] {
 	const primitives: VisualPrimitive[] = []
 
 	for (const indicator of indicators) {
-		if (indicator.zoneId !== zoneId) continue
-
 		for (const effect of indicator.effects) {
-			const { sourceItemId, targetItemId } = effect
+			const { sourceItemTypeId, targetItemTypeId } = effect
 
-			const placementA = placements.find((p) => p.id === sourceItemId)
-			const placementB = placements.find((p) => p.id === targetItemId)
+			// Find all placements that match the source and target item types
+			const sourcePlacements = placements.filter((p) => p.item.id === sourceItemTypeId)
+			const targetPlacements = placements.filter((p) => p.item.id === targetItemTypeId)
 
-			if (!placementA || !placementB) continue
+			// Check for adjacency between all pairs of matching source and target placements
+			for (const sourcePlacement of sourcePlacements) {
+				for (const targetPlacement of targetPlacements) {
+					const adjacency = getAdjacency(sourcePlacement, targetPlacement)
+					if (!adjacency) continue
 
-			const adjacency = getAdjacency(placementA, placementB)
-			if (!adjacency) continue
+					if (adjacency.type === 'edge') {
+						const midPoint = {
+							x: (adjacency.p1.x + adjacency.p2.x) / 2,
+							y: (adjacency.p1.y + adjacency.p2.y) / 2,
+						}
+						const orientation =
+							adjacency.p1.x === adjacency.p2.x ? 'vertical' : 'horizontal'
+						const dir =
+							orientation === 'vertical'
+								? targetPlacement.x < midPoint.x
+									? 'left'
+									: 'right'
+								: targetPlacement.y < midPoint.y
+									? 'bottom'
+									: 'top'
+						const primitive: VisualPrimitive = {
+							type: 'semicircle',
+							position: midPoint,
+							direction: dir,
+							color: getColorForEffect(effect.nature),
+							effect,
+						}
+						primitives.push(primitive)
+					} else {
+						// corner
+						const { point } = adjacency
+						const { x, y, size } = targetPlacement
+						let sector: 0 | 1 | 2 | 3 = 0
+						if (point.x === x + size && point.y === y + size) sector = 2 // Top-Right corner
+						if (point.x === x && point.y === y + size) sector = 1 // Top-Left corner
+						if (point.x === x && point.y === y) sector = 0 // Bottom-Left corner
+						if (point.x === x + size && point.y === y) sector = 3 // Bottom-Right corner
 
-			if (adjacency.type === 'edge') {
-				const midPoint = {
-					x: (adjacency.p1.x + adjacency.p2.x) / 2,
-					y: (adjacency.p1.y + adjacency.p2.y) / 2,
+						const primitive: VisualPrimitive = {
+							type: 'sector',
+							position: point,
+							sector,
+							color: getColorForEffect(effect.nature),
+							effect,
+						}
+						primitives.push(primitive)
+					}
 				}
-				const orientation = adjacency.p1.x === adjacency.p2.x ? 'vertical' : 'horizontal'
-				const dir =
-					orientation === 'vertical'
-						? placementB.x < midPoint.x
-							? 'right'
-							: 'left'
-						: placementB.y < midPoint.y
-							? 'bottom'
-							: 'top'
-				const primitive: VisualPrimitive = {
-					type: 'semicircle',
-					position: midPoint,
-					direction: dir,
-					color: getColorForEffect(effect.nature),
-					effect,
-				}
-				primitives.push(primitive)
-			} else {
-				// corner
-				const { point } = adjacency
-				const { x, y, size } = placementB
-				let sector: 0 | 1 | 2 | 3 = 0
-				if (point.x === x + size && point.y === y + size) sector = 2 // Top-Right corner
-				if (point.x === x && point.y === y + size) sector = 1 // Top-Left corner
-				if (point.x === x && point.y === y) sector = 0 // Bottom-Left corner
-				if (point.x === x + size && point.y === y) sector = 3 // Bottom-Right corner
-
-				const primitive: VisualPrimitive = {
-					type: 'sector',
-					position: point,
-					sector,
-					color: getColorForEffect(effect.nature),
-					effect,
-				}
-				primitives.push(primitive)
 			}
 		}
 	}

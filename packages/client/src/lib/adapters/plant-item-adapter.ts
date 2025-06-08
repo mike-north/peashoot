@@ -1,96 +1,55 @@
 import { convertDistanceToFeet, type IPlant } from '@peashoot/types'
-import type { PlantItem } from '../item-types/plant-item'
-import {
-	isPlantItem,
-	createPlantItem,
-	restorePlantItemMetadata,
-} from '../item-types/plant-item'
-import { tileSizeForItem, categoryNameForItem } from '../entities/item'
+import type { PlantMetadata } from '../entities/plant-metadata'
+import { isPlantMetadata } from '../entities/plant-metadata'
+import { isItemWithMetadata, type Item } from '../entities/item'
 import type { ItemAdapter } from './item-adapter'
 
 export type PlantResource = IPlant & { id: `plant_${string}` }
 
-export function convertPlantItem(iPlant: PlantResource): PlantItem {
+export function convertPlantItem(iPlant: PlantResource): Item<PlantMetadata> {
 	const plantingDistanceInFeet = convertDistanceToFeet(iPlant.plantingDistance).value
-	return createPlantItem({
+
+	// Use the new function
+	return {
 		id: iPlant.id,
 		displayName: iPlant.name,
+		category: iPlant.family,
 		variant: iPlant.name,
+		size: Math.max(1, Math.ceil(plantingDistanceInFeet)),
 		presentation: {
-			iconPath: iPlant.presentation.iconPath,
-			accentColor: iPlant.presentation.accentColor,
-			size: Math.max(1, Math.round(plantingDistanceInFeet)),
+			iconPath: iPlant.iconPath,
+			accentColor: iPlant.accentColor,
 		},
-		family: iPlant.family,
-		plantingDistanceInFeet: Math.round(plantingDistanceInFeet * 100) / 100,
-	})
+		metadata: {
+			plantingDistanceInFeet,
+			family: iPlant.family,
+		},
+	}
 }
 
 /**
  * Plant-specific implementation of ItemAdapter
  */
-export class PlantItemAdapter implements ItemAdapter<PlantItem> {
-	getItemSize(item: PlantItem): number {
-		return tileSizeForItem(item)
-	}
-
-	getCategoryName(item: PlantItem): string {
-		return categoryNameForItem(item)
-	}
-
-	isValidItem(item: unknown): item is PlantItem {
-		return isPlantItem(item)
+export class PlantItemAdapter implements ItemAdapter<Item<PlantMetadata>> {
+	isValidItem(item: unknown): item is Item<PlantMetadata> {
+		return isItemWithMetadata(item, isPlantMetadata)
 	}
 
 	/**
 	 * Safely validate and cast an item to PlantItem
 	 * @throws Error if the item is not a valid PlantItem
 	 */
-	validateAndCastItem(item: unknown): PlantItem {
+	validateAndCastItem(item: unknown): Item<PlantMetadata> {
 		// First try direct validation
-		if (isPlantItem(item)) {
+		if (isItemWithMetadata(item, isPlantMetadata)) {
 			return item
+		} else {
+			console.error('Item is not a plant item', item)
+			throw new Error('Item is not a plant item')
 		}
-
-		// If validation failed, try to restore metadata
-		const restoredItem = restorePlantItemMetadata(item)
-		if (restoredItem) {
-			return restoredItem
-		}
-
-		// If we got here, the item can't be recovered
-		// Check the item type for detailed error
-		if (!item) {
-			throw new Error('Item is undefined or null')
-		}
-
-		if (typeof item !== 'object') {
-			throw new Error(`Item is not an object (type: ${typeof item})`)
-		}
-
-		// Check if it has the necessary properties
-		if (!('id' in item)) {
-			throw new Error('Item is missing id property')
-		}
-
-		if (!('metadata' in item)) {
-			throw new Error('Item is missing metadata property')
-		}
-
-		// Full validation
-		const metadata = 'metadata' in item ? (item as { metadata: unknown }).metadata : null
-		throw new Error(
-			`Item failed plant validation: id=${
-				'id' in item ? String((item as { id: unknown }).id) : 'missing'
-			}, has metadata=${!!metadata}, keys=${
-				metadata && typeof metadata === 'object'
-					? Object.keys(metadata).join(',')
-					: 'none'
-			}`,
-		)
 	}
 
-	async fetchPlants(): Promise<PlantItem[]> {
+	async fetchPlants(): Promise<Item<PlantMetadata>[]> {
 		const response = await fetch('http://localhost:3000/api/plants')
 		const data = (await response.json()) as PlantResource[]
 		const plants = data.map(convertPlantItem)

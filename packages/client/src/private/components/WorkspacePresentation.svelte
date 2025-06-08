@@ -24,7 +24,9 @@ import {
 } from '../../private/state/plantsStore'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import type { DraggableItem } from '../dnd/types'
-import ZoneGrid from '../../components/ZoneGrid.svelte'
+import ZoneGrid from '../grid/components/ZoneGrid.svelte'
+import HorizontalBarMeter from '../../components/HorizontalBarMeter.svelte'
+import IdLabel from '../../lib/components/IdLabel.svelte'
 
 interface WorkspaceProps {
 	workspace: Workspace
@@ -255,6 +257,24 @@ function safeGetItemSize(item: DraggableItem): number {
 }
 
 let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
+
+const getColSpanClass = (zoneId: string) => {
+	const colSpan = zoneCardColSpans[zoneId] ?? 1
+	switch (colSpan) {
+		case 1:
+			return 'col-span-1'
+		case 2:
+			return 'col-span-2'
+		case 3:
+			return 'col-span-3'
+		case 4:
+			return 'col-span-4'
+		case 5:
+			return 'col-span-5'
+		default:
+			return 'col-span-1'
+	}
+}
 </script>
 
 <style>
@@ -269,6 +289,16 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 	flex: 1;
 	overflow: auto;
 	padding: 1rem;
+}
+
+.meters-row {
+	display: flex;
+	flex-direction: row;
+	gap: 17px;
+	justify-content: left;
+	align-items: center;
+	margin-bottom: 1em;
+	margin-top: 0;
 }
 </style>
 
@@ -301,12 +331,38 @@ let zoneCardColSpans = $derived(calculateZoneViewColSpans(workspace))
 				class="grid grid-flow-row-dense grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
 			>
 				{#each zones as zone (zone.id)}
-					<ZoneGrid
-						zone={zone}
-						items={$plants}
-						indicators={workspace.indicators}
-						colSpan={zoneCardColSpans[zone.id] ?? 1}
-					/>
+					<div class="card bg-base-100 shadow-sm {getColSpanClass(zone.id)}">
+						<ZoneGrid zone={zone} indicators={workspace.indicators} />
+						<div class="card-body">
+							<div class="card-title flex justify-between items-center">
+								Work Zone ({zone.width}×{zone.height} units)
+								<IdLabel id={zone.id} />
+							</div>
+
+							<div class="meters-row">
+								<HorizontalBarMeter
+									id={`${zone.id}-water`}
+									value={zone.waterLevel}
+									max={5}
+									filledColor="#3498db"
+									emptyColor="#3498db22"
+									borderColor="#3498db"
+									label="Water"
+									labelColor="#3498db"
+								/>
+								<HorizontalBarMeter
+									id={`${zone.id}-sun`}
+									value={zone.sunLevel}
+									max={5}
+									filledColor="#FFD600"
+									emptyColor="#FFD60022"
+									borderColor="#FFD600"
+									label="Sun"
+									labelColor="#FF6666"
+								/>
+							</div>
+						</div>
+					</div>
 				{/each}
 			</div>
 		</div>

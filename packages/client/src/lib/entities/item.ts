@@ -1,17 +1,15 @@
-import type { GridPlaceable } from '../../private/grid/grid-placement'
-import type { GridItemPresentation } from '../../private/grid/grid-placement'
+import type {
+	GridPlaceable,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	GridItemPresentation,
+} from '../../private/grid/grid-placement'
 
 /**
  * Generic item interface that can represent any type of placeable item
  */
 export interface Item<M extends object = object> extends GridPlaceable {
-	readonly id: string
-	readonly displayName: string
 	readonly category: string
 	readonly variant: string
-	/** An integer size that represents the width and height of the item in grid cells */
-	readonly size: number
-	readonly presentation: GridItemPresentation
 	// Additional properties can be stored in metadata
 	readonly metadata: M
 }

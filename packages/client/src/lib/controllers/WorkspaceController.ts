@@ -211,7 +211,12 @@ export const PlantValidationRules = {
 	 */
 	checkBoundaries(): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
+			if (context.operationType !== 'item-remove-from-zone') {
+				return { isValid: true }
+			}
+
 			if (context.targetX === undefined || context.targetY === undefined) {
+				console.warn('checkBoundaries: missing target coordinates', context)
 				return { isValid: false, reason: 'Missing target coordinates' }
 			}
 
@@ -239,6 +244,7 @@ export const PlantValidationRules = {
 	noOverlaps(): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			if (context.targetX === undefined || context.targetY === undefined) {
+				console.warn('noOverlaps: missing target coordinates', context)
 				return { isValid: false, reason: 'Missing target coordinates' }
 			}
 
@@ -382,6 +388,7 @@ export const PlantValidationRules = {
 	): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
 			if (context.targetX === undefined || context.targetY === undefined) {
+				console.warn('incompatiblePlants: missing target coordinates', context)
 				return { isValid: false, reason: 'Missing target coordinates' }
 			}
 

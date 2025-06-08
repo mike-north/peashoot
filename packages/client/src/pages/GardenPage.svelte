@@ -1,9 +1,8 @@
 <script lang="ts">
-import type { ValidationRule } from '../lib/controllers/IWorkspaceController'
 import {
 	PlantValidationRules,
 	WorkspaceController,
-} from '../lib/controllers/WorkspaceController'
+} from '../lib/controllers/workspace-controller'
 import type { Item } from '../lib/entities/item'
 import type { PlantMetadata } from '../lib/entities/plant-metadata'
 // This file now redirects to the new WorkspacePage with generic terminology
@@ -30,7 +29,7 @@ const controller = new WorkspaceController<Item<PlantMetadata>>({
 				reason: 'Tomatoes and potatoes should not be planted together (shared diseases)',
 			},
 		]),
-	] as ValidationRule<Item<PlantMetadata>>[],
+	],
 })
 </script>
 

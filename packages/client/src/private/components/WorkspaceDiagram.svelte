@@ -24,7 +24,7 @@ import {
 } from '../state/notificationsStore'
 import { isItemWithMetadata, type Item } from '../../lib/entities/item'
 import { isPlantMetadata, type PlantMetadata } from '../../lib/entities/plant-metadata'
-import type { IWorkspaceController } from '../../lib/controllers/IWorkspaceController'
+import type { IWorkspaceController } from '../../lib/controllers/workspace-controller'
 import type { ValidationResult } from '../../lib/types/validation'
 
 export type AddNewItemHandler<TItem extends GridPlaceable & Item> = (

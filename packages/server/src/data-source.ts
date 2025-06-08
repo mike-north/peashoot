@@ -6,6 +6,9 @@ import { PlantPlacement } from './entities/plant-placement'
 import { Garden } from './entities/garden'
 import { RGBColor } from './values/rgb-color'
 import { XYCoordinate } from './values/xy-coordinate'
+import { Location } from './entities/location'
+import { LocationMonthlyTemperature } from './entities/location-monthly-temperature'
+import { TemperatureRange } from './values/temperature-range'
 
 export const AppDataSource = new DataSource({
 	type: 'sqlite',
@@ -20,6 +23,9 @@ export const AppDataSource = new DataSource({
 		Garden,
 		RGBColor,
 		XYCoordinate,
+		Location,
+		LocationMonthlyTemperature,
+		TemperatureRange,
 	],
 	migrations: [],
 	subscribers: [],

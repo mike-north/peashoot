@@ -1,0 +1,53 @@
+locations:
+  - name: "San Francisco"
+    state: "CA"
+    country: "USA"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [8.3, "C"]
+          max: [13.9, "C"]
+      - month: 2
+        temperatureRange:
+          min: [9.4, "C"]
+          max: [15.0, "C"]
+      - month: 3
+        temperatureRange:
+          min: [10.0, "C"]
+          max: [15.6, "C"]
+      - month: 4
+        temperatureRange:
+          min: [10.6, "C"]
+          max: [16.1, "C"]
+      - month: 5
+        temperatureRange:
+          min: [11.7, "C"]
+          max: [17.2, "C"]
+      - month: 6
+        temperatureRange:
+          min: [12.8, "C"]
+          max: [18.3, "C"]
+      - month: 7
+        temperatureRange:
+          min: [13.3, "C"]
+          max: [18.9, "C"]
+      - month: 8
+        temperatureRange:
+          min: [13.9, "C"]
+          max: [19.4, "C"]
+      - month: 9
+        temperatureRange:
+          min: [13.9, "C"]
+          max: [20.6, "C"]
+      - month: 10
+        temperatureRange:
+          min: [12.2, "C"]
+          max: [19.4, "C"]
+      - month: 11
+        temperatureRange:
+          min: [10.6, "C"]
+          max: [16.7, "C"]
+      - month: 12
+        temperatureRange:
+          min: [8.9, "C"]
+          max: [14.4, "C"] 

@@ -4,11 +4,11 @@ import type {
 	WorkspaceAsyncValidationFunction,
 	WorkspaceValidationContext,
 } from '../state/workspaceDragState'
-import type { ValidationResult } from '../grid/grid-drag-state'
 import { ASYNC_VALIDATION_TIMEOUT_MS } from '../dnd/constants'
 import { UnreachableError } from '../../lib/errors/unreachabe'
 import type { GridPlacement } from '../grid/grid-placement'
 import type { Item } from '../../lib/entities/item'
+import type { ValidationResult } from '../../lib/types/validation'
 
 interface PlacementValidityResult {
 	isValid: boolean
@@ -149,13 +149,13 @@ export class WorkspaceValidationService {
 								if (plant.metadata.family === 'tomatoes' && targetZone.sunLevel < 3) {
 									resolve({
 										isValid: false,
-										error: 'Target zone has insufficient sunlight for tomatoes',
+										reason: 'Target zone has insufficient sunlight for tomatoes',
 									})
 								} else if (Math.random() > 0.1) resolve({ isValid: true })
 								else
 									resolve({
 										isValid: false,
-										error: 'Environment compatibility issue between zones',
+										reason: 'Environment compatibility issue between zones',
 									})
 								break
 							}
@@ -176,7 +176,7 @@ export class WorkspaceValidationService {
 								)
 
 								if (occupancyRateAfterAdd > 0.8) {
-									resolve({ isValid: false, error: 'Zone is too crowded for new items' })
+									resolve({ isValid: false, reason: 'Zone is too crowded for new items' })
 								} else {
 									// TODO: Implement real checks for item suitability in the zone
 									resolve({ isValid: true })
@@ -220,7 +220,7 @@ export class WorkspaceValidationService {
 								if (!clonePlacementCheck.isValid) {
 									resolve({
 										isValid: false,
-										error: `Cannot clone item: ${clonePlacementCheck.reason}`,
+										reason: `Cannot clone item: ${clonePlacementCheck.reason}`,
 									})
 									return
 								}
@@ -232,7 +232,7 @@ export class WorkspaceValidationService {
 								if (occupancyRateAfterClone > 0.75) {
 									resolve({
 										isValid: false,
-										error: 'Target zone is too crowded for cloning (capacity check)',
+										reason: 'Target zone is too crowded for cloning (capacity check)',
 									})
 								} else {
 									// TODO: Implement real checks for cloning suitability

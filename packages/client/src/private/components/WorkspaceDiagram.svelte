@@ -21,12 +21,10 @@ import {
 	showError,
 	showInfo,
 } from '../state/notificationsStore'
-import type {
-	ValidationResult,
-	WorkspaceController,
-} from '../../lib/controllers/WorkspaceController'
 import { isItemWithMetadata, type Item } from '../../lib/entities/item'
 import { isPlantMetadata, type PlantMetadata } from '../../lib/entities/plant-metadata'
+import type { IWorkspaceController } from '../../lib/controllers/IWorkspaceController'
+import type { ValidationResult } from '../../lib/types/validation'
 
 export type AddNewItemHandler<TItem extends GridPlaceable & Item> = (
 	zoneId: string,
@@ -69,7 +67,7 @@ interface WorkspaceDiagramProps<TItem extends GridPlaceable & Item> {
 	handleCloneItem: CloneItemHandler
 	workspace: Workspace
 	itemAdapter: ItemAdapter<TItem>
-	controller: WorkspaceController<TItem>
+	controller: IWorkspaceController<TItem>
 }
 
 const {

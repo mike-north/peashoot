@@ -26,7 +26,6 @@ import {
 import type { Indicator } from '../../../lib/entities/indicator'
 import { tooltip } from '../../../lib/tooltips/action'
 import IndicatorSemicircle from './IndicatorSemicircle.svelte'
-import type { Item } from '../../../lib/entities/item'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {

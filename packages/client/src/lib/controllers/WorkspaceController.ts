@@ -2,69 +2,29 @@ import type { Item } from '../entities/item'
 import type { Workspace } from '../entities/workspace'
 import type { Zone } from '../entities/zone'
 import type { PlantMetadata } from '../entities/plant-metadata'
-
-/**
- * Feature flags that control what workspace operations are enabled
- */
-export interface WorkspaceFeatureFlags {
-	canDragItemsWithinZone: boolean
-	canDragItemsAcrossZones: boolean
-	canAddItems: boolean
-	canRemoveItems: boolean
-	canCloneItems: boolean
-	showValidationIndicators: boolean
-}
-
-/**
- * Result of a validation check
- */
-export interface ValidationResult {
-	isValid: boolean
-	reason?: string
-}
-
-/**
- * Represents different types of workspace operations
- */
-export type WorkspaceOperationType =
-	| 'item-move-within-zone'
-	| 'item-move-across-zones'
-	| 'item-add-to-zone'
-	| 'item-remove-from-zone'
-	| 'item-clone-in-zone'
-
-/**
- * Context for validation checks
- */
-export interface ValidationContext<T extends Item = Item> {
-	workspace: Workspace
-	operationType: WorkspaceOperationType
-	item: T
-	itemInstanceId?: string | undefined
-	sourceZone?: Zone | undefined
-	targetZone: Zone
-	targetX?: number | undefined
-	targetY?: number | undefined
-}
-
-/**
- * A rule function that checks if an operation is valid
- */
-export type ValidationRule<T extends Item = Item> = (
-	context: ValidationContext<T>,
-) => ValidationResult | Promise<ValidationResult>
+import type {
+	IWorkspaceController,
+	ValidationContext,
+	ValidationRule,
+	WorkspaceFeatureFlags,
+} from './IWorkspaceController'
+import type { ValidationResult } from '../types/validation'
 
 /**
  * Handles high-level business logic for workspace operations
  * including validation rules and feature enablement
  */
-export class WorkspaceController<T extends Item = Item> {
-	private validationRules: ValidationRule<T>[] = []
+export class WorkspaceController<T extends Item = Item>
+	implements IWorkspaceController<T>
+{
+	private placementValidationRules: ValidationRule<T>[] = []
+	private deletionValidationRules: ValidationRule<T>[] = []
 	private featureFlags: WorkspaceFeatureFlags
 
 	constructor(options?: {
 		featureFlags?: Partial<WorkspaceFeatureFlags>
 		validationRules?: ValidationRule<T>[]
+		deletionValidationRules?: ValidationRule<T>[]
 	}) {
 		// Default feature flags
 		this.featureFlags = {
@@ -78,21 +38,29 @@ export class WorkspaceController<T extends Item = Item> {
 		}
 
 		// Initialize with provided validation rules if any
-		this.validationRules = options?.validationRules || []
+		this.placementValidationRules = options?.validationRules || []
+		this.deletionValidationRules = options?.deletionValidationRules || []
 	}
 
 	/**
 	 * Add a validation rule to the controller
 	 */
-	addValidationRule(rule: ValidationRule): void {
-		this.validationRules.push(rule)
+	addValidationRule(rule: ValidationRule<T>): void {
+		this.placementValidationRules.push(rule)
+	}
+
+	/**
+	 * Add a validation rule for deletion operations
+	 */
+	addDeletionValidationRule(rule: ValidationRule<T>): void {
+		this.deletionValidationRules.push(rule)
 	}
 
 	/**
 	 * Set all validation rules at once (replaces existing rules)
 	 */
 	setValidationRules(rules: ValidationRule[]): void {
-		this.validationRules = [...rules]
+		this.placementValidationRules = [...rules]
 	}
 
 	/**
@@ -120,8 +88,12 @@ export class WorkspaceController<T extends Item = Item> {
 	 * Validate a workspace operation
 	 */
 	async validateOperation(context: ValidationContext<T>): Promise<ValidationResult> {
-		// Apply all validation rules
-		for (const rule of this.validationRules) {
+		const rules =
+			context.operationType === 'item-remove-from-zone'
+				? this.deletionValidationRules
+				: this.placementValidationRules
+
+		for (const rule of rules) {
 			const result = await rule(context)
 			if (!result.isValid) {
 				return result
@@ -211,10 +183,6 @@ export const PlantValidationRules = {
 	 */
 	checkBoundaries(): ValidationRule<Item<PlantMetadata>> {
 		return (context) => {
-			if (context.operationType !== 'item-remove-from-zone') {
-				return { isValid: true }
-			}
-
 			if (context.targetX === undefined || context.targetY === undefined) {
 				console.warn('checkBoundaries: missing target coordinates', context)
 				return { isValid: false, reason: 'Missing target coordinates' }

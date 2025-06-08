@@ -1,3 +1,4 @@
+import type { ValidationResult } from '../../lib/types/validation'
 import type {
 	DraggableItem,
 	DropZoneContext,
@@ -41,14 +42,6 @@ export type GridValidationContext<
 	T extends GridPlaceable,
 	TZoneCtx extends GridZoneContext<T> = GridZoneContext<T>,
 > = ValidationContext<T, TZoneCtx>
-
-/**
- * Result of validation
- */
-export interface ValidationResult {
-	isValid: boolean
-	error?: string
-}
 
 /**
  * Grid validation function type

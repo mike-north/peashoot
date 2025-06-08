@@ -1,8 +1,8 @@
 <script lang="ts">
+import type { ValidationRule } from '../lib/controllers/IWorkspaceController'
 import {
 	PlantValidationRules,
 	WorkspaceController,
-	type ValidationRule,
 } from '../lib/controllers/WorkspaceController'
 import type { Item } from '../lib/entities/item'
 import type { PlantMetadata } from '../lib/entities/plant-metadata'

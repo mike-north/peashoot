@@ -1,7 +1,7 @@
 /**
  * Plant-specific metadata interface
  */
-export interface PlantMetadata extends Record<string, unknown> {
+export interface PlantMetadata {
 	/** A decimal number that represents the planting distance in feet */
 	plantingDistanceInFeet: number
 }

@@ -143,23 +143,6 @@ function getTileComputedStyles(
 				: 'auto',
 	}
 }
-
-interface DropEventPayload {
-	item: WithId
-	x?: number
-	y?: number
-}
-
-function handleDrop(payload: DropEventPayload) {
-	const { item, x, y } = payload
-	if (x === undefined || y === undefined) return
-
-	const itemSize = (item as GridPlaceable).size
-	if (!isValidPlacement(x, y, itemSize)) {
-		console.warn('[ZoneGrid] Invalid placement, drop rejected.')
-	}
-}
-
 // Derive the actual size of the item being dragged for grid purposes
 const draggedGridItemEffectiveSize = $derived(
 	(() => {
@@ -381,7 +364,7 @@ const draggedGridItemEffectiveSize = $derived(
 
 		<!-- HTML Plant Tiles (middle layer) -->
 		<div class="tile-overlay" style="width: {svgWidth}px; height: {svgHeight}px;">
-			<GenericDropZone zoneId={zone.id} onDrop={handleDrop}>
+			<GenericDropZone zoneId={zone.id}>
 				<div
 					class="tile-overlay__tiles"
 					style="width: {svgWidth}px; height: {svgHeight}px; position: relative;"

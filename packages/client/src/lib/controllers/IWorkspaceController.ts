@@ -42,9 +42,12 @@ export interface ValidationContext<T extends Item = Item> {
 /**
  * A rule function that checks if an operation is valid
  */
-export type ValidationRule<T extends Item = Item> = (
-	context: ValidationContext<T>,
-) => ValidationResult | Promise<ValidationResult>
+export interface ValidationRule<T extends Item = Item> {
+	name: string
+	validate: (
+		context: ValidationContext<T>,
+	) => ValidationResult | Promise<ValidationResult>
+}
 
 export interface IWorkspaceController<T extends Item = Item> {
 	validateOperation(context: ValidationContext<T>): Promise<ValidationResult>

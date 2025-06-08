@@ -2,6 +2,7 @@
 import WorkspacePresentation from './WorkspacePresentation.svelte'
 import type { Workspace } from '../../lib/entities/workspace'
 import { findZone, findItemPlacement } from '../../lib/entities/workspace'
+import { setContext } from 'svelte'
 import {
 	type ExistingWorkspaceItem,
 	type PlacementRequestDetails,
@@ -80,6 +81,10 @@ const {
 	itemAdapter,
 	controller,
 }: WorkspaceDiagramProps<Item> = $props()
+
+// Set controller and workspace in context for child components
+setContext('workspaceController', controller)
+setContext('workspace', workspace)
 
 function handleAsyncValidationStart() {
 	showInfo('Validating...', { autoRemove: false })

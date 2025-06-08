@@ -88,16 +88,29 @@ export class WorkspaceController<T extends Item = Item>
 	 * Validate a workspace operation
 	 */
 	async validateOperation(context: ValidationContext<T>): Promise<ValidationResult> {
+		console.debug('🔍 validateOperation', context.operationType, {
+			item: context.item.displayName,
+			targetZone: context.targetZone,
+			numRules:
+				context.operationType === 'item-remove-from-zone'
+					? this.deletionValidationRules.length
+					: this.placementValidationRules.length,
+		})
+
 		const rules =
 			context.operationType === 'item-remove-from-zone'
 				? this.deletionValidationRules
 				: this.placementValidationRules
 
+		console.debug(`⚙️ Running ${rules.length} validation rules`)
+
 		for (const rule of rules) {
-			const result = await rule(context)
+			const result = await rule.validate(context)
 			if (!result.isValid) {
+				console.warn('❌ Validation failed (rule: ' + rule.name + '):', result.reason)
 				return result
 			}
+			console.debug('✅ Validation passed:', rule.name)
 		}
 
 		return { isValid: true }
@@ -182,68 +195,71 @@ export const PlantValidationRules = {
 	 * Rule: Cannot place an item outside the zone boundaries
 	 */
 	checkBoundaries(): ValidationRule<Item<PlantMetadata>> {
-		return (context) => {
-			if (context.targetX === undefined || context.targetY === undefined) {
-				console.warn('checkBoundaries: missing target coordinates', context)
-				return { isValid: false, reason: 'Missing target coordinates' }
-			}
+		return {
+			name: 'checkBoundaries',
+			validate: (context) => {
+				if (context.targetX === undefined || context.targetY === undefined) {
+					return { isValid: false, reason: 'Missing target coordinates' }
+				}
 
-			const targetZone = context.targetZone
+				const targetZone = context.targetZone
 
-			const plantItem = context.item
-			const size = plantItem.metadata.plantingDistanceInFeet || 1
+				const plantItem = context.item
+				const size = plantItem.metadata.plantingDistanceInFeet || 1
 
-			if (
-				context.targetX < 0 ||
-				context.targetY < 0 ||
-				context.targetX + size > targetZone.width ||
-				context.targetY + size > targetZone.height
-			) {
-				return { isValid: false, reason: 'Placement is out of bounds' }
-			}
+				if (
+					context.targetX < 0 ||
+					context.targetY < 0 ||
+					context.targetX + size > targetZone.width ||
+					context.targetY + size > targetZone.height
+				) {
+					return { isValid: false, reason: 'Placement is out of bounds' }
+				}
 
-			return { isValid: true }
+				return { isValid: true }
+			},
 		}
 	},
-
 	/**
 	 * Rule: Cannot place an item that overlaps with existing items
 	 */
 	noOverlaps(): ValidationRule<Item<PlantMetadata>> {
-		return (context) => {
-			if (context.targetX === undefined || context.targetY === undefined) {
-				console.warn('noOverlaps: missing target coordinates', context)
-				return { isValid: false, reason: 'Missing target coordinates' }
-			}
-
-			const targetZone = context.targetZone
-
-			const plantItem = context.item
-			const size = plantItem.metadata.plantingDistanceInFeet || 1
-
-			for (const placement of targetZone.placements) {
-				// Skip the item itself in case of a move
-				if (context.itemInstanceId && placement.id === context.itemInstanceId) {
-					continue
+		return {
+			name: 'noOverlaps',
+			validate: (context) => {
+				if (context.targetX === undefined || context.targetY === undefined) {
+					return { isValid: false, reason: 'Missing target coordinates' }
 				}
 
-				const existingItem = placement.item as Item<PlantMetadata>
-				const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
+				const targetZone = context.targetZone
 
-				if (
-					context.targetX < placement.x + existingSize &&
-					context.targetX + size > placement.x &&
-					context.targetY < placement.y + existingSize &&
-					context.targetY + size > placement.y
-				) {
-					return {
-						isValid: false,
-						reason: `Overlaps with existing ${existingItem.displayName}`,
+				const plantItem = context.item
+				const size = plantItem.metadata.plantingDistanceInFeet || 1
+
+				for (const placement of targetZone.placements) {
+					// Skip the item itself in case of a move
+					if (context.itemInstanceId && placement.id === context.itemInstanceId) {
+						continue
+					}
+
+					const existingItem = placement.item as Item<PlantMetadata>
+					const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
+
+					if (
+						context.targetX < placement.x + existingSize &&
+						context.targetX + size > placement.x &&
+						context.targetY < placement.y + existingSize &&
+						context.targetY + size > placement.y
+					) {
+						return {
+							isValid: false,
+							reason: `Overlaps with existing ${existingItem.displayName}`,
+						}
 					}
 				}
-			}
 
-			return { isValid: true }
+				return { isValid: true }
+			},
 		}
 	},
 
@@ -251,51 +267,55 @@ export const PlantValidationRules = {
 	 * Rule: Cannot exceed specified zone density
 	 */
 	maxDensity(maxDensityPercentage = 0.8): ValidationRule<Item<PlantMetadata>> {
-		return (context) => {
-			if (
-				context.operationType !== 'item-add-to-zone' &&
-				context.operationType !== 'item-clone-in-zone' &&
-				context.operationType !== 'item-move-across-zones'
-			) {
-				return { isValid: true }
-			}
-
-			const targetZone = context.targetZone
-
-			const plantItem = context.item
-			const itemFootprint = (plantItem.metadata.plantingDistanceInFeet || 1) ** 2
-
-			// Calculate current occupied space
-			let occupiedSpace = 0
-			for (const placement of targetZone.placements) {
-				// Skip the item itself in case of a move within same zone
+		return {
+			name: 'maxDensity',
+			validate: (context) => {
 				if (
-					context.itemInstanceId &&
-					placement.id === context.itemInstanceId &&
-					context.sourceZone &&
-					context.targetZone.id === context.sourceZone.id
+					context.operationType !== 'item-add-to-zone' &&
+					context.operationType !== 'item-clone-in-zone' &&
+					context.operationType !== 'item-move-across-zones'
 				) {
-					continue
+					return { isValid: true }
 				}
 
-				const existingItem = placement.item as Item<PlantMetadata>
-				const existingFootprint = (existingItem.metadata.plantingDistanceInFeet || 1) ** 2
-				occupiedSpace += existingFootprint
-			}
+				const targetZone = context.targetZone
 
-			// Add the new item's footprint
-			const totalOccupiedAfterAdd = occupiedSpace + itemFootprint
-			const totalSpace = targetZone.width * targetZone.height
-			const occupancyRate = totalOccupiedAfterAdd / totalSpace
+				const plantItem = context.item
+				const itemFootprint = (plantItem.metadata.plantingDistanceInFeet || 1) ** 2
 
-			if (occupancyRate > maxDensityPercentage) {
-				return {
-					isValid: false,
-					reason: `Zone is too crowded (${Math.round(occupancyRate * 100)}% occupied)`,
+				// Calculate current occupied space
+				let occupiedSpace = 0
+				for (const placement of targetZone.placements) {
+					// Skip the item itself in case of a move within same zone
+					if (
+						context.itemInstanceId &&
+						placement.id === context.itemInstanceId &&
+						context.sourceZone &&
+						context.targetZone.id === context.sourceZone.id
+					) {
+						continue
+					}
+
+					const existingItem = placement.item as Item<PlantMetadata>
+					const existingFootprint =
+						(existingItem.metadata.plantingDistanceInFeet || 1) ** 2
+					occupiedSpace += existingFootprint
 				}
-			}
 
-			return { isValid: true }
+				// Add the new item's footprint
+				const totalOccupiedAfterAdd = occupiedSpace + itemFootprint
+				const totalSpace = targetZone.width * targetZone.height
+				const occupancyRate = totalOccupiedAfterAdd / totalSpace
+
+				if (occupancyRate > maxDensityPercentage) {
+					return {
+						isValid: false,
+						reason: `Zone is too crowded (${Math.round(occupancyRate * 100)}% occupied)`,
+					}
+				}
+
+				return { isValid: true }
+			},
 		}
 	},
 
@@ -303,22 +323,24 @@ export const PlantValidationRules = {
 	 * Rule: Specific plant types have sunlight requirements
 	 */
 	sunlightRequirements(): ValidationRule<Item<PlantMetadata>> {
-		return (context) => {
-			const targetZone = context.targetZone
+		return {
+			name: 'sunlightRequirements',
+			validate: (context) => {
+				const targetZone = context.targetZone
 
-			const plantItem = context.item
+				const plantItem = context.item
 
-			// Example sunlight requirements by plant family
-			if (plantItem.metadata.family === 'tomatoes' && targetZone.sunLevel < 3) {
-				return {
-					isValid: false,
-					reason: 'Tomatoes require high sunlight levels (minimum 3)',
+				// Example sunlight requirements by plant family
+				if (plantItem.category === 'tomatoes' && targetZone.sunLevel < 3) {
+					return {
+						isValid: false,
+						reason: 'Tomatoes require high sunlight levels (minimum 3)',
+					}
 				}
-			}
 
-			// More plant-specific rules can be added here
-
-			return { isValid: true }
+				// More plant-specific rules can be added here
+				return { isValid: true }
+			},
 		}
 	},
 
@@ -328,23 +350,26 @@ export const PlantValidationRules = {
 	restrictedPlantsByZone(
 		restrictions: { plantType: string; zoneIds: string[] }[],
 	): ValidationRule<Item<PlantMetadata>> {
-		return (context) => {
-			const plantItem = context.item
-			const targetZone = context.targetZone
+		return {
+			name: 'restrictedPlantsByZone',
+			validate: (context) => {
+				const plantItem = context.item
+				const targetZone = context.targetZone
 
-			for (const restriction of restrictions) {
-				if (
-					plantItem.metadata.family === restriction.plantType &&
-					restriction.zoneIds.includes(targetZone.id)
-				) {
-					return {
-						isValid: false,
-						reason: `${plantItem.displayName} cannot be placed in this zone`,
+				for (const restriction of restrictions) {
+					if (
+						plantItem.category === restriction.plantType &&
+						restriction.zoneIds.includes(targetZone.id)
+					) {
+						return {
+							isValid: false,
+							reason: `${plantItem.displayName} cannot be placed in this zone`,
+						}
 					}
 				}
-			}
 
-			return { isValid: true }
+				return { isValid: true }
+			},
 		}
 	},
 
@@ -354,56 +379,58 @@ export const PlantValidationRules = {
 	incompatiblePlants(
 		incompatibilities: { plant1: string; plant2: string; reason: string }[],
 	): ValidationRule<Item<PlantMetadata>> {
-		return (context) => {
-			if (context.targetX === undefined || context.targetY === undefined) {
-				console.warn('incompatiblePlants: missing target coordinates', context)
-				return { isValid: false, reason: 'Missing target coordinates' }
-			}
-
-			const targetZone = context.targetZone
-
-			const plantItem = context.item
-			const plantSize = plantItem.metadata.plantingDistanceInFeet || 1
-
-			// Define the margin to check for adjacency (could be customizable)
-			const adjacencyMargin = 0.5
-
-			for (const placement of targetZone.placements) {
-				// Skip the item itself in case of a move
-				if (context.itemInstanceId && placement.id === context.itemInstanceId) {
-					continue
+		return {
+			name: 'incompatiblePlants',
+			validate: (context) => {
+				if (context.targetX === undefined || context.targetY === undefined) {
+					return { isValid: false, reason: 'Missing target coordinates' }
 				}
 
-				const existingItem = placement.item as Item<PlantMetadata>
-				const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
+				const targetZone = context.targetZone
 
-				// Check if the items are adjacent (within the margin)
-				const isAdjacent =
-					Math.abs(context.targetX - placement.x) <=
-						plantSize + existingSize + adjacencyMargin &&
-					Math.abs(context.targetY - placement.y) <=
-						plantSize + existingSize + adjacencyMargin
+				const plantItem = context.item
+				const plantSize = plantItem.metadata.plantingDistanceInFeet || 1
 
-				if (isAdjacent) {
-					// Check for incompatibilities
-					for (const incompatibility of incompatibilities) {
-						const isIncompatible =
-							(plantItem.metadata.family === incompatibility.plant1 &&
-								existingItem.metadata.family === incompatibility.plant2) ||
-							(plantItem.metadata.family === incompatibility.plant2 &&
-								existingItem.metadata.family === incompatibility.plant1)
+				// Define the margin to check for adjacency (could be customizable)
+				const adjacencyMargin = 0.5
 
-						if (isIncompatible) {
-							return {
-								isValid: false,
-								reason: incompatibility.reason,
+				for (const placement of targetZone.placements) {
+					// Skip the item itself in case of a move
+					if (context.itemInstanceId && placement.id === context.itemInstanceId) {
+						continue
+					}
+
+					const existingItem = placement.item as Item<PlantMetadata>
+					const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
+
+					// Check if the items are adjacent (within the margin)
+					const isAdjacent =
+						Math.abs(context.targetX - placement.x) <=
+							plantSize + existingSize + adjacencyMargin &&
+						Math.abs(context.targetY - placement.y) <=
+							plantSize + existingSize + adjacencyMargin
+
+					if (isAdjacent) {
+						// Check for incompatibilities
+						for (const incompatibility of incompatibilities) {
+							const isIncompatible =
+								(plantItem.category === incompatibility.plant1 &&
+									existingItem.category === incompatibility.plant2) ||
+								(plantItem.category === incompatibility.plant2 &&
+									existingItem.category === incompatibility.plant1)
+
+							if (isIncompatible) {
+								return {
+									isValid: false,
+									reason: incompatibility.reason,
+								}
 							}
 						}
 					}
 				}
-			}
 
-			return { isValid: true }
+				return { isValid: true }
+			},
 		}
 	},
 }

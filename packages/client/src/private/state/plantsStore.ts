@@ -62,7 +62,7 @@ export const getPlantById = derived(plants, ($plants) => {
 // Function to get plants by family
 export const getPlantsByFamily = derived(plants, ($plants) => {
 	return (family: string): Item<PlantMetadata>[] => {
-		return $plants.filter((plant) => plant.metadata.family === family)
+		return $plants.filter((plant) => plant.category === family)
 	}
 })
 

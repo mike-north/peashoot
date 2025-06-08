@@ -70,4 +70,5 @@ export async function deleteSeedPacket(id: string): Promise<boolean> {
 
 	return success
 }
+
 export default seedPacketsState

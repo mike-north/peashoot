@@ -2,7 +2,7 @@
 import SeedPacket from '../components/SeedPacket.svelte'
 import PageTitle from '../components/PageTitle.svelte'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
-import { seedPackets } from '../lib/state/seedPacketsStore'
+import { seedPackets } from '../lib/state/seed-packets.store'
 
 const { route }: { route: RouteResult } = $props()
 </script>

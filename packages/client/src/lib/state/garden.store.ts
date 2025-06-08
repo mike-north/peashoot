@@ -283,7 +283,7 @@ export async function removePlantFromZone(
 }
 
 /**
- * Clone a plant
+ * Clone a plant from one zone to another
  */
 export async function clonePlant(
 	gardenId: string,
@@ -313,10 +313,5 @@ export async function clonePlant(
 		return false
 	}
 }
-
-// Auto-load gardens when the store is created
-loadGardens().catch((error: unknown) => {
-	console.error('Error loading gardens:', error)
-})
 
 export default gardenState

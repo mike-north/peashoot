@@ -2,8 +2,8 @@
 import Layout from './pages/Layout.svelte'
 import { getPlantRepository } from './lib/repositories/repository-factory'
 import { getSeedPacketRepository } from './lib/repositories/repository-factory'
-import { setPlants } from './lib/state/plantsStore'
-import { setSeedPackets } from './lib/state/seedPacketsStore'
+import { setPlants } from './lib/state/plants.store'
+import { setSeedPackets } from './lib/state/seed-packets.store'
 
 let isLoadingCoreData = $state(true)
 

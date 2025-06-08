@@ -9,7 +9,7 @@ import type { Workspace } from '../lib/entities/workspace'
 import type { GridPlacement } from '../private/grid/grid-placement'
 import type { Zone } from '../lib/entities/zone'
 import type { PlantMetadata } from '../lib/entities/plant-metadata'
-import { WorkspaceController } from '../lib/controllers/WorkspaceController'
+import type { IWorkspaceController } from '../lib/controllers/workspace-controller'
 import type { RouteResult } from '@mateothegreat/svelte5-router/route.svelte'
 import {
 	loadFirstGarden,
@@ -19,14 +19,15 @@ import {
 	movePlantBetweenZones,
 	removePlantFromZone,
 	clonePlant,
-} from '../lib/state/gardenStore'
+} from '../lib/state/garden.store'
 import { PlantRepository } from '../lib/repositories/plant.repository'
 import type { Item } from '../lib/entities/item'
 
 const {
 	route,
 	controller,
-}: { route: RouteResult; controller: WorkspaceController<Item<PlantMetadata>> } = $props()
+}: { route: RouteResult; controller: IWorkspaceController<Item<PlantMetadata>> } =
+	$props()
 
 // Create plant repository and workspace controller
 const plantRepository = new PlantRepository()
@@ -316,6 +317,6 @@ async function handleCloneItem(
 		moveItemBetweenZones={moveItemBetweenZones as MoveItemBetweenZonesHandler<Item>}
 		handleCloneItem={handleCloneItem}
 		itemAdapter={plantRepository}
-		controller={workspaceController as WorkspaceController}
+		controller={workspaceController as IWorkspaceController}
 	/>
 {/if}

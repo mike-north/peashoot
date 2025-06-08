@@ -16,7 +16,7 @@ import {
 	updatePendingOperation,
 	removePendingOperation,
 } from '../../private/dnd/validation'
-import { plants } from '../../lib/state/plantsStore'
+import { plants } from '../../lib/state/plants.store'
 import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
 import ZoneGrid from '../grid/components/ZoneGrid.svelte'
 import HorizontalBarMeter from '../../components/HorizontalBarMeter.svelte'

@@ -5,7 +5,6 @@ import type {
 	ValidationContext,
 	ValidationState,
 } from './types'
-import { ASYNC_VALIDATION_TIMEOUT_MS } from './constants'
 import type { WithId } from '../../lib/entities/with-id'
 
 // Validation function type
@@ -35,16 +34,4 @@ export function updatePendingOperation(id: string, state: ValidationState) {
 
 export function removePendingOperation(id: string) {
 	pendingOperations.update((ops) => ops.filter((op) => op.id !== id))
-}
-
-export const defaultAsyncValidation: AsyncValidationFunction<
-	WithId,
-	DropZoneContext
-> = async (_context: ValidationContext<WithId, DropZoneContext>) => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			// For now, always resolve to allow operations
-			resolve()
-		}, ASYNC_VALIDATION_TIMEOUT_MS) // Use the constant here
-	})
 }

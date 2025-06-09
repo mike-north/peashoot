@@ -1,10 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 'typeorm'
+import { Entity, Column, OneToMany, JoinColumn } from 'typeorm'
 import { LocationMonthlyTemperature } from './location-monthly-temperature'
+import { PeashootEntity } from './peashoot-entity'
 
 @Entity()
-export class Location {
-	@PrimaryGeneratedColumn('uuid')
-	id!: string
+export class Location extends PeashootEntity<'loc'> {
+	constructor() {
+		super('loc')
+	}
 
 	@Column('text')
 	name!: string

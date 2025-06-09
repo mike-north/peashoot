@@ -15,6 +15,7 @@ export abstract class PeashootEntity<Prefix extends string> {
 
 	@PrimaryColumn({
 		name: 'id',
+		type: 'text',
 		unique: true,
 	})
 	id!: BaseEntityId<Prefix>

@@ -42,8 +42,14 @@ describe('LocationMonthlyTemperature Entity', () => {
 		const temp = tempRepo.create({
 			month: 1,
 			temperatureRange: {
-				min: [8.3, 'C'],
-				max: [13.9, 'C'],
+				min: {
+					value: 8.3,
+					unit: 'C',
+				},
+				max: {
+					value: 13.9,
+					unit: 'C',
+				},
 			},
 			location,
 		})
@@ -51,8 +57,14 @@ describe('LocationMonthlyTemperature Entity', () => {
 		const savedTemp = await tempRepo.save(temp)
 		expect(savedTemp.id).toBeDefined()
 		expect(savedTemp.month).toBe(1)
-		expect(savedTemp.temperatureRange.min).toEqual([8.3, 'C'])
-		expect(savedTemp.temperatureRange.max).toEqual([13.9, 'C'])
+		expect(savedTemp.temperatureRange.min).toEqual({
+			value: 8.3,
+			unit: 'C',
+		})
+		expect(savedTemp.temperatureRange.max).toEqual({
+			value: 13.9,
+			unit: 'C',
+		})
 	})
 
 	it('should load temperature with its location', async () => {
@@ -71,8 +83,14 @@ describe('LocationMonthlyTemperature Entity', () => {
 			tempRepo.create({
 				month: 1,
 				temperatureRange: {
-					min: [8.3, 'C'],
-					max: [13.9, 'C'],
+					min: {
+						value: 8.3,
+						unit: 'C',
+					},
+					max: {
+						value: 13.9,
+						unit: 'C',
+					},
 				},
 				location,
 			}),
@@ -102,8 +120,14 @@ describe('LocationMonthlyTemperature Entity', () => {
 		const temp = tempRepo.create({
 			month: 1,
 			temperatureRange: {
-				min: [8.3, 'C'],
-				max: [13.9, 'C'],
+				min: {
+					value: 8.3,
+					unit: 'C',
+				},
+				max: {
+					value: 13.9,
+					unit: 'C',
+				},
 			},
 			location,
 		})
@@ -114,9 +138,9 @@ describe('LocationMonthlyTemperature Entity', () => {
 		})
 
 		expect(loadedTemp?.temperatureRange).toBeInstanceOf(Object)
-		expect(Array.isArray(loadedTemp?.temperatureRange.min)).toBe(true)
-		expect(Array.isArray(loadedTemp?.temperatureRange.max)).toBe(true)
-		expect(loadedTemp?.temperatureRange.min[1]).toBe('C')
-		expect(loadedTemp?.temperatureRange.max[1]).toBe('C')
+		expect(loadedTemp?.temperatureRange.min).toBeInstanceOf(Object)
+		expect(loadedTemp?.temperatureRange.max).toBeInstanceOf(Object)
+		expect(loadedTemp?.temperatureRange.min.unit).toBe('C')
+		expect(loadedTemp?.temperatureRange.max.unit).toBe('C')
 	})
 })

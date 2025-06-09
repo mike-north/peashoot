@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import * as rimraf from 'rimraf'
 import { initApp } from './application/app'
 import { createLogger } from './logger'

@@ -1,53 +1,261 @@
 locations:
-  - name: "San Francisco"
-    state: "CA"
-    country: "USA"
+  - name: "Tokyo"
+    region: "Tokyo"
+    country: "Japan"
     monthlyTemperatures:
       - month: 1
         temperatureRange:
-          min: [8.3, "C"]
-          max: [13.9, "C"]
+          min: [5.2, "C"]
+          max: [8.3, "C"]
       - month: 2
         temperatureRange:
-          min: [9.4, "C"]
-          max: [15.0, "C"]
+          min: [5.7, "C"]
+          max: [8.9, "C"]
       - month: 3
         temperatureRange:
-          min: [10.0, "C"]
-          max: [15.6, "C"]
+          min: [8.7, "C"]
+          max: [12.2, "C"]
       - month: 4
         temperatureRange:
-          min: [10.6, "C"]
-          max: [16.1, "C"]
+          min: [14.2, "C"]
+          max: [18.3, "C"]
       - month: 5
         temperatureRange:
-          min: [11.7, "C"]
-          max: [17.2, "C"]
+          min: [18.7, "C"]
+          max: [22.8, "C"]
       - month: 6
         temperatureRange:
-          min: [12.8, "C"]
-          max: [18.3, "C"]
+          min: [21.8, "C"]
+          max: [25.0, "C"]
       - month: 7
         temperatureRange:
-          min: [13.3, "C"]
-          max: [18.9, "C"]
+          min: [25.4, "C"]
+          max: [29.4, "C"]
       - month: 8
         temperatureRange:
-          min: [13.9, "C"]
-          max: [19.4, "C"]
+          min: [27.1, "C"]
+          max: [31.1, "C"]
       - month: 9
         temperatureRange:
-          min: [13.9, "C"]
+          min: [23.5, "C"]
+          max: [27.2, "C"]
+      - month: 10
+        temperatureRange:
+          min: [17.5, "C"]
+          max: [21.1, "C"]
+      - month: 11
+        temperatureRange:
+          min: [12.1, "C"]
+          max: [16.1, "C"]
+      - month: 12
+        temperatureRange:
+          min: [7.5, "C"]
+          max: [11.7, "C"]
+  - name: "Sydney"
+    region: "New South Wales"
+    country: "Australia"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [22.8, "C"]
+          max: [26.1, "C"]
+      - month: 2
+        temperatureRange:
+          min: [23.0, "C"]
+          max: [26.7, "C"]
+      - month: 3
+        temperatureRange:
+          min: [21.9, "C"]
+          max: [25.6, "C"]
+      - month: 4
+        temperatureRange:
+          min: [19.4, "C"]
+          max: [23.3, "C"]
+      - month: 5
+        temperatureRange:
+          min: [16.3, "C"]
+          max: [20.0, "C"]
+      - month: 6
+        temperatureRange:
+          min: [13.8, "C"]
+          max: [17.8, "C"]
+      - month: 7
+        temperatureRange:
+          min: [13.0, "C"]
+          max: [16.7, "C"]
+      - month: 8
+        temperatureRange:
+          min: [14.2, "C"]
+          max: [18.3, "C"]
+      - month: 9
+        temperatureRange:
+          min: [16.6, "C"]
           max: [20.6, "C"]
       - month: 10
         temperatureRange:
-          min: [12.2, "C"]
-          max: [19.4, "C"]
+          min: [18.8, "C"]
+          max: [22.2, "C"]
       - month: 11
         temperatureRange:
-          min: [10.6, "C"]
-          max: [16.7, "C"]
+          min: [20.3, "C"]
+          max: [23.9, "C"]
       - month: 12
         temperatureRange:
-          min: [8.9, "C"]
-          max: [14.4, "C"] 
+          min: [21.8, "C"]
+          max: [25.6, "C"]
+  - name: "Berlin"
+    region: "Berlin"
+    country: "Germany"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [0.5, "C"]
+          max: [3.3, "C"]
+      - month: 2
+        temperatureRange:
+          min: [1.3, "C"]
+          max: [4.4, "C"]
+      - month: 3
+        temperatureRange:
+          min: [5.1, "C"]
+          max: [9.4, "C"]
+      - month: 4
+        temperatureRange:
+          min: [9.7, "C"]
+          max: [14.4, "C"]
+      - month: 5
+        temperatureRange:
+          min: [14.8, "C"]
+          max: [19.4, "C"]
+      - month: 6
+        temperatureRange:
+          min: [17.8, "C"]
+          max: [22.2, "C"]
+      - month: 7
+        temperatureRange:
+          min: [19.8, "C"]
+          max: [24.4, "C"]
+      - month: 8
+        temperatureRange:
+          min: [19.4, "C"]
+          max: [24.4, "C"]
+      - month: 9
+        temperatureRange:
+          min: [15.2, "C"]
+          max: [19.4, "C"]
+      - month: 10
+        temperatureRange:
+          min: [10.1, "C"]
+          max: [14.4, "C"]
+      - month: 11
+        temperatureRange:
+          min: [5.3, "C"]
+          max: [8.9, "C"]
+      - month: 12
+        temperatureRange:
+          min: [1.7, "C"]
+          max: [4.4, "C"]
+  - name: "Cairo"
+    region: "Cairo"
+    country: "Egypt"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [13.6, "C"]
+          max: [18.9, "C"]
+      - month: 2
+        temperatureRange:
+          min: [14.7, "C"]
+          max: [20.0, "C"]
+      - month: 3
+        temperatureRange:
+          min: [16.9, "C"]
+          max: [23.3, "C"]
+      - month: 4
+        temperatureRange:
+          min: [21.2, "C"]
+          max: [28.3, "C"]
+      - month: 5
+        temperatureRange:
+          min: [24.7, "C"]
+          max: [32.2, "C"]
+      - month: 6
+        temperatureRange:
+          min: [27.6, "C"]
+          max: [35.0, "C"]
+      - month: 7
+        temperatureRange:
+          min: [28.6, "C"]
+          max: [36.1, "C"]
+      - month: 8
+        temperatureRange:
+          min: [28.4, "C"]
+          max: [35.6, "C"]
+      - month: 9
+        temperatureRange:
+          min: [26.7, "C"]
+          max: [33.3, "C"]
+      - month: 10
+        temperatureRange:
+          min: [23.5, "C"]
+          max: [30.0, "C"]
+      - month: 11
+        temperatureRange:
+          min: [19.2, "C"]
+          max: [25.6, "C"]
+      - month: 12
+        temperatureRange:
+          min: [15.0, "C"]
+          max: [20.6, "C"]
+  - name: "Toronto"
+    region: "Ontario"
+    country: "Canada"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [-6.7, "C"]
+          max: [-1.1, "C"]
+      - month: 2
+        temperatureRange:
+          min: [-5.6, "C"]
+          max: [0.0, "C"]
+      - month: 3
+        temperatureRange:
+          min: [-0.2, "C"]
+          max: [5.6, "C"]
+      - month: 4
+        temperatureRange:
+          min: [6.7, "C"]
+          max: [12.8, "C"]
+      - month: 5
+        temperatureRange:
+          min: [13.3, "C"]
+          max: [19.4, "C"]
+      - month: 6
+        temperatureRange:
+          min: [18.9, "C"]
+          max: [24.4, "C"]
+      - month: 7
+        temperatureRange:
+          min: [21.7, "C"]
+          max: [26.7, "C"]
+      - month: 8
+        temperatureRange:
+          min: [20.6, "C"]
+          max: [25.6, "C"]
+      - month: 9
+        temperatureRange:
+          min: [16.1, "C"]
+          max: [21.1, "C"]
+      - month: 10
+        temperatureRange:
+          min: [9.4, "C"]
+          max: [14.4, "C"]
+      - month: 11
+        temperatureRange:
+          min: [3.3, "C"]
+          max: [8.3, "C"]
+      - month: 12
+        temperatureRange:
+          min: [-3.3, "C"]
+          max: [1.7, "C"] 

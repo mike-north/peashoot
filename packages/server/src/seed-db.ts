@@ -215,11 +215,19 @@ async function loadTemperatureData(logger: Logger) {
 			await locationRepo.save(location)
 
 			for (const tempData of locData.monthlyTemperatures) {
+				const trMin = {
+					value: tempData.temperatureRange.min[0],
+					unit: tempData.temperatureRange.min[1],
+				}
+				const trMax = {
+					value: tempData.temperatureRange.max[0],
+					unit: tempData.temperatureRange.max[1],
+				}
 				const temp = tempRepo.create({
 					month: tempData.month,
 					temperatureRange: {
-						min: tempData.temperatureRange.min,
-						max: tempData.temperatureRange.max,
+						min: trMin,
+						max: trMax,
 					},
 					location,
 				})

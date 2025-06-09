@@ -7,6 +7,8 @@ import { Logger } from 'winston'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 
+import { createLocationRouter } from './locations-router'
+
 export function createRouter(logger: Logger): Router {
 	const router = Router()
 	router.use(cors({ origin: '*' }))
@@ -14,6 +16,8 @@ export function createRouter(logger: Logger): Router {
 	router.use(zodErrorTo400(logger))
 	router.use('/gardens', createGardenRouter(logger))
 	router.use('/plants', createPlantRouter(logger))
+	router.use('/seed-packets', createSeedPacketRouter(logger))
+	router.use('/locations', createLocationRouter(logger))
 	router.use('/seed-packets', createSeedPacketRouter(logger))
 
 	// Fallback error logger for any errors not caught by specific handlers

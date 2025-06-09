@@ -1,5 +1,5 @@
 import type { Location } from '../entities/location'
-import { LocationTemperatureDataRepository } from './location-temperature-data.repository'
+import { Repository } from './repository.base'
 
 const mockLocations: Location[] = [
 	{
@@ -43,7 +43,10 @@ const mockLocations: Location[] = [
  * Repository for Location temperature data that uses fixture data
  * Used for testing and development
  */
-export class LocationTemperatureDataFixturesRepository extends LocationTemperatureDataRepository {
+export class LocationTemperatureDataFixturesRepository extends Repository<
+	Location,
+	string
+> {
 	constructor() {
 		super('/api')
 	}
@@ -60,14 +63,17 @@ export class LocationTemperatureDataFixturesRepository extends LocationTemperatu
 		return 'locations'
 	}
 
-	override async getLocations(): Promise<Location[]> {
+	async getLocations(): Promise<Location[]> {
 		// Mock implementation with fixture data
 		return Promise.resolve(mockLocations)
 	}
 
-	override async calculateDate(_request: {
+	async calculateDate(_request: {
 		locationId: string
-		temperature: number
+		temperature: {
+			value: number
+			unit: 'C' | 'F'
+		}
 	}): Promise<Date> {
 		// Mock implementation that returns a date 30 days from now
 		const date = new Date()

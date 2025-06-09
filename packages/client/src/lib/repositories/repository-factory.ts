@@ -7,7 +7,7 @@ import { PlantFixturesRepository } from './plant-fixtures.repository'
 
 // Control whether to use real API or fixture data
 // Can be toggled for development/testing purposes
-let useFixtures = false
+let useFixtures = true
 
 /**
  * Set whether to use fixtures (true) or real API (false)

@@ -59,7 +59,7 @@ export const seedPackets: SeedPacket[] = [
 		name: 'Big Boy Tomato',
 		quantity: 30, // from seedPacketInfo.seedCount
 		presentation: {
-			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+			iconPath: 'tomatoes-big-boy-tomato.png',
 			accentColor: { red: 255, green: 99, blue: 71 }, // Tomato red
 		},
 		netWeightGrams: 1, // Placeholder, not directly in YAML for this item
@@ -107,7 +107,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'burpee-big-boy-tomato',
 			plantingDistance: { value: 2, unit: 'feet' },
 			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-			iconPath: 'tomatoes-burpee-big-boy-tomato.png',
+			iconPath: 'tomatoes-big-boy-tomato.png',
 		},
 		{
 			id: 'plant_tomatoes-rareseeds-cherokee-purple-tomato',
@@ -116,7 +116,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'rareseeds-cherokee-purple-tomato',
 			plantingDistance: { value: 2, unit: 'feet' },
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-tomatoes-purple
-			iconPath: 'tomatoes-rareseeds-cherokee-purple-tomato.png',
+			iconPath: 'tomatoes-cherokee-purple-tomato.png',
 		},
 		{
 			id: 'plant_tomatoes-sweet-100-tomato',
@@ -125,7 +125,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'sweet-100-tomato',
 			plantingDistance: { value: 2, unit: 'feet' },
 			accentColor: { red: 214, green: 40, blue: 40 }, // --color-tomatoes-red
-			iconPath: 'tomatoes-sweet-100-tomato.png',
+			iconPath: 'tomatoes-sweet-100-cherry-tomato.png',
 		},
 		{
 			id: 'plant_tomatoes-napa-chardonnay-tomato',
@@ -154,7 +154,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'burpee-buttercrunch-lettuce',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 123, green: 182, blue: 97 }, // --color-lettuce-green
-			iconPath: 'lettuce-burpee-buttercrunch-lettuce.png',
+			iconPath: 'lettuce-buttercrunch-lettuce.png',
 		},
 		{
 			id: 'plant_arugula-arugula',
@@ -192,7 +192,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'burpee-chantenay-carrot',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 255, green: 167, blue: 38 }, // --color-carrots-orange
-			iconPath: 'carrots-burpee-chantenay-carrot.png',
+			iconPath: 'carrots-chantenay-red-core-carrot.png',
 		},
 		{
 			id: 'plant_carrots-parisienne-carrots',
@@ -210,7 +210,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'lila-lu-sang-carrots',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 128, green: 0, blue: 128 }, // --color-carrots-purple
-			iconPath: 'carrots-lila-lu-sang-carrots.png',
+			iconPath: 'carrots-lila-lu-sang-purple-carrots.png',
 		},
 
 		// Peppers
@@ -221,7 +221,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'burpee-california-wonder-pepper',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 58, green: 145, blue: 63 }, // --color-peppers-green
-			iconPath: 'peppers-burpee-california-wonder-pepper.png',
+			iconPath: 'peppers-california-wonder-bell-pepper.png',
 		},
 		{
 			id: 'plant_peppers-jalapeno-hot-pepper',
@@ -268,7 +268,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'burpee-provider-bush-bean',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 86, green: 130, blue: 3 }, // --color-beans-green
-			iconPath: 'beans-burpee-provider-bush-bean.png',
+			iconPath: 'beans-provider-bush-bean.png',
 		},
 		{
 			id: 'plant_beans-fava-beans',
@@ -286,7 +286,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'dragons-tongue-beans',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 255, green: 212, blue: 0 }, // --color-beans-yellow
-			iconPath: 'beans-dragons-tongue-beans.png',
+			iconPath: 'beans-dragons-tongue-bush-bean.png',
 		},
 		{
 			id: 'plant_beans-cherokee-trail-of-tears-beans',
@@ -315,7 +315,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'rareseeds-yellow-of-parma-onion',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 255, green: 212, blue: 0 }, // --color-onions-yellow
-			iconPath: 'onions-rareseeds-yellow-of-parma-onion.png',
+			iconPath: 'onions-yellow-of-parma-onion.png',
 		},
 		{
 			id: 'plant_onions-burpee-evergreen-hardy-white-scallions',
@@ -324,7 +324,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'burpee-evergreen-hardy-white-scallions',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 245, green: 245, blue: 245 }, // --color-onions-white
-			iconPath: 'onions-burpee-evergreen-hardy-white-scallions.png',
+			iconPath: 'onions-evergreen-hardy-white-scallions.png',
 		},
 		{
 			id: 'plant_onions-chives',
@@ -371,7 +371,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'alexandria-strawberry',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 220, green: 20, blue: 60 }, // --color-strawberries-red
-			iconPath: 'strawberries-alexandria-strawberry.png',
+			iconPath: 'strawberries-alexandria-alpine-strawberry.png',
 		},
 
 		// Flowers
@@ -509,7 +509,7 @@ export const plants: Item<PlantMetadata>[] = (
 			variant: 'super-sugar-snap',
 			plantingDistance: { value: 1, unit: 'feet' },
 			accentColor: { red: 123, green: 182, blue: 97 },
-			iconPath: 'peas-burpee-sugar-snap-peas.png',
+			iconPath: 'peas-sugar-snap-peas.png',
 		},
 		{
 			id: 'plant_dahlia',

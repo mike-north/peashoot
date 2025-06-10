@@ -1,57 +1,56 @@
 <script lang="ts">
 import type { IndicatorVisual } from '../private/grid/zone-layout-calculator'
-import type { EffectNature } from './entities/indicator'
 
-const { item: indicator }: { item?: Partial<IndicatorVisual> } = $props()
+const { item: indicator }: { item: Partial<IndicatorVisual> } = $props()
 
-// Group effects by nature for better display
-const effectsByNature = $derived(() => {
-	const groups: Record<EffectNature, IndicatorVisual['effects']> = {
-		beneficial: [],
-		harmful: [],
-		neutral: [],
-	}
+// // Group effects by nature for better display
+// const effectsByNature = $derived(() => {
+// 	const groups: Record<EffectNature, IndicatorVisual['effects']> = {
+// 		beneficial: [],
+// 		harmful: [],
+// 		neutral: [],
+// 	}
 
-	for (const effect of indicator?.effects ?? []) {
-		groups[effect.nature].push(effect)
-	}
+// 	for (const effect of indicator?.effects ?? []) {
+// 		groups[effect.nature].push(effect)
+// 	}
 
-	return groups
-})
+// 	return groups
+// })
 
-// Helper function to get nature icon and color
-function getNatureStyle(nature: EffectNature) {
-	switch (nature) {
-		case 'beneficial':
-			return {
-				icon: '✓',
-				color: 'text-green-600',
-				bg: 'bg-green-50',
-				border: 'border-green-200',
-			}
-		case 'harmful':
-			return {
-				icon: '✗',
-				color: 'text-red-600',
-				bg: 'bg-red-50',
-				border: 'border-red-200',
-			}
-		case 'neutral':
-			return {
-				icon: '○',
-				color: 'text-blue-600',
-				bg: 'bg-blue-50',
-				border: 'border-blue-200',
-			}
-		default:
-			return {
-				icon: '?',
-				color: 'text-gray-600',
-				bg: 'bg-gray-50',
-				border: 'border-gray-200',
-			}
-	}
-}
+// // Helper function to get nature icon and color
+// function getNatureStyle(nature: any /*EffectNature*/) {
+// 	switch (nature) {
+// 		case 'beneficial':
+// 			return {
+// 				icon: '✓',
+// 				color: 'text-green-600',
+// 				bg: 'bg-green-50',
+// 				border: 'border-green-200',
+// 			}
+// 		case 'harmful':
+// 			return {
+// 				icon: '✗',
+// 				color: 'text-red-600',
+// 				bg: 'bg-red-50',
+// 				border: 'border-red-200',
+// 			}
+// 		case 'neutral':
+// 			return {
+// 				icon: '○',
+// 				color: 'text-blue-600',
+// 				bg: 'bg-blue-50',
+// 				border: 'border-blue-200',
+// 			}
+// 		default:
+// 			return {
+// 				icon: '?',
+// 				color: 'text-gray-600',
+// 				bg: 'bg-gray-50',
+// 				border: 'border-gray-200',
+// 			}
+// 	}
+// }
 </script>
 
 <style lang="scss">
@@ -71,10 +70,10 @@ function getNatureStyle(nature: EffectNature) {
 	}
 }
 
-.grid-position {
-	background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-	border: 1px solid #cbd5e1;
-}
+// .grid-position {
+// 	background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+// 	border: 1px solid #cbd5e1;
+// }
 </style>
 
 <div class="indicator-tooltip-content">
@@ -87,7 +86,18 @@ function getNatureStyle(nature: EffectNature) {
 
 	<!-- Effects by Nature -->
 	<div class="space-y-3">
-		{#each Object.entries(effectsByNature()) as [nature, effects] (nature)}
+		{#if indicator.effects}
+			{#each indicator.effects as effect (effect.sourceId + '-' + effect.targetId)}
+				<div class="effect-item bg-gray-50 border border-gray-200 rounded-lg p-3">
+					<div class="flex justify-between items-start mb-2">
+						<div class="text-sm font-medium text-gray-700">
+							{effect.description}
+						</div>
+					</div>
+				</div>
+			{/each}
+		{/if}
+		<!-- {#each Object.entries(effectsByNature()) as [nature, effects] (nature)}
 			{#if effects.length > 0}
 				{@const style = getNatureStyle(nature as EffectNature)}
 				<div class="space-y-2">
@@ -110,6 +120,6 @@ function getNatureStyle(nature: EffectNature) {
 					</div>
 				</div>
 			{/if}
-		{/each}
+		{/each} -->
 	</div>
 </div>

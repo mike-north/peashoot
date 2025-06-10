@@ -1,6 +1,6 @@
 import { z } from 'zod/v4'
 import { createZoneSchemaForItemType, ZoneSchema } from './zone.type.js'
-import { IndicatorSchema } from './indicator.js'
+import { IndicatorSchema } from './indicator.type.js'
 
 export function createWorkspaceSchemaForItemType<
 	IT extends z.ZodObject,

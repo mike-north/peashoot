@@ -5,8 +5,7 @@ import {
 } from '../src/private/grid/zone-layout-calculator.js'
 import type { GridItemPresentation } from '../src/private/grid/grid-placement.js'
 import { DEFAULT_LAYOUT_PARAMS } from '../src/private/grid/grid-layout-constants.js'
-import type { Indicator } from '../src/lib/entities/indicator.js'
-import type { Item, ItemPlacement } from '@peashoot/types'
+import type { Indicator, Item, ItemPlacement } from '@peashoot/types'
 
 interface TestItem extends Item {
 	id: string
@@ -156,9 +155,8 @@ describe('ZoneLayoutCalculator', () => {
 				id: 'ind1',
 				effects: [
 					{
-						sourceItemTypeId: '1',
-						targetItemTypeId: '2',
-						nature: 'beneficial',
+						sourceId: '1',
+						targetId: '2',
 						description: 'Helps growth',
 					},
 				],

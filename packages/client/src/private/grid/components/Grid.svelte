@@ -23,10 +23,10 @@ import {
 	ZoneLayoutCalculator,
 	calculateIndicatorVisuals,
 } from '../zone-layout-calculator'
-import type { Indicator } from '../../../lib/entities/indicator'
 import { tooltip } from '../../../lib/tooltips/action'
 import IndicatorSemicircle from './IndicatorSemicircle.svelte'
 import type { WithId } from '../../../lib/entities/with-id'
+import type { Indicator } from '@peashoot/types'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {

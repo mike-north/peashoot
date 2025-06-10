@@ -1,13 +1,11 @@
 import { makePoint, type Line } from '../types/geometry'
 import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
-import type { ItemPlacement, Workspace } from '@peashoot/types'
-
 import type {
-	EffectNature,
 	Indicator,
-	InteractionEffect,
-} from '../../lib/entities/indicator'
-import { UnreachableError } from '../../lib/errors/unreachabe'
+	IndicatorEffect,
+	ItemPlacement,
+	Workspace,
+} from '@peashoot/types'
 
 /**
  * Layout information for an item tile, used by generic placement tiles.
@@ -61,7 +59,7 @@ export interface IndicatorVisual {
 	radius: number
 	gridX: number
 	gridY: number
-	effects: InteractionEffect[]
+	effects: IndicatorEffect[]
 	sectors?: {
 		sector: 0 | 1 | 2 | 3
 		color: string
@@ -504,14 +502,14 @@ type VisualPrimitive =
 			position: { x: number; y: number }
 			direction: 'top' | 'bottom' | 'left' | 'right'
 			color: string
-			effect: InteractionEffect
+			effect: IndicatorEffect
 	  }
 	| {
 			type: 'sector'
 			position: { x: number; y: number }
 			sector: 0 | 1 | 2 | 3
 			color: string
-			effect: InteractionEffect
+			effect: IndicatorEffect
 	  }
 
 export function calculateIndicatorVisuals(
@@ -523,11 +521,11 @@ export function calculateIndicatorVisuals(
 
 	for (const indicator of indicators) {
 		for (const effect of indicator.effects) {
-			const { sourceItemTypeId, targetItemTypeId } = effect
+			const { sourceId, targetId } = effect
 
 			// Find all placements that match the source and target item types
-			const sourcePlacements = placements.filter((p) => p.item.id === sourceItemTypeId)
-			const targetPlacements = placements.filter((p) => p.item.id === targetItemTypeId)
+			const sourcePlacements = placements.filter((p) => p.item.id === sourceId)
+			const targetPlacements = placements.filter((p) => p.item.id === targetId)
 
 			// Check for adjacency between all pairs of matching source and target placements
 			for (const sourcePlacement of sourcePlacements) {
@@ -554,7 +552,7 @@ export function calculateIndicatorVisuals(
 							type: 'semicircle',
 							position: midPoint,
 							direction: dir,
-							color: getColorForEffect(effect.nature),
+							color: 'yellow', //getColorForEffect(effect.nature),
 							effect,
 						}
 						primitives.push(primitive)
@@ -575,7 +573,7 @@ export function calculateIndicatorVisuals(
 							type: 'sector',
 							position: point,
 							sector,
-							color: getColorForEffect(effect.nature),
+							color: 'yellow', //getColorForEffect(effect.nature),
 							effect,
 						}
 						primitives.push(primitive)
@@ -624,16 +622,16 @@ export function calculateIndicatorVisuals(
 	return visuals
 }
 
-function getColorForEffect(nature: EffectNature): string {
-	switch (nature) {
-		case 'beneficial':
-			return 'green'
-		case 'harmful':
-			return 'red'
-		case 'neutral':
-			return 'blue'
-		default: {
-			throw new UnreachableError(nature, `Unknown effect nature: ${nature as string}`)
-		}
-	}
-}
+// function getColorForEffect(nature: EffectNature): string {
+// 	switch (nature) {
+// 		case 'beneficial':
+// 			return 'green'
+// 		case 'harmful':
+// 			return 'red'
+// 		case 'neutral':
+// 			return 'blue'
+// 		default: {
+// 			throw new UnreachableError(nature, `Unknown effect nature: ${nature as string}`)
+// 		}
+// 	}
+// }

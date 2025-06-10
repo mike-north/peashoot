@@ -17,7 +17,7 @@ import {
 	clonePlant,
 	addItemToWorkspace,
 } from '../lib/state/workspaces.store'
-import { ItemRepository } from '../lib/repositories/plant.repository'
+import { ItemRepository } from '../lib/repositories/item.repository'
 import type { Item, Zone } from '@peashoot/types'
 import type { ExistingWorkspaceItem } from '../private/state/workspaceDragState'
 

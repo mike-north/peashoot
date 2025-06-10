@@ -1,10 +1,9 @@
 import { z } from 'zod/v4'
 
 export const IndicatorEffectSchema = z.object({
-	sourceItemTypeId: z.string(),
-	targetItemTypeId: z.string(),
-	nature: z.enum(['beneficial', 'harmful', 'neutral']),
 	description: z.string(),
+	sourceId: z.string(),
+	targetId: z.string(),
 })
 
 export const IndicatorSchema = z.object({

@@ -1,4 +1,9 @@
-import { Plant as IPlant, ListItemsResponse, PlantSchema } from '@peashoot/types'
+import {
+	convertDistanceToFeet,
+	Plant as IPlant,
+	ListItemsResponse,
+	PlantSchema,
+} from '@peashoot/types'
 import { AppDataSource } from '../data-source'
 import { Plant } from '../entities/plant'
 
@@ -10,7 +15,7 @@ export class PlantsService {
 			category: plant.family,
 			variant: plant.variant,
 			displayName: plant.name,
-			size: 1,
+			size: Math.max(1, Math.ceil(convertDistanceToFeet(plant.plantingDistance).value)),
 			presentation: {
 				iconPath: plant.presentation.iconPath,
 				accentColor: plant.presentation.accentColor,

@@ -2,21 +2,12 @@ import { Garden } from '../entities/garden'
 import { AppDataSource } from '../data-source'
 import { isIdWithPrefix } from '../utils/id'
 import { InvalidArgsError } from '../application/errors/invalid-args-error'
-import { type ListWorkspacesResponse } from '@peashoot/types'
 import { Logger } from 'winston'
 import { DeepPartial } from 'typeorm'
 
 export class GardensService {
-	async getAllGardens(): Promise<ListWorkspacesResponse> {
-		const gardens = await AppDataSource.manager.find(Garden, {})
-		return gardens.map((garden) => ({
-			id: garden.id,
-			name: garden.name,
-			description: garden.description,
-			indicators: [],
-			zones: [],
-			metadata: {},
-		}))
+	async getAllGardens(): Promise<Garden[]> {
+		return await AppDataSource.manager.find(Garden, {})
 	}
 	async getGardenById(id: string): Promise<Garden | null> {
 		if (!isIdWithPrefix('grdn', id)) {

@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { SeedPacketsService } from '../services/seed-packets-service'
 import { asyncHandler } from './middlewares/async-handler'
 import { Logger } from 'winston'
+import { ListPacketsResponse } from '@peashoot/types'
 
 export function createSeedPacketRouter(logger: Logger): Router {
 	const router = Router()
@@ -11,8 +12,22 @@ export function createSeedPacketRouter(logger: Logger): Router {
 		'/',
 		asyncHandler(async (_req, res) => {
 			try {
-				const seedPackets = await seedPacketsService.getAllSeedPackets()
-				res.json(seedPackets)
+				const packets = await seedPacketsService.getAllSeedPackets()
+				const response: ListPacketsResponse = packets.map((packet) => ({
+					id: packet.id,
+					category: packet.category,
+					name: packet.name,
+					description: packet.description,
+					presentation: {
+						iconPath: packet.presentation.iconPath,
+						accentColor: packet.presentation.accentColor,
+					},
+					metadata: {
+						quantity: packet.quantity,
+						plantingDistance: packet.plantingDistance,
+					},
+				}))
+				res.json(response)
 			} catch (error) {
 				logger.error('Error in GET /seed-packets:', error)
 				// We'll let the asyncHandler and global error handlers deal with the response

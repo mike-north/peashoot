@@ -25,23 +25,8 @@ export class SeedPacket extends PeashootEntity<'spkt'> {
 	@Column()
 	category!: string
 
-	@Column()
-	netWeightGrams!: number
-
-	@Column()
-	originLocation!: string
-
-	@Column()
-	plantingInstructions!: string
-
-	@Column()
-	plantFamily!: string
-
 	@Column(() => Presentation)
 	presentation!: Presentation
-
-	@Column()
-	expiresAt!: Date
 
 	@Column(() => Distance)
 	plantingDistance!: Distance

@@ -3,6 +3,7 @@ import { InvalidArgsError } from './errors/invalid-args-error'
 import { PlantsService } from '../services/plants-service'
 import { asyncHandler } from './middlewares/async-handler'
 import { Logger } from 'winston'
+import { convertDistanceToFeet } from '@peashoot/types'
 
 export function createPlantRouter(logger: Logger): Router {
 	const plantsService = new PlantsService()
@@ -14,7 +15,25 @@ export function createPlantRouter(logger: Logger): Router {
 			async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
 				try {
 					const plants = await plantsService.getAllPlants()
-					res.json(plants)
+
+					const response = plants.map((plant) => ({
+						id: plant.id,
+						category: plant.family,
+						variant: plant.variant,
+						displayName: plant.name,
+						size: Math.max(
+							1,
+							Math.ceil(convertDistanceToFeet(plant.plantingDistance).value),
+						),
+						presentation: {
+							iconPath: plant.presentation.iconPath,
+							accentColor: plant.presentation.accentColor,
+						},
+						metadata: {
+							plantingDistance: plant.plantingDistance,
+						},
+					}))
+					res.json(response)
 				} catch (error) {
 					logger.error('Error in GET /plants:', error)
 					if (error instanceof InvalidArgsError) {

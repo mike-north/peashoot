@@ -1,5 +1,5 @@
-import { Repository } from './repository.base'
-import type { ItemAdapter } from '../adapters/item.adapter'
+import { Repository } from './repository.base.js'
+import type { ItemAdapter } from '../adapters/item.adapter.js'
 import { ItemSchema, PlantMetadataSchema, PlantSchema, type Plant } from '@peashoot/types'
 
 /**

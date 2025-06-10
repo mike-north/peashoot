@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store'
-import { ItemRepository } from '../repositories/plant.repository'
+import { ItemRepository } from '../repositories/item.repository'
 import type { Item } from '@peashoot/types'
 
 interface ItemsState {

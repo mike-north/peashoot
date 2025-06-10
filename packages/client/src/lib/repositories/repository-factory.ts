@@ -1,5 +1,5 @@
 import { WorkspaceRepository } from './workspace.repository'
-import { ItemRepository } from './plant.repository'
+import { ItemRepository } from './item.repository'
 import { SeedPacketRepository } from './seed-packet.repository'
 
 /**

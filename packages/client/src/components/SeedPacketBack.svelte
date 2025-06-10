@@ -21,8 +21,12 @@ const { seedPacket }: Props = $props()
 	<p>{seedPacket.description}</p>
 
 	<p class="mb-2">
-		<span class="font-bold text-md">Hardiness:</span>
-		<!-- {seedPacket.instructions} -->
+		<span class="font-bold text-md">Expires At:</span>
+		{seedPacket.metadata.expiresAt}
+	</p>
+	<p class="mb-2">
+		<span class="font-bold text-md">Planting Distance:</span>
+		{seedPacket.metadata.plantingDistance} ft
 	</p>
 	<p>
 		<span class="font-bold text-md">Days to Harvest:</span>

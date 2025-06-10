@@ -24,6 +24,11 @@ export class SeedPacketsService {
 			},
 			category: pkt.plantFamily,
 			quantity: pkt.seedPacketInfo?.seedCount ?? 100,
+			expiresAt: new Date(
+				2024 + (pkt.seedPacketInfo?.viabilityYears ?? 2),
+				2,
+				1,
+			).toISOString(),
 			plantingDistance: {
 				value: pkt.spacing.optimal.value,
 				unit: stringToDistanceUnit(pkt.spacing.optimal.unit),

@@ -4,7 +4,7 @@
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"outDir": "dist",
-		"rootDir": ".",
+		"rootDir": "src",
 		"declaration": true,
 		"declarationMap": true,
 		"noEmit": false

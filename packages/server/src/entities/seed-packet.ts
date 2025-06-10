@@ -30,4 +30,7 @@ export class SeedPacket extends PeashootEntity<'spkt'> {
 
 	@Column(() => Distance)
 	plantingDistance!: Distance
+
+	@Column()
+	expiresAt!: string // ISO-8601
 }

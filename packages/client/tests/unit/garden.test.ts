@@ -1,9 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi } from 'vitest'
-import { moveItemBetweenZonesAndCreateNewWorkspace } from '../../src/lib/entities/workspace.js'
 import type { GridArea } from '../../src/private/grid/grid-area.js'
 import type { WithId } from '../../src/lib/entities/with-id.js'
-import type { ItemPlacement, Plant, Workspace, Zone } from '@peashoot/types'
+import {
+	moveItemBetweenZonesAndCreateNewWorkspace,
+	type ItemPlacement,
+	type Plant,
+	type Workspace,
+	type Zone,
+} from '@peashoot/types'
 
 const mockPlant: Plant = {
 	id: 'plant_1',
@@ -59,6 +63,7 @@ const workspace: Workspace = {
 	id: 'workspace_1',
 	zones: [sourceZone, targetZone],
 	indicators: [],
+	metadata: {},
 }
 
 describe('moveItemBetweenZones', () => {

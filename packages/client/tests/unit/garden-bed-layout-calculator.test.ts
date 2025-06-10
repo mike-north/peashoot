@@ -1,14 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { ZoneLayoutCalculator } from '../../src/private/grid/zone-layout-calculator.js'
-import { type GridPlaceable } from '../../src/private/grid/grid-placement.js'
-import { type Item } from '../../src/lib/entities/item.js'
-import { type WithId } from '../../src/lib/entities/with-id.js'
-import type { ItemPlacement, PlantMetadata } from '@peashoot/types'
+import type { ItemPlacement, Plant } from '@peashoot/types'
 
 const layoutParams = { width: 4, height: 4, tileSizeForItem: () => 1 }
 const layout = new ZoneLayoutCalculator(layoutParams)
 
-const mockItem: Item<PlantMetadata> & WithId & GridPlaceable = {
+const mockItem: Plant = {
 	id: 'plant_1',
 	displayName: 'Tomato',
 	category: 'tomatoes',

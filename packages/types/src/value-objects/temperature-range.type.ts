@@ -1,8 +1,9 @@
 import { z } from 'zod/v4'
+import { TemperatureSchema } from './temperature.type.js'
 
 export const TemperatureRangeSchema = z.object({
-	min: z.number().min(-100).max(200),
-	max: z.number().min(-100).max(200),
+	min: TemperatureSchema,
+	max: TemperatureSchema,
 })
 
 export type TemperatureRange = z.infer<typeof TemperatureRangeSchema>

@@ -4,7 +4,7 @@ import { isIdWithPrefix } from '../utils/id'
 import { InvalidArgsError } from '../application/errors/invalid-args-error'
 import {
 	convertDistanceToFeet,
-	ItemPlacement,
+	type ItemPlacement,
 	Zone,
 	type ListWorkspacesResponse,
 } from '@peashoot/types'

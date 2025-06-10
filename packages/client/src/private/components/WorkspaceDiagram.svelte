@@ -1,6 +1,5 @@
 <script lang="ts">
 import WorkspacePresentation from './WorkspacePresentation.svelte'
-import { findZone, findItemPlacement } from '../../lib/entities/workspace'
 import { setContext } from 'svelte'
 import {
 	type ExistingWorkspaceItem,
@@ -21,10 +20,15 @@ import {
 	showError,
 	showInfo,
 } from '../state/notificationsStore'
-import { isItemWithMetadata } from '../../lib/entities/item'
 import type { IWorkspaceController } from '../../lib/controllers/workspace-controller'
 import type { ValidationResult } from '../../lib/types/validation'
-import { isPlantMetadata, type Item, type Workspace } from '@peashoot/types'
+import {
+	findItemPlacement,
+	findZone,
+	isPlantMetadata,
+	type Item,
+	type Workspace,
+} from '@peashoot/types'
 
 export type AddNewItemHandler<TItem extends GridPlaceable & Item> = (
 	zoneId: string,
@@ -203,7 +207,7 @@ async function handleRequestPlacement(
 	let validatedItem: Item
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
-		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
+		if (isPlantMetadata(rawValidatedItem.metadata)) {
 			validatedItem = rawValidatedItem
 		} else {
 			console.error('Item is not a plant item', rawValidatedItem)
@@ -394,7 +398,7 @@ async function handleRequestRemoval(
 	let validatedItem: Item
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
-		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
+		if (isPlantMetadata(rawValidatedItem.metadata)) {
 			validatedItem = rawValidatedItem
 		} else {
 			throw new Error('Item is not a plant item')
@@ -500,7 +504,7 @@ async function handleRequestCloning(
 	let validatedItem: Item
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemDataToClone)
-		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
+		if (isPlantMetadata(rawValidatedItem.metadata)) {
 			validatedItem = rawValidatedItem
 		} else {
 			throw new Error('Item is not a plant item')

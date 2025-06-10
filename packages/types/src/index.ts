@@ -21,6 +21,7 @@ export * from './value-objects/rgb-color.type.js'
 export * from './value-objects/temperature-range.type.js'
 export * from './value-objects/temperature.type.js'
 export * from './value-objects/xy-coordinate.type.js'
+export * from './utils/comparator.js'
 
 export * from './resources/locations-calculate-date.js'
 export * from './resources/locations-list.js'

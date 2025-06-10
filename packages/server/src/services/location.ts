@@ -1,6 +1,6 @@
 import { AppDataSource } from '../data-source'
 import { Location } from '../entities/location'
-import type Temperature from '../values/temperature'
+import type { Temperature } from '@peashoot/types'
 // import { toCelsius } from '../values/temperature'
 
 export class LocationService {

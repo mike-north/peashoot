@@ -258,4 +258,108 @@ locations:
       - month: 12
         temperatureRange:
           min: [-3.3, "C"]
-          max: [1.7, "C"] 
+          max: [1.7, "C"]
+  - name: "Kirkland"
+    region: "Washington"
+    country: "USA"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [3.3, "C"]
+          max: [8.3, "C"]
+      - month: 2
+        temperatureRange:
+          min: [3.9, "C"]
+          max: [10.0, "C"]
+      - month: 3
+        temperatureRange:
+          min: [5.6, "C"]
+          max: [12.2, "C"]
+      - month: 4
+        temperatureRange:
+          min: [7.2, "C"]
+          max: [15.6, "C"]
+      - month: 5
+        temperatureRange:
+          min: [10.0, "C"]
+          max: [18.9, "C"]
+      - month: 6
+        temperatureRange:
+          min: [12.8, "C"]
+          max: [21.7, "C"]
+      - month: 7
+        temperatureRange:
+          min: [14.4, "C"]
+          max: [24.4, "C"]
+      - month: 8
+        temperatureRange:
+          min: [15.0, "C"]
+          max: [25.0, "C"]
+      - month: 9
+        temperatureRange:
+          min: [12.8, "C"]
+          max: [21.7, "C"]
+      - month: 10
+        temperatureRange:
+          min: [9.4, "C"]
+          max: [16.1, "C"]
+      - month: 11
+        temperatureRange:
+          min: [5.6, "C"]
+          max: [10.6, "C"]
+      - month: 12
+        temperatureRange:
+          min: [3.3, "C"]
+          max: [7.8, "C"]
+  - name: "Minneapolis"
+    region: "Minnesota"
+    country: "USA"
+    monthlyTemperatures:
+      - month: 1
+        temperatureRange:
+          min: [-16.2, "C"]
+          max: [-6.3, "C"]
+      - month: 2
+        temperatureRange:
+          min: [-12.7, "C"]
+          max: [-3.0, "C"]
+      - month: 3
+        temperatureRange:
+          min: [-5.2, "C"]
+          max: [4.0, "C"]
+      - month: 4
+        temperatureRange:
+          min: [2.3, "C"]
+          max: [13.6, "C"]
+      - month: 5
+        temperatureRange:
+          min: [8.7, "C"]
+          max: [20.8, "C"]
+      - month: 6
+        temperatureRange:
+          min: [14.2, "C"]
+          max: [26.0, "C"]
+      - month: 7
+        temperatureRange:
+          min: [17.3, "C"]
+          max: [28.9, "C"]
+      - month: 8
+        temperatureRange:
+          min: [15.7, "C"]
+          max: [27.1, "C"]
+      - month: 9
+        temperatureRange:
+          min: [10.2, "C"]
+          max: [21.5, "C"]
+      - month: 10
+        temperatureRange:
+          min: [3.8, "C"]
+          max: [14.9, "C"]
+      - month: 11
+        temperatureRange:
+          min: [-3.8, "C"]
+          max: [5.0, "C"]
+      - month: 12
+        temperatureRange:
+          min: [-12.1, "C"]
+          max: [-3.6, "C"] 

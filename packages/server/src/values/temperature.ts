@@ -5,6 +5,6 @@ export class Temperature implements ITemperature {
 	@Column()
 	value!: number
 
-	@Column()
+	@Column('text')
 	unit!: TemperatureUnit
 }

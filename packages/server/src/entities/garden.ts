@@ -1,10 +1,9 @@
 import { Column, Entity, OneToMany } from 'typeorm'
 import { PeashootEntity } from './peashoot-entity'
-import { IGarden } from '@peashoot/types'
 import { GardenBed } from './garden-bed'
 
 @Entity({ name: 'garden' })
-export class Garden extends PeashootEntity<'grdn'> implements IGarden {
+export class Garden extends PeashootEntity<'grdn'> {
 	constructor() {
 		super('grdn')
 	}

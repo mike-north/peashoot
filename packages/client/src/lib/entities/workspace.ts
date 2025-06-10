@@ -1,14 +1,5 @@
-import type { Zone } from './zone'
-import { type Item } from './item'
 import type { GridPlacement } from '../../private/grid/grid-placement'
-import type { Indicator } from './indicator'
-
-export interface Workspace<T extends Item = Item> {
-	readonly id: string
-	zones: Zone<T>[]
-	/** New flexible indicator system that supports multiple items and sector-based visualization */
-	indicators: Indicator[]
-}
+import type { Item, ItemPlacement, Workspace, Zone } from '@peashoot/types'
 
 export function moveItemBetweenZonesAndCreateNewWorkspace(
 	workspace: Workspace,
@@ -30,9 +21,7 @@ export function moveItemBetweenZonesAndCreateNewWorkspace(
 
 	const updatedSourceZone = {
 		...sourceZone,
-		placements: sourceZone.placements.filter(
-			(p: GridPlacement<Item>) => p.id !== placement.id,
-		),
+		placements: sourceZone.placements.filter((p) => p.id !== placement.id),
 	}
 
 	const updatedTargetZone: Zone = {
@@ -41,11 +30,13 @@ export function moveItemBetweenZonesAndCreateNewWorkspace(
 			...targetZone.placements,
 			{
 				...placement,
-				x: newX,
-				y: newY,
+				position: {
+					x: newX,
+					y: newY,
+				},
 				sourceZoneId: targetZoneId,
 				item: placement.item,
-			} satisfies GridPlacement<Item>,
+			},
 		],
 	}
 
@@ -66,6 +57,6 @@ export function findZone(workspace: Workspace, zoneId: string): Zone | undefined
 export function findItemPlacement(
 	zone: Zone,
 	itemPlacementId: string,
-): GridPlacement<Item> | undefined {
-	return zone.placements.find((pp: GridPlacement<Item>) => pp.id === itemPlacementId)
+): ItemPlacement | undefined {
+	return zone.placements.find((pp) => pp.id === itemPlacementId)
 }

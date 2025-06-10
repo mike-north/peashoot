@@ -1,6 +1,6 @@
 <script lang="ts">
 import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement, GridPlaceable } from '../grid-placement'
+import type { GridPlaceable } from '../grid-placement'
 import { dragState as genericDragState } from '../../dnd/state'
 import {
 	isGridDragStatePopulated,
@@ -12,14 +12,15 @@ import type { WorkspaceDragState } from '../../../private/state/workspaceDragSta
 import { ZoneLayoutCalculator } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import type { GridArea } from '../grid-area'
+import type { Item, ItemPlacement } from '@peashoot/types'
 
 interface Props {
-	grids: GridArea<GridPlaceable>[]
+	grids: GridArea[]
 }
 
 const { grids }: Props = $props()
 
-let currentDragState = $derived($genericDragState as WorkspaceDragState<GridPlaceable>)
+let currentDragState = $derived($genericDragState as WorkspaceDragState<Item>)
 
 let draggedItemForPreview: GridPlaceable | null = $derived(null)
 let previewGridFootprintSize = $derived(1)
@@ -149,13 +150,14 @@ let previewPosition = $derived.by(() => {
 	>
 		{#if isGridDraggingExistingItem(currentDragState) && isGridPlaceable(currentDragState.draggedExistingItem.item)}
 			{@const itemToRender = currentDragState.draggedExistingItem.item}
-			{@const placementForTile: GridPlacement<GridPlaceable> = {
+			{@const placementForTile: ItemPlacement = {
 				id: currentDragState.draggedExistingItem.id,
-				x: currentDragState.draggedExistingItem.x,
-				y: currentDragState.draggedExistingItem.y,
-				size: itemToRender.size,
+				position: {
+					x: currentDragState.draggedExistingItem.x,
+					y: currentDragState.draggedExistingItem.y,
+				},
 				item: itemToRender,
-				sourceZoneId: currentDragState.draggedExistingItem.sourceZoneId
+				sourceZoneId: currentDragState.draggedExistingItem.sourceZoneId,
 			}}
 			<GridPlacementTile placement={placementForTile} sizePx={previewPosition.size} />
 			{#if currentDragState.isCloneMode}
@@ -163,11 +165,9 @@ let previewPosition = $derived.by(() => {
 			{/if}
 		{:else if isGridDraggingNewItem(currentDragState) && isGridPlaceable(currentDragState.draggedNewItem)}
 			{@const itemToRender = currentDragState.draggedNewItem}
-			{@const placementForTile: GridPlacement<GridPlaceable> = {
+			{@const placementForTile: ItemPlacement = {
 				id: 'preview',
-				x: 0,
-				y: 0,
-				size: itemToRender.size,
+				position: { x: 0, y: 0 },
 				item: itemToRender,
 				sourceZoneId: '',
 			}}

@@ -1,5 +1,5 @@
 export * from './repository.base'
 export * from './seed-packet.repository'
-export * from './garden.repository'
+export * from './workspace.repository'
 export * from './plant.repository'
 export * from './repository-factory'

@@ -1,37 +1,35 @@
 import { writable, derived } from 'svelte/store'
-import type { Workspace } from '../../lib/entities/workspace'
-import type { Item } from '../../lib/entities/item'
-import type { PlantMetadata } from '../../lib/entities/plant-metadata'
-import { getGardenRepository } from '../../lib/repositories/repository-factory'
+import { getWorkspaceRepository } from '../../lib/repositories/repository-factory'
+import type { Item, Workspace } from '@peashoot/types'
 
-interface GardenState {
-	gardens: Workspace[]
-	currentGarden: Workspace | null
+interface WorkspaceState {
+	workspaces: Workspace[]
+	currentWorkspace: Workspace | null
 	loading: boolean
 	error: string | null
 }
 
 // Get the appropriate repository based on current setting
-const gardenRepository = getGardenRepository()
+const workspaceRepository = getWorkspaceRepository()
 
-const initialState: GardenState = {
-	gardens: [],
-	currentGarden: null,
+const initialState: WorkspaceState = {
+	workspaces: [],
+	currentWorkspace: null,
 	loading: true,
 	error: null,
 }
 
 // Create the writable store
-const gardenState = writable<GardenState>(initialState)
+const gardenState = writable<WorkspaceState>(initialState)
 
 // Derived stores for convenience
-export const gardens = derived(gardenState, ($state) => $state.gardens)
-export const currentGarden = derived(gardenState, ($state) => $state.currentGarden)
+export const gardens = derived(gardenState, ($state) => $state.workspaces)
+export const currentGarden = derived(gardenState, ($state) => $state.currentWorkspace)
 export const gardensLoading = derived(gardenState, ($state) => $state.loading)
 export const gardensError = derived(gardenState, ($state) => $state.error)
 export const gardensReady = derived(
 	gardenState,
-	($state) => !$state.loading && $state.error === null && $state.gardens.length > 0,
+	($state) => !$state.loading && $state.error === null && $state.workspaces.length > 0,
 )
 
 // Function to load all gardens
@@ -39,10 +37,10 @@ export async function loadGardens(): Promise<void> {
 	gardenState.update((state) => ({ ...state, loading: true, error: null }))
 
 	try {
-		const gardensData = await gardenRepository.findAll()
+		const gardensData = await workspaceRepository.findAll()
 		gardenState.update((state) => ({
 			...state,
-			gardens: gardensData,
+			workspaces: gardensData,
 			loading: false,
 			error: null,
 		}))
@@ -62,13 +60,13 @@ export async function loadFirstGarden(): Promise<Workspace | null> {
 	gardenState.update((state) => ({ ...state, loading: true, error: null }))
 
 	try {
-		const gardensData = await gardenRepository.findAll()
+		const gardensData = await workspaceRepository.findAll()
 		const firstGarden = gardensData.length > 0 ? gardensData[0] : null
 
 		gardenState.update((state) => ({
 			...state,
-			gardens: gardensData,
-			currentGarden: firstGarden,
+			workspaces: gardensData,
+			currentWorkspace: firstGarden,
 			loading: false,
 			error: null,
 		}))
@@ -89,13 +87,13 @@ export async function loadFirstGarden(): Promise<Workspace | null> {
 // Function to get a garden by ID
 export async function fetchGardenById(id: string): Promise<Workspace | null> {
 	try {
-		const garden = await gardenRepository.findById(id)
+		const garden = await workspaceRepository.findById(id)
 
 		if (garden) {
 			// Update the current garden in the store
 			gardenState.update((state) => ({
 				...state,
-				currentGarden: garden,
+				currentWorkspace: garden,
 			}))
 		}
 
@@ -109,26 +107,28 @@ export async function fetchGardenById(id: string): Promise<Workspace | null> {
 // Function to save a garden
 export async function saveGarden(garden: Workspace): Promise<Workspace> {
 	try {
-		const savedGarden = await gardenRepository.save(garden)
+		const savedGarden = await workspaceRepository.save(garden)
 
 		// Update the store
 		gardenState.update((state) => {
-			const index = state.gardens.findIndex((g) => g.id === savedGarden.id)
+			const index = state.workspaces.findIndex((g) => g.id === savedGarden.id)
 
-			let updatedGardens = [...state.gardens]
+			let updatedGardens = [...state.workspaces]
 			if (index >= 0) {
 				// Update existing garden
 				updatedGardens[index] = savedGarden
 			} else {
 				// Add new garden
-				updatedGardens = [...state.gardens, savedGarden]
+				updatedGardens = [...state.workspaces, savedGarden]
 			}
 
 			return {
 				...state,
-				gardens: updatedGardens,
-				currentGarden:
-					state.currentGarden?.id === savedGarden.id ? savedGarden : state.currentGarden,
+				workspaces: updatedGardens,
+				currentWorkspace:
+					state.currentWorkspace?.id === savedGarden.id
+						? savedGarden
+						: state.currentWorkspace,
 			}
 		})
 
@@ -145,21 +145,22 @@ export async function saveGarden(garden: Workspace): Promise<Workspace> {
  */
 function updateGardenInStore(garden: Workspace): void {
 	gardenState.update((state) => {
-		const index = state.gardens.findIndex((g) => g.id === garden.id)
+		const index = state.workspaces.findIndex((g) => g.id === garden.id)
 
-		let updatedGardens = [...state.gardens]
+		let updatedGardens = [...state.workspaces]
 		if (index >= 0) {
 			// Update existing garden
 			updatedGardens[index] = garden
 		} else {
 			// Add new garden
-			updatedGardens = [...state.gardens, garden]
+			updatedGardens = [...state.workspaces, garden]
 		}
 
 		return {
 			...state,
-			gardens: updatedGardens,
-			currentGarden: state.currentGarden?.id === garden.id ? garden : state.currentGarden,
+			workspaces: updatedGardens,
+			currentWorkspace:
+				state.currentWorkspace?.id === garden.id ? garden : state.currentWorkspace,
 		}
 	})
 }
@@ -167,19 +168,19 @@ function updateGardenInStore(garden: Workspace): void {
 /**
  * Add a plant to a garden zone
  */
-export async function addPlantToGarden(
-	gardenId: string,
+export async function addItemToWorkspace(
+	workspaceId: string,
 	zoneId: string,
-	plant: Item<PlantMetadata>,
+	item: Item,
 	x: number,
 	y: number,
 ): Promise<boolean> {
 	try {
 		// Call repository method that updates the API
-		const updatedGarden = await gardenRepository.addPlantToGarden(
-			gardenId,
+		const updatedGarden = await workspaceRepository.addItemToWorkspace(
+			workspaceId,
 			zoneId,
-			plant,
+			item,
 			x,
 			y,
 		)
@@ -197,19 +198,19 @@ export async function addPlantToGarden(
 /**
  * Move a plant within a zone
  */
-export async function movePlantWithinZone(
+export async function moveItemWithinZone(
 	gardenId: string,
 	zoneId: string,
-	plantId: string,
+	itemId: string,
 	x: number,
 	y: number,
 ): Promise<boolean> {
 	try {
 		// Call repository method that updates the API
-		const updatedGarden = await gardenRepository.movePlantWithinZone(
+		const updatedGarden = await workspaceRepository.moveItemWithinZone(
 			gardenId,
 			zoneId,
-			plantId,
+			itemId,
 			x,
 			y,
 		)
@@ -219,29 +220,29 @@ export async function movePlantWithinZone(
 
 		return true
 	} catch (error) {
-		console.error('Error moving plant within zone:', error)
-		return false
+		console.error('Error moving item within zone:', error)
+		throw error
 	}
 }
 
 /**
  * Move a plant between zones
  */
-export async function movePlantBetweenZones(
+export async function moveItemBetweenZones(
 	gardenId: string,
 	sourceZoneId: string,
 	targetZoneId: string,
-	plantId: string,
+	itemId: string,
 	x: number,
 	y: number,
 ): Promise<boolean> {
 	try {
 		// Call repository method that updates the API
-		const updatedGarden = await gardenRepository.movePlantBetweenZones(
+		const updatedGarden = await workspaceRepository.moveItemBetweenZones(
 			gardenId,
 			sourceZoneId,
 			targetZoneId,
-			plantId,
+			itemId,
 			x,
 			y,
 		)
@@ -251,8 +252,8 @@ export async function movePlantBetweenZones(
 
 		return true
 	} catch (error) {
-		console.error('Error moving plant between zones:', error)
-		return false
+		console.error('Error moving item between zones:', error)
+		throw error
 	}
 }
 
@@ -266,7 +267,7 @@ export async function removePlantFromZone(
 ): Promise<boolean> {
 	try {
 		// Call repository method that updates the API
-		const updatedGarden = await gardenRepository.removePlantFromZone(
+		const updatedGarden = await workspaceRepository.removeItemFromZone(
 			gardenId,
 			zoneId,
 			plantId,
@@ -295,7 +296,7 @@ export async function clonePlant(
 ): Promise<boolean> {
 	try {
 		// Call repository method that updates the API
-		const updatedGarden = await gardenRepository.clonePlant(
+		const updatedGarden = await workspaceRepository.cloneItem(
 			gardenId,
 			sourceZoneId,
 			targetZoneId,
@@ -310,7 +311,7 @@ export async function clonePlant(
 		return true
 	} catch (error) {
 		console.error('Error cloning plant:', error)
-		return false
+		throw error
 	}
 }
 

@@ -1,10 +1,9 @@
-<script lang="ts" generics="T extends GridPlaceable">
-import type { GridPlaceable, GridPlacement } from '../grid-placement'
-import { rgbToCss } from '@peashoot/types'
+<script lang="ts">
+import { rgbToCss, type ItemPlacement } from '@peashoot/types'
 import { tooltip } from '../../../lib/tooltips/action'
 
-export interface GridPlacementTileProps<T extends GridPlaceable> {
-	placement: GridPlacement<T>
+export interface GridPlacementTileProps {
+	placement: ItemPlacement
 	sizePx: number // SVG width (cellWidth * size)
 	isPulsingSource?: boolean // Visual indicator for pending operations
 	showSizeBadge?: boolean // Only show size badge if true
@@ -17,10 +16,10 @@ let {
 	isPulsingSource = false,
 	showSizeBadge = false,
 	disableTooltip = false,
-}: GridPlacementTileProps<T> = $props()
+}: GridPlacementTileProps = $props()
 
 const item = $derived(placement.item)
-const itemSize = $derived(placement.size)
+const itemSize = $derived(placement.item.size)
 const iconDisplaySize = $derived(sizePx * 0.9)
 
 // Tile element reference

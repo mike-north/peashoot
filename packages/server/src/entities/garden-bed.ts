@@ -1,11 +1,10 @@
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
 import { PeashootEntity } from './peashoot-entity'
-import { IGardenBed } from '@peashoot/types'
 import { Garden } from './garden'
 import { PlantPlacement } from './plant-placement'
 
 @Entity({ name: 'garden-beds' })
-export class GardenBed extends PeashootEntity<'gbed'> implements IGardenBed {
+export class GardenBed extends PeashootEntity<'gbed'> {
 	constructor() {
 		super('gbed')
 	}
@@ -14,10 +13,10 @@ export class GardenBed extends PeashootEntity<'gbed'> implements IGardenBed {
 	name!: string
 
 	@Column({ type: 'int' })
-	rows!: number
+	width!: number
 
 	@Column({ type: 'int' })
-	columns!: number
+	height!: number
 
 	@Column()
 	description!: string
@@ -26,5 +25,5 @@ export class GardenBed extends PeashootEntity<'gbed'> implements IGardenBed {
 	garden!: Garden
 
 	@OneToMany(() => PlantPlacement, (placement) => placement.bed)
-	plantPlacements!: PlantPlacement[]
+	placements!: PlantPlacement[]
 }

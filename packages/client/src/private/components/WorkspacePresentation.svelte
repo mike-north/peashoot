@@ -3,7 +3,7 @@ import { dragState } from '../../private/dnd/state'
 import GridViewToolbar from '../grid/components/GridViewToolbar.svelte'
 import DeleteZone from '../../private/grid/ui/DeleteZone.svelte'
 import DragPreview from '../../private/grid/ui/DragPreview.svelte'
-import type { Workspace } from '../../lib/entities/workspace'
+import { isItem, isItemPlacement, type Workspace } from '@peashoot/types'
 import { calculateZoneViewColSpans } from '../grid/zone-layout-calculator'
 import type {
 	PlacementRequestDetails,
@@ -16,8 +16,7 @@ import {
 	updatePendingOperation,
 	removePendingOperation,
 } from '../../private/dnd/validation'
-import { plants } from '../../lib/state/plants.store'
-import { isGridPlaceable, isGridPlacement } from '../../private/grid/grid-placement'
+import { plants } from '../../lib/state/items.store'
 import ZoneGrid from '../grid/components/ZoneGrid.svelte'
 import HorizontalBarMeter from '../../components/HorizontalBarMeter.svelte'
 import IdLabel from '../../lib/components/IdLabel.svelte'
@@ -76,8 +75,9 @@ async function handleDrop(dropInfo: {
 	if (sourceZoneId && dropInfo.targetType === 'delete-zone' && draggedExistingItem) {
 		// Cast to ExistingWorkspaceItem to access x and y coordinates
 
-		if (!isGridPlacement(draggedExistingItem, isGridPlaceable))
+		if (!isItemPlacement(draggedExistingItem)) {
 			throw new Error('Dragged item is not a grid placeable')
+		}
 
 		// Create pending operation for removal
 		const pendingOpId = addPendingOperation({
@@ -86,8 +86,8 @@ async function handleDrop(dropInfo: {
 			zoneId: sourceZoneId,
 			item: draggedExistingItem.item,
 			size: safeGetItemSize(draggedExistingItem.item),
-			x: draggedExistingItem.x,
-			y: draggedExistingItem.y,
+			x: draggedExistingItem.position.x,
+			y: draggedExistingItem.position.y,
 			originalSourceZoneId: sourceZoneId,
 			originalInstanceId: draggedExistingItem.id,
 		})
@@ -121,8 +121,9 @@ async function handleDrop(dropInfo: {
 		if (sourceZoneId && draggedExistingItem) {
 			const existingItem = draggedExistingItem
 			const sourceZoneIdValue = sourceZoneId
-			if (!isGridPlacement(existingItem, isGridPlaceable))
+			if (!isItemPlacement(existingItem)) {
 				throw new Error('Dragged item is not a grid placeable')
+			}
 
 			if (dropInfo.isCloneMode) {
 				// Create pending operation for cloning
@@ -144,8 +145,8 @@ async function handleDrop(dropInfo: {
 							itemDataToClone: existingItem.item,
 							sourceOriginalZoneId: sourceZoneIdValue,
 							targetCloneZoneId: dropInfo.targetZoneId,
-							sourceOriginalX: existingItem.x,
-							sourceOriginalY: existingItem.y,
+							sourceOriginalX: existingItem.position.x,
+							sourceOriginalY: existingItem.position.y,
 							targetCloneX: x,
 							targetCloneY: y,
 							operationType: 'item-clone-in-zone',
@@ -216,9 +217,9 @@ async function handleDrop(dropInfo: {
 			})
 
 			try {
-				if (!isGridPlaceable(currentDragState.draggedNewItem))
-					throw new Error('Dragged item is not a grid placeable')
-
+				if (!isItem(currentDragState.draggedNewItem)) {
+					throw new Error('Dragged item is not a valid item')
+				}
 				await onRequestPlacement(
 					{
 						itemData: currentDragState.draggedNewItem,
@@ -244,8 +245,8 @@ async function handleDrop(dropInfo: {
 
 // Function to safely get item size, avoiding validation errors
 function safeGetItemSize(item: WithId): number {
-	if (!isGridPlaceable(item)) {
-		console.warn('Item is not a grid placeable', item)
+	if (!isItem(item)) {
+		console.warn('Item is not an item', item)
 		return 1
 	}
 	return item.size
@@ -327,7 +328,7 @@ const getColSpanClass = (zoneId: string) => {
 						<div class="meters-row">
 							<HorizontalBarMeter
 								id={`${zone.id}-water`}
-								value={zone.waterLevel}
+								value={2}
 								max={5}
 								filledColor="#3498db"
 								emptyColor="#3498db22"
@@ -337,7 +338,7 @@ const getColSpanClass = (zoneId: string) => {
 							/>
 							<HorizontalBarMeter
 								id={`${zone.id}-sun`}
-								value={zone.sunLevel}
+								value={3}
 								max={5}
 								filledColor="#FFD600"
 								emptyColor="#FFD60022"

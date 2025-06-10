@@ -9,10 +9,10 @@ import {
 	isGridItemRemovalOperation,
 } from '../src/private/grid/grid-drag-state.js'
 import type { PendingOperation } from '../src/private/dnd/types.js'
-import type { GridPlacement, GridPlaceable } from '../src/private/grid/grid-placement.js'
+import type { Item, ItemPlacement } from '@peashoot/types'
 
 describe('Grid Drag State', () => {
-	interface TestItem extends GridPlaceable {
+	interface TestItem extends Item {
 		name: string
 	}
 
@@ -21,6 +21,8 @@ describe('Grid Drag State', () => {
 		name: `Test Item ${id}`,
 		displayName: `Test Item ${id}`,
 		size,
+		category: 'test',
+		variant: 'test',
 		presentation: {
 			iconPath: '/icons/test.svg',
 			accentColor: { red: 255, green: 0, blue: 0 },
@@ -33,13 +35,11 @@ describe('Grid Drag State', () => {
 		x: number,
 		y: number,
 		sourceZoneId: string,
-	): GridPlacement<TestItem> => ({
+	): ItemPlacement => ({
 		id,
 		item,
 		sourceZoneId,
-		x,
-		y,
-		size: item.size,
+		position: { x, y },
 	})
 
 	describe('Grid Drag State Type Guards', () => {

@@ -1,8 +1,7 @@
 <script lang="ts">
-import { rgbToCss } from '@peashoot/types'
+import { isPlantMetadata, rgbToCss } from '@peashoot/types'
 import { type GridPlaceable } from '../private/grid/grid-placement'
 import { isItemWithMetadata } from './entities/item'
-import { isPlantMetadata } from './entities/plant-metadata'
 import IdLabel from './components/IdLabel.svelte'
 
 export interface Props {
@@ -12,6 +11,10 @@ export interface Props {
 let { item }: Props = $props()
 
 const itemData = $derived(isItemWithMetadata(item, isPlantMetadata) ? item : null)
+
+const plantMetadata = $derived(
+	isPlantMetadata(itemData?.metadata) ? itemData.metadata : null,
+)
 </script>
 
 <style lang="scss">
@@ -22,7 +25,7 @@ const itemData = $derived(isItemWithMetadata(item, isPlantMetadata) ? item : nul
 }
 </style>
 
-{#if itemData}
+{#if itemData && plantMetadata}
 	<div class="item-tooltip-content">
 		<div class="item-tooltip-content__header flex items-center gap-3 mb-3">
 			{#if item?.presentation?.iconPath}
@@ -41,7 +44,8 @@ const itemData = $derived(isItemWithMetadata(item, isPlantMetadata) ? item : nul
 				</p>
 				<p class="text-xs text-gray-500 italic">Family: {itemData.category}</p>
 				<p class="text-xs text-gray-500 italic">
-					Planting Distance: {itemData.metadata.plantingDistanceInFeet} feet
+					Planting Distance: {plantMetadata.plantingDistance.value}
+					{plantMetadata.plantingDistance.unit}
 				</p>
 				{#if itemData}
 					<p class="text-xs text-gray-500 italic">Category: {itemData.category}</p>

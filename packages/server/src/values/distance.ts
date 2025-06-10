@@ -1,16 +1,10 @@
 import { IDistance } from '@peashoot/types'
 import { Column } from 'typeorm'
 
-export enum DistanceUnit {
-	Inches = 'inches',
-	Feet = 'feet',
-	Yards = 'yards',
-	Meters = 'meters',
-	Centimeters = 'centimeters',
-}
+export type DistanceUnit = 'inches' | 'feet' | 'yards' | 'meters' | 'centimeters'
 
 export function isDistanceUnit(value: string): value is DistanceUnit {
-	return Object.values(DistanceUnit).includes(value as DistanceUnit)
+	return ['inches', 'feet', 'yards', 'meters', 'centimeters'].includes(value)
 }
 
 export function stringToDistanceUnit(value: string): DistanceUnit {

@@ -1,21 +1,11 @@
 import { Entity, Column, OneToMany } from 'typeorm'
 import { Plant } from './plant'
 import { PeashootEntity } from './peashoot-entity'
-import { IDistance, ISeedPacket, ISeedPacketPresentation } from '@peashoot/types'
-import { RGBColor } from '../values/rgb-color'
 import { Distance } from '../values/distance'
-
-@Entity()
-export class SeedPacketPresentation implements ISeedPacketPresentation {
-	@Column(() => RGBColor)
-	accentColor!: RGBColor
-
-	@Column()
-	iconPath!: string
-}
+import { Presentation } from './presentation'
 
 @Entity({ name: 'seed-packets' })
-export class SeedPacket extends PeashootEntity<'spkt'> implements ISeedPacket {
+export class SeedPacket extends PeashootEntity<'spkt'> {
 	constructor() {
 		super('spkt')
 	}
@@ -33,6 +23,9 @@ export class SeedPacket extends PeashootEntity<'spkt'> implements ISeedPacket {
 	quantity!: number
 
 	@Column()
+	category!: string
+
+	@Column()
 	netWeightGrams!: number
 
 	@Column()
@@ -44,12 +37,12 @@ export class SeedPacket extends PeashootEntity<'spkt'> implements ISeedPacket {
 	@Column()
 	plantFamily!: string
 
-	@Column(() => SeedPacketPresentation)
-	presentation!: SeedPacketPresentation
+	@Column(() => Presentation)
+	presentation!: Presentation
 
 	@Column()
 	expiresAt!: Date
 
 	@Column(() => Distance)
-	plantingDistance!: IDistance
+	plantingDistance!: Distance
 }

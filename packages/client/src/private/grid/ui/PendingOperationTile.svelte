@@ -1,6 +1,5 @@
-<script lang="ts" generics="T extends WithVisualPresentation">
+<script lang="ts">
 import GridPlacementTile from './GridPlacementTile.svelte'
-import type { GridPlacement, WithVisualPresentation } from '../grid-placement'
 import {
 	OPERATION_PROGRESS_ANIMATION_DELAY_MS,
 	OPERATION_COMPLETION_DISPLAY_DURATION_MS,
@@ -9,13 +8,15 @@ import CheckIcon from '~icons/ph/check-bold'
 import XIcon from '~icons/ph/x-bold'
 import TrashIcon from '~icons/ph/trash-duotone'
 import type { GridPendingOperation } from '../grid-drag-state'
+import type { ItemPlacement } from '@peashoot/types'
+import type { GridPlaceable } from '../grid-placement'
 
-interface Props<T extends WithVisualPresentation> {
-	operation: GridPendingOperation<T>
+interface Props {
+	operation: GridPendingOperation<GridPlaceable>
 	sizePx: number
 }
 
-let { operation, sizePx }: Props<T> = $props()
+let { operation, sizePx }: Props = $props()
 
 // Create a GridPlacement for display
 const placementForDisplay = $derived(
@@ -27,12 +28,17 @@ const placementForDisplay = $derived(
 
 		return {
 			id: `pending-${operation.id}`,
-			x: operation.x || 0,
-			y: operation.y || 0,
-			size: operation.item.size,
-			item: displayItem,
+			position: {
+				x: operation.x || 0,
+				y: operation.y || 0,
+			},
+			item: {
+				...displayItem,
+				category: '',
+				variant: '',
+			},
 			sourceZoneId: operation.zoneId,
-		} satisfies GridPlacement<WithVisualPresentation>
+		} satisfies ItemPlacement
 	})(),
 )
 

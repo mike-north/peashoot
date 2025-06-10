@@ -1,17 +1,10 @@
-import type { Location } from '../entities/location'
+import {
+	CalculateDateResponseSchema,
+	LocationSchema,
+	type CalculateDateRequest,
+	type Location,
+} from '@peashoot/types'
 import { Repository } from './repository.base'
-
-interface CalculateDateRequest {
-	locationId: string
-	temperature: {
-		value: number
-		unit: 'C' | 'F'
-	}
-}
-
-interface CalculateDateResponse {
-	date: string
-}
 
 export class LocationTemperatureDataRepository extends Repository<Location, string> {
 	constructor() {
@@ -19,11 +12,7 @@ export class LocationTemperatureDataRepository extends Repository<Location, stri
 	}
 
 	protected toDomainEntity(resource: unknown): Location {
-		return resource as Location
-	}
-
-	protected toResource(entity: Location): unknown {
-		return entity
+		return LocationSchema.parse(resource)
 	}
 
 	protected getEndpoint(): string {
@@ -50,8 +39,7 @@ export class LocationTemperatureDataRepository extends Repository<Location, stri
 			if (!response.ok) {
 				throw new Error('Failed to calculate date')
 			}
-
-			const result = (await response.json()) as CalculateDateResponse
+			const result = CalculateDateResponseSchema.parse(await response.json())
 			return new Date(result.date)
 		} catch (error) {
 			console.error('Error calculating date:', error)

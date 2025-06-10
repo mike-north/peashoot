@@ -7,13 +7,6 @@ import Ajv, { AnySchema } from 'ajv'
 import _, * as ld from 'lodash'
 import { SeedPacket } from './entities/seed-packet'
 import { AppDataSource } from './data-source'
-import {
-	GardenBedSchema,
-	GardenSchema,
-	PlantPlacementSchema,
-	PlantSchema,
-	SeedPacketSchema,
-} from '@peashoot/types'
 import { Plant } from './entities/plant'
 import { stringToDistanceUnit } from './values/distance'
 import { Garden } from './entities/garden'
@@ -71,10 +64,18 @@ export async function loadSeedsIntoDb(logger: Logger) {
 	const repo = AppDataSource.getRepository(SeedPacket)
 	const packets = readSeedDataFile(logger)
 	for (const pkt of packets) {
-		const seedPacketParams = SeedPacketSchema.parse({
+		let packet = repo.create({
 			name: pkt.commonName,
 			description: pkt.description ?? '',
-			iconPath: `${ld.kebabCase([pkt.plantFamily, pkt.commonName].join('-'))}.png`,
+			presentation: {
+				accentColor: {
+					red: pkt.presentation.accentColor.red,
+					green: pkt.presentation.accentColor.green,
+					blue: pkt.presentation.accentColor.blue,
+				},
+				iconPath: `${ld.kebabCase([pkt.plantFamily, pkt.commonName].join('-'))}.png`,
+			},
+			category: pkt.plantFamily,
 			plantingInstructions: pkt.plantingInstructions ?? '',
 			quantity: pkt.seedPacketInfo?.seedCount ?? 100,
 			netWeightGrams: (pkt.seedPacketInfo?.ntWeightInOz ?? 1) * 28.3495,
@@ -88,16 +89,7 @@ export async function loadSeedsIntoDb(logger: Logger) {
 				Date.now() +
 					(pkt.seedPacketInfo?.viabilityYears ?? 1) * 365 * 24 * 60 * 60 * 1000,
 			),
-			presentation: {
-				accentColor: {
-					red: pkt.presentation.accentColor.red,
-					green: pkt.presentation.accentColor.green,
-					blue: pkt.presentation.accentColor.blue,
-				},
-				iconPath: pkt.presentation.iconPath,
-			},
 		})
-		let packet = repo.create(seedPacketParams)
 		packet = await repo.save(packet)
 		logger.info('Seed packet saved', { pkt: packet.name, id: packet.id })
 	}
@@ -111,7 +103,7 @@ export async function generatePlants(logger: Logger) {
 	for (const packet of packets) {
 		const variant = _.kebabCase(packet.name)
 		const iconPath = `${packet.plantFamily}-${variant}.png`
-		const plantParams = PlantSchema.parse({
+		const plant = plantRepo.create({
 			seedPacket: packet,
 			name: packet.name,
 			description: packet.description,
@@ -122,7 +114,6 @@ export async function generatePlants(logger: Logger) {
 			iconPath,
 			accentColor: packet.presentation.accentColor,
 		})
-		const plant = plantRepo.create(plantParams)
 		await plantRepo.save(plant)
 		logger.info('Plant saved', { plant: plant.name, id: plant.id })
 	}
@@ -134,59 +125,55 @@ async function createGarden(logger: Logger) {
 	const plantRepo = AppDataSource.getRepository(Plant)
 	const plantPlacementRepo = AppDataSource.getRepository(PlantPlacement)
 
-	const gardenParams = GardenSchema.parse({
+	let garden = gardenRepo.create({
 		name: 'My Garden',
 		description: 'My garden',
 		beds: [],
 	})
-	let garden = gardenRepo.create(gardenParams)
 	garden = await gardenRepo.save(garden)
 	logger.info('Garden saved', { garden: garden.name, id: garden.id })
 
-	const bedParams1 = GardenBedSchema.parse({
+	let bed1 = bedRepo.create({
 		name: 'Bed 1',
 		description: 'My first raised bed',
 		garden,
-		rows: 4,
-		columns: 4,
+		height: 4,
+		width: 4,
 	})
-	let bed1 = bedRepo.create(bedParams1)
 	bed1 = await bedRepo.save(bed1)
 	logger.info('Bed saved', { bed: bed1.name, id: bed1.id })
-	const bedParams2 = GardenBedSchema.parse({
+	let bed2 = bedRepo.create({
 		name: 'Bed 2',
 		description: 'My second raised bed',
 		garden,
-		rows: 4,
-		columns: 4,
+		width: 4,
+		height: 4,
 	})
-	let bed2 = bedRepo.create(bedParams2)
 	bed2 = await bedRepo.save(bed2)
 	logger.info('Bed saved', { bed: bed2.name, id: bed2.id })
 
 	const [plant1, plant2] = await plantRepo.find({ take: 2 })
 
-	const plantPlacement1Params = PlantPlacementSchema.parse({
-		plant: plant1,
+	let placement1 = plantPlacementRepo.create({
+		item: plant1,
 		bed: bed1,
 		position: {
 			x: 0,
 			y: 0,
 		},
+		sourceZoneId: bed1.id,
 	})
-
-	const plantPlacement2Params = PlantPlacementSchema.parse({
-		plant: plant2,
+	placement1 = await plantPlacementRepo.save(placement1)
+	logger.info('Plant placement saved', { placement: placement1.id })
+	let placement2 = plantPlacementRepo.create({
+		item: plant2,
 		bed: bed2,
 		position: {
 			x: 0,
 			y: 0,
 		},
+		sourceZoneId: bed2.id,
 	})
-	let placement1 = plantPlacementRepo.create(plantPlacement1Params)
-	placement1 = await plantPlacementRepo.save(placement1)
-	logger.info('Plant placement saved', { placement: placement1.id })
-	let placement2 = plantPlacementRepo.create(plantPlacement2Params)
 	placement2 = await plantPlacementRepo.save(placement2)
 	logger.info('Plant placement saved', { placement: placement2.id })
 }

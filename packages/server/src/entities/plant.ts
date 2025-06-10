@@ -1,13 +1,13 @@
-import { Entity, Column, ManyToOne } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
 import { SeedPacket } from './seed-packet'
 import { PeashootEntity } from './peashoot-entity'
-import { IDistance, IPlant, IRGBColor } from '@peashoot/types'
 import { PlantPlacement } from './plant-placement'
 import { RGBColor } from '../values/rgb-color'
 import { Distance } from '../values/distance'
+import { Presentation } from './presentation'
 
 @Entity({ name: 'plants' })
-export class Plant extends PeashootEntity<'plant'> implements IPlant {
+export class Plant extends PeashootEntity<'plant'> {
 	constructor() {
 		super('plant')
 	}
@@ -15,11 +15,11 @@ export class Plant extends PeashootEntity<'plant'> implements IPlant {
 	@ManyToOne(() => SeedPacket, (seedPacket) => seedPacket.plants, { nullable: false })
 	seedPacket!: SeedPacket
 
-	@ManyToOne(() => PlantPlacement, (placement) => placement.plant)
+	@OneToMany(() => PlantPlacement, (placement) => placement.item)
 	placements!: PlantPlacement[]
 
 	@Column(() => RGBColor)
-	accentColor!: IRGBColor
+	accentColor!: RGBColor
 
 	@Column({ nullable: false }) iconPath!: string
 	@Column({ nullable: false }) variant!: string
@@ -28,5 +28,8 @@ export class Plant extends PeashootEntity<'plant'> implements IPlant {
 	@Column({ nullable: false }) family!: string
 	@Column({ nullable: false }) description!: string
 	@Column(() => Distance)
-	plantingDistance!: IDistance
+	plantingDistance!: Distance
+
+	@Column(() => Presentation)
+	presentation!: Presentation
 }

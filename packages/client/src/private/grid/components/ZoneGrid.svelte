@@ -17,7 +17,6 @@ import { disablePointerEventsWhenDragging } from '../actions/disablePointerEvent
 
 import type { GridPlaceable } from '../grid-placement'
 import { isGridPlaceable } from '../grid-placement'
-import type { Zone } from '../../../lib/entities/zone'
 import { isGridPendingOperation, type GridPendingOperation } from '../grid-drag-state'
 import {
 	ZoneLayoutCalculator,
@@ -27,6 +26,7 @@ import type { Indicator } from '../../../lib/entities/indicator'
 import { tooltip } from '../../../lib/tooltips/action'
 import IndicatorSemicircle from './IndicatorSemicircle.svelte'
 import type { WithId } from '../../../lib/entities/with-id'
+import type { Zone } from '@peashoot/types'
 
 // Define a type for the operation that should cause pulsing
 type PulsingSourceOperation = GridPendingOperation<GridPlaceable> & {
@@ -66,7 +66,7 @@ let pendingSourcePlantIds = $derived(
 )
 
 // Instantiate the layout calculator
-const layout = new ZoneLayoutCalculator<GridPlaceable>({
+const layout = new ZoneLayoutCalculator({
 	width: zone.width,
 	height: zone.height,
 	...DEFAULT_LAYOUT_PARAMS, // Use shared constants
@@ -102,7 +102,7 @@ function isValidPlacement(x: number, y: number, size: number): boolean {
 }
 
 const indicatorVisuals = $derived(
-	calculateIndicatorVisuals<GridPlaceable>(indicators, gridPlacements, layout),
+	calculateIndicatorVisuals(indicators, gridPlacements, layout),
 )
 
 interface TileStyleProps {
@@ -397,22 +397,22 @@ const draggedGridItemEffectiveSize = $derived(
 						></div>
 					{/if}
 					{#each gridPlacements as placement (placement.id)}
-						{@const itemDataSize = placement.size}
+						{@const itemDataSize = placement.item.size}
 						{@const tileLayout = layout.getTileLayoutInfo({
-							x: placement.x,
-							y: placement.y,
+							x: placement.position.x,
+							y: placement.position.y,
 							size: itemDataSize,
 						})}
 						{@const overlayLayout = layout.getTileOverlayLayoutInfo({
-							x: placement.x,
-							y: placement.y,
+							x: placement.position.x,
+							y: placement.position.y,
 							size: itemDataSize,
 							strokeWidth: 2,
 						})}
 
 						{@const corners = layout.getTileFrameCornerPositions({
-							x: placement.x,
-							y: placement.y,
+							x: placement.position.x,
+							y: placement.position.y,
 							size: itemDataSize,
 							bedWidth: zone.width,
 							bedHeight: zone.height,

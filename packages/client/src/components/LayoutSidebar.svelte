@@ -13,7 +13,7 @@ const { ...rest }: Partial<Record<string, string>> = $props()
 	object-fit: contain;
 }
 #layout-sidebar {
-	width: 300px !important;
+	width: 180px !important;
 	background: rgba(231, 240, 225);
 }
 </style>

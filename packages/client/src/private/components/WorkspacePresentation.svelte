@@ -257,7 +257,7 @@ const getColSpanClass = (zoneId: string) => {
 	const colSpan = zoneCardColSpans[zoneId] ?? 1
 	switch (colSpan) {
 		case 1:
-			return 'col-span-1'
+			return 'col-span-2'
 		case 2:
 			return 'col-span-2'
 		case 3:

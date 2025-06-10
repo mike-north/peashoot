@@ -1,22 +1,24 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
 import { PeashootEntity } from './peashoot-entity'
-import { IPlantPlacement } from '@peashoot/types'
 import { GardenBed } from './garden-bed'
-import { Plant } from './plant'
 import { XYCoordinate } from '../values/xy-coordinate'
+import { Plant } from './plant'
 
 @Entity({ name: 'plant-placements' })
-export class PlantPlacement extends PeashootEntity<'plcmnt'> implements IPlantPlacement {
+export class PlantPlacement extends PeashootEntity<'plcmnt'> {
 	constructor() {
 		super('plcmnt')
 	}
 
-	@ManyToOne(() => GardenBed, (gardenBed) => gardenBed.plantPlacements)
+	@ManyToOne(() => GardenBed, (gardenBed) => gardenBed.placements)
 	bed!: GardenBed
 
 	@ManyToOne(() => Plant, (plant) => plant.placements, { nullable: false })
-	plant!: Plant
+	item!: Plant
 
 	@Column(() => XYCoordinate)
 	position!: XYCoordinate
+
+	@Column()
+	sourceZoneId!: string
 }

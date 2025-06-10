@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import type { GridArea } from '../src/private/grid/grid-area.js'
-import type { GridPlaceable, GridPlacement } from '../src/private/grid/grid-placement.js'
+import type { Item, ItemPlacement } from '@peashoot/types'
 
 describe('Grid Area', () => {
-	interface TestItem extends GridPlaceable {
+	interface TestItem extends Item {
 		name: string
 	}
 
@@ -12,6 +12,8 @@ describe('Grid Area', () => {
 		name: `Test Item ${id}`,
 		displayName: `Test Item ${id}`,
 		size,
+		category: 'test',
+		variant: 'test',
 		presentation: {
 			iconPath: '/icons/test.svg',
 			accentColor: { red: 255, green: 0, blue: 0 },
@@ -24,18 +26,16 @@ describe('Grid Area', () => {
 		x: number,
 		y: number,
 		sourceZoneId: string,
-	): GridPlacement<TestItem> => ({
+	): ItemPlacement => ({
 		id,
 		item,
 		sourceZoneId,
-		x,
-		y,
-		size: item.size,
+		position: { x, y },
 	})
 
 	describe('Grid Area Properties', () => {
 		it('allows valid grid area creation', () => {
-			const area: GridArea<TestItem> = {
+			const area: GridArea = {
 				id: 'area-1',
 				width: 10,
 				height: 10,
@@ -53,7 +53,7 @@ describe('Grid Area', () => {
 			const item1 = createTestItem('item-1', 1)
 			const item2 = createTestItem('item-2', 2)
 
-			const area: GridArea<TestItem> = {
+			const area: GridArea = {
 				id: 'area-1',
 				width: 10,
 				height: 10,
@@ -72,7 +72,7 @@ describe('Grid Area', () => {
 	describe('Grid Area Constraints', () => {
 		it('validates placement boundaries', () => {
 			const item = createTestItem('item-1', 2)
-			const area: GridArea<TestItem> = {
+			const area: GridArea = {
 				id: 'area-1',
 				width: 3,
 				height: 3,
@@ -106,7 +106,7 @@ describe('Grid Area', () => {
 			const mediumItem = createTestItem('medium', 2)
 			const largeItem = createTestItem('large', 3)
 
-			const area: GridArea<TestItem> = {
+			const area: GridArea = {
 				id: 'area-1',
 				width: 5,
 				height: 5,
@@ -118,15 +118,15 @@ describe('Grid Area', () => {
 			}
 
 			expect(area.placements).toHaveLength(3)
-			expect(area.placements[0].size).toBe(1)
-			expect(area.placements[1].size).toBe(2)
-			expect(area.placements[2].size).toBe(3)
+			expect(area.placements[0].item.size).toBe(1)
+			expect(area.placements[1].item.size).toBe(2)
+			expect(area.placements[2].item.size).toBe(3)
 		})
 	})
 
 	describe('Grid Area Operations', () => {
 		it('allows adding and removing placements', () => {
-			const area: GridArea<TestItem> = {
+			const area: GridArea = {
 				id: 'area-1',
 				width: 10,
 				height: 10,
@@ -148,7 +148,7 @@ describe('Grid Area', () => {
 
 		it('allows updating placement properties', () => {
 			const item = createTestItem('item-1', 1)
-			const area: GridArea<TestItem> = {
+			const area: GridArea = {
 				id: 'area-1',
 				width: 10,
 				height: 10,
@@ -163,8 +163,8 @@ describe('Grid Area', () => {
 			}
 			area.placements[0] = updatedPlacement
 
-			expect(area.placements[0].x).toBe(1)
-			expect(area.placements[0].y).toBe(1)
+			expect(area.placements[0].position.x).toBe(1)
+			expect(area.placements[0].position.y).toBe(1)
 		})
 	})
 })

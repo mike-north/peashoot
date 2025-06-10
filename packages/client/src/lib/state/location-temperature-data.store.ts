@@ -1,6 +1,6 @@
 import { writable, get } from 'svelte/store'
 import { LocationTemperatureDataRepository } from '../repositories/location-temperature-data.repository'
-import type { Location } from '../entities/location'
+import type { Location } from '@peashoot/types'
 
 interface LocationTemperatureDataState {
 	locations: Location[]

@@ -1,6 +1,5 @@
 <script lang="ts">
 import WorkspacePresentation from './WorkspacePresentation.svelte'
-import type { Workspace } from '../../lib/entities/workspace'
 import { findZone, findItemPlacement } from '../../lib/entities/workspace'
 import { setContext } from 'svelte'
 import {
@@ -22,10 +21,10 @@ import {
 	showError,
 	showInfo,
 } from '../state/notificationsStore'
-import { isItemWithMetadata, type Item } from '../../lib/entities/item'
-import { isPlantMetadata, type PlantMetadata } from '../../lib/entities/plant-metadata'
+import { isItemWithMetadata } from '../../lib/entities/item'
 import type { IWorkspaceController } from '../../lib/controllers/workspace-controller'
 import type { ValidationResult } from '../../lib/types/validation'
+import { isPlantMetadata, type Item, type Workspace } from '@peashoot/types'
 
 export type AddNewItemHandler<TItem extends GridPlaceable & Item> = (
 	zoneId: string,
@@ -104,7 +103,7 @@ function handleAsyncValidationError(errorMessage: string) {
 async function handleMoveItemToDifferentZone(
 	sourceZoneId: string,
 	targetZoneId: string,
-	existingItem: ExistingWorkspaceItem<Item<PlantMetadata>>,
+	existingItem: ExistingWorkspaceItem<Item>,
 	newX: number,
 	newY: number,
 ) {
@@ -139,7 +138,7 @@ async function handleMoveItemToDifferentZone(
 		return
 	}
 
-	const gridPlacementArg: GridPlacement<Item<PlantMetadata>> = {
+	const gridPlacementArg: GridPlacement<Item> = {
 		id: existingItem.id,
 		x: existingItem.x,
 		y: existingItem.y,
@@ -201,12 +200,13 @@ async function handleRequestPlacement(
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
-	let validatedItem: Item<PlantMetadata>
+	let validatedItem: Item
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
 		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
 			validatedItem = rawValidatedItem
 		} else {
+			console.error('Item is not a plant item', rawValidatedItem)
 			throw new Error('Item is not a plant item')
 		}
 	} catch (error) {
@@ -329,10 +329,10 @@ async function handleRequestPlacement(
 					throw new Error('Original item not found')
 				}
 
-				const existingItem: ExistingWorkspaceItem<Item<PlantMetadata>> = {
+				const existingItem: ExistingWorkspaceItem<Item> = {
 					id: details.originalInstanceId,
-					x: originalItem.x,
-					y: originalItem.y,
+					x: originalItem.position.x,
+					y: originalItem.position.y,
 					item: validatedItem, // Use the validated item here!
 					size: validatedItem.size,
 					sourceZoneId: details.sourceZoneId,
@@ -391,7 +391,7 @@ async function handleRequestRemoval(
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
-	let validatedItem: Item<PlantMetadata>
+	let validatedItem: Item
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemData)
 		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
@@ -497,7 +497,7 @@ async function handleRequestCloning(
 	pendingOpId?: string,
 ): Promise<void> {
 	// First ensure the item data is valid before any operations
-	let validatedItem: Item<PlantMetadata>
+	let validatedItem: Item
 	try {
 		const rawValidatedItem = itemAdapter.validateAndCastItem(details.itemDataToClone)
 		if (isItemWithMetadata(rawValidatedItem, isPlantMetadata)) {
@@ -572,15 +572,15 @@ async function handleRequestCloning(
 					details.targetCloneY,
 				)
 
-				console.log('Clone operation completed successfully')
-
-				// Update pending operation to success
+				// Update pending operation to success only after the operation succeeds
 				if (pendingOpId) {
 					updatePendingOperation(pendingOpId, 'success')
 					setTimeout(() => {
 						removePendingOperation(pendingOpId)
 					}, OPERATION_COMPLETION_DISPLAY_DURATION_MS)
 				}
+
+				console.log('Clone operation completed successfully')
 			} catch (cloneError) {
 				console.error('Error in handleCloneItem:', cloneError)
 				handleAsyncValidationError(

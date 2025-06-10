@@ -13,7 +13,10 @@ export abstract class Repository<T extends { id: string }, ID extends string | n
 	/**
 	 * Abstract method to convert an API resource to a domain entity
 	 */
-	protected abstract toResource(entity: T): unknown
+	protected toResource(entity: T): unknown {
+		// Return the entity directly, or transform it for the API if needed
+		return entity
+	}
 
 	/**
 	 * Get the endpoint path for this repository

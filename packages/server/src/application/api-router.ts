@@ -14,11 +14,10 @@ export function createRouter(logger: Logger): Router {
 	router.use(cors({ origin: '*' }))
 	router.use(bodyParser.json())
 	router.use(zodErrorTo400(logger))
-	router.use('/gardens', createGardenRouter(logger))
-	router.use('/plants', createPlantRouter(logger))
-	router.use('/seed-packets', createSeedPacketRouter(logger))
+	router.use('/workspaces', createGardenRouter(logger))
+	router.use('/items', createPlantRouter(logger))
+	router.use('/packets', createSeedPacketRouter(logger))
 	router.use('/locations', createLocationRouter(logger))
-	router.use('/seed-packets', createSeedPacketRouter(logger))
 
 	// Fallback error logger for any errors not caught by specific handlers
 	router.use((err: Error, _req: Request, _res: Response, next: NextFunction) => {

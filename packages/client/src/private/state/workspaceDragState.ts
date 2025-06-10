@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store'
-import type { Zone } from '../../lib/entities/zone'
-import type { Workspace } from '../../lib/entities/workspace'
+import type { Zone, Workspace, Item } from '@peashoot/types'
 import type {
 	GridZoneContext,
 	GridDragState,
@@ -19,7 +18,7 @@ import type { WithVisualPresentation, GridPlacement } from '../grid/grid-placeme
 
 // Generic type aliases
 export type ExistingWorkspaceItem<T extends WithVisualPresentation> = GridPlacement<T>
-export type WorkspaceDragState<T extends WithVisualPresentation> = GridDragState<T>
+export type WorkspaceDragState<T extends Item> = GridDragState<T>
 export type WorkspacePendingOperation<T extends WithVisualPresentation> =
 	GridPendingOperation<T>
 export type PlacementRequestDetails<T> = GridPlacementRequestDetails<T>
@@ -71,7 +70,7 @@ export function isWorkspaceItemRemovalOperation<T extends WithVisualPresentation
 	)
 }
 
-export function createWorkspaceAppDragState<T extends WithVisualPresentation>() {
+export function createWorkspaceAppDragState<T extends Item>() {
 	return writable<WorkspaceDragState<T>>({
 		draggedExistingItem: null,
 		draggedNewItem: null,

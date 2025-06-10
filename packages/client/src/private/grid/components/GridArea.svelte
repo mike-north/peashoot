@@ -3,11 +3,10 @@ import { ZoneLayoutCalculator } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import { disablePointerEventsWhenDragging } from '../actions/disablePointerEventsWhenDragging'
 import { dragState } from '../../dnd/state'
-import type { GridPlaceable } from '../grid-placement'
 import type { GridArea } from '../grid-area'
 
 interface Props {
-	grid: GridArea<GridPlaceable>
+	grid: GridArea
 	edgeBorders: {
 		key: string
 		points: { x: number; y: number }[]

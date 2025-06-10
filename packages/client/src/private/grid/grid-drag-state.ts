@@ -8,6 +8,7 @@ import type {
 } from '../dnd/types'
 import type { GridPlacement, GridPlaceable } from './grid-placement'
 import type { WithId } from '../../lib/entities/with-id'
+import type { Item, ItemPlacement } from '@peashoot/types'
 
 /**
  * Context for a grid-based drop zone
@@ -21,8 +22,8 @@ export interface GridZoneContext<T extends GridPlaceable> extends DropZoneContex
 /**
  * Grid-specific drag state - specialized for GridPlacement
  */
-export interface GridDragState<T extends GridPlaceable> {
-	draggedExistingItem: GridPlacement<T> | null
+export interface GridDragState<T extends Item> {
+	draggedExistingItem: ItemPlacement | null
 	draggedNewItem: T | null // This is the core item data for a new item
 	draggedItemEffectiveSize: number // Actual size being used for drag visuals/collision
 	dragSourceType: DragSourceType
@@ -108,7 +109,7 @@ export interface GridCloningRequestDetails<T> {
 
 // Grid-specific drag state utility functions
 
-export function isGridDragStatePopulated<T extends GridPlaceable>(
+export function isGridDragStatePopulated<T extends Item>(
 	state: GridDragState<T>,
 ): boolean {
 	return (
@@ -117,7 +118,7 @@ export function isGridDragStatePopulated<T extends GridPlaceable>(
 	)
 }
 
-export function isGridDraggingExistingItem<T extends GridPlaceable>(
+export function isGridDraggingExistingItem<T extends Item>(
 	state: GridDragState<T>,
 ): state is GridDragState<T> & {
 	draggedExistingItem: GridPlacement<T>
@@ -130,13 +131,13 @@ export function isGridDraggingExistingItem<T extends GridPlaceable>(
 	)
 }
 
-export function isGridDraggingNewItem<T extends GridPlaceable>(
+export function isGridDraggingNewItem<T extends Item>(
 	state: GridDragState<T>,
 ): state is GridDragState<T> & { draggedNewItem: T } {
 	return state.dragSourceType === 'new-item' && state.draggedNewItem !== null
 }
 
-export function getGridDraggedItemInfo<T extends GridPlaceable>(
+export function getGridDraggedItemInfo<T extends Item>(
 	state: GridDragState<T>,
 ): { item: T; effectiveSize: number } | null {
 	if (isGridDraggingExistingItem(state)) {

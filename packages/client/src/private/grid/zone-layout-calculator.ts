@@ -1,7 +1,6 @@
 import { makePoint, type Line } from '../types/geometry'
 import { DEFAULT_LAYOUT_PARAMS } from './grid-layout-constants'
-import type { GridPlaceable, GridPlacement } from './grid-placement'
-import type { Workspace } from '../../lib/entities/workspace'
+import type { ItemPlacement, Workspace } from '@peashoot/types'
 
 import type {
 	EffectNature,
@@ -90,7 +89,7 @@ export function isIndicatorVisual(item: unknown): item is IndicatorVisual {
  * Provides methods to convert between zone grid coordinates and SVG coordinates,
  * and to retrieve all relevant layout parameters for rendering.
  */
-export class ZoneLayoutCalculator<T extends GridPlaceable> {
+export class ZoneLayoutCalculator {
 	public readonly width: number
 	public readonly height: number
 	public readonly cellSize: number
@@ -340,7 +339,7 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 		x: number,
 		y: number,
 		size: number,
-		placements: GridPlacement<T>[],
+		placements: ItemPlacement[],
 		skipId?: string,
 	): boolean {
 		if (x < 0 || y < 0 || x + size > this.width || y + size > this.height) return false
@@ -352,7 +351,12 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 			if (skipId && p.id === skipId) continue
 
 			// Bounding box collision detection
-			if (x < p.x + p.size && x + size > p.x && y < p.y + p.size && y + size > p.y) {
+			if (
+				x < p.position.x + p.item.size &&
+				x + size > p.position.x &&
+				y < p.position.y + p.item.size &&
+				y + size > p.position.y
+			) {
 				return false // collision
 			}
 		}
@@ -405,9 +409,9 @@ export class ZoneLayoutCalculator<T extends GridPlaceable> {
 /**
  * Converts screen (client) coordinates to grid coordinates for a given SVG element and layout.
  */
-export function screenToGridCoordinates<T extends GridPlaceable>(
+export function screenToGridCoordinates(
 	svgElement: SVGSVGElement,
-	layout: ZoneLayoutCalculator<T>,
+	layout: ZoneLayoutCalculator,
 	clientX: number,
 	clientY: number,
 ): { x: number; y: number } {
@@ -439,15 +443,21 @@ export function calculateZoneViewColSpans(workspace: Workspace): Record<string, 
 	return colSpans
 }
 
-function getAdjacency<T extends GridPlaceable>(
-	p1: GridPlacement<T>,
-	p2: GridPlacement<T>,
+function getAdjacency(
+	p1: ItemPlacement,
+	p2: ItemPlacement,
 ):
 	| { type: 'edge'; p1: { x: number; y: number }; p2: { x: number; y: number } }
 	| { type: 'corner'; point: { x: number; y: number } }
 	| null {
-	const { x: x1, y: y1, size: s1 } = p1
-	const { x: x2, y: y2, size: s2 } = p2
+	const {
+		position: { x: x1, y: y1 },
+		item: { size: s1 },
+	} = p1
+	const {
+		position: { x: x2, y: y2 },
+		item: { size: s2 },
+	} = p2
 	const r1 = x1 + s1
 	const t1 = y1 + s1
 	const r2 = x2 + s2
@@ -504,10 +514,10 @@ type VisualPrimitive =
 			effect: InteractionEffect
 	  }
 
-export function calculateIndicatorVisuals<T extends GridPlaceable>(
+export function calculateIndicatorVisuals(
 	indicators: Indicator[],
-	placements: GridPlacement<T>[],
-	layout: ZoneLayoutCalculator<T>,
+	placements: ItemPlacement[],
+	layout: ZoneLayoutCalculator,
 ): IndicatorVisual[] {
 	const primitives: VisualPrimitive[] = []
 
@@ -534,10 +544,10 @@ export function calculateIndicatorVisuals<T extends GridPlaceable>(
 							adjacency.p1.x === adjacency.p2.x ? 'vertical' : 'horizontal'
 						const dir =
 							orientation === 'vertical'
-								? targetPlacement.x < midPoint.x
+								? targetPlacement.position.x < midPoint.x
 									? 'left'
 									: 'right'
-								: targetPlacement.y < midPoint.y
+								: targetPlacement.position.y < midPoint.y
 									? 'bottom'
 									: 'top'
 						const primitive: VisualPrimitive = {
@@ -551,7 +561,10 @@ export function calculateIndicatorVisuals<T extends GridPlaceable>(
 					} else {
 						// corner
 						const { point } = adjacency
-						const { x, y, size } = targetPlacement
+						const {
+							position: { x, y },
+							item: { size },
+						} = targetPlacement
 						let sector: 0 | 1 | 2 | 3 = 0
 						if (point.x === x + size && point.y === y + size) sector = 2 // Top-Right corner
 						if (point.x === x && point.y === y + size) sector = 1 // Top-Left corner

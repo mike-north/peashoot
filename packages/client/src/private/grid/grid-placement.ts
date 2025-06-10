@@ -1,5 +1,5 @@
 import type { IRGBColor } from '@peashoot/types'
-import { type ItemInZone, isPlacedDraggableItem } from '../dnd/types'
+import { type ItemInZone } from '../dnd/types'
 import { isWithId, type WithId } from '../../lib/entities/with-id'
 
 /**
@@ -13,31 +13,6 @@ export interface GridPlacement<T extends WithId> extends ItemInZone<T> {
 	readonly y: number
 	/** The size of the item on the grid (e.g., 2 means 2x2) */
 	readonly size: number
-}
-
-export function isGridPlacement(
-	maybePlacement: unknown,
-): maybePlacement is GridPlacement<WithId>
-export function isGridPlacement<T extends WithId>(
-	maybePlacement: unknown,
-	itemGuard: (item: unknown) => item is T,
-): maybePlacement is GridPlacement<T>
-export function isGridPlacement<T extends WithId>(
-	maybePlacement: unknown,
-	itemGuard?: (item: unknown) => item is T,
-): maybePlacement is GridPlacement<T> {
-	const baseCheck =
-		isPlacedDraggableItem(maybePlacement) &&
-		'x' in maybePlacement &&
-		typeof maybePlacement.x === 'number' &&
-		'y' in maybePlacement &&
-		typeof maybePlacement.y === 'number' &&
-		'size' in maybePlacement &&
-		typeof maybePlacement.size === 'number'
-	if (itemGuard) {
-		return baseCheck && itemGuard(maybePlacement.item)
-	}
-	return baseCheck
 }
 
 /**

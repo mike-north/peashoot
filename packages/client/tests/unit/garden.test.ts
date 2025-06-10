@@ -1,21 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi } from 'vitest'
-import {
-	moveItemBetweenZonesAndCreateNewWorkspace,
-	type Workspace,
-} from '../../src/lib/entities/workspace.js'
-import type { Zone } from '../../src/lib/entities/zone.js'
-import type {
-	GridPlaceable,
-	GridPlacement,
-} from '../../src/private/grid/grid-placement.js'
+import { moveItemBetweenZonesAndCreateNewWorkspace } from '../../src/lib/entities/workspace.js'
 import type { GridArea } from '../../src/private/grid/grid-area.js'
-import type { ItemInZone } from '../../src/private/dnd/types.js'
-import { type PlantMetadata } from '../../src/lib/entities/plant-metadata.js'
-import { type Item } from '../../src/lib/entities/item.js'
 import type { WithId } from '../../src/lib/entities/with-id.js'
+import type { ItemPlacement, Plant, Workspace, Zone } from '@peashoot/types'
 
-const mockPlant: Item<PlantMetadata> & WithId & GridPlaceable = {
+const mockPlant: Plant = {
 	id: 'plant_1',
 	displayName: 'Tomato',
 	category: 'tomatoes',
@@ -30,36 +20,38 @@ const mockPlant: Item<PlantMetadata> & WithId & GridPlaceable = {
 		iconPath: 'tomato.png',
 	},
 	metadata: {
-		plantingDistanceInFeet: 1,
-		family: 'tomatoes',
+		plantingDistance: {
+			value: 1,
+			unit: 'feet',
+		},
 	},
 }
 
-const plantPlacement: GridPlacement<Item<PlantMetadata>> &
-	ItemInZone<Item<PlantMetadata>> = {
+const plantPlacement: ItemPlacement = {
 	id: 'placement1',
 	item: mockPlant,
 	sourceZoneId: 'zone1',
-	x: 1,
-	y: 2,
-	size: 1,
+	position: {
+		x: 1,
+		y: 2,
+	},
 }
 
-const sourceZone: Zone<Item<PlantMetadata>> & WithId & GridArea<Item<PlantMetadata>> = {
+const sourceZone: Zone & WithId & GridArea = {
 	id: 'zone_1',
+	name: 'Zone 1',
+	description: 'Zone 1',
 	width: 4,
 	height: 4,
-	waterLevel: 5,
-	sunLevel: 7,
 	placements: [plantPlacement],
 }
 
-const targetZone: Zone<Item<PlantMetadata>> & WithId & GridArea<Item<PlantMetadata>> = {
+const targetZone: Zone & WithId & GridArea = {
 	id: 'zone_2',
+	name: 'Zone 2',
+	description: 'Zone 2',
 	width: 4,
 	height: 4,
-	waterLevel: 5,
-	sunLevel: 7,
 	placements: [],
 }
 
@@ -80,19 +72,15 @@ describe('moveItemBetweenZones', () => {
 			4,
 		)
 		const { zones } = updated as {
-			zones: (Zone<Item<PlantMetadata>> & WithId & GridArea<Item<PlantMetadata>>)[]
+			zones: (Zone & WithId & GridArea)[]
 		}
-		const [updatedSource] = zones.filter((z) => z.id === 'zone_1') satisfies Zone<
-			Item<PlantMetadata>
-		>[]
-		const [updatedTarget] = zones.filter((z) => z.id === 'zone_2') satisfies Zone<
-			Item<PlantMetadata>
-		>[]
+		const [updatedSource] = zones.filter((z) => z.id === 'zone_1') satisfies Zone[]
+		const [updatedTarget] = zones.filter((z) => z.id === 'zone_2') satisfies Zone[]
 
 		expect(updatedSource.placements.length).toBe(0)
 		expect(updatedTarget.placements.length).toBe(1)
-		expect(updatedTarget.placements[0].x).toBe(3)
-		expect(updatedTarget.placements[0].y).toBe(4)
+		expect(updatedTarget.placements[0].position.x).toBe(3)
+		expect(updatedTarget.placements[0].position.y).toBe(4)
 		expect(updatedTarget.placements[0].id).toBe('placement1')
 	})
 

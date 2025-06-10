@@ -1,8 +1,5 @@
-import type { SeedPacket } from '../entities/seed-packet'
-import type { ISeedPacket } from '@peashoot/types'
+import { SeedPacketSchema, type SeedPacket } from '@peashoot/types'
 import { Repository } from './repository.base'
-
-type SeedPacketResource = ISeedPacket & { id: string }
 
 export interface ISeedPacketRepository {
 	findAll(): Promise<SeedPacket[]>
@@ -18,21 +15,11 @@ export class SeedPacketRepository extends Repository<SeedPacket, string> {
 	}
 
 	protected getEndpoint(): string {
-		return 'seed-packets'
+		return 'packets'
 	}
 
 	protected toDomainEntity(resource: unknown): SeedPacket {
-		const seedPacket = resource as SeedPacketResource
-
-		return {
-			...seedPacket,
-			id: seedPacket.id as `seedp_${string}`,
-		}
-	}
-
-	protected toResource(entity: SeedPacket): unknown {
-		// Return the entity directly, removing any domain-specific transformations if needed
-		return entity
+		return SeedPacketSchema.parse(resource)
 	}
 
 	/**

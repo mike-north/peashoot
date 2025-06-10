@@ -3,15 +3,12 @@ import {
 	ZoneLayoutCalculator,
 	calculateIndicatorVisuals,
 } from '../src/private/grid/zone-layout-calculator.js'
-import type {
-	GridPlaceable,
-	GridPlacement,
-	GridItemPresentation,
-} from '../src/private/grid/grid-placement.js'
+import type { GridItemPresentation } from '../src/private/grid/grid-placement.js'
 import { DEFAULT_LAYOUT_PARAMS } from '../src/private/grid/grid-layout-constants.js'
 import type { Indicator } from '../src/lib/entities/indicator.js'
+import type { Item, ItemPlacement } from '@peashoot/types'
 
-interface TestItem extends GridPlaceable {
+interface TestItem extends Item {
 	id: string
 	displayName: string
 	presentation: GridItemPresentation
@@ -23,6 +20,8 @@ describe('ZoneLayoutCalculator', () => {
 			id: '1',
 			displayName: 'Item 1',
 			size: 1,
+			category: 'test',
+			variant: 'test',
 			presentation: {
 				iconPath: '/icons/item1.svg',
 				accentColor: { red: 255, green: 0, blue: 0 },
@@ -32,13 +31,15 @@ describe('ZoneLayoutCalculator', () => {
 			id: '2',
 			displayName: 'Item 2',
 			size: 2,
+			category: 'test',
+			variant: 'test',
 			presentation: {
 				iconPath: '/icons/item2.svg',
 				accentColor: { red: 0, green: 255, blue: 0 },
 			},
 		},
 	]
-	const calculator = new ZoneLayoutCalculator<TestItem>({
+	const calculator = new ZoneLayoutCalculator({
 		width: 10,
 		height: 10,
 		cellSize: DEFAULT_LAYOUT_PARAMS.cellSize,
@@ -80,21 +81,17 @@ describe('ZoneLayoutCalculator', () => {
 	})
 
 	describe('placement validation', () => {
-		const placements: GridPlacement<TestItem>[] = [
+		const placements: ItemPlacement[] = [
 			{
 				id: 'placement1',
 				item: items[0],
-				x: 0,
-				y: 0,
-				size: 1,
+				position: { x: 0, y: 0 },
 				sourceZoneId: 'zone1',
 			},
 			{
 				id: 'placement2',
 				item: items[1],
-				x: 1,
-				y: 0,
-				size: 1,
+				position: { x: 1, y: 0 },
 				sourceZoneId: 'zone1',
 			},
 		]
@@ -139,21 +136,17 @@ describe('ZoneLayoutCalculator', () => {
 	})
 
 	describe('indicator visuals calculation', () => {
-		const placements: GridPlacement<TestItem>[] = [
+		const placements: ItemPlacement[] = [
 			{
 				id: 'pA',
 				item: items[0],
-				x: 0,
-				y: 0,
-				size: 1,
+				position: { x: 0, y: 0 },
 				sourceZoneId: 'zone1',
 			},
 			{
 				id: 'pB',
 				item: items[1],
-				x: 1,
-				y: 0,
-				size: 1,
+				position: { x: 1, y: 0 },
 				sourceZoneId: 'zone1',
 			},
 		]

@@ -2,7 +2,7 @@
 import PageTitle from '../components/PageTitle.svelte'
 import { onMount } from 'svelte'
 import { locationTemperatureDataStore } from '../lib/state/location-temperature-data.store'
-import type { Location } from '../lib/entities/location'
+import type { Location } from '@peashoot/types'
 
 const { route } = $props()
 

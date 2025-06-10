@@ -1,9 +1,5 @@
-import type { Item } from '../entities/item'
-import type { Workspace } from '../entities/workspace'
-import type { Zone } from '../entities/zone'
-import type { PlantMetadata } from '../entities/plant-metadata'
-
 import type { ValidationResult } from '../types/validation'
+import { PlantSchema, type Item, type Workspace, type Zone } from '@peashoot/types'
 
 /**
  * Feature flags that control what workspace operations are enabled
@@ -263,7 +259,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Cannot place an item outside the zone boundaries
 	 */
-	checkBoundaries(): ValidationRule<Item<PlantMetadata>> {
+	checkBoundaries(): ValidationRule {
 		return {
 			name: 'checkBoundaries',
 			validate: (context) => {
@@ -273,8 +269,8 @@ export const PlantValidationRules = {
 
 				const targetZone = context.targetZone
 
-				const plantItem = context.item
-				const size = plantItem.metadata.plantingDistanceInFeet || 1
+				const plantItem = PlantSchema.parse(context.item)
+				const { size } = plantItem
 
 				if (
 					context.targetX < 0 ||
@@ -292,7 +288,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Cannot place an item that overlaps with existing items
 	 */
-	noOverlaps(): ValidationRule<Item<PlantMetadata>> {
+	noOverlaps(): ValidationRule {
 		return {
 			name: 'noOverlaps',
 			validate: (context) => {
@@ -302,8 +298,8 @@ export const PlantValidationRules = {
 
 				const targetZone = context.targetZone
 
-				const plantItem = context.item
-				const size = plantItem.metadata.plantingDistanceInFeet || 1
+				const plantItem = PlantSchema.parse(context.item)
+				const { size } = plantItem
 
 				for (const placement of targetZone.placements) {
 					// Skip the item itself in case of a move
@@ -311,14 +307,14 @@ export const PlantValidationRules = {
 						continue
 					}
 
-					const existingItem = placement.item as Item<PlantMetadata>
-					const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
+					const existingItem = placement.item
+					const existingSize = existingItem.size || 1
 
 					if (
-						context.targetX < placement.x + existingSize &&
-						context.targetX + size > placement.x &&
-						context.targetY < placement.y + existingSize &&
-						context.targetY + size > placement.y
+						context.targetX < placement.position.x + existingSize &&
+						context.targetX + size > placement.position.x &&
+						context.targetY < placement.position.y + existingSize &&
+						context.targetY + size > placement.position.y
 					) {
 						return {
 							isValid: false,
@@ -335,7 +331,7 @@ export const PlantValidationRules = {
 	/**
 	 * Rule: Cannot exceed specified zone density
 	 */
-	maxDensity(maxDensityPercentage = 0.8): ValidationRule<Item<PlantMetadata>> {
+	maxDensity(maxDensityPercentage = 0.8): ValidationRule {
 		return {
 			name: 'maxDensity',
 			validate: (context) => {
@@ -350,7 +346,7 @@ export const PlantValidationRules = {
 				const targetZone = context.targetZone
 
 				const plantItem = context.item
-				const itemFootprint = (plantItem.metadata.plantingDistanceInFeet || 1) ** 2
+				const itemFootprint = (plantItem.size || 1) ** 2
 
 				// Calculate current occupied space
 				let occupiedSpace = 0
@@ -365,9 +361,8 @@ export const PlantValidationRules = {
 						continue
 					}
 
-					const existingItem = placement.item as Item<PlantMetadata>
-					const existingFootprint =
-						(existingItem.metadata.plantingDistanceInFeet || 1) ** 2
+					const existingItem = placement.item
+					const existingFootprint = (existingItem.size || 1) ** 2
 					occupiedSpace += existingFootprint
 				}
 
@@ -389,36 +384,11 @@ export const PlantValidationRules = {
 	},
 
 	/**
-	 * Rule: Specific plant types have sunlight requirements
-	 */
-	sunlightRequirements(): ValidationRule<Item<PlantMetadata>> {
-		return {
-			name: 'sunlightRequirements',
-			validate: (context) => {
-				const targetZone = context.targetZone
-
-				const plantItem = context.item
-
-				// Example sunlight requirements by plant family
-				if (plantItem.category === 'tomatoes' && targetZone.sunLevel < 3) {
-					return {
-						isValid: false,
-						reason: 'Tomatoes require high sunlight levels (minimum 3)',
-					}
-				}
-
-				// More plant-specific rules can be added here
-				return { isValid: true }
-			},
-		}
-	},
-
-	/**
 	 * Rule: Prohibit specific plant types in specific zones
 	 */
 	restrictedPlantsByZone(
 		restrictions: { plantType: string; zoneIds: string[] }[],
-	): ValidationRule<Item<PlantMetadata>> {
+	): ValidationRule {
 		return {
 			name: 'restrictedPlantsByZone',
 			validate: (context) => {
@@ -447,7 +417,7 @@ export const PlantValidationRules = {
 	 */
 	incompatiblePlants(
 		incompatibilities: { plant1: string; plant2: string; reason: string }[],
-	): ValidationRule<Item<PlantMetadata>> {
+	): ValidationRule {
 		return {
 			name: 'incompatiblePlants',
 			validate: (context) => {
@@ -458,7 +428,7 @@ export const PlantValidationRules = {
 				const targetZone = context.targetZone
 
 				const plantItem = context.item
-				const plantSize = plantItem.metadata.plantingDistanceInFeet || 1
+				const plantSize = plantItem.size || 1
 
 				// Define the margin to check for adjacency (could be customizable)
 				const adjacencyMargin = 0.5
@@ -469,14 +439,14 @@ export const PlantValidationRules = {
 						continue
 					}
 
-					const existingItem = placement.item as Item<PlantMetadata>
-					const existingSize = existingItem.metadata.plantingDistanceInFeet || 1
+					const existingItem = placement.item
+					const existingSize = existingItem.size || 1
 
 					// Check if the items are adjacent (within the margin)
 					const isAdjacent =
-						Math.abs(context.targetX - placement.x) <=
+						Math.abs(context.targetX - placement.position.x) <=
 							plantSize + existingSize + adjacencyMargin &&
-						Math.abs(context.targetY - placement.y) <=
+						Math.abs(context.targetY - placement.position.y) <=
 							plantSize + existingSize + adjacencyMargin
 
 					if (isAdjacent) {

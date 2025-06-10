@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store'
-import type { SeedPacket } from '../../lib/entities/seed-packet'
 import { SeedPacketRepository } from '../../lib/repositories'
+import type { SeedPacket } from '@peashoot/types'
 
 interface SeedPacketsState {
 	seedPackets: SeedPacket[]

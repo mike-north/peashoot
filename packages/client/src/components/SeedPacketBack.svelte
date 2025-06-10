@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { SeedPacket } from '../lib/entities/seed-packet'
+import type { SeedPacket } from '@peashoot/types'
 
 interface Props {
 	seedPacket: SeedPacket

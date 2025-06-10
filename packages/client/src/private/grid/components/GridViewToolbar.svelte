@@ -3,11 +3,10 @@ import type { GridItemPresentation, GridPlaceable } from '../grid-placement'
 import { dragManager } from '../../dnd/drag-manager'
 import { dragState } from '../../dnd/state'
 import GridPlacementTile from '../ui/GridPlacementTile.svelte'
-import type { GridPlacement } from '../grid-placement'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
 import { clickOrHold } from '../actions/clickOrHold'
 import type { WithVisualPresentation } from '../grid-placement'
-import type { Item } from '../../../lib/entities/item'
+import type { Item, ItemPlacement } from '@peashoot/types'
 
 export interface GridToolbarProps<TItem extends WithVisualPresentation> {
 	items: TItem[]
@@ -113,7 +112,7 @@ function createItem(categoryName: string, categoryItemName: string): TItem {
 function createToolbarGridPlacement(
 	categoryName: string,
 	categoryItemName: string,
-): GridPlacement<TItem> {
+): ItemPlacement {
 	const item = items.find(
 		(itm) => itm.category === categoryName && itm.displayName === categoryItemName,
 	)
@@ -122,9 +121,7 @@ function createToolbarGridPlacement(
 	}
 	return {
 		id: `gridplacement_${categoryName}_${categoryItemName}`,
-		x: 0,
-		y: 0,
-		size: item.size,
+		position: { x: 0, y: 0 },
 		item: item,
 		sourceZoneId: 'toolbar', // Required by ExistingDraggableItem
 	}

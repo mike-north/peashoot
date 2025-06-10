@@ -1,8 +1,9 @@
-import type { SeedPacket } from './entities/seed-packet'
-import type { Workspace } from './entities/workspace'
-import type { Item } from './entities/item'
-import type { PlantMetadata } from './entities/plant-metadata'
-import { convertDistanceToFeet } from '@peashoot/types'
+import {
+	convertDistanceToFeet,
+	type Item,
+	type SeedPacket,
+	type Workspace,
+} from '@peashoot/types'
 
 interface BasicPlantData {
 	id: string
@@ -14,7 +15,7 @@ interface BasicPlantData {
 	iconPath: string
 }
 
-export function createPlantItem(plantData: BasicPlantData): Item<PlantMetadata> {
+export function createPlantItem(plantData: BasicPlantData): Item {
 	const plantingDistanceInFeet = convertDistanceToFeet(plantData.plantingDistance).value
 	const size = Math.max(1, Math.ceil(plantingDistanceInFeet))
 
@@ -38,66 +39,74 @@ export const seedPackets: SeedPacket[] = [
 	{
 		id: 'seedp_0',
 		name: 'Celery Seeds',
-		quantity: 10,
 		presentation: {
 			iconPath: 'celery-celery.png',
 			accentColor: { red: 144, green: 238, blue: 144 },
 		},
-		netWeightGrams: 10,
-		originLocation: 'Colombia',
 		description: 'Celery seeds are a great way to add some green to your garden.',
-		plantingInstructions: 'Sow seeds 1/2 inch deep in soil.',
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-		plantFamily: 'celery',
-		plantingDistance: {
-			value: 1,
-			unit: 'feet',
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(),
+		category: 'celery',
+		metadata: {
+			quantity: 10,
+			plantingInstructions: 'Sow seeds 1/2 inch deep in soil.',
+			plantingDistance: {
+				value: 1,
+				unit: 'feet',
+			},
+			netWeightGrams: 10,
+			originLocation: 'Colombia',
 		},
 	},
 	{
 		id: 'seedp_1',
 		name: 'Big Boy Tomato',
-		quantity: 30, // from seedPacketInfo.seedCount
 		presentation: {
 			iconPath: 'tomatoes-big-boy-tomato.png',
-			accentColor: { red: 255, green: 99, blue: 71 }, // Tomato red
+			accentColor: { red: 255, green: 99, blue: 71 },
 		},
-		netWeightGrams: 1, // Placeholder, not directly in YAML for this item
-		originLocation: 'USA', // Placeholder, not directly in YAML
 		description:
 			'Classic indeterminate beefsteak tomato producing large, meaty fruits up to 1 pound. Excellent for slicing and sandwiches.',
-		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-		plantFamily: 'tomatoes',
-		plantingDistance: {
-			value: 2,
-			unit: 'feet',
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(),
+		category: 'tomatoes',
+
+		metadata: {
+			quantity: 30,
+			plantingInstructions: 'Sow seeds 1/4 inch deep.',
+			plantingDistance: {
+				value: 2,
+				unit: 'feet',
+			},
+			netWeightGrams: 1,
+			originLocation: 'USA',
 		},
 	},
 	{
 		id: 'seedp_2',
 		name: 'Basil',
-		quantity: 100, // from seedPacketInfo.seedCount
 		presentation: {
 			iconPath: 'basil-basil.png',
-			accentColor: { red: 133, green: 187, blue: 101 }, // Basil green
+			accentColor: { red: 133, green: 187, blue: 101 },
 		},
-		netWeightGrams: 0.5, // Placeholder
-		originLocation: 'India', // Placeholder
 		description:
 			'Aromatic annual herb with excellent culinary uses. Natural pest deterrent and pollinator attractor.',
-		plantingInstructions: 'Sow seeds 1/4 inch deep.', // from planting.seedDepth
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-		plantFamily: 'basil',
-		plantingDistance: {
-			value: 1,
-			unit: 'feet',
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString(),
+		category: 'basil',
+
+		metadata: {
+			quantity: 100,
+			plantingInstructions: 'Sow seeds 1/4 inch deep.',
+			plantingDistance: {
+				value: 1,
+				unit: 'feet',
+			},
+			netWeightGrams: 0.5,
+			originLocation: 'India',
 		},
 	},
 ]
 
 // Convert legacy plant data to PlantItem format
-export const plants: Item<PlantMetadata>[] = (
+export const plants: Item[] = (
 	[
 		// Tomatoes
 		{
@@ -523,7 +532,7 @@ export const plants: Item<PlantMetadata>[] = (
 	] satisfies BasicPlantData[]
 ).map(createPlantItem)
 
-function findPlantById(id: string): Item<PlantMetadata> {
+function findPlantById(id: string): Item {
 	const result = plants.find((plant) => plant.id === id)
 	if (!result) {
 		throw new Error(`Plant with id ${id} not found`)
@@ -599,22 +608,20 @@ export const gardens: Workspace[] = [
 				id: 'bed_962af647-bce5-4cff-9d47-e22ef97a20e0',
 				width: 12,
 				height: 2,
-				waterLevel: 0,
-				sunLevel: 2,
 				placements: [],
+				description: 'A bed of lettuce',
+				name: 'Bed #1',
 			},
 			{
 				id: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 				width: 1,
 				height: 1,
-				waterLevel: 0,
-				sunLevel: 0,
+				description: 'A bed of tomatoes',
+				name: 'Bed #2',
 				placements: [
 					{
 						id: 'plant_placement_c806fc0b-b50d-489c-9aa4-30e9448769ae',
-						x: 0,
-						y: 0,
-						size: 2,
+						position: { x: 0, y: 0 },
 						item: findPlantById('plant_tomatoes-burpee-big-boy-tomato'),
 						sourceZoneId: 'bed_ee059cdd-d907-4c1a-99c5-5cfb34c47b2d',
 					},
@@ -624,14 +631,12 @@ export const gardens: Workspace[] = [
 				id: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 				width: 1,
 				height: 1,
-				waterLevel: 0,
-				sunLevel: 0,
+				description: 'A bed of lettuce',
+				name: 'A raised bed',
 				placements: [
 					{
 						id: 'plant_placement_16cee04a-c890-478e-9ac6-3ee02b3e0db6',
-						x: 0,
-						y: 0,
-						size: 1,
+						position: { x: 0, y: 0 },
 						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_642de3aa-1d4e-44bc-b40a-db89c23c8aa4',
 					},
@@ -641,30 +646,24 @@ export const gardens: Workspace[] = [
 				id: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 				width: 6,
 				height: 2,
-				waterLevel: 2,
-				sunLevel: 4,
+				name: 'Bed #6',
+				description: 'A bed of tomatoes and lettuce',
 				placements: [
 					{
 						id: 'plant_placement_c7bc1a01-38e3-47bb-93cd-992334b4babb',
-						x: 0,
-						y: 0,
-						size: 2,
+						position: { x: 0, y: 0 },
 						item: findPlantById('plant_tomatoes-burpee-big-boy-tomato'),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
 						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-793d19cc841b',
-						x: 2,
-						y: 0,
-						size: 1,
+						position: { x: 2, y: 0 },
 						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
 					{
 						id: 'plant_placement_1aac58bc-ad63-4fa9-8927-7939cc841b',
-						x: 2,
-						y: 1,
-						size: 1,
+						position: { x: 2, y: 1 },
 						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_34b81532-496a-488c-8c71-ab8044a8c5a6',
 					},
@@ -674,22 +673,18 @@ export const gardens: Workspace[] = [
 				id: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 				width: 6,
 				height: 2,
-				waterLevel: 2,
-				sunLevel: 4,
+				name: 'Bed #5',
+				description: 'A bed of arugula and spinach',
 				placements: [
 					{
 						id: 'plant_placement_f41c815b-6774-4017-bf19-067ac3f81099',
-						x: 0,
-						y: 0,
-						size: 1,
+						position: { x: 0, y: 0 },
 						item: findPlantById('plant_arugula-arugula'),
 						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
 					{
 						id: 'plant_placement_4c957f8b-1b4f-4a8a-aa92-70eefcb052b7',
-						x: 2,
-						y: 0,
-						size: 1,
+						position: { x: 2, y: 0 },
 						item: findPlantById('plant_spinach-japanese-perpetual-spinach'),
 						sourceZoneId: 'bed_6a288fa4-d503-4be5-b7fe-2c9a4db8919f',
 					},
@@ -699,48 +694,38 @@ export const gardens: Workspace[] = [
 				id: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 				width: 12,
 				height: 4,
-				waterLevel: 3,
-				sunLevel: 3,
+				name: 'Bed #4',
+				description: 'A bed of cherries',
 				placements: [
 					{
 						id: 'plant_placement_f2321084-5ff0-4328-b90a-776de35d8f81',
-						x: 2,
-						y: 1,
-						size: 3,
+						position: { x: 2, y: 1 },
 						item: findPlantById('plant_cherries-rainier-cherry'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_86b880d5-77c0-487d-8fdd-34260c9c0bc6',
-						x: 0,
-						y: 0,
-						size: 2,
+						position: { x: 0, y: 0 },
 						item: findPlantById('plant_tomatoes-burpee-big-boy-tomato'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 					{
 						id: 'plant_placement_e2ab8f6e-513d-4dff-9a76-d78f741eee13',
-						x: 2,
-						y: 0,
-						size: 1,
+						position: { x: 2, y: 0 },
 						item: findPlantById('plant_lettuce-burpee-buttercrunch-lettuce'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
 						id: 'plant_placement_3ca27ca0-6438-47d8-8b90-7af77b24f430',
-						x: 6,
-						y: 0,
-						size: 1,
+						position: { x: 6, y: 0 },
 						item: findPlantById('plant_strawberries-alexandria-strawberry'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
 
 					{
 						id: 'plant_placement_224254bb-e30b-44ab-8b6c-f9988bb49f2a',
-						x: 6,
-						y: 3,
-						size: 1,
+						position: { x: 6, y: 3 },
 						item: findPlantById('plant_daisies-zinnia-2'),
 						sourceZoneId: 'bed_49442534-ba8e-47ee-8613-1be8bcf7fd3e',
 					},
@@ -750,38 +735,30 @@ export const gardens: Workspace[] = [
 				id: 'bed_complex_interaction',
 				width: 2,
 				height: 2,
-				waterLevel: 0,
-				sunLevel: 0,
+				name: 'Bed #3',
+				description: 'A bed of complex interaction',
 				placements: [
 					{
 						id: 'plant_placement_garlic',
-						x: 0,
-						y: 1,
-						size: 1,
+						position: { x: 0, y: 1 },
 						item: findPlantById('plant_onions-garlic'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 					{
 						id: 'plant_placement_dahlia',
-						x: 1,
-						y: 1,
-						size: 1,
+						position: { x: 1, y: 1 },
 						item: findPlantById('plant_dahlia'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 					{
 						id: 'plant_placement_broccoli',
-						x: 0,
-						y: 0,
-						size: 2,
+						position: { x: 0, y: 0 },
 						item: findPlantById('plant_broccoli'),
 						sourceZoneId: 'bed_complex_interaction',
 					},
 					{
 						id: 'plant_placement_peas',
-						x: 1,
-						y: 0,
-						size: 1,
+						position: { x: 1, y: 0 },
 						item: findPlantById('plant_peas'),
 						sourceZoneId: 'bed_complex_interaction',
 					},

@@ -4,8 +4,8 @@ import type { Writable } from 'svelte/store'
 import type { IDragState, ItemInZone } from '../../../private/dnd/types'
 import { ZoneLayoutCalculator, screenToGridCoordinates } from '../zone-layout-calculator'
 import { DEFAULT_LAYOUT_PARAMS } from '../grid-layout-constants'
-import type { Zone } from '../../../lib/entities/zone'
 import type { WithId } from '../../../lib/entities/with-id'
+import type { Zone } from '@peashoot/types'
 
 interface WorkspaceDragCoordinatorOptions {
 	dragState: Writable<IDragState<WithId, ItemInZone<WithId>>>

@@ -1,22 +1,20 @@
 <script lang="ts">
+import type { Item } from '@peashoot/types'
 import {
 	PlantValidationRules,
 	WorkspaceController,
 } from '../lib/controllers/workspace-controller'
-import type { Item } from '../lib/entities/item'
-import type { PlantMetadata } from '../lib/entities/plant-metadata'
 // This file now redirects to the new WorkspacePage with generic terminology
 // The old garden-specific implementation is preserved but uses the new workspace system
 import WorkspacePage from './WorkspacePage.svelte'
 
 const { route } = $props()
 
-const controller = new WorkspaceController<Item<PlantMetadata>>({
+const controller = new WorkspaceController<Item>({
 	validationRules: [
 		PlantValidationRules.checkBoundaries(),
 		PlantValidationRules.noOverlaps(),
 		PlantValidationRules.maxDensity(0.8),
-		PlantValidationRules.sunlightRequirements(),
 		// Example of a specific plant restriction - can be customized as needed
 		PlantValidationRules.restrictedPlantsByZone([
 			{ plantType: 'shade-loving', zoneIds: ['full-sun-zone'] },

@@ -5,7 +5,8 @@ import type { Location } from '@peashoot/types'
 interface LocationTemperatureDataState {
 	locations: Location[]
 	selectedLocation: Location | null
-	targetTemperature: number
+	targetTemperature: number | null
+	temperatureUnit: 'C' | 'F'
 	estimatedDate: Date | null
 	isLoading: boolean
 	error: string | null
@@ -16,7 +17,8 @@ function createLocationTemperatureDataStore() {
 	const { subscribe, set, update } = writable<LocationTemperatureDataState>({
 		locations: [],
 		selectedLocation: null,
-		targetTemperature: 0,
+		targetTemperature: null,
+		temperatureUnit: 'C',
 		estimatedDate: null,
 		isLoading: false,
 		error: null,
@@ -40,14 +42,43 @@ function createLocationTemperatureDataStore() {
 			}
 		},
 		selectLocation: (location: Location | null) => {
-			update((state) => ({ ...state, selectedLocation: location }))
+			update((state) => ({ ...state, selectedLocation: location, estimatedDate: null }))
 		},
-		setTargetTemperature: (temperature: number) => {
-			update((state) => ({ ...state, targetTemperature: temperature }))
+		setTemperatureUnit: (unit: 'C' | 'F') => {
+			update((state) => {
+				if (unit === state.temperatureUnit) {
+					return state
+				}
+
+				if (state.targetTemperature === null) {
+					return { ...state, temperatureUnit: unit, estimatedDate: null }
+				}
+
+				const currentTemp = state.targetTemperature
+				const newTemp =
+					unit === 'F'
+						? (currentTemp * 9) / 5 + 32 // C to F
+						: ((currentTemp - 32) * 5) / 9 // F to C
+
+				return {
+					...state,
+					temperatureUnit: unit,
+					targetTemperature: Math.round(newTemp * 10) / 10,
+					estimatedDate: null,
+				}
+			})
+		},
+		setTargetTemperature: (temperature: number | null) => {
+			update((state) => ({
+				...state,
+				targetTemperature: temperature,
+				estimatedDate: null,
+			}))
 		},
 		calculateDate: async () => {
 			const currentState = get(store)
-			if (!currentState.selectedLocation || !currentState.targetTemperature) return
+			if (!currentState.selectedLocation || currentState.targetTemperature === null)
+				return
 
 			update((state) => ({
 				...state,
@@ -61,7 +92,7 @@ function createLocationTemperatureDataStore() {
 					locationId: currentState.selectedLocation.id,
 					temperature: {
 						value: currentState.targetTemperature,
-						unit: 'C',
+						unit: currentState.temperatureUnit,
 					},
 				})
 				update((state) => ({ ...state, estimatedDate: date, isLoading: false }))
@@ -79,7 +110,8 @@ function createLocationTemperatureDataStore() {
 			set({
 				locations: [],
 				selectedLocation: null,
-				targetTemperature: 0,
+				targetTemperature: null,
+				temperatureUnit: 'C',
 				estimatedDate: null,
 				isLoading: false,
 				error: null,

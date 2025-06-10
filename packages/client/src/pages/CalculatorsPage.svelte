@@ -31,8 +31,14 @@ function handleLocationChange(event: Event) {
 
 function handleTemperatureChange(event: Event) {
 	const input = event.target as HTMLInputElement
+	if (input.value === '') {
+		locationTemperatureDataStore.setTargetTemperature(null)
+		return
+	}
 	const temperature = parseFloat(input.value)
-	locationTemperatureDataStore.setTargetTemperature(temperature)
+	locationTemperatureDataStore.setTargetTemperature(
+		isNaN(temperature) ? null : temperature,
+	)
 }
 </script>
 
@@ -72,22 +78,44 @@ function handleTemperatureChange(event: Event) {
 
 			<div>
 				<label for="temperature" class="block text-sm font-medium text-gray-700 mb-1">
-					Target Temperature (°C)
+					Target Temperature (°{$locationTemperatureDataStore.temperatureUnit})
 				</label>
-				<input
-					type="number"
-					id="temperature"
-					value={$locationTemperatureDataStore.targetTemperature}
-					onchange={handleTemperatureChange}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-					placeholder="Enter temperature"
-				/>
+				<div class="join w-full">
+					<input
+						type="number"
+						id="temperature"
+						value={$locationTemperatureDataStore.targetTemperature ?? ''}
+						oninput={handleTemperatureChange}
+						class="input input-bordered join-item w-full"
+						placeholder="Enter temperature"
+					/>
+					<button
+						class="btn join-item {$locationTemperatureDataStore.temperatureUnit === 'C'
+							? 'btn-active'
+							: ''}"
+						onclick={() => {
+							locationTemperatureDataStore.setTemperatureUnit('C')
+						}}
+					>
+						°C
+					</button>
+					<button
+						class="btn join-item {$locationTemperatureDataStore.temperatureUnit === 'F'
+							? 'btn-active'
+							: ''}"
+						onclick={() => {
+							locationTemperatureDataStore.setTemperatureUnit('F')
+						}}
+					>
+						°F
+					</button>
+				</div>
 			</div>
 
 			<button
 				onclick={handleEstimate}
 				disabled={!$locationTemperatureDataStore.selectedLocation ||
-					!$locationTemperatureDataStore.targetTemperature ||
+					$locationTemperatureDataStore.targetTemperature === null ||
 					$locationTemperatureDataStore.isLoading}
 				class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
 			>
@@ -101,7 +129,7 @@ function handleTemperatureChange(event: Event) {
 			{#if $locationTemperatureDataStore.estimatedDate}
 				<div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
 					<p class="text-green-800">
-						The temperature is estimated to reach {$locationTemperatureDataStore.targetTemperature}°C
+						The temperature is estimated to reach {$locationTemperatureDataStore.targetTemperature}°{$locationTemperatureDataStore.temperatureUnit}
 						on {$locationTemperatureDataStore.estimatedDate.toLocaleDateString()}
 					</p>
 				</div>

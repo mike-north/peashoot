@@ -21,6 +21,17 @@ export function distanceToHumanReadable(distance: IDistance): string {
 	return `${distance.value}${distance.unit}`
 }
 
+export function isDistanceUnit(value: string): value is IDistanceUnit {
+	return ['inches', 'feet', 'yards', 'meters', 'centimeters'].includes(value)
+}
+
+export function stringToDistanceUnit(value: string): IDistanceUnit {
+	if (isDistanceUnit(value)) {
+		return value
+	}
+	throw new Error(`Invalid distance unit: ${value}`)
+}
+
 export function convertDistanceToFeet(distance: IDistance): IDistance {
 	switch (distance.unit) {
 		case 'inches':

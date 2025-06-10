@@ -1,6 +1,7 @@
 import { z } from 'zod/v4'
 import {
 	createItemPlacementSchemaForItemType,
+	ItemPlacement,
 	ItemPlacementSchema,
 } from './item-placement.type.js'
 
@@ -25,3 +26,10 @@ export const ZoneSchema = z.object({
 })
 
 export type Zone = z.infer<typeof ZoneSchema>
+
+export function findItemPlacement(
+	zone: Zone,
+	itemPlacementId: string,
+): ItemPlacement | undefined {
+	return zone.placements.find((pp) => pp.id === itemPlacementId)
+}

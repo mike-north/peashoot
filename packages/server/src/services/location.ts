@@ -1,7 +1,38 @@
+import { Logger } from 'winston'
 import { AppDataSource } from '../data-source'
 import { Location } from '../entities/location'
-import type Temperature from '../values/temperature'
-// import { toCelsius } from '../values/temperature'
+import * as fs from 'fs'
+import { join } from 'path'
+import { JSONValue } from '../types/json'
+import { parse } from 'yaml'
+
+const TEMPERATURE_DATA_FILE_PATH = join(
+	__dirname,
+	'..',
+	'..',
+	'data',
+	'temperature-ranges.yml',
+)
+
+export async function loadTemperatureData(logger: Logger) {
+	if (!fs.existsSync(TEMPERATURE_DATA_FILE_PATH)) {
+		logger.error(`Temperature data file not found at ${TEMPERATURE_DATA_FILE_PATH}`)
+		return
+	}
+
+	try {
+		const dataString = fs.readFileSync(TEMPERATURE_DATA_FILE_PATH, 'utf8')
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const parsedData = parse(dataString) as JSONValue
+
+		// TODO: Parse temperature data into some model
+
+		return await Promise.resolve(null)
+	} catch (error) {
+		logger.error('Failed to validate temperature data', { error })
+		throw new Error('Invalid temperature data format', { cause: error })
+	}
+}
 
 export class LocationService {
 	private locationRepository = AppDataSource.getRepository(Location)
@@ -21,10 +52,12 @@ export class LocationService {
 		return this.locationRepository.find()
 	}
 
-	async calculateDate(locationId: string, _temperature: Temperature): Promise<Date> {
+	async calculateDate(
+		locationId: string,
+		_temperature: { value: number; unit: 'C' | 'F' },
+	): Promise<Date> {
 		const location = await this.locationRepository.findOne({
 			where: { id: locationId as `loc_${string}` },
-			relations: ['monthlyTemperatures'],
 		})
 		if (!location) {
 			throw new Error(`Location with id ${locationId} not found`)

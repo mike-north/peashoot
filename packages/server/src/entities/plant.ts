@@ -1,7 +1,6 @@
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm'
+import { Entity, Column, ManyToOne } from 'typeorm'
 import { SeedPacket } from './seed-packet'
 import { PeashootEntity } from './peashoot-entity'
-import { PlantPlacement } from './plant-placement'
 import { RGBColor } from '../values/rgb-color'
 import { Distance } from '../values/distance'
 import { Presentation } from './presentation'
@@ -14,9 +13,6 @@ export class Plant extends PeashootEntity<'plant'> {
 
 	@ManyToOne(() => SeedPacket, (seedPacket) => seedPacket.plants, { nullable: false })
 	seedPacket!: SeedPacket
-
-	@OneToMany(() => PlantPlacement, (placement) => placement.item)
-	placements!: PlantPlacement[]
 
 	@Column(() => RGBColor)
 	accentColor!: RGBColor

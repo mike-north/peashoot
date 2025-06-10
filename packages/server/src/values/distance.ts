@@ -1,18 +1,5 @@
-import { IDistance } from '@peashoot/types'
+import { stringToDistanceUnit, type IDistance, type IDistanceUnit } from '@peashoot/types'
 import { Column } from 'typeorm'
-
-export type DistanceUnit = 'inches' | 'feet' | 'yards' | 'meters' | 'centimeters'
-
-export function isDistanceUnit(value: string): value is DistanceUnit {
-	return ['inches', 'feet', 'yards', 'meters', 'centimeters'].includes(value)
-}
-
-export function stringToDistanceUnit(value: string): DistanceUnit {
-	if (isDistanceUnit(value)) {
-		return value
-	}
-	throw new Error(`Invalid distance unit: ${value}`)
-}
 
 export class Distance implements IDistance {
 	@Column()
@@ -20,9 +7,9 @@ export class Distance implements IDistance {
 
 	@Column('varchar', {
 		transformer: {
-			to: (value: DistanceUnit): string => value as string,
+			to: (value: IDistanceUnit): string => value,
 			from: stringToDistanceUnit,
 		},
 	})
-	unit!: DistanceUnit
+	unit!: IDistanceUnit
 }

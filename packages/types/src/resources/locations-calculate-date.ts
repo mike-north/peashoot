@@ -1,9 +1,11 @@
 import { z } from 'zod/v4'
-import { TemperatureSchema } from '../value-objects/temperature.type.js'
 
 export const CalculateDateRequestSchema = z.object({
 	locationId: z.string(),
-	temperature: TemperatureSchema,
+	temperature: z.object({
+		value: z.number(),
+		unit: z.union([z.literal('C'), z.literal('F')]),
+	}),
 })
 
 export type CalculateDateRequest = z.infer<typeof CalculateDateRequestSchema>

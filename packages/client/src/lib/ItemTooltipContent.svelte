@@ -1,7 +1,6 @@
 <script lang="ts">
-import { isPlantMetadata, rgbToCss } from '@peashoot/types'
+import { isItem, isPlantMetadata, rgbToCss } from '@peashoot/types'
 import { type GridPlaceable } from '../private/grid/grid-placement'
-import { isItemWithMetadata } from './entities/item'
 import IdLabel from './components/IdLabel.svelte'
 
 export interface Props {
@@ -10,7 +9,7 @@ export interface Props {
 
 let { item }: Props = $props()
 
-const itemData = $derived(isItemWithMetadata(item, isPlantMetadata) ? item : null)
+const itemData = $derived(isItem(item) && isPlantMetadata(item.metadata) ? item : null)
 
 const plantMetadata = $derived(
 	isPlantMetadata(itemData?.metadata) ? itemData.metadata : null,

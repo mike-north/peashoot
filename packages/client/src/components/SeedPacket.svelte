@@ -203,11 +203,9 @@ svg {
 				<text x="200" y="385" font-size="20" text-anchor="middle" fill="#333"
 					>Count: {seedPacket.metadata.quantity}</text
 				>
-				<text x="30" y="470" font-size="16" fill="#444"
-					>Net Wt. {seedPacket.metadata.netWeightGrams}g</text
-				>
+				<text x="30" y="470" font-size="16" fill="#444">Net Wt. I_HAVE_NO_IDEA_g</text>
 				<text x="370" y="470" font-size="16" text-anchor="end" fill="#444"
-					>Product of {seedPacket.metadata.originLocation}</text
+					>Product of UNKNOWN</text
 				>
 			</svg>
 		</div>

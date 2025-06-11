@@ -3,6 +3,7 @@ import {
 	PlantValidationRules,
 	WorkspaceController,
 } from '../lib/controllers/workspace-controller'
+import { gardens } from '../lib/state/garden.store'
 import type { Item } from '../lib/entities/item'
 import type { PlantMetadata } from '../lib/entities/plant-metadata'
 // This file now redirects to the new WorkspacePage with generic terminology
@@ -10,9 +11,9 @@ import type { PlantMetadata } from '../lib/entities/plant-metadata'
 import WorkspacePage from './WorkspacePage.svelte'
 
 const { route } = $props()
-
 const controller = new WorkspaceController<Item<PlantMetadata>>({
 	validationRules: [
+		PlantValidationRules.preventAntagonistPlantAdjacency(),
 		PlantValidationRules.checkBoundaries(),
 		PlantValidationRules.noOverlaps(),
 		PlantValidationRules.maxDensity(0.8),
@@ -25,8 +26,8 @@ const controller = new WorkspaceController<Item<PlantMetadata>>({
 		PlantValidationRules.incompatiblePlants([
 			{
 				plant1: 'tomatoes',
-				plant2: 'potatoes',
-				reason: 'Tomatoes and potatoes should not be planted together (shared diseases)',
+				plant2: 'carrots',
+				reason: 'Tomatoes and carrots should not be planted together (shared diseases)',
 			},
 		]),
 	],

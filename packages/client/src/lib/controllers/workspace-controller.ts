@@ -260,6 +260,45 @@ export class WorkspaceController<T extends Item = Item>
  * Helper functions to create common validation rules for plant items
  */
 export const PlantValidationRules = {
+	preventAntagonistPlantAdjacency(): ValidationRule<Item<PlantMetadata>> {
+		return {
+			name: 'antagonist-placement',
+			validate: (context): ValidationResult => {
+				const { targetZone, targetX, targetY, item } = context
+				const { indicators } = context.workspace
+
+				const relevantIndicators: any[] = []
+				// For all indicators
+				for (const indicator of indicators) {
+					// for each effect of the indicator
+					for (const effect of indicator.effects) {
+						// If it affects the plant being dragged
+						if (effect.targetItemTypeId === 'plant_peas')
+							console.log({ effect, indicator, item })
+						if (effect.targetItemTypeId === item.id) {
+							// And the plant creating the negative effect hurts me
+							if (
+								targetZone.placements.some((placement) => {
+									return (
+										effect.nature === 'harmful' &&
+										placement.item.id === effect.sourceItemTypeId
+									)
+								})
+							)
+								// Consider it to be relvant as a blocker for placement
+								relevantIndicators.push(effect)
+						}
+					}
+				}
+				console.log({ relevantIndicators })
+				return {
+					isValid: relevantIndicators.length === 0,
+					reason: `${relevantIndicators.length} indicators negatively affect ${item.displayName}`,
+				}
+			},
+		}
+	},
+
 	/**
 	 * Rule: Cannot place an item outside the zone boundaries
 	 */
@@ -274,7 +313,7 @@ export const PlantValidationRules = {
 				const targetZone = context.targetZone
 
 				const plantItem = context.item
-				const size = plantItem.metadata.plantingDistanceInFeet || 1
+				const size = plantItem.size || 1
 
 				if (
 					context.targetX < 0 ||

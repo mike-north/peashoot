@@ -1,7 +1,12 @@
 {
 	"extends": "../../tsconfig.build.json",
 	"compilerOptions": {
-		"outDir": "dist"
+		"target": "ESNext",
+		"outDir": "dist",
+		"composite": true
 	},
-	"include": ["src/**/*"]
+	"references": [
+		{ "path": "../types/tsconfig.build.json" }
+	],
+	"include": ["src"]
 }

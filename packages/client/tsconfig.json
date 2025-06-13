@@ -19,6 +19,7 @@
 		"strictNullChecks": true,
 		"exactOptionalPropertyTypes": true,
 		"types": ["svelte"],
+		"composite": true,
 		"paths": {
 			"@mateothegreat/svelte5-router": [
 				"./types/@mateothegreat/svelte5-router/index.d.ts"
@@ -31,7 +32,14 @@
 		"src/**/*.d.ts",
 		"src/**/*.svelte",
 		"../../global.d.ts",
-		"src/svelte.d.ts"
-, "tests/zone-layout-calculator.test.ts", "tests/grid-placement.test.ts", "tests/grid-drag-state.test.ts", "tests/grid-area.test.ts", "tests/types.test.ts", "tests/zone-layout-calculator.test.ts"	],
-	"exclude": ["node_modules/*", "public/*"]
+		"src/svelte.d.ts",
+		"tests/zone-layout-calculator.test.ts",
+		"tests/grid-placement.test.ts",
+		"tests/grid-drag-state.test.ts",
+		"tests/grid-area.test.ts",
+		"tests/types.test.ts",
+		"tests/zone-layout-calculator.test.ts"
+	],
+	"exclude": ["node_modules/*", "public/*"],
+	"references": [{ "path": "../types" }]
 }

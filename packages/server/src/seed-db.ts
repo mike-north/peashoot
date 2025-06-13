@@ -2,7 +2,7 @@ import { parse } from 'yaml'
 import * as fs from 'fs'
 import { join } from 'path'
 import { Logger } from 'winston'
-import { RawSeedPacketInfo, RawSeedPacketInfoCollection } from '../data/raw-seed-info'
+import { RawSeedPacketInfo, RawSeedPacketInfoCollection } from './data/raw-seed-info'
 import Ajv, { AnySchema } from 'ajv'
 import { SeedPacket } from './entities/seed-packet'
 import { AppDataSource } from './data-source'
@@ -59,8 +59,8 @@ export async function loadSeedsIntoDb(logger: Logger) {
 	const packets = readSeedDataFile(logger)
 	for (const pkt of packets) {
 		const packet = await repo.save(seedPacketsService.parseSeedPacket(repo, pkt))
-		logger.info('Seed packet saved', { pkt: packet.name, id: packet.id })
 	}
+	logger.info(`${packets.length} seed packets saved`)
 }
 
 export async function generatePlants(logger: Logger) {
@@ -73,8 +73,8 @@ export async function generatePlants(logger: Logger) {
 		const plant = await plantRepo.save(
 			plantsService.generatePlantFromSeedPacket(plantRepo, packet),
 		)
-		logger.info('Plant saved', { plant: plant.name, id: plant.id })
 	}
+	logger.info(`${packets.length} plants saved`)
 }
 
 export async function initializeNewDbWithData(logger: Logger) {

@@ -8,8 +8,7 @@
 		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
 		"build": "tsc -P tsconfig.build.json && npm run generate-seed-file-schema",
 		"lint": "eslint .",
-		"generate-seed-file-schema": "npx typescript-json-schema --required data/raw-seed-info.ts RawSeedPacketInfoCollection -o data/seed-packet.schema.json",
-		"format": "prettier --write src tests"
+		"generate-seed-file-schema": "typescript-json-schema --required src/data/raw-seed-info.ts RawSeedPacketInfoCollection -o data/seed-packet.schema.json"
 	},
 	"keywords": [],
 	"author": "",
@@ -37,7 +36,7 @@
 		"vitest": "^3.1.4"
 	},
 	"dependencies": {
-		"@peashoot/types": "^0.0.1",
+		"@peashoot/types": "workspace:*",
 		"ajv": "^8.17.1",
 		"body-parser": "^1.20.3",
 		"chalk": "^5.4.1",

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { asyncHandler } from './middlewares/async-handler'
 import { LocationService } from '../services/location'
 import { Logger } from 'winston'
+import { InvalidArgsError } from './errors/invalid-args-error'
 
 const calculateDateSchema = z.object({
 	temperature: z.object({
@@ -26,7 +27,9 @@ export function createLocationRouter(logger: Logger): Router {
 	router.get(
 		'/:id',
 		asyncHandler(async (req: Request, res: Response) => {
-			const location = await locationService.getLocation(req.params.id)
+			const { params: { id } } = req
+			if (!id) throw new InvalidArgsError('Location ID is required')
+			const location = await locationService.getLocation(id)
 			res.json(location)
 		}),
 	)
@@ -34,9 +37,10 @@ export function createLocationRouter(logger: Logger): Router {
 	router.post(
 		'/:id/calculate-date',
 		asyncHandler(async (req: Request, res: Response) => {
-			const locationId = req.params.id
+			const { params: { id } } = req
+			if (!id) throw new InvalidArgsError('Location ID is required')
 			const { temperature } = calculateDateSchema.parse(req.body)
-			const date = await locationService.calculateDate(locationId, temperature)
+			const date = await locationService.calculateDate(id, temperature)
 			res.json({ date: date.toISOString() })
 		}),
 	)

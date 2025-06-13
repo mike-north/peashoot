@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
+		"target": "es2023",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"strict": true,
@@ -9,8 +9,9 @@
 		"emitDecoratorMetadata": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": false,
-		"paths": {
-			"@/*": ["./packages/client/src/*"]
-		}
-	}
+		"noImplicitThis": true,
+		"pretty": true,
+		"noUncheckedIndexedAccess": true
+	},
+	"include": ["global.d.ts"]
 }

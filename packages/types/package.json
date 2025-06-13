@@ -10,8 +10,7 @@
 			"types": "./dist/index.d.ts",
 			"node": "./dist/index.js",
 			"import": "./dist/index.js",
-			"default": "./dist/index.js",
-			"format": "prettier --write src tests"
+			"default": "./dist/index.js"
 		}
 	},
 	"scripts": {
@@ -19,6 +18,9 @@
 		"dev": "tsc -P tsconfig.build.json --watch --preserveWatchOutput"
 	},
 	"dependencies": {
-		"zod": "^3.25.46"
+		"zod": "^3.25.64"
+	},
+	"devDependencies": {
+		"@types/node": "^24.0.1"
 	}
 }

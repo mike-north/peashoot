@@ -1,7 +1,8 @@
+import 'reflect-metadata'
 import * as rimraf from 'rimraf'
-import { initApp } from './application/app'
-import { createLogger } from './logger'
-import { initializeNewDbWithData } from './seed-db'
+import { initApp } from './application/app.js'
+import { createLogger } from './logger.js'
+import { initializeNewDbWithData } from './seed-db.js'
 import { Logger } from 'winston'
 import { join } from 'path'
 

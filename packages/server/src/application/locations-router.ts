@@ -1,9 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import { asyncHandler } from './middlewares/async-handler'
-import { LocationService } from '../services/location'
+import { asyncHandler } from './middlewares/async-handler.js'
+import { LocationService } from '../services/location.js'
 import { Logger } from 'winston'
-import { InvalidArgsError } from './errors/invalid-args-error'
+import { InvalidArgsError } from './errors/invalid-args-error.js'
 
 const calculateDateSchema = z.object({
 	temperature: z.object({

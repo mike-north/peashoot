@@ -1,9 +1,9 @@
 import { Logger } from 'winston'
-import { AppDataSource } from '../data-source'
-import { Location } from '../entities/location'
+import { AppDataSource } from '../data-source.js'
+import { Location } from '../entities/location.js'
 import * as fs from 'fs'
 import { join } from 'path'
-import { JSONValue } from '../types/json'
+import { JSONValue } from '../types/json.js'
 import { parse } from 'yaml'
 
 const TEMPERATURE_DATA_FILE_PATH = join(

@@ -1,8 +1,8 @@
 import { Entity, Column, OneToMany } from 'typeorm'
-import { Plant } from './plant'
-import { PeashootEntity } from './peashoot-entity'
-import { Distance } from '../values/distance'
-import { Presentation } from './presentation'
+import { Plant } from './plant.js'
+import { PeashootEntity } from './peashoot-entity.js'
+import { Distance } from '../values/distance.js'
+import { Presentation } from './presentation.js'
 
 @Entity({ name: 'seed-packets' })
 export class SeedPacket extends PeashootEntity<'spkt'> {

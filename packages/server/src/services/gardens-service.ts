@@ -1,7 +1,7 @@
-import { Garden } from '../entities/garden'
-import { AppDataSource } from '../data-source'
-import { isIdWithPrefix } from '../utils/id'
-import { InvalidArgsError } from '../application/errors/invalid-args-error'
+import { Garden } from '../entities/garden.js'
+import { AppDataSource } from '../data-source.js'
+import { isIdWithPrefix } from '../utils/id.js'
+import { InvalidArgsError } from '../application/errors/invalid-args-error.js'
 import { Logger } from 'winston'
 import { DeepPartial } from 'typeorm'
 

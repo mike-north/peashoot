@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { SeedPacket } from './seed-packet'
-import { PeashootEntity } from './peashoot-entity'
-import { RGBColor } from '../values/rgb-color'
-import { Distance } from '../values/distance'
-import { Presentation } from './presentation'
+import { SeedPacket } from './seed-packet.js'
+import { PeashootEntity } from './peashoot-entity.js'
+import { RGBColor } from '../values/rgb-color.js'
+import { Distance } from '../values/distance.js'
+import { Presentation } from './presentation.js'
 
 @Entity({ name: 'plants' })
 export class Plant extends PeashootEntity<'plant'> {

@@ -5,8 +5,10 @@
 		"moduleResolution": "NodeNext",
 		"outDir": "dist",
 		"declaration": true,
+		"rootDir": "src",
 		"declarationMap": true,
-		"noEmit": false
+		"noEmit": false,
+		"composite": true
 	},
-	"include": ["src/**/*"]
+	"include": ["src"]
 }

@@ -1,15 +1,16 @@
 {
 	"name": "@peashoot/server",
 	"version": "1.0.0",
-	"main": "index.js",
+	"main": "dist/index.js",
+	"type": "module",
 	"scripts": {
+		"check": "tsc --noEmit",
 		"test": "vitest run --coverage && tsd",
 		"test:watch": "vitest watch",
-		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+		"dev": "tsx --tsconfig tsconfig.build.json --watch --watch-preserve-output src/index.ts",
 		"build": "tsc -P tsconfig.build.json && npm run generate-seed-file-schema",
 		"lint": "eslint .",
-		"generate-seed-file-schema": "npx typescript-json-schema --required data/raw-seed-info.ts RawSeedPacketInfoCollection -o data/seed-packet.schema.json",
-		"format": "prettier --write src tests"
+		"generate-seed-file-schema": "typescript-json-schema --required src/data/raw-seed-info.ts RawSeedPacketInfoCollection -o data/seed-packet.schema.json"
 	},
 	"keywords": [],
 	"author": "",
@@ -33,11 +34,12 @@
 		"date-fns": "^4.1.0",
 		"prettier": "^3.5.3",
 		"tsd": "^0.32.0",
+		"tsx": "^4.20.3",
 		"typescript": "^5.8.3",
 		"vitest": "^3.1.4"
 	},
 	"dependencies": {
-		"@peashoot/types": "^0.0.1",
+		"@peashoot/types": "workspace:*",
 		"ajv": "^8.17.1",
 		"body-parser": "^1.20.3",
 		"chalk": "^5.4.1",
@@ -46,6 +48,8 @@
 		"express": "^4.17.1",
 		"express-async-handler": "^1.2.0",
 		"lodash": "^4.17.21",
+		"pkg-up": "^5.0.0",
+		"reflect-metadata": "^0.2.2",
 		"rimraf": "^6.0.1",
 		"sqlite3": "^5.1.7",
 		"typeorm": "^0.3.24",

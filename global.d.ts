@@ -9,3 +9,9 @@ declare module '*.svelte' {
 		Bindings extends keyof Props | '' = string,
 	> extends Component<Props, Events, Bindings> {}
 }
+
+declare global {
+	interface ErrorConstructor {
+		captureStackTrace: (targetObject: object, constructorOpt?: Function) => void
+	}
+}

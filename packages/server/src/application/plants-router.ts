@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import { InvalidArgsError } from './errors/invalid-args-error'
-import { PlantsService } from '../services/plants-service'
-import { asyncHandler } from './middlewares/async-handler'
+import { InvalidArgsError } from './errors/invalid-args-error.js'
+import { PlantsService } from '../services/plants-service.js'
+import { asyncHandler } from './middlewares/async-handler.js'
 import { Logger } from 'winston'
 import { convertDistanceToFeet } from '@peashoot/types'
 

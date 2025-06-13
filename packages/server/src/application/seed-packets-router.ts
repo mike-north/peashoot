@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { SeedPacketsService } from '../services/seed-packets-service'
-import { asyncHandler } from './middlewares/async-handler'
+import { SeedPacketsService } from '../services/seed-packets-service.js'
+import { asyncHandler } from './middlewares/async-handler.js'
 import { Logger } from 'winston'
 import { ListPacketsResponse } from '@peashoot/types'
 

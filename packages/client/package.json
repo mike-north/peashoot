@@ -1,16 +1,16 @@
 {
-	"name": "@peashoot/ui",
+	"name": "@peashoot/client",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
+		"check": "sv check",
 		"dev": "vite",
 		"build": "sv check --fail-on-warnings && vite build",
 		"test": "vitest run --coverage && tsd",
 		"test:watch": "vitest watch",
 		"preview": "vite preview",
-		"lint": "eslint .",
-		"format": "prettier --write src tests"
+		"lint": "eslint ."
 	},
 	"devDependencies": {
 		"@iconify-json/ph": "^1.2.2",
@@ -45,7 +45,7 @@
 	},
 	"dependencies": {
 		"@mateothegreat/svelte5-router": "^2.15.2",
-		"@peashoot/types": "^0.0.1",
+		"@peashoot/types": "workspace:*",
 		"uuid": "^11.1.0",
 		"zod": "^3.25.46"
 	}

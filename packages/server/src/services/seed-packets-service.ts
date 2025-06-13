@@ -1,8 +1,8 @@
-import { SeedPacket } from '../entities/seed-packet'
-import { AppDataSource } from '../data-source'
-import { RawSeedPacketInfo } from '../../data/raw-seed-info'
+import { SeedPacket } from '../entities/seed-packet.js'
+import { AppDataSource } from '../data-source.js'
+import { RawSeedPacketInfo } from '../data/raw-seed-info.js'
 import { Repository } from 'typeorm'
-import * as ld from 'lodash'
+import ld from 'lodash'
 import { stringToDistanceUnit } from '@peashoot/types'
 
 export class SeedPacketsService {

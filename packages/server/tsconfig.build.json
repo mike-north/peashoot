@@ -1,7 +1,16 @@
 {
 	"extends": "../../tsconfig.build.json",
 	"compilerOptions": {
-		"outDir": "dist"
+		"target": "ESNext",
+		"outDir": "dist",
+		"composite": true,
+		"esModuleInterop": false,
+		"allowSyntheticDefaultImports": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
 	},
-	"include": ["src/**/*"]
+	"references": [
+		{ "path": "../types/tsconfig.build.json" }
+	],
+	"include": ["src"]
 }

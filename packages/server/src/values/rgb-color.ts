@@ -2,15 +2,15 @@ import { IRGBColor } from '@peashoot/types'
 import { Column } from 'typeorm'
 
 export class RGBColor implements IRGBColor {
-	@Column()
+	@Column('int')
 	red!: number
 
-	@Column()
+	@Column('int')
 	green!: number
 
-	@Column()
+	@Column('int')
 	blue!: number
 
-	@Column({ default: 1 })
+	@Column({ type: 'float', default: 1 })
 	alpha!: number
 }

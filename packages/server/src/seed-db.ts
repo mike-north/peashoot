@@ -2,25 +2,19 @@ import { parse } from 'yaml'
 import * as fs from 'fs'
 import { join } from 'path'
 import { Logger } from 'winston'
-import { RawSeedPacketInfo, RawSeedPacketInfoCollection } from '../data/raw-seed-info'
-import Ajv, { AnySchema } from 'ajv'
-import { SeedPacket } from './entities/seed-packet'
-import { AppDataSource } from './data-source'
-import { Plant } from './entities/plant'
-import { SeedPacketsService } from './services/seed-packets-service'
-import { PlantsService } from './services/plants-service'
-import { GardensService } from './services/gardens-service'
-import { loadTemperatureData } from './services/location'
+import { RawSeedPacketInfo, RawSeedPacketInfoCollection } from './data/raw-seed-info.js'
+import { Ajv, type AnySchema } from 'ajv'
+import { SeedPacket } from './entities/seed-packet.js'
+import { AppDataSource } from './data-source.js'
+import { Plant } from './entities/plant.js'
+import { SeedPacketsService } from './services/seed-packets-service.js'
+import { PlantsService } from './services/plants-service.js'
+import { GardensService } from './services/gardens-service.js'
+import { loadTemperatureData } from './services/location.js'
+import { pkgUpSync } from 'pkg-up'
+import { SEED_DATA_FILE_PATH, SEED_DATA_SCHEMA_FILE_PATH } from './paths.js'
 
 const ajv = new Ajv()
-
-const SEED_DATA_FILE_PATH = join(__dirname, '..', 'data', 'seeds.yml')
-const SEED_DATA_SCHEMA_FILE_PATH = join(
-	__dirname,
-	'..',
-	'data',
-	'seed-packet.schema.json',
-)
 
 export function readSeedDataFile(logger: Logger): RawSeedPacketInfo[] {
 	if (!fs.existsSync(SEED_DATA_FILE_PATH)) {
@@ -59,8 +53,8 @@ export async function loadSeedsIntoDb(logger: Logger) {
 	const packets = readSeedDataFile(logger)
 	for (const pkt of packets) {
 		const packet = await repo.save(seedPacketsService.parseSeedPacket(repo, pkt))
-		logger.info('Seed packet saved', { pkt: packet.name, id: packet.id })
 	}
+	logger.info(`${packets.length} seed packets saved`)
 }
 
 export async function generatePlants(logger: Logger) {
@@ -73,8 +67,8 @@ export async function generatePlants(logger: Logger) {
 		const plant = await plantRepo.save(
 			plantsService.generatePlantFromSeedPacket(plantRepo, packet),
 		)
-		logger.info('Plant saved', { plant: plant.name, id: plant.id })
 	}
+	logger.info(`${packets.length} plants saved`)
 }
 
 export async function initializeNewDbWithData(logger: Logger) {

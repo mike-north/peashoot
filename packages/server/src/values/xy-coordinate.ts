@@ -2,9 +2,9 @@ import { Column } from 'typeorm'
 import { IXYCoordinate } from '@peashoot/types'
 
 export class XYCoordinate implements IXYCoordinate {
-	@Column()
+	@Column('int')
 	x!: number
 
-	@Column()
+	@Column('int')
 	y!: number
 }

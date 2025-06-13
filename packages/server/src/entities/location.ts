@@ -1,5 +1,5 @@
 import { Entity, Column } from 'typeorm'
-import { PeashootEntity } from './peashoot-entity'
+import { PeashootEntity } from './peashoot-entity.js'
 
 @Entity()
 export class Location extends PeashootEntity<'loc'> {

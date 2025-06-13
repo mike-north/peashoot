@@ -1,0 +1,9 @@
+packages:
+  - packages/*
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - nx
+  - sqlite3

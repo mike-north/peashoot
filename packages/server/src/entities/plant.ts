@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne } from 'typeorm'
-import { SeedPacket } from './seed-packet'
-import { PeashootEntity } from './peashoot-entity'
-import { RGBColor } from '../values/rgb-color'
-import { Distance } from '../values/distance'
-import { Presentation } from './presentation'
+import { SeedPacket } from './seed-packet.js'
+import { PeashootEntity } from './peashoot-entity.js'
+import { RGBColor } from '../values/rgb-color.js'
+import { Distance } from '../values/distance.js'
+import { Presentation } from './presentation.js'
 
 @Entity({ name: 'plants' })
 export class Plant extends PeashootEntity<'plant'> {
@@ -17,12 +17,12 @@ export class Plant extends PeashootEntity<'plant'> {
 	@Column(() => RGBColor)
 	accentColor!: RGBColor
 
-	@Column({ nullable: false }) iconPath!: string
-	@Column({ nullable: false }) variant!: string
+	@Column({ type: 'text', nullable: false }) iconPath!: string
+	@Column({ type: 'text', nullable: false }) variant!: string
 
-	@Column({ nullable: false }) name!: string
-	@Column({ nullable: false }) family!: string
-	@Column({ nullable: false }) description!: string
+	@Column({ type: 'text', nullable: false }) name!: string
+	@Column({ type: 'text', nullable: false }) family!: string
+	@Column({ type: 'text', nullable: false }) description!: string
 	@Column(() => Distance)
 	plantingDistance!: Distance
 

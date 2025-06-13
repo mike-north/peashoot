@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm'
-import { PeashootEntity } from './peashoot-entity'
+import { PeashootEntity } from './peashoot-entity.js'
 
 @Entity({ name: 'garden' })
 export class Garden extends PeashootEntity<'grdn'> {
@@ -7,9 +7,9 @@ export class Garden extends PeashootEntity<'grdn'> {
 		super('grdn')
 	}
 
-	@Column()
+	@Column('varchar', { length: 255 })
 	name!: string
 
-	@Column()
+	@Column('varchar', { length: 255 })
 	description!: string
 }

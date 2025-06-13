@@ -1,13 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import { createGardenRouter } from './gardens-router'
-import { createPlantRouter } from './plants-router'
-import { createSeedPacketRouter } from './seed-packets-router'
-import { zodErrorTo400 } from './middlewares/zod-error-to-400'
+import { createGardenRouter } from './gardens-router.js'
+import { createPlantRouter } from './plants-router.js'
+import { createSeedPacketRouter } from './seed-packets-router.js'
+import { zodErrorTo400 } from './middlewares/zod-error-to-400.js'
 import { Logger } from 'winston'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 
-import { createLocationRouter } from './locations-router'
+import { createLocationRouter } from './locations-router.js'
 
 export function createRouter(logger: Logger): Router {
 	const router = Router()

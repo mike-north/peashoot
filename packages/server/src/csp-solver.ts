@@ -1,139 +1,139 @@
-import {
-	PlantingSolver,
-	SpacingConstraintRule,
-	AntagonistConstraintRule,
-	type Plant,
-	type SolverSolution,
-	type PlantName,
-} from './optimizers/garden-planner-csp'
+// import {
+// 	PlantingSolver,
+// 	SpacingConstraintRule,
+// 	AntagonistConstraintRule,
+// 	type Plant,
+// 	type SolverSolution,
+// 	type PlantName,
+// } from './optimizers/garden-planner-csp'
 
-// Define the beds
-const bedConfigs = [
-	{ id: 'bed1', gridSize: 3 },
-	{ id: 'bed2', gridSize: 3 },
-	{ id: 'bed3', gridSize: 3 },
-]
+// // Define the beds
+// const bedConfigs = [
+// 	{ id: 'bed1', gridSize: 3 },
+// 	{ id: 'bed2', gridSize: 3 },
+// 	{ id: 'bed3', gridSize: 3 },
+// ]
 
-// Define plants using the Plant interface
-const plantsData: Plant[] = [
-	{
-		name: 'arugula',
-		minSpacing: 1,
-		sunRequirements: 'full',
-		companions: ['lettuce'],
-		antagonists: ['tomato', 'basil'],
-	},
-	{
-		name: 'lettuce',
-		minSpacing: 1,
-		sunRequirements: 'partial',
-		companions: ['arugula', 'tomato'],
-		antagonists: [],
-	},
-	{
-		name: 'tomato',
-		minSpacing: 2,
-		sunRequirements: 'full',
-		companions: ['lettuce'],
-		antagonists: ['arugula', 'basil'],
-	},
-	{
-		name: 'basil',
-		minSpacing: 1,
-		sunRequirements: 'full',
-		companions: ['tomato'],
-		antagonists: ['arugula'],
-	},
-	{
-		name: 'marigold',
-		minSpacing: 1,
-		sunRequirements: 'partial',
-		companions: ['tomato', 'arugula', 'lettuce'],
-		antagonists: [],
-	},
-]
+// // Define plants using the Plant interface
+// const plantsData: Plant[] = [
+// 	{
+// 		name: 'arugula',
+// 		minSpacing: 1,
+// 		sunRequirements: 'full',
+// 		companions: ['lettuce'],
+// 		antagonists: ['tomato', 'basil'],
+// 	},
+// 	{
+// 		name: 'lettuce',
+// 		minSpacing: 1,
+// 		sunRequirements: 'partial',
+// 		companions: ['arugula', 'tomato'],
+// 		antagonists: [],
+// 	},
+// 	{
+// 		name: 'tomato',
+// 		minSpacing: 2,
+// 		sunRequirements: 'full',
+// 		companions: ['lettuce'],
+// 		antagonists: ['arugula', 'basil'],
+// 	},
+// 	{
+// 		name: 'basil',
+// 		minSpacing: 1,
+// 		sunRequirements: 'full',
+// 		companions: ['tomato'],
+// 		antagonists: ['arugula'],
+// 	},
+// 	{
+// 		name: 'marigold',
+// 		minSpacing: 1,
+// 		sunRequirements: 'partial',
+// 		companions: ['tomato', 'arugula', 'lettuce'],
+// 		antagonists: [],
+// 	},
+// ]
 
-// Create the solver instance
-const solver = new PlantingSolver(bedConfigs, plantsData)
+// // Create the solver instance
+// const solver = new PlantingSolver(bedConfigs, plantsData)
 
-// Register rules with weights
-// For hard constraints like spacing and antagonists, we can use a high weight.
-const highWeight = 10.0
-solver.registerRule(new SpacingConstraintRule(), highWeight)
-solver.registerRule(new AntagonistConstraintRule(), highWeight)
+// // Register rules with weights
+// // For hard constraints like spacing and antagonists, we can use a high weight.
+// const highWeight = 10.0
+// solver.registerRule(new SpacingConstraintRule(), highWeight)
+// solver.registerRule(new AntagonistConstraintRule(), highWeight)
 
-// Example: Add a soft rule for companion planting (implementation pending in garden-planner.ts)
-// solver.registerRule(new CompanionAffinityRule(), 2.0);
+// // Example: Add a soft rule for companion planting (implementation pending in garden-planner.ts)
+// // solver.registerRule(new CompanionAffinityRule(), 2.0);
 
-// Solve the CSP
-console.log('Attempting to find plant placement solution...')
+// // Solve the CSP
+// console.log('Attempting to find plant placement solution...')
 
-const startTime1 = performance.now() // Record start time
+// const startTime1 = performance.now() // Record start time
 
-// We can adjust the satisfactionThreshold (0.0 to 1.0).
-// A higher threshold means solutions must satisfy weighted rules more completely.
-// Default is 0.75 in the solver.
-const solution1: SolverSolution | null = solver.solve(100000, 0.75) // Explicitly using 0.75 for clarity
-const endTime1 = performance.now() // Record end time
-const elapsedTime1 = (endTime1 - startTime1).toFixed(2) // Calculate elapsed time in milliseconds
-console.log(`\nSolver1 finished in ${elapsedTime1} ms.`)
+// // We can adjust the satisfactionThreshold (0.0 to 1.0).
+// // A higher threshold means solutions must satisfy weighted rules more completely.
+// // Default is 0.75 in the solver.
+// const solution1: SolverSolution | null = solver.solve(100000, 0.75) // Explicitly using 0.75 for clarity
+// const endTime1 = performance.now() // Record end time
+// const elapsedTime1 = (endTime1 - startTime1).toFixed(2) // Calculate elapsed time in milliseconds
+// console.log(`\nSolver1 finished in ${elapsedTime1} ms.`)
 
-const startTime2 = performance.now() // Record start time
-const solution2: SolverSolution | null = solver.solve(100000, 1) // Explicitly using 0.75 for clarity
-const endTime2 = performance.now() // Record end time
+// const startTime2 = performance.now() // Record start time
+// const solution2: SolverSolution | null = solver.solve(100000, 1) // Explicitly using 0.75 for clarity
+// const endTime2 = performance.now() // Record end time
 
-const elapsedTime2 = (endTime2 - startTime2).toFixed(2) // Calculate elapsed time in milliseconds
-console.log(`\nSolver2 finished in ${elapsedTime2} ms.`)
+// const elapsedTime2 = (endTime2 - startTime2).toFixed(2) // Calculate elapsed time in milliseconds
+// console.log(`\nSolver2 finished in ${elapsedTime2} ms.`)
 
-// Output the solution
-console.log('\nPlant placement solution:')
-if (solution1) {
-	bedConfigs.forEach((bedConfig) => {
-		console.log(`\n--- ${bedConfig.id.toUpperCase()} ---`)
-		const bedSolution = solution1[bedConfig.id]
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (!bedSolution) {
-			// TODO: properly handle case where no solution is found
-			console.log(`No solution found for ${bedConfig.id}`)
-			return
-		}
+// // Output the solution
+// console.log('\nPlant placement solution:')
+// if (solution1) {
+// 	bedConfigs.forEach((bedConfig) => {
+// 		console.log(`\n--- ${bedConfig.id.toUpperCase()} ---`)
+// 		const bedSolution = solution1[bedConfig.id]
+// 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+// 		if (!bedSolution) {
+// 			// TODO: properly handle case where no solution is found
+// 			console.log(`No solution found for ${bedConfig.id}`)
+// 			return
+// 		}
 
-		// For a nicer table output, we can format it.
-		const tableFormattedSolution: unknown[] = []
-		for (let r = 0; r < bedConfig.gridSize; r++) {
-			const row: Record<string, PlantName> = {} // Allow string for "Empty"
-			for (let c = 0; c < bedConfig.gridSize; c++) {
-				row[`Col ${c}`] = bedSolution[`${r},${c}`] || 'Empty'
-			}
-			tableFormattedSolution.push(row)
-		}
-		console.table(tableFormattedSolution)
-	})
-} else {
-	console.log('No solution1 found for any bed.')
-}
-if (solution2) {
-	bedConfigs.forEach((bedConfig) => {
-		console.log(`\n--- ${bedConfig.id.toUpperCase()} ---`)
-		const bedSolution = solution2[bedConfig.id]
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (!bedSolution) {
-			// TODO: properly handle case where no solution is found
-			console.log(`No solution found for ${bedConfig.id}`)
-			return
-		}
+// 		// For a nicer table output, we can format it.
+// 		const tableFormattedSolution: unknown[] = []
+// 		for (let r = 0; r < bedConfig.gridSize; r++) {
+// 			const row: Record<string, PlantName> = {} // Allow string for "Empty"
+// 			for (let c = 0; c < bedConfig.gridSize; c++) {
+// 				row[`Col ${c}`] = bedSolution[`${r},${c}`] || 'Empty'
+// 			}
+// 			tableFormattedSolution.push(row)
+// 		}
+// 		console.table(tableFormattedSolution)
+// 	})
+// } else {
+// 	console.log('No solution1 found for any bed.')
+// }
+// if (solution2) {
+// 	bedConfigs.forEach((bedConfig) => {
+// 		console.log(`\n--- ${bedConfig.id.toUpperCase()} ---`)
+// 		const bedSolution = solution2[bedConfig.id]
+// 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+// 		if (!bedSolution) {
+// 			// TODO: properly handle case where no solution is found
+// 			console.log(`No solution found for ${bedConfig.id}`)
+// 			return
+// 		}
 
-		// For a nicer table output, we can format it.
-		const tableFormattedSolution: unknown[] = []
-		for (let r = 0; r < bedConfig.gridSize; r++) {
-			const row: Record<string, PlantName> = {} // Allow string for "Empty"
-			for (let c = 0; c < bedConfig.gridSize; c++) {
-				row[`Col ${c}`] = bedSolution[`${r},${c}`] || 'Empty'
-			}
-			tableFormattedSolution.push(row)
-		}
-		console.table(tableFormattedSolution)
-	})
-} else {
-	console.log('No solution2 found for any bed.')
-}
+// 		// For a nicer table output, we can format it.
+// 		const tableFormattedSolution: unknown[] = []
+// 		for (let r = 0; r < bedConfig.gridSize; r++) {
+// 			const row: Record<string, PlantName> = {} // Allow string for "Empty"
+// 			for (let c = 0; c < bedConfig.gridSize; c++) {
+// 				row[`Col ${c}`] = bedSolution[`${r},${c}`] || 'Empty'
+// 			}
+// 			tableFormattedSolution.push(row)
+// 		}
+// 		console.table(tableFormattedSolution)
+// 	})
+// } else {
+// 	console.log('No solution2 found for any bed.')
+// }

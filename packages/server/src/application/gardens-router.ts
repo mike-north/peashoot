@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { GardensService } from '../services/gardens-service'
-import { asyncHandler } from './middlewares/async-handler'
+import { GardensService } from '../services/gardens-service.js'
+import { asyncHandler } from './middlewares/async-handler.js'
 import { Logger } from 'winston'
 import { ListWorkspacesResponse } from '@peashoot/types'
 

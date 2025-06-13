@@ -1,9 +1,9 @@
 import express, { Express, RequestHandler } from 'express'
-import { createRouter } from './api-router'
+import { createRouter } from './api-router.js'
 import { Logger } from 'winston'
 
 function createRequestLogger(logger: Logger): RequestHandler {
-	return (req, res, next) => {
+	return (req, res, next) => {	
 		logger.info(`${req.method} ${req.url}`)
 		next()
 	}

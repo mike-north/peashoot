@@ -4,6 +4,7 @@
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
+		"check": "tsc --noEmit",
 		"test": "vitest run --coverage && tsd",
 		"test:watch": "vitest watch",
 		"dev": "tsx --tsconfig tsconfig.build.json --watch --watch-preserve-output src/index.ts",

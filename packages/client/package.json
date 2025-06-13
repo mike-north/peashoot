@@ -4,6 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
+		"check": "sv check",
 		"dev": "vite",
 		"build": "sv check --fail-on-warnings && vite build",
 		"test": "vitest run --coverage && tsd",

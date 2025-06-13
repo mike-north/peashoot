@@ -5,15 +5,8 @@
 	"type": "module",
 	"types": "dist/index.d.ts",
 	"main": "dist/index.js",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"node": "./dist/index.js",
-			"import": "./dist/index.js",
-			"default": "./dist/index.js"
-		}
-	},
 	"scripts": {
+		"check": "tsc --noEmit",
 		"build": "tsc -P tsconfig.build.json",
 		"dev": "tsc -P tsconfig.build.json --watch --preserveWatchOutput"
 	},

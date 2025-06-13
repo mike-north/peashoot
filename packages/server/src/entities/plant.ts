@@ -17,12 +17,12 @@ export class Plant extends PeashootEntity<'plant'> {
 	@Column(() => RGBColor)
 	accentColor!: RGBColor
 
-	@Column({ nullable: false }) iconPath!: string
-	@Column({ nullable: false }) variant!: string
+	@Column({ type: 'text', nullable: false }) iconPath!: string
+	@Column({ type: 'text', nullable: false }) variant!: string
 
-	@Column({ nullable: false }) name!: string
-	@Column({ nullable: false }) family!: string
-	@Column({ nullable: false }) description!: string
+	@Column({ type: 'text', nullable: false }) name!: string
+	@Column({ type: 'text', nullable: false }) family!: string
+	@Column({ type: 'text', nullable: false }) description!: string
 	@Column(() => Distance)
 	plantingDistance!: Distance
 

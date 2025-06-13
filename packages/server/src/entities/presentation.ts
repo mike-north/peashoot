@@ -6,6 +6,6 @@ export class Presentation {
 	@Column(() => RGBColor)
 	accentColor!: RGBColor
 
-	@Column()
+	@Column('text')
 	iconPath!: string
 }

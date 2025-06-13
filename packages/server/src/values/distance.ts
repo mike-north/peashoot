@@ -2,7 +2,7 @@ import { stringToDistanceUnit, type IDistance, type IDistanceUnit } from '@peash
 import { Column } from 'typeorm'
 
 export class Distance implements IDistance {
-	@Column()
+	@Column('int')
 	value!: number
 
 	@Column('varchar', {

@@ -3,7 +3,11 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"outDir": "dist",
-		"composite": true
+		"composite": true,
+		"esModuleInterop": false,
+		"allowSyntheticDefaultImports": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
 	},
 	"references": [
 		{ "path": "../types/tsconfig.build.json" }

@@ -2,7 +2,7 @@ import { Plant as IPlant, PlantSchema } from '@peashoot/types'
 import { AppDataSource } from '../data-source.js'
 import { Plant } from '../entities/plant.js'
 import { DeepPartial, Repository } from 'typeorm'
-import * as ld from 'lodash'
+import ld from 'lodash'
 import { SeedPacket } from '../entities/seed-packet.js'
 
 export class PlantsService {

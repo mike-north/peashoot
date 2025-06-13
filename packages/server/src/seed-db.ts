@@ -11,16 +11,10 @@ import { SeedPacketsService } from './services/seed-packets-service.js'
 import { PlantsService } from './services/plants-service.js'
 import { GardensService } from './services/gardens-service.js'
 import { loadTemperatureData } from './services/location.js'
+import { pkgUpSync } from 'pkg-up'
+import { SEED_DATA_FILE_PATH, SEED_DATA_SCHEMA_FILE_PATH } from './paths.js'
 
 const ajv = new Ajv()
-
-const SEED_DATA_FILE_PATH = join(__dirname, '..', 'data', 'seeds.yml')
-const SEED_DATA_SCHEMA_FILE_PATH = join(
-	__dirname,
-	'..',
-	'data',
-	'seed-packet.schema.json',
-)
 
 export function readSeedDataFile(logger: Logger): RawSeedPacketInfo[] {
 	if (!fs.existsSync(SEED_DATA_FILE_PATH)) {

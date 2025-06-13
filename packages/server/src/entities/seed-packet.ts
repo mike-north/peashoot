@@ -13,16 +13,16 @@ export class SeedPacket extends PeashootEntity<'spkt'> {
 	@OneToMany(() => Plant, (plant) => plant.seedPacket)
 	plants!: Plant[]
 
-	@Column()
+	@Column('text')
 	name!: string
 
-	@Column({ nullable: false })
+	@Column({type: 'text', nullable: false })
 	description!: string
 
-	@Column()
+	@Column('int')
 	quantity!: number
 
-	@Column()
+	@Column('text')
 	category!: string
 
 	@Column(() => Presentation)
